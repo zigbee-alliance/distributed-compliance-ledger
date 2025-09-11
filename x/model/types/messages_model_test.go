@@ -226,6 +226,24 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
+			name: "IcdUserActiveModeTriggerInstruction length > 1024",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.IcdUserActiveModeTriggerInstruction = tmrand.Str(1025)
+
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
+		{
+			name: "FactoryResetStepsInstruction length > 1024",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.FactoryResetStepsInstruction = tmrand.Str(1025)
+
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
+		{
 			name: "UserManualUrl is not valid URL",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.UserManualUrl = "not valid URL"
@@ -770,6 +788,70 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			}(validMsgCreateModel()),
 		},
 		{
+			name: "IcdUserActiveModeTriggerHint == 0",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.IcdUserActiveModeTriggerHint = 0
+
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "FactoryResetStepsHint == 0",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.FactoryResetStepsHint = 0
+
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "IcdUserActiveModeTriggerHint > 0",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.IcdUserActiveModeTriggerHint = 1
+
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "FactoryResetStepsHint > 0",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.FactoryResetStepsHint = 1
+
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "IcdUserActiveModeTriggerInstruction is omitted",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.IcdUserActiveModeTriggerInstruction = ""
+
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "FactoryResetStepsInstruction is omitted",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.FactoryResetStepsInstruction = ""
+
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "IcdUserActiveModeTriggerInstruction length == 1024",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.IcdUserActiveModeTriggerInstruction = tmrand.Str(1024)
+
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "FactoryResetStepsInstruction length == 1024",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.FactoryResetStepsInstruction = tmrand.Str(1024)
+
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
 			name: "UserManualUrl is omitted",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.UserManualUrl = ""
@@ -1019,9 +1101,18 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "CommissioningModeSecondaryStepsInstruction length > 1024",
+			name: "IcdUserActiveModeTriggerInstruction length > 1024",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
-				msg.CommissioningModeSecondaryStepsInstruction = tmrand.Str(1025)
+				msg.IcdUserActiveModeTriggerInstruction = tmrand.Str(1025)
+
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
+		{
+			name: "FactoryResetStepsInstruction length > 1024",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.FactoryResetStepsInstruction = tmrand.Str(1025)
 
 				return msg
 			}(validMsgUpdateModel()),
@@ -1557,17 +1648,33 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			}(validMsgUpdateModel()),
 		},
 		{
-			name: "CommissioningModeSecondaryStepsInstruction is omitted",
+			name: "IcdUserActiveModeTriggerInstruction is omitted",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
-				msg.CommissioningModeSecondaryStepsInstruction = ""
+				msg.IcdUserActiveModeTriggerInstruction = ""
 
 				return msg
 			}(validMsgUpdateModel()),
 		},
 		{
-			name: "CommissioningModeSecondaryStepsInstruction length == 1024",
+			name: "FactoryResetStepsInstruction is omitted",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
-				msg.CommissioningModeSecondaryStepsInstruction = tmrand.Str(1024)
+				msg.FactoryResetStepsInstruction = ""
+
+				return msg
+			}(validMsgUpdateModel()),
+		},
+		{
+			name: "IcdUserActiveModeTriggerInstruction length == 1024",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.IcdUserActiveModeTriggerInstruction = tmrand.Str(1024)
+
+				return msg
+			}(validMsgUpdateModel()),
+		},
+		{
+			name: "FactoryResetStepsInstruction length == 1024",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.FactoryResetStepsInstruction = tmrand.Str(1024)
 
 				return msg
 			}(validMsgUpdateModel()),
@@ -1853,16 +1960,20 @@ func validMsgCreateModel() *MsgCreateModel {
 		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      testconstants.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction,
-		UserManualUrl:               testconstants.UserManualURL,
-		SupportUrl:                  testconstants.SupportURL,
-		ProductUrl:                  testconstants.ProductURL,
-		LsfUrl:                      testconstants.LsfURL,
-		EnhancedSetupFlowOptions:    testconstants.EnhancedSetupFlowOptions,
-		EnhancedSetupFlowTCUrl:      testconstants.EnhancedSetupFlowTCURL,
-		EnhancedSetupFlowTCRevision: int32(testconstants.EnhancedSetupFlowTCRevision),
-		EnhancedSetupFlowTCDigest:   testconstants.EnhancedSetupFlowTCDigest,
-		EnhancedSetupFlowTCFileSize: uint32(testconstants.EnhancedSetupFlowTCFileSize),
-		MaintenanceUrl:              testconstants.MaintenanceURL,
+		IcdUserActiveModeTriggerHint:               testconstants.IcdUserActiveModeTriggerHint,
+		IcdUserActiveModeTriggerInstruction:        testconstants.IcdUserActiveModeTriggerInstruction,
+		FactoryResetStepsHint:                      testconstants.FactoryResetStepsHint,
+		FactoryResetStepsInstruction:               testconstants.FactoryResetStepsInstruction,
+		UserManualUrl:                              testconstants.UserManualURL,
+		SupportUrl:                                 testconstants.SupportURL,
+		ProductUrl:                                 testconstants.ProductURL,
+		LsfUrl:                                     testconstants.LsfURL,
+		EnhancedSetupFlowOptions:                   testconstants.EnhancedSetupFlowOptions,
+		EnhancedSetupFlowTCUrl:                     testconstants.EnhancedSetupFlowTCURL,
+		EnhancedSetupFlowTCRevision:                int32(testconstants.EnhancedSetupFlowTCRevision),
+		EnhancedSetupFlowTCDigest:                  testconstants.EnhancedSetupFlowTCDigest,
+		EnhancedSetupFlowTCFileSize:                uint32(testconstants.EnhancedSetupFlowTCFileSize),
+		MaintenanceUrl:                             testconstants.MaintenanceURL,
 	}
 }
 
@@ -1877,16 +1988,18 @@ func validMsgUpdateModel() *MsgUpdateModel {
 		CommissioningCustomFlowUrl:               testconstants.CommissioningCustomFlowURL + "/updated",
 		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction + "-updated",
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction + "-updated",
-		UserManualUrl:               testconstants.UserManualURL + "/updated",
-		SupportUrl:                  testconstants.SupportURL + "/updated",
-		ProductUrl:                  testconstants.ProductURL + "/updated",
-		LsfUrl:                      testconstants.LsfURL + "/updated",
-		LsfRevision:                 testconstants.LsfRevision + 1,
-		EnhancedSetupFlowOptions:    testconstants.EnhancedSetupFlowOptions + 2,
-		EnhancedSetupFlowTCUrl:      testconstants.EnhancedSetupFlowTCURL + "/updated",
-		EnhancedSetupFlowTCRevision: int32(testconstants.EnhancedSetupFlowTCRevision + 1),
-		EnhancedSetupFlowTCDigest:   testconstants.EnhancedSetupFlowTCDigest,
-		EnhancedSetupFlowTCFileSize: uint32(testconstants.EnhancedSetupFlowTCFileSize + 1),
-		MaintenanceUrl:              testconstants.MaintenanceURL + "/updated",
+		IcdUserActiveModeTriggerInstruction:        testconstants.IcdUserActiveModeTriggerInstruction + "-updated",
+		FactoryResetStepsInstruction:               testconstants.FactoryResetStepsInstruction + "-updated",
+		UserManualUrl:                              testconstants.UserManualURL + "/updated",
+		SupportUrl:                                 testconstants.SupportURL + "/updated",
+		ProductUrl:                                 testconstants.ProductURL + "/updated",
+		LsfUrl:                                     testconstants.LsfURL + "/updated",
+		LsfRevision:                                testconstants.LsfRevision + 1,
+		EnhancedSetupFlowOptions:                   testconstants.EnhancedSetupFlowOptions + 2,
+		EnhancedSetupFlowTCUrl:                     testconstants.EnhancedSetupFlowTCURL + "/updated",
+		EnhancedSetupFlowTCRevision:                int32(testconstants.EnhancedSetupFlowTCRevision + 1),
+		EnhancedSetupFlowTCDigest:                  testconstants.EnhancedSetupFlowTCDigest,
+		EnhancedSetupFlowTCFileSize:                uint32(testconstants.EnhancedSetupFlowTCFileSize + 1),
+		MaintenanceUrl:                             testconstants.MaintenanceURL + "/updated",
 	}
 }

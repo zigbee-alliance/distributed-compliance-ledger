@@ -24,6 +24,16 @@ restart_cnt=0
 RUN_CMD="$HOME"/./cosmovisor_start.sh
 ln -s "$HOME"/cosmovisor_preupgrade.sh "$HOME"/.dcl/cosmovisor/cosmovisor_preupgrade.sh
 
+cosmovisor_stop() {
+    pkill -f cosmovisor_start
+    sleep 1
+    exit 0
+}
+
+if env | grep GOCOVERDIR; then
+    trap cosmovisor_stop EXIT
+fi
+
 while $RUN_CMD; do
     # in tests, the number of restarts is very limited, mainly when an upgrade occurs
     # exit with error if there are any unexpected unnecessary restarts

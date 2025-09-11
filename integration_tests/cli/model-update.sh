@@ -69,7 +69,7 @@ echo "$result"
 
 test_divider
 
-# check default values for commissioningModeInitialStepsHint and commissioningModeSecondaryStepsHint
+# check default values for commissioningModeInitialStepsHint and commissioningModeSecondaryStepsHint, factoryResetStepsHint and icdUserActiveModeTriggerHint
 echo "Get Model with VID: $vid PID: $pid"
 result=$(dcld query model get-model --vid=$vid --pid=$pid)
 check_response "$result" "\"vid\": $vid"
@@ -78,6 +78,8 @@ check_response "$result" "\"productLabel\": \"$productLabel\""
 check_response "$result" "\"schemaVersion\": $schema_version_0"
 check_response "$result" "\"commissioningModeInitialStepsHint\": 1"
 check_response "$result" "\"commissioningModeSecondaryStepsHint\": 1"
+check_response "$result" "\"icdUserActiveModeTriggerHint\": 1"
+check_response "$result" "\"factoryResetStepsHint\": 1"
 check_response "$result" "\"enhancedSetupFlowOptions\": $enhancedSetupFlowOptions_0"
 echo "$result"
 
@@ -100,9 +102,13 @@ echo "Update Model with VID: ${vid} PID: ${pid} with new description, commission
 description="New Device Description"
 commissioningModeInitialStepsHint=3
 commissioningModeSecondaryStepsHint=4
+factoryResetStepsHint=5
+icdUserActiveModeTriggerHint=6
 enhancedSetupFlowOptions_2=2
 result=$(echo "test1234" | dcld tx model update-model --vid=$vid --pid=$pid --from $vendor_account --yes --productLabel "$description" --schemaVersion=$schema_version_0 \
-  --commissioningModeInitialStepsHint="$commissioningModeInitialStepsHint" --commissioningModeSecondaryStepsHint="$commissioningModeSecondaryStepsHint" --enhancedSetupFlowOptions=$enhancedSetupFlowOptions_2)
+  --commissioningModeInitialStepsHint="$commissioningModeInitialStepsHint" --commissioningModeSecondaryStepsHint="$commissioningModeSecondaryStepsHint" \
+  --icdUserActiveModeTriggerHint="$icdUserActiveModeTriggerHint" \
+  --factoryResetStepsHint="$factoryResetStepsHint" --enhancedSetupFlowOptions=$enhancedSetupFlowOptions_2)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
@@ -118,6 +124,8 @@ check_response "$result" "\"productLabel\": \"$description\""
 check_response "$result" "\"schemaVersion\": $schema_version_0"
 check_response "$result" "\"commissioningModeInitialStepsHint\": $commissioningModeInitialStepsHint"
 check_response "$result" "\"commissioningModeSecondaryStepsHint\": $commissioningModeSecondaryStepsHint"
+check_response "$result" "\"icdUserActiveModeTriggerHint\": $icdUserActiveModeTriggerHint"
+check_response "$result" "\"factoryResetStepsHint\": $factoryResetStepsHint"
 check_response "$result" "\"enhancedSetupFlowOptions\": $enhancedSetupFlowOptions_2"
 echo "$result"
 
@@ -132,7 +140,7 @@ echo "$result"
 
 test_divider
 
-# check non-updated values for commissioningModeInitialStepsHint and commissioningModeSecondaryStepsHint
+# check non-updated values for commissioningModeInitialStepsHint and commissioningModeSecondaryStepsHint, factoryResetStepsHint and icdUserActiveModeTriggerHint
 # (because the values have not been set)
 echo "Get Model with VID: ${vid} PID: ${pid}"
 result=$(dcld query model get-model --vid=$vid --pid=$pid)
@@ -142,22 +150,24 @@ check_response "$result" "\"productLabel\": \"$description\""
 check_response "$result" "\"schemaVersion\": $schema_version_0"
 check_response "$result" "\"commissioningModeInitialStepsHint\": $commissioningModeInitialStepsHint"
 check_response "$result" "\"commissioningModeSecondaryStepsHint\": $commissioningModeSecondaryStepsHint"
+check_response "$result" "\"icdUserActiveModeTriggerHint\": $icdUserActiveModeTriggerHint"
+check_response "$result" "\"factoryResetStepsHint\": $factoryResetStepsHint"
 check_response "$result" "\"enhancedSetupFlowOptions\": $enhancedSetupFlowOptions_2"
 echo "$result"
 
 test_divider
 
-echo "Update Model with VID: ${vid} PID: ${pid} with new description, commissioningModeInitialStepsHint and commissioningModeSecondaryStepsHint"
+echo "Update Model with VID: ${vid} PID: ${pid} with new description, commissioningModeInitialStepsHint, commissioningModeSecondaryStepsHint, factoryResetStepsHint, and icdUserActiveModeTriggerHint"
 description="New Device Description 3"
 result=$(echo "test1234" | dcld tx model update-model --vid=$vid --pid=$pid --from $vendor_account --yes --productLabel "$description" --schemaVersion=$schema_version_0 \
-  --commissioningModeInitialStepsHint=0 --commissioningModeSecondaryStepsHint=0 --enhancedSetupFlowOptions=$enhancedSetupFlowOptions_2)
+  --commissioningModeInitialStepsHint=0 --commissioningModeSecondaryStepsHint=0 --factoryResetStepsHint=0 --icdUserActiveModeTriggerHint=0 --enhancedSetupFlowOptions=$enhancedSetupFlowOptions_2)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
 
-# check non-updated values for commissioningModeInitialStepsHint and commissioningModeSecondaryStepsHint 
+# check non-updated values for commissioningModeInitialStepsHint, commissioningModeSecondaryStepsHint, factoryResetStepsHint, and icdUserActiveModeTriggerHint
 # (because the values were set to 0)
 echo "Get Model with VID: ${vid} PID: ${pid}"
 result=$(dcld query model get-model --vid=$vid --pid=$pid)
@@ -167,5 +177,7 @@ check_response "$result" "\"productLabel\": \"$description\""
 check_response "$result" "\"schemaVersion\": $schema_version_0"
 check_response "$result" "\"commissioningModeInitialStepsHint\": $commissioningModeInitialStepsHint"
 check_response "$result" "\"commissioningModeSecondaryStepsHint\": $commissioningModeSecondaryStepsHint"
+check_response "$result" "\"icdUserActiveModeTriggerHint\": $icdUserActiveModeTriggerHint"
+check_response "$result" "\"factoryResetStepsHint\": $factoryResetStepsHint"
 check_response "$result" "\"enhancedSetupFlowOptions\": $enhancedSetupFlowOptions_2"
 echo "$result"

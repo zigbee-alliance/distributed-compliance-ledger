@@ -13,7 +13,14 @@ variable "ssh_username" {
   default     = "ubuntu"
 }
 
-variable "region" {
-  description = "AWS Region"
-  default     = "us-west-1"
+variable "instance_type" {
+  description = "Prometheus instance type"
+}
+
+variable "endpoints" {
+  description = "Prometheus endpoints"
+}
+
+variable "vpc" {
+  description = "Prometheus VPC"
 }
