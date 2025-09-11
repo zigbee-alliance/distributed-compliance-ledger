@@ -49,6 +49,8 @@ message MsgCreateModel {
   string maintenanceUrl = 24 [(gogoproto.moretags) = "validate:\"required_if_bit_0_set=EnhancedSetupFlowOptions,omitempty,url,startswith=https:,max=256\""];
   uint32 discoveryCapabilitiesBitmask = 25 [(gogoproto.moretags) = "validate:\"gte=0,lte=14\""];
   string commissioningFallbackUrl = 26 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
+  uint32 factoryResetStepsHint = 27;
+  string factoryResetStepsInstruction = 28 [(gogoproto.moretags) = "validate:\"max=1024\""];
 }
 message MsgCreateModelResponse {}
 
@@ -78,6 +80,8 @@ message MsgUpdateModel {
   string maintenanceUrl = 22 [(gogoproto.moretags) = "validate:\"required_if_bit_0_set=EnhancedSetupFlowOptions,omitempty,url,startswith=https:,max=256\""];
   string commissioningFallbackUrl = 23 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
   uint32 commissioningModeSecondaryStepsHint = 24;
+  uint32 factoryResetStepsHint = 25;
+  string factoryResetStepsInstruction = 26 [(gogoproto.moretags) = "validate:\"max=1024\""];
 }
 message MsgUpdateModelResponse {}
 
