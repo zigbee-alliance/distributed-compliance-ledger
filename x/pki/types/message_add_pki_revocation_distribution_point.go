@@ -105,7 +105,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) verifyPAI(cert *x509.Certificat
 		return pkitypes.NewErrInvalidVidFormat(err)
 	}
 
-	if vid != msg.Vid {
+	if vid > 0 && vid != msg.Vid {
 		return pkitypes.NewErrCRLSignerCertificateVidNotEqualMsgVid(vid, msg.Vid)
 	}
 
@@ -120,7 +120,7 @@ func (msg *MsgAddPkiRevocationDistributionPoint) verifyPAI(cert *x509.Certificat
 	if pid != 0 && msg.Pid == 0 {
 		return pkitypes.NewErrPidNotFoundInMessage(pid)
 	}
-	if pid != msg.Pid {
+	if pid > 0 && pid != msg.Pid {
 		return pkitypes.NewErrCRLSignerCertificatePidNotEqualMsgPid(pid, msg.Pid)
 	}
 
