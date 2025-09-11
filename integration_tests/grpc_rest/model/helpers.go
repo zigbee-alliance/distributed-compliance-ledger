@@ -54,6 +54,8 @@ func NewMsgCreateModel(vid int32, pid int32, signer string) *modeltypes.MsgCreat
 		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      testconstants.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction,
+		IcdUserActiveModeTriggerHint:               testconstants.IcdUserActiveModeTriggerHint,
+		IcdUserActiveModeTriggerInstruction:        testconstants.IcdUserActiveModeTriggerInstruction,
 		FactoryResetStepsHint:                      testconstants.FactoryResetStepsHint,
 		FactoryResetStepsInstruction:               testconstants.FactoryResetStepsInstruction,
 		UserManualUrl:                              testconstants.UserManualURL,
@@ -1117,10 +1119,12 @@ func Demo(suite *utils.TestSuite) {
 	// Update second model
 	newCommissioningModeInitialStepsHint := uint32(8)
 	newCommissioningModeSecondaryStepsHint := uint32(9)
+	newIcdUserActiveModeTriggerHint := uint32(7)
 	newFactoryResetStepsHint := uint32(7)
 	updateSecondModelMsg := NewMsgUpdateModel(createSecondModelMsg.Vid, createSecondModelMsg.Pid, vendorAccount.Address)
 	updateSecondModelMsg.CommissioningModeInitialStepsHint = newCommissioningModeInitialStepsHint
 	updateSecondModelMsg.CommissioningModeSecondaryStepsHint = newCommissioningModeSecondaryStepsHint
+	updateSecondModelMsg.IcdUserActiveModeTriggerHint = newIcdUserActiveModeTriggerHint
 	updateSecondModelMsg.FactoryResetStepsHint = newFactoryResetStepsHint
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{updateSecondModelMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
@@ -1131,6 +1135,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, updateSecondModelMsg.ProductLabel, receivedModel.ProductLabel)
 	require.Equal(suite.T, newCommissioningModeInitialStepsHint, receivedModel.CommissioningModeInitialStepsHint)
 	require.Equal(suite.T, newCommissioningModeSecondaryStepsHint, receivedModel.CommissioningModeSecondaryStepsHint)
+	require.Equal(suite.T, newIcdUserActiveModeTriggerHint, receivedModel.IcdUserActiveModeTriggerHint)
 	require.Equal(suite.T, newFactoryResetStepsHint, receivedModel.FactoryResetStepsHint)
 
 	// add new model version

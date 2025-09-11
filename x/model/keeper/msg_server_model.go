@@ -46,6 +46,8 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 		CommissioningModeInitialStepsInstruction: msg.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      msg.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: msg.CommissioningModeSecondaryStepsInstruction,
+		IcdUserActiveModeTriggerHint:               msg.IcdUserActiveModeTriggerHint,
+		IcdUserActiveModeTriggerInstruction:        msg.IcdUserActiveModeTriggerInstruction,
 		FactoryResetStepsHint:                      msg.FactoryResetStepsHint,
 		FactoryResetStepsInstruction:               msg.FactoryResetStepsInstruction,
 		UserManualUrl:                              msg.UserManualUrl,
@@ -70,6 +72,10 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 
 	if model.CommissioningModeSecondaryStepsHint == 0 {
 		model.CommissioningModeSecondaryStepsHint = 1
+	}
+
+	if model.IcdUserActiveModeTriggerHint == 0 {
+		model.IcdUserActiveModeTriggerHint = 1
 	}
 
 	if model.FactoryResetStepsHint == 0 {
@@ -148,6 +154,10 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 		model.CommissioningModeSecondaryStepsInstruction = msg.CommissioningModeSecondaryStepsInstruction
 	}
 
+	if msg.IcdUserActiveModeTriggerInstruction != "" {
+		model.IcdUserActiveModeTriggerInstruction = msg.IcdUserActiveModeTriggerInstruction
+	}
+
 	if msg.FactoryResetStepsInstruction != "" {
 		model.FactoryResetStepsInstruction = msg.FactoryResetStepsInstruction
 	}
@@ -210,6 +220,10 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 
 	if msg.CommissioningModeSecondaryStepsHint != 0 {
 		model.CommissioningModeSecondaryStepsHint = msg.CommissioningModeSecondaryStepsHint
+	}
+
+	if msg.IcdUserActiveModeTriggerHint != 0 {
+		model.IcdUserActiveModeTriggerHint = msg.IcdUserActiveModeTriggerHint
 	}
 
 	if msg.FactoryResetStepsHint != 0 {
