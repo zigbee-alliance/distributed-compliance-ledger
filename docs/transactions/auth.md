@@ -121,7 +121,7 @@ Gets an accounts by the address. Revoked accounts are not returned.
 - Parameters:
   - address: `string` - account address; Bech32 encoded
 - CLI command:
-  - `dcld query auth account --addres <bench32 encoded string>`
+  - `dcld query auth account --address <bench32 encoded string>`
 - REST API:
   - GET `/dcl/auth/accounts/{address}`
 
