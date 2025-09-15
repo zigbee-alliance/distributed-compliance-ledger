@@ -26,6 +26,8 @@ func CmdCreateModel() *cobra.Command {
 		commissioningModeInitialStepsInstruction   string
 		commissioningModeSecondaryStepsHint        uint32
 		commissioningModeSecondaryStepsInstruction string
+		icdUserActiveModeTriggerHint               uint32
+		icdUserActiveModeTriggerInstruction        string
 		factoryResetStepsHint                      uint32
 		factoryResetStepsInstruction               string
 		userManualURL                              string
@@ -79,6 +81,8 @@ func CmdCreateModel() *cobra.Command {
 				commissioningModeInitialStepsInstruction,
 				commissioningModeSecondaryStepsHint,
 				commissioningModeSecondaryStepsInstruction,
+				icdUserActiveModeTriggerHint,
+				icdUserActiveModeTriggerInstruction,
 				factoryResetStepsHint,
 				factoryResetStepsInstruction,
 				userManualURL,
@@ -150,6 +154,15 @@ current CHIP Administrator to put the device into commissioning mode.`)
 of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, 
 as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
 and for these values the commissioningModeSecondaryStepInstruction SHALL be set`)
+	cmd.Flags().Uint32Var(&icdUserActiveModeTriggerHint, FlagIcdUserActiveModeTriggerHint, 0,
+		`IcdUserActiveModeTriggerHint (when provided) is applicable to 
+an ICD that supports the UserActiveModeTriggerFeature feature. This field SHALL indicate which user action(s) 
+will trigger the ICD to switch to Active mode. This field SHALL follow the requirements specified in UserActiveModeTriggerHint.`)
+	cmd.Flags().StringVar(&icdUserActiveModeTriggerInstruction, FlagIcdUserActiveModeTriggerInstruction, "",
+		`IcdUserActiveModeTriggerInstruction (when provided) is applicable to an ICD that supports the UserActiveModeTriggerFeature 
+feature. The meaning of this field is dependent upon the UserActiveModeTriggerHint field value, and the conformance is indicated 
+in the "dependency" column in UserActiveModeTriggerHintTable. This field SHALL follow the requirements specified in 
+UserActiveModeTriggerInstruction.`)
 	cmd.Flags().Uint32Var(&factoryResetStepsHint, FlagFactoryResetStepsHint, 0,
 		`FactoryResetStepsHint SHALL identify a hint for the steps that MAY be used to factory 
 reset a device. This field is a bitmap with values defined in the Pairing/Reset Hint Table. For example, 
@@ -201,6 +214,8 @@ func CmdUpdateModel() *cobra.Command {
 		commissioningCustomFlowURL                 string
 		commissioningModeInitialStepsInstruction   string
 		commissioningModeSecondaryStepsInstruction string
+		icdUserActiveModeTriggerHint               uint32
+		icdUserActiveModeTriggerInstruction        string
 		factoryResetStepsHint                      uint32
 		factoryResetStepsInstruction               string
 		userManualURL                              string
@@ -260,6 +275,8 @@ func CmdUpdateModel() *cobra.Command {
 				maintenanceURL,
 				commissioningFallbackURL,
 				commissioningModeSecondaryStepsHint,
+				icdUserActiveModeTriggerHint,
+				icdUserActiveModeTriggerInstruction,
 				factoryResetStepsHint,
 				factoryResetStepsInstruction,
 			)
@@ -297,6 +314,15 @@ values the commissioningModeInitialStepsInstruction SHALL be set`)
 of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, 
 as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
 and for these values the commissioningModeSecondaryStepInstruction SHALL be set`)
+	cmd.Flags().Uint32Var(&icdUserActiveModeTriggerHint, FlagIcdUserActiveModeTriggerHint, 0,
+		`IcdUserActiveModeTriggerHint (when provided) is applicable to 
+an ICD that supports the UserActiveModeTriggerFeature feature. This field SHALL indicate which user action(s) 
+will trigger the ICD to switch to Active mode. This field SHALL follow the requirements specified in UserActiveModeTriggerHint.`)
+	cmd.Flags().StringVar(&icdUserActiveModeTriggerInstruction, FlagIcdUserActiveModeTriggerInstruction, "",
+		`IcdUserActiveModeTriggerInstruction (when provided) is applicable to an ICD that supports the UserActiveModeTriggerFeature 
+feature. The meaning of this field is dependent upon the UserActiveModeTriggerHint field value, and the conformance is indicated 
+in the "dependency" column in UserActiveModeTriggerHintTable. This field SHALL follow the requirements specified in 
+UserActiveModeTriggerInstruction.`)
 	cmd.Flags().StringVar(&factoryResetStepsInstruction, FlagFactoryResetStepsInstruction, "",
 		`FactoryResetStepsInstruction SHALL be populated with the appropriate 
 factory reset instruction for those values of FactoryResetStepsHint, for which the Pairing/Reset Hint Table 
