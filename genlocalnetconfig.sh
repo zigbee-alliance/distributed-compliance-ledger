@@ -40,10 +40,7 @@ if [[ -n "$DCL_OBSERVERS" ]]; then
 fi
 
 if [ -n "$MAINNET_STABLE_VERSION" ]; then
-    wget "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/${MAINNET_STABLE_VERSION}/dcld"
-    chmod ugo+x dcld
-    mv dcld dcld_mainnet_stable
-    DCL_BINARY=./dcld_mainnet_stable
+    DCL_BINARY=$MAINNET_STABLE_VERSION
 fi
 
 
@@ -219,6 +216,3 @@ if [[ -n "$DCL_LIGHT_CLIENT_PROXY" ]]; then
 fi
 
 chmod 777 -R $DCL_DIR
-#if [ -n "$MAINNET_STABLE_VERSION" ]; then
-#    rm dcld
-#fi

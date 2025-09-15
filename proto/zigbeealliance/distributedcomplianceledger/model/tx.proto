@@ -49,6 +49,10 @@ message MsgCreateModel {
   string maintenanceUrl = 24 [(gogoproto.moretags) = "validate:\"required_if_bit_0_set=EnhancedSetupFlowOptions,omitempty,url,startswith=https:,max=256\""];
   uint32 discoveryCapabilitiesBitmask = 25 [(gogoproto.moretags) = "validate:\"gte=0,lte=14\""];
   string commissioningFallbackUrl = 26 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
+  uint32 icdUserActiveModeTriggerHint = 27;
+  string icdUserActiveModeTriggerInstruction = 28 [(gogoproto.moretags) = "validate:\"max=1024\""];
+  uint32 factoryResetStepsHint = 29;
+  string factoryResetStepsInstruction = 30 [(gogoproto.moretags) = "validate:\"max=1024\""];
 }
 message MsgCreateModelResponse {}
 
@@ -77,6 +81,11 @@ message MsgUpdateModel {
   uint32 enhancedSetupFlowTCFileSize = 21 [(gogoproto.moretags) = "validate:\"required_with=EnhancedSetupFlowTCUrl\""];;
   string maintenanceUrl = 22 [(gogoproto.moretags) = "validate:\"required_if_bit_0_set=EnhancedSetupFlowOptions,omitempty,url,startswith=https:,max=256\""];
   string commissioningFallbackUrl = 23 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
+  uint32 commissioningModeSecondaryStepsHint = 24;
+  uint32 icdUserActiveModeTriggerHint = 25;
+  string icdUserActiveModeTriggerInstruction = 26 [(gogoproto.moretags) = "validate:\"max=1024\""];
+  uint32 factoryResetStepsHint = 27;
+  string factoryResetStepsInstruction = 28 [(gogoproto.moretags) = "validate:\"max=1024\""];
 }
 message MsgUpdateModelResponse {}
 
@@ -104,6 +113,7 @@ message MsgCreateModelVersion {
   uint32 maxApplicableSoftwareVersion = 14 [(gogoproto.moretags) = "validate:\"gtecsfield=MinApplicableSoftwareVersion\""];
   string releaseNotesUrl = 15 [(gogoproto.moretags) = "validate:\"omitempty,url,startswith=https:,max=256\""];
   uint32 schemaVersion = 16 [(gogoproto.moretags) = "validate:\"eq=0\""];
+  uint32 specificationVersion = 17;
 }
 message MsgCreateModelVersionResponse {}
 

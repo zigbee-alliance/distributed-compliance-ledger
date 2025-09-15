@@ -372,7 +372,7 @@ func TestHandler_AddDaIntermediateCert_RootIsNoc(t *testing.T) {
 	addNocX509RootCert := types.NewMsgAddNocX509RootCert(
 		setup.Vendor1.String(),
 		testconstants.RootCertPem,
-		testconstants.CertSchemaVersion)
+		testconstants.CertSchemaVersion, false)
 	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
 	require.NoError(t, err)
 

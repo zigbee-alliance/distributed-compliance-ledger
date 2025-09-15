@@ -20,17 +20,10 @@ source integration_tests/cli/common.sh
 
 plan_name="v1.4.4"
 upgrade_checksum="sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958"
-binary_version_old="v1.4.3"
 binary_version_new="v1.4.4"
 
-wget -O dcld_old "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_old/dcld"
-chmod ugo+x dcld_old
-
-wget -O dcld_new "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_new/dcld"
-chmod ugo+x dcld_new
-
-DCLD_BIN_OLD="./dcld_old"
-DCLD_BIN_NEW="./dcld_new"
+DCLD_BIN_OLD="/tmp/dcld_bins/dcld_v1.4.3"
+DCLD_BIN_NEW="/tmp/dcld_bins/dcld_v1.4.4"
 $DCLD_BIN_NEW config broadcast-mode sync
 ########################################################################################
 
@@ -690,7 +683,7 @@ test_divider
 
 echo "Get node"
 # FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
-result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-nodes")
+result=$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo test1234 | dcld query validator all-nodes")
 check_response "$result" "\"owner\": \"$validator_address\""
 
 ########################################################################################
@@ -1194,17 +1187,17 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 # VALIDATOR_NODE
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld config broadcast-mode sync")
+result=$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo test1234  | dcld config broadcast-mode sync")
 
 echo "Disable node"
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator disable-node --from=$account --yes")
+result=$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo test1234  | dcld tx validator disable-node --from=$account --yes")
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Enable node"
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
+result=$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -1232,7 +1225,7 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 echo "Enable node"
-result=$(docker exec "$container" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
+result=$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo test1234  | dcld tx validator enable-node --from=$account --yes")
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -1643,12 +1636,9 @@ test_divider
 
 echo "Get node"
 # FIXME: use proper binary (not dcld but $DCLD_BIN_OLD)
-result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-nodes")
+result=$(docker exec "$VALIDATOR_DEMO_CONTAINER_NAME" /bin/sh -c "echo test1234 | dcld query validator all-nodes")
 check_response "$result" "\"owner\": \"$validator_address\""
 
 test_divider
 
-echo "Upgrade from 1.4.3 to 1.4.4 passed"
-
-rm -f $DCLD_BIN_OLD
-rm -f $DCLD_BIN_NEW
+echo "Upgrade from 1.4.3 to 1.4.4 PASSED"

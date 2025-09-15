@@ -46,13 +46,17 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 		CommissioningModeInitialStepsInstruction: msg.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      msg.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: msg.CommissioningModeSecondaryStepsInstruction,
-		UserManualUrl:            msg.UserManualUrl,
-		SupportUrl:               msg.SupportUrl,
-		ProductUrl:               msg.ProductUrl,
-		LsfUrl:                   msg.LsfUrl,
-		EnhancedSetupFlowOptions: msg.EnhancedSetupFlowOptions,
-		SchemaVersion:            msg.SchemaVersion,
-		CommissioningFallbackUrl: msg.CommissioningFallbackUrl,
+		IcdUserActiveModeTriggerHint:               msg.IcdUserActiveModeTriggerHint,
+		IcdUserActiveModeTriggerInstruction:        msg.IcdUserActiveModeTriggerInstruction,
+		FactoryResetStepsHint:                      msg.FactoryResetStepsHint,
+		FactoryResetStepsInstruction:               msg.FactoryResetStepsInstruction,
+		UserManualUrl:                              msg.UserManualUrl,
+		SupportUrl:                                 msg.SupportUrl,
+		ProductUrl:                                 msg.ProductUrl,
+		LsfUrl:                                     msg.LsfUrl,
+		EnhancedSetupFlowOptions:                   msg.EnhancedSetupFlowOptions,
+		SchemaVersion:                              msg.SchemaVersion,
+		CommissioningFallbackUrl:                   msg.CommissioningFallbackUrl,
 	}
 
 	// if LsfUrl is not empty, we set lsfRevision to default value of 1
@@ -64,6 +68,18 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 	// Relevant issue: https://github.com/zigbee-alliance/distributed-compliance-ledger/issues/522
 	if model.CommissioningModeInitialStepsHint == 0 {
 		model.CommissioningModeInitialStepsHint = 1
+	}
+
+	if model.CommissioningModeSecondaryStepsHint == 0 {
+		model.CommissioningModeSecondaryStepsHint = 1
+	}
+
+	if model.IcdUserActiveModeTriggerHint == 0 {
+		model.IcdUserActiveModeTriggerHint = 1
+	}
+
+	if model.FactoryResetStepsHint == 0 {
+		model.FactoryResetStepsHint = 1
 	}
 
 	if model.EnhancedSetupFlowOptions&1 == 1 {
@@ -138,6 +154,14 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 		model.CommissioningModeSecondaryStepsInstruction = msg.CommissioningModeSecondaryStepsInstruction
 	}
 
+	if msg.IcdUserActiveModeTriggerInstruction != "" {
+		model.IcdUserActiveModeTriggerInstruction = msg.IcdUserActiveModeTriggerInstruction
+	}
+
+	if msg.FactoryResetStepsInstruction != "" {
+		model.FactoryResetStepsInstruction = msg.FactoryResetStepsInstruction
+	}
+
 	if msg.UserManualUrl != "" {
 		model.UserManualUrl = msg.UserManualUrl
 	}
@@ -192,6 +216,18 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 
 	if msg.CommissioningModeInitialStepsHint != 0 {
 		model.CommissioningModeInitialStepsHint = msg.CommissioningModeInitialStepsHint
+	}
+
+	if msg.CommissioningModeSecondaryStepsHint != 0 {
+		model.CommissioningModeSecondaryStepsHint = msg.CommissioningModeSecondaryStepsHint
+	}
+
+	if msg.IcdUserActiveModeTriggerHint != 0 {
+		model.IcdUserActiveModeTriggerHint = msg.IcdUserActiveModeTriggerHint
+	}
+
+	if msg.FactoryResetStepsHint != 0 {
+		model.FactoryResetStepsHint = msg.FactoryResetStepsHint
 	}
 
 	// store updated model
