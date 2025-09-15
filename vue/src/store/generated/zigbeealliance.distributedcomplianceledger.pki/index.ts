@@ -1131,48 +1131,6 @@ export default {
 		},
 		
 		
-		async sendMsgRevokeNocX509RootCert({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
-				const result = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.sendMsgRevokeNocX509RootCert({ value, fee: fullFee, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRevokeNocX509RootCert:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgRevokeNocX509RootCert:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgRemoveNocX509RootCert({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
-				const result = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.sendMsgRemoveNocX509RootCert({ value, fee: fullFee, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRemoveNocX509RootCert:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgRemoveNocX509RootCert:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgAssignVid({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
-				const result = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.sendMsgAssignVid({ value, fee: fullFee, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAssignVid:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgAssignVid:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
 		async sendMsgApproveRevokeX509RootCert({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
@@ -1184,76 +1142,6 @@ export default {
 					throw new Error('TxClient:MsgApproveRevokeX509RootCert:Init Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new Error('TxClient:MsgApproveRevokeX509RootCert:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgDeletePkiRevocationDistributionPoint({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
-				const result = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.sendMsgDeletePkiRevocationDistributionPoint({ value, fee: fullFee, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeletePkiRevocationDistributionPoint:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgDeletePkiRevocationDistributionPoint:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgRemoveNocX509IcaCert({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
-				const result = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.sendMsgRemoveNocX509IcaCert({ value, fee: fullFee, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRemoveNocX509IcaCert:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgRemoveNocX509IcaCert:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgRevokeX509Cert({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
-				const result = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.sendMsgRevokeX509Cert({ value, fee: fullFee, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRevokeX509Cert:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgRevokeX509Cert:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgAddNocX509IcaCert({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
-				const result = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.sendMsgAddNocX509IcaCert({ value, fee: fullFee, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAddNocX509IcaCert:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgAddNocX509IcaCert:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgRemoveX509Cert({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
-				const result = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.sendMsgRemoveX509Cert({ value, fee: fullFee, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRemoveX509Cert:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgRemoveX509Cert:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -1271,17 +1159,101 @@ export default {
 				}
 			}
 		},
-		async sendMsgAddX509Cert({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
+		async sendMsgRemoveX509Cert({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
 				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
-				const result = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.sendMsgAddX509Cert({ value, fee: fullFee, memo })
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.sendMsgRemoveX509Cert({ value, fee: fullFee, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAddX509Cert:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgRemoveX509Cert:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgAddX509Cert:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgRemoveX509Cert:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgAssignVid({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.sendMsgAssignVid({ value, fee: fullFee, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgAssignVid:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgAssignVid:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgAddNocX509IcaCert({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.sendMsgAddNocX509IcaCert({ value, fee: fullFee, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgAddNocX509IcaCert:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgAddNocX509IcaCert:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgRemoveNocX509IcaCert({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.sendMsgRemoveNocX509IcaCert({ value, fee: fullFee, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgRemoveNocX509IcaCert:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgRemoveNocX509IcaCert:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgProposeAddX509RootCert({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.sendMsgProposeAddX509RootCert({ value, fee: fullFee, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgProposeAddX509RootCert:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgProposeAddX509RootCert:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgRevokeNocX509RootCert({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.sendMsgRevokeNocX509RootCert({ value, fee: fullFee, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgRevokeNocX509RootCert:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgRevokeNocX509RootCert:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgDeletePkiRevocationDistributionPoint({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.sendMsgDeletePkiRevocationDistributionPoint({ value, fee: fullFee, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgDeletePkiRevocationDistributionPoint:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgDeletePkiRevocationDistributionPoint:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -1299,17 +1271,45 @@ export default {
 				}
 			}
 		},
-		async sendMsgProposeAddX509RootCert({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
+		async sendMsgApproveAddX509RootCert({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
 				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
-				const result = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.sendMsgProposeAddX509RootCert({ value, fee: fullFee, memo })
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.sendMsgApproveAddX509RootCert({ value, fee: fullFee, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgProposeAddX509RootCert:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgApproveAddX509RootCert:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgProposeAddX509RootCert:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgApproveAddX509RootCert:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgRemoveNocX509RootCert({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.sendMsgRemoveNocX509RootCert({ value, fee: fullFee, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgRemoveNocX509RootCert:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgRemoveNocX509RootCert:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgProposeRevokeX509RootCert({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.sendMsgProposeRevokeX509RootCert({ value, fee: fullFee, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgProposeRevokeX509RootCert:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgProposeRevokeX509RootCert:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -1341,17 +1341,17 @@ export default {
 				}
 			}
 		},
-		async sendMsgProposeRevokeX509RootCert({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
+		async sendMsgAddX509Cert({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
 				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
-				const result = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.sendMsgProposeRevokeX509RootCert({ value, fee: fullFee, memo })
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.sendMsgAddX509Cert({ value, fee: fullFee, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgProposeRevokeX509RootCert:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgAddX509Cert:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgProposeRevokeX509RootCert:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgAddX509Cert:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -1369,60 +1369,21 @@ export default {
 				}
 			}
 		},
-		async sendMsgApproveAddX509RootCert({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
+		async sendMsgRevokeX509Cert({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
 				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
-				const result = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.sendMsgApproveAddX509RootCert({ value, fee: fullFee, memo })
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.sendMsgRevokeX509Cert({ value, fee: fullFee, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgApproveAddX509RootCert:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgRevokeX509Cert:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgApproveAddX509RootCert:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgRevokeX509Cert:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
 		
-		async MsgRevokeNocX509RootCert({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.msgRevokeNocX509RootCert({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRevokeNocX509RootCert:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgRevokeNocX509RootCert:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgRemoveNocX509RootCert({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.msgRemoveNocX509RootCert({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRemoveNocX509RootCert:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgRemoveNocX509RootCert:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgAssignVid({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.msgAssignVid({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAssignVid:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgAssignVid:Create Could not create message: ' + e.message)
-				}
-			}
-		},
 		async MsgApproveRevokeX509RootCert({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
@@ -1433,71 +1394,6 @@ export default {
 					throw new Error('TxClient:MsgApproveRevokeX509RootCert:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgApproveRevokeX509RootCert:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgDeletePkiRevocationDistributionPoint({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.msgDeletePkiRevocationDistributionPoint({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeletePkiRevocationDistributionPoint:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgDeletePkiRevocationDistributionPoint:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgRemoveNocX509IcaCert({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.msgRemoveNocX509IcaCert({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRemoveNocX509IcaCert:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgRemoveNocX509IcaCert:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgRevokeX509Cert({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.msgRevokeX509Cert({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRevokeX509Cert:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgRevokeX509Cert:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgAddNocX509IcaCert({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.msgAddNocX509IcaCert({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAddNocX509IcaCert:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgAddNocX509IcaCert:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgRemoveX509Cert({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.msgRemoveX509Cert({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRemoveX509Cert:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgRemoveX509Cert:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -1514,16 +1410,94 @@ export default {
 				}
 			}
 		},
-		async MsgAddX509Cert({ rootGetters }, { value }) {
+		async MsgRemoveX509Cert({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.msgAddX509Cert({value})
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.msgRemoveX509Cert({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAddX509Cert:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgRemoveX509Cert:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgAddX509Cert:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgRemoveX509Cert:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgAssignVid({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.msgAssignVid({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgAssignVid:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgAssignVid:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgAddNocX509IcaCert({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.msgAddNocX509IcaCert({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgAddNocX509IcaCert:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgAddNocX509IcaCert:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgRemoveNocX509IcaCert({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.msgRemoveNocX509IcaCert({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgRemoveNocX509IcaCert:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgRemoveNocX509IcaCert:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgProposeAddX509RootCert({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.msgProposeAddX509RootCert({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgProposeAddX509RootCert:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgProposeAddX509RootCert:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgRevokeNocX509RootCert({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.msgRevokeNocX509RootCert({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgRevokeNocX509RootCert:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgRevokeNocX509RootCert:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgDeletePkiRevocationDistributionPoint({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.msgDeletePkiRevocationDistributionPoint({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgDeletePkiRevocationDistributionPoint:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgDeletePkiRevocationDistributionPoint:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -1540,16 +1514,42 @@ export default {
 				}
 			}
 		},
-		async MsgProposeAddX509RootCert({ rootGetters }, { value }) {
+		async MsgApproveAddX509RootCert({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.msgProposeAddX509RootCert({value})
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.msgApproveAddX509RootCert({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgProposeAddX509RootCert:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgApproveAddX509RootCert:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgProposeAddX509RootCert:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgApproveAddX509RootCert:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgRemoveNocX509RootCert({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.msgRemoveNocX509RootCert({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgRemoveNocX509RootCert:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgRemoveNocX509RootCert:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgProposeRevokeX509RootCert({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.msgProposeRevokeX509RootCert({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgProposeRevokeX509RootCert:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgProposeRevokeX509RootCert:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -1579,16 +1579,16 @@ export default {
 				}
 			}
 		},
-		async MsgProposeRevokeX509RootCert({ rootGetters }, { value }) {
+		async MsgAddX509Cert({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.msgProposeRevokeX509RootCert({value})
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.msgAddX509Cert({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgProposeRevokeX509RootCert:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgAddX509Cert:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgProposeRevokeX509RootCert:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgAddX509Cert:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -1605,16 +1605,16 @@ export default {
 				}
 			}
 		},
-		async MsgApproveAddX509RootCert({ rootGetters }, { value }) {
+		async MsgRevokeX509Cert({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.msgApproveAddX509RootCert({value})
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerPki.tx.msgRevokeX509Cert({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgApproveAddX509RootCert:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgRevokeX509Cert:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgApproveAddX509RootCert:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgRevokeX509Cert:Create Could not create message: ' + e.message)
 				}
 			}
 		},

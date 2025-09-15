@@ -450,34 +450,6 @@ export default {
 		},
 		
 		
-		async sendMsgRejectAddAccount({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
-				const result = await client.ZigbeeallianceDistributedcomplianceledgerDclauth.tx.sendMsgRejectAddAccount({ value, fee: fullFee, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRejectAddAccount:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgRejectAddAccount:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgApproveRevokeAccount({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
-				const result = await client.ZigbeeallianceDistributedcomplianceledgerDclauth.tx.sendMsgApproveRevokeAccount({ value, fee: fullFee, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgApproveRevokeAccount:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgApproveRevokeAccount:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
 		async sendMsgProposeRevokeAccount({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
@@ -489,20 +461,6 @@ export default {
 					throw new Error('TxClient:MsgProposeRevokeAccount:Init Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new Error('TxClient:MsgProposeRevokeAccount:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgProposeAddAccount({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
-				const result = await client.ZigbeeallianceDistributedcomplianceledgerDclauth.tx.sendMsgProposeAddAccount({ value, fee: fullFee, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgProposeAddAccount:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgProposeAddAccount:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -520,33 +478,49 @@ export default {
 				}
 			}
 		},
-		
-		async MsgRejectAddAccount({ rootGetters }, { value }) {
+		async sendMsgRejectAddAccount({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
 			try {
-				const client=initClient(rootGetters)
-				const msg = await client.ZigbeeallianceDistributedcomplianceledgerDclauth.tx.msgRejectAddAccount({value})
-				return msg
+				const client=await initClient(rootGetters)
+				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerDclauth.tx.sendMsgRejectAddAccount({ value, fee: fullFee, memo })
+				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
 					throw new Error('TxClient:MsgRejectAddAccount:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgRejectAddAccount:Create Could not create message: ' + e.message)
+				}else{
+					throw new Error('TxClient:MsgRejectAddAccount:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
-		async MsgApproveRevokeAccount({ rootGetters }, { value }) {
+		async sendMsgProposeAddAccount({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
 			try {
-				const client=initClient(rootGetters)
-				const msg = await client.ZigbeeallianceDistributedcomplianceledgerDclauth.tx.msgApproveRevokeAccount({value})
-				return msg
+				const client=await initClient(rootGetters)
+				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerDclauth.tx.sendMsgProposeAddAccount({ value, fee: fullFee, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgProposeAddAccount:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgProposeAddAccount:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgApproveRevokeAccount({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerDclauth.tx.sendMsgApproveRevokeAccount({ value, fee: fullFee, memo })
+				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
 					throw new Error('TxClient:MsgApproveRevokeAccount:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgApproveRevokeAccount:Create Could not create message: ' + e.message)
+				}else{
+					throw new Error('TxClient:MsgApproveRevokeAccount:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
+		
 		async MsgProposeRevokeAccount({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
@@ -557,6 +531,32 @@ export default {
 					throw new Error('TxClient:MsgProposeRevokeAccount:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgProposeRevokeAccount:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgApproveAddAccount({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerDclauth.tx.msgApproveAddAccount({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgApproveAddAccount:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgApproveAddAccount:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgRejectAddAccount({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerDclauth.tx.msgRejectAddAccount({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgRejectAddAccount:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgRejectAddAccount:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -573,16 +573,16 @@ export default {
 				}
 			}
 		},
-		async MsgApproveAddAccount({ rootGetters }, { value }) {
+		async MsgApproveRevokeAccount({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.ZigbeeallianceDistributedcomplianceledgerDclauth.tx.msgApproveAddAccount({value})
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerDclauth.tx.msgApproveRevokeAccount({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgApproveAddAccount:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgApproveRevokeAccount:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgApproveAddAccount:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgApproveRevokeAccount:Create Could not create message: ' + e.message)
 				}
 			}
 		},

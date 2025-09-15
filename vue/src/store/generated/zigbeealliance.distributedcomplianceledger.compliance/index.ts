@@ -419,17 +419,17 @@ export default {
 		},
 		
 		
-		async sendMsgProvisionModel({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
+		async sendMsgDeleteComplianceInfo({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
 				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
-				const result = await client.ZigbeeallianceDistributedcomplianceledgerCompliance.tx.sendMsgProvisionModel({ value, fee: fullFee, memo })
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerCompliance.tx.sendMsgDeleteComplianceInfo({ value, fee: fullFee, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgProvisionModel:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgDeleteComplianceInfo:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgProvisionModel:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgDeleteComplianceInfo:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -444,6 +444,20 @@ export default {
 					throw new Error('TxClient:MsgUpdateComplianceInfo:Init Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new Error('TxClient:MsgUpdateComplianceInfo:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgProvisionModel({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerCompliance.tx.sendMsgProvisionModel({ value, fee: fullFee, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgProvisionModel:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgProvisionModel:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -475,31 +489,17 @@ export default {
 				}
 			}
 		},
-		async sendMsgDeleteComplianceInfo({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
-				const result = await client.ZigbeeallianceDistributedcomplianceledgerCompliance.tx.sendMsgDeleteComplianceInfo({ value, fee: fullFee, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeleteComplianceInfo:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgDeleteComplianceInfo:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
 		
-		async MsgProvisionModel({ rootGetters }, { value }) {
+		async MsgDeleteComplianceInfo({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.ZigbeeallianceDistributedcomplianceledgerCompliance.tx.msgProvisionModel({value})
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerCompliance.tx.msgDeleteComplianceInfo({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgProvisionModel:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgDeleteComplianceInfo:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgProvisionModel:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgDeleteComplianceInfo:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -513,6 +513,19 @@ export default {
 					throw new Error('TxClient:MsgUpdateComplianceInfo:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgUpdateComplianceInfo:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgProvisionModel({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerCompliance.tx.msgProvisionModel({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgProvisionModel:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgProvisionModel:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -539,19 +552,6 @@ export default {
 					throw new Error('TxClient:MsgRevokeModel:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgRevokeModel:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgDeleteComplianceInfo({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.ZigbeeallianceDistributedcomplianceledgerCompliance.tx.msgDeleteComplianceInfo({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeleteComplianceInfo:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgDeleteComplianceInfo:Create Could not create message: ' + e.message)
 				}
 			}
 		},

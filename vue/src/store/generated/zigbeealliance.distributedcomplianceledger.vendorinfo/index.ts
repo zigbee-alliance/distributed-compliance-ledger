@@ -161,20 +161,6 @@ export default {
 		},
 		
 		
-		async sendMsgCreateVendorInfo({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
-				const result = await client.ZigbeeallianceDistributedcomplianceledgerVendorinfo.tx.sendMsgCreateVendorInfo({ value, fee: fullFee, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgCreateVendorInfo:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgCreateVendorInfo:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
 		async sendMsgUpdateVendorInfo({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
@@ -189,20 +175,21 @@ export default {
 				}
 			}
 		},
-		
-		async MsgCreateVendorInfo({ rootGetters }, { value }) {
+		async sendMsgCreateVendorInfo({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
 			try {
-				const client=initClient(rootGetters)
-				const msg = await client.ZigbeeallianceDistributedcomplianceledgerVendorinfo.tx.msgCreateVendorInfo({value})
-				return msg
+				const client=await initClient(rootGetters)
+				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerVendorinfo.tx.sendMsgCreateVendorInfo({ value, fee: fullFee, memo })
+				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
 					throw new Error('TxClient:MsgCreateVendorInfo:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgCreateVendorInfo:Create Could not create message: ' + e.message)
+				}else{
+					throw new Error('TxClient:MsgCreateVendorInfo:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
+		
 		async MsgUpdateVendorInfo({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
@@ -213,6 +200,19 @@ export default {
 					throw new Error('TxClient:MsgUpdateVendorInfo:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgUpdateVendorInfo:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgCreateVendorInfo({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerVendorinfo.tx.msgCreateVendorInfo({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCreateVendorInfo:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgCreateVendorInfo:Create Could not create message: ' + e.message)
 				}
 			}
 		},

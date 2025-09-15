@@ -421,20 +421,6 @@ export default {
 		},
 		
 		
-		async sendMsgRejectDisableValidator({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
-				const result = await client.ZigbeeallianceDistributedcomplianceledgerValidator.tx.sendMsgRejectDisableValidator({ value, fee: fullFee, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRejectDisableValidator:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgRejectDisableValidator:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
 		async sendMsgCreateValidator({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
@@ -446,6 +432,20 @@ export default {
 					throw new Error('TxClient:MsgCreateValidator:Init Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new Error('TxClient:MsgCreateValidator:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgProposeDisableValidator({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerValidator.tx.sendMsgProposeDisableValidator({ value, fee: fullFee, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgProposeDisableValidator:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgProposeDisableValidator:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -491,34 +491,21 @@ export default {
 				}
 			}
 		},
-		async sendMsgProposeDisableValidator({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
+		async sendMsgRejectDisableValidator({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
 				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
-				const result = await client.ZigbeeallianceDistributedcomplianceledgerValidator.tx.sendMsgProposeDisableValidator({ value, fee: fullFee, memo })
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerValidator.tx.sendMsgRejectDisableValidator({ value, fee: fullFee, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgProposeDisableValidator:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgRejectDisableValidator:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgProposeDisableValidator:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgRejectDisableValidator:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
 		
-		async MsgRejectDisableValidator({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.ZigbeeallianceDistributedcomplianceledgerValidator.tx.msgRejectDisableValidator({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRejectDisableValidator:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgRejectDisableValidator:Create Could not create message: ' + e.message)
-				}
-			}
-		},
 		async MsgCreateValidator({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
@@ -529,6 +516,19 @@ export default {
 					throw new Error('TxClient:MsgCreateValidator:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgCreateValidator:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgProposeDisableValidator({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerValidator.tx.msgProposeDisableValidator({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgProposeDisableValidator:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgProposeDisableValidator:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -571,16 +571,16 @@ export default {
 				}
 			}
 		},
-		async MsgProposeDisableValidator({ rootGetters }, { value }) {
+		async MsgRejectDisableValidator({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.ZigbeeallianceDistributedcomplianceledgerValidator.tx.msgProposeDisableValidator({value})
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerValidator.tx.msgRejectDisableValidator({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgProposeDisableValidator:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgRejectDisableValidator:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgProposeDisableValidator:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgRejectDisableValidator:Create Could not create message: ' + e.message)
 				}
 			}
 		},

@@ -60,6 +60,14 @@ export interface DistributedcomplianceledgermodelModel {
   /** @format int64 */
   discoveryCapabilitiesBitmask?: number;
   commissioningFallbackUrl?: string;
+
+  /** @format int64 */
+  icdUserActiveModeTriggerHint?: number;
+  icdUserActiveModeTriggerInstruction?: string;
+
+  /** @format int64 */
+  factoryResetStepsHint?: number;
+  factoryResetStepsInstruction?: string;
 }
 
 export interface DistributedcomplianceledgermodelModelVersion {
@@ -96,6 +104,9 @@ export interface DistributedcomplianceledgermodelModelVersion {
 
   /** @format int64 */
   schemaVersion?: number;
+
+  /** @format int64 */
+  specificationVersion?: number;
 }
 
 export interface DistributedcomplianceledgermodelModelVersions {

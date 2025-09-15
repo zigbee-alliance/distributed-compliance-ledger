@@ -7,18 +7,12 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
-import { MsgCreateVendorInfo } from "./types/zigbeealliance/distributedcomplianceledger/vendorinfo/tx";
 import { MsgUpdateVendorInfo } from "./types/zigbeealliance/distributedcomplianceledger/vendorinfo/tx";
+import { MsgCreateVendorInfo } from "./types/zigbeealliance/distributedcomplianceledger/vendorinfo/tx";
 
 import { VendorInfo as typeVendorInfo} from "./types"
 
-export { MsgCreateVendorInfo, MsgUpdateVendorInfo };
-
-type sendMsgCreateVendorInfoParams = {
-  value: MsgCreateVendorInfo,
-  fee?: StdFee,
-  memo?: string
-};
+export { MsgUpdateVendorInfo, MsgCreateVendorInfo };
 
 type sendMsgUpdateVendorInfoParams = {
   value: MsgUpdateVendorInfo,
@@ -26,13 +20,19 @@ type sendMsgUpdateVendorInfoParams = {
   memo?: string
 };
 
-
-type msgCreateVendorInfoParams = {
+type sendMsgCreateVendorInfoParams = {
   value: MsgCreateVendorInfo,
+  fee?: StdFee,
+  memo?: string
 };
+
 
 type msgUpdateVendorInfoParams = {
   value: MsgUpdateVendorInfo,
+};
+
+type msgCreateVendorInfoParams = {
+  value: MsgCreateVendorInfo,
 };
 
 
@@ -65,20 +65,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
-		async sendMsgCreateVendorInfo({ value, fee, memo }: sendMsgCreateVendorInfoParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgCreateVendorInfo: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgCreateVendorInfo({ value: MsgCreateVendorInfo.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgCreateVendorInfo: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
 		async sendMsgUpdateVendorInfo({ value, fee, memo }: sendMsgUpdateVendorInfoParams): Promise<DeliverTxResponse> {
 			if (!signer) {
 					throw new Error('TxClient:sendMsgUpdateVendorInfo: Unable to sign Tx. Signer is not present.')
@@ -93,20 +79,34 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		
-		msgCreateVendorInfo({ value }: msgCreateVendorInfoParams): EncodeObject {
-			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.vendorinfo.MsgCreateVendorInfo", value: MsgCreateVendorInfo.fromPartial( value ) }  
+		async sendMsgCreateVendorInfo({ value, fee, memo }: sendMsgCreateVendorInfoParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgCreateVendorInfo: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgCreateVendorInfo({ value: MsgCreateVendorInfo.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:MsgCreateVendorInfo: Could not create message: ' + e.message)
+				throw new Error('TxClient:sendMsgCreateVendorInfo: Could not broadcast Tx: '+ e.message)
 			}
 		},
+		
 		
 		msgUpdateVendorInfo({ value }: msgUpdateVendorInfoParams): EncodeObject {
 			try {
 				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.vendorinfo.MsgUpdateVendorInfo", value: MsgUpdateVendorInfo.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgUpdateVendorInfo: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgCreateVendorInfo({ value }: msgCreateVendorInfoParams): EncodeObject {
+			try {
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.vendorinfo.MsgCreateVendorInfo", value: MsgCreateVendorInfo.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgCreateVendorInfo: Could not create message: ' + e.message)
 			}
 		},
 		
