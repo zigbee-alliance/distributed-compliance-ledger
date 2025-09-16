@@ -7,24 +7,24 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
-import { MsgRevokeNocX509RootCert } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
-import { MsgRevokeX509Cert } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
-import { MsgAddX509Cert } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
-import { MsgAddNocX509IcaCert } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
-import { MsgUpdatePkiRevocationDistributionPoint } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
-import { MsgProposeRevokeX509RootCert } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
-import { MsgProposeAddX509RootCert } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
-import { MsgDeletePkiRevocationDistributionPoint } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
 import { MsgApproveRevokeX509RootCert } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
+import { MsgUpdatePkiRevocationDistributionPoint } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
 import { MsgRemoveX509Cert } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
-import { MsgApproveAddX509RootCert } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
-import { MsgRevokeNocX509IcaCert } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
-import { MsgAddNocX509RootCert } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
 import { MsgAssignVid } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
-import { MsgRejectAddX509RootCert } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
+import { MsgAddNocX509IcaCert } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
 import { MsgRemoveNocX509IcaCert } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
-import { MsgAddPkiRevocationDistributionPoint } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
+import { MsgProposeAddX509RootCert } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
+import { MsgRevokeNocX509RootCert } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
+import { MsgDeletePkiRevocationDistributionPoint } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
+import { MsgRevokeNocX509IcaCert } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
+import { MsgApproveAddX509RootCert } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
 import { MsgRemoveNocX509RootCert } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
+import { MsgProposeRevokeX509RootCert } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
+import { MsgAddPkiRevocationDistributionPoint } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
+import { MsgRejectAddX509RootCert } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
+import { MsgAddX509Cert } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
+import { MsgAddNocX509RootCert } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
+import { MsgRevokeX509Cert } from "./types/zigbeealliance/distributedcomplianceledger/pki/tx";
 
 import { AllCertificates as typeAllCertificates} from "./types"
 import { AllCertificatesBySubject as typeAllCertificatesBySubject} from "./types"
@@ -54,28 +54,10 @@ import { RevokedNocRootCertificates as typeRevokedNocRootCertificates} from "./t
 import { RevokedRootCertificates as typeRevokedRootCertificates} from "./types"
 import { UniqueCertificate as typeUniqueCertificate} from "./types"
 
-export { MsgRevokeNocX509RootCert, MsgRevokeX509Cert, MsgAddX509Cert, MsgAddNocX509IcaCert, MsgUpdatePkiRevocationDistributionPoint, MsgProposeRevokeX509RootCert, MsgProposeAddX509RootCert, MsgDeletePkiRevocationDistributionPoint, MsgApproveRevokeX509RootCert, MsgRemoveX509Cert, MsgApproveAddX509RootCert, MsgRevokeNocX509IcaCert, MsgAddNocX509RootCert, MsgAssignVid, MsgRejectAddX509RootCert, MsgRemoveNocX509IcaCert, MsgAddPkiRevocationDistributionPoint, MsgRemoveNocX509RootCert };
+export { MsgApproveRevokeX509RootCert, MsgUpdatePkiRevocationDistributionPoint, MsgRemoveX509Cert, MsgAssignVid, MsgAddNocX509IcaCert, MsgRemoveNocX509IcaCert, MsgProposeAddX509RootCert, MsgRevokeNocX509RootCert, MsgDeletePkiRevocationDistributionPoint, MsgRevokeNocX509IcaCert, MsgApproveAddX509RootCert, MsgRemoveNocX509RootCert, MsgProposeRevokeX509RootCert, MsgAddPkiRevocationDistributionPoint, MsgRejectAddX509RootCert, MsgAddX509Cert, MsgAddNocX509RootCert, MsgRevokeX509Cert };
 
-type sendMsgRevokeNocX509RootCertParams = {
-  value: MsgRevokeNocX509RootCert,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgRevokeX509CertParams = {
-  value: MsgRevokeX509Cert,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgAddX509CertParams = {
-  value: MsgAddX509Cert,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgAddNocX509IcaCertParams = {
-  value: MsgAddNocX509IcaCert,
+type sendMsgApproveRevokeX509RootCertParams = {
+  value: MsgApproveRevokeX509RootCert,
   fee?: StdFee,
   memo?: string
 };
@@ -86,50 +68,8 @@ type sendMsgUpdatePkiRevocationDistributionPointParams = {
   memo?: string
 };
 
-type sendMsgProposeRevokeX509RootCertParams = {
-  value: MsgProposeRevokeX509RootCert,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgProposeAddX509RootCertParams = {
-  value: MsgProposeAddX509RootCert,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgDeletePkiRevocationDistributionPointParams = {
-  value: MsgDeletePkiRevocationDistributionPoint,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgApproveRevokeX509RootCertParams = {
-  value: MsgApproveRevokeX509RootCert,
-  fee?: StdFee,
-  memo?: string
-};
-
 type sendMsgRemoveX509CertParams = {
   value: MsgRemoveX509Cert,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgApproveAddX509RootCertParams = {
-  value: MsgApproveAddX509RootCert,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgRevokeNocX509IcaCertParams = {
-  value: MsgRevokeNocX509IcaCert,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgAddNocX509RootCertParams = {
-  value: MsgAddNocX509RootCert,
   fee?: StdFee,
   memo?: string
 };
@@ -140,8 +80,8 @@ type sendMsgAssignVidParams = {
   memo?: string
 };
 
-type sendMsgRejectAddX509RootCertParams = {
-  value: MsgRejectAddX509RootCert,
+type sendMsgAddNocX509IcaCertParams = {
+  value: MsgAddNocX509IcaCert,
   fee?: StdFee,
   memo?: string
 };
@@ -152,8 +92,32 @@ type sendMsgRemoveNocX509IcaCertParams = {
   memo?: string
 };
 
-type sendMsgAddPkiRevocationDistributionPointParams = {
-  value: MsgAddPkiRevocationDistributionPoint,
+type sendMsgProposeAddX509RootCertParams = {
+  value: MsgProposeAddX509RootCert,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgRevokeNocX509RootCertParams = {
+  value: MsgRevokeNocX509RootCert,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgDeletePkiRevocationDistributionPointParams = {
+  value: MsgDeletePkiRevocationDistributionPoint,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgRevokeNocX509IcaCertParams = {
+  value: MsgRevokeNocX509IcaCert,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgApproveAddX509RootCertParams = {
+  value: MsgApproveAddX509RootCert,
   fee?: StdFee,
   memo?: string
 };
@@ -164,77 +128,113 @@ type sendMsgRemoveNocX509RootCertParams = {
   memo?: string
 };
 
-
-type msgRevokeNocX509RootCertParams = {
-  value: MsgRevokeNocX509RootCert,
+type sendMsgProposeRevokeX509RootCertParams = {
+  value: MsgProposeRevokeX509RootCert,
+  fee?: StdFee,
+  memo?: string
 };
 
-type msgRevokeX509CertParams = {
-  value: MsgRevokeX509Cert,
+type sendMsgAddPkiRevocationDistributionPointParams = {
+  value: MsgAddPkiRevocationDistributionPoint,
+  fee?: StdFee,
+  memo?: string
 };
 
-type msgAddX509CertParams = {
+type sendMsgRejectAddX509RootCertParams = {
+  value: MsgRejectAddX509RootCert,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgAddX509CertParams = {
   value: MsgAddX509Cert,
+  fee?: StdFee,
+  memo?: string
 };
 
-type msgAddNocX509IcaCertParams = {
-  value: MsgAddNocX509IcaCert,
+type sendMsgAddNocX509RootCertParams = {
+  value: MsgAddNocX509RootCert,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgRevokeX509CertParams = {
+  value: MsgRevokeX509Cert,
+  fee?: StdFee,
+  memo?: string
+};
+
+
+type msgApproveRevokeX509RootCertParams = {
+  value: MsgApproveRevokeX509RootCert,
 };
 
 type msgUpdatePkiRevocationDistributionPointParams = {
   value: MsgUpdatePkiRevocationDistributionPoint,
 };
 
-type msgProposeRevokeX509RootCertParams = {
-  value: MsgProposeRevokeX509RootCert,
-};
-
-type msgProposeAddX509RootCertParams = {
-  value: MsgProposeAddX509RootCert,
-};
-
-type msgDeletePkiRevocationDistributionPointParams = {
-  value: MsgDeletePkiRevocationDistributionPoint,
-};
-
-type msgApproveRevokeX509RootCertParams = {
-  value: MsgApproveRevokeX509RootCert,
-};
-
 type msgRemoveX509CertParams = {
   value: MsgRemoveX509Cert,
-};
-
-type msgApproveAddX509RootCertParams = {
-  value: MsgApproveAddX509RootCert,
-};
-
-type msgRevokeNocX509IcaCertParams = {
-  value: MsgRevokeNocX509IcaCert,
-};
-
-type msgAddNocX509RootCertParams = {
-  value: MsgAddNocX509RootCert,
 };
 
 type msgAssignVidParams = {
   value: MsgAssignVid,
 };
 
-type msgRejectAddX509RootCertParams = {
-  value: MsgRejectAddX509RootCert,
+type msgAddNocX509IcaCertParams = {
+  value: MsgAddNocX509IcaCert,
 };
 
 type msgRemoveNocX509IcaCertParams = {
   value: MsgRemoveNocX509IcaCert,
 };
 
-type msgAddPkiRevocationDistributionPointParams = {
-  value: MsgAddPkiRevocationDistributionPoint,
+type msgProposeAddX509RootCertParams = {
+  value: MsgProposeAddX509RootCert,
+};
+
+type msgRevokeNocX509RootCertParams = {
+  value: MsgRevokeNocX509RootCert,
+};
+
+type msgDeletePkiRevocationDistributionPointParams = {
+  value: MsgDeletePkiRevocationDistributionPoint,
+};
+
+type msgRevokeNocX509IcaCertParams = {
+  value: MsgRevokeNocX509IcaCert,
+};
+
+type msgApproveAddX509RootCertParams = {
+  value: MsgApproveAddX509RootCert,
 };
 
 type msgRemoveNocX509RootCertParams = {
   value: MsgRemoveNocX509RootCert,
+};
+
+type msgProposeRevokeX509RootCertParams = {
+  value: MsgProposeRevokeX509RootCert,
+};
+
+type msgAddPkiRevocationDistributionPointParams = {
+  value: MsgAddPkiRevocationDistributionPoint,
+};
+
+type msgRejectAddX509RootCertParams = {
+  value: MsgRejectAddX509RootCert,
+};
+
+type msgAddX509CertParams = {
+  value: MsgAddX509Cert,
+};
+
+type msgAddNocX509RootCertParams = {
+  value: MsgAddNocX509RootCert,
+};
+
+type msgRevokeX509CertParams = {
+  value: MsgRevokeX509Cert,
 };
 
 
@@ -267,59 +267,17 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
-		async sendMsgRevokeNocX509RootCert({ value, fee, memo }: sendMsgRevokeNocX509RootCertParams): Promise<DeliverTxResponse> {
+		async sendMsgApproveRevokeX509RootCert({ value, fee, memo }: sendMsgApproveRevokeX509RootCertParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgRevokeNocX509RootCert: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgApproveRevokeX509RootCert: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgRevokeNocX509RootCert({ value: MsgRevokeNocX509RootCert.fromPartial(value) })
+				let msg = this.msgApproveRevokeX509RootCert({ value: MsgApproveRevokeX509RootCert.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgRevokeNocX509RootCert: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgRevokeX509Cert({ value, fee, memo }: sendMsgRevokeX509CertParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgRevokeX509Cert: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgRevokeX509Cert({ value: MsgRevokeX509Cert.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgRevokeX509Cert: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgAddX509Cert({ value, fee, memo }: sendMsgAddX509CertParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgAddX509Cert: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgAddX509Cert({ value: MsgAddX509Cert.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgAddX509Cert: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgAddNocX509IcaCert({ value, fee, memo }: sendMsgAddNocX509IcaCertParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgAddNocX509IcaCert: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgAddNocX509IcaCert({ value: MsgAddNocX509IcaCert.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgAddNocX509IcaCert: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgApproveRevokeX509RootCert: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -337,62 +295,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgProposeRevokeX509RootCert({ value, fee, memo }: sendMsgProposeRevokeX509RootCertParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgProposeRevokeX509RootCert: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgProposeRevokeX509RootCert({ value: MsgProposeRevokeX509RootCert.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgProposeRevokeX509RootCert: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgProposeAddX509RootCert({ value, fee, memo }: sendMsgProposeAddX509RootCertParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgProposeAddX509RootCert: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgProposeAddX509RootCert({ value: MsgProposeAddX509RootCert.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgProposeAddX509RootCert: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgDeletePkiRevocationDistributionPoint({ value, fee, memo }: sendMsgDeletePkiRevocationDistributionPointParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgDeletePkiRevocationDistributionPoint: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgDeletePkiRevocationDistributionPoint({ value: MsgDeletePkiRevocationDistributionPoint.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgDeletePkiRevocationDistributionPoint: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgApproveRevokeX509RootCert({ value, fee, memo }: sendMsgApproveRevokeX509RootCertParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgApproveRevokeX509RootCert: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgApproveRevokeX509RootCert({ value: MsgApproveRevokeX509RootCert.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgApproveRevokeX509RootCert: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
 		async sendMsgRemoveX509Cert({ value, fee, memo }: sendMsgRemoveX509CertParams): Promise<DeliverTxResponse> {
 			if (!signer) {
 					throw new Error('TxClient:sendMsgRemoveX509Cert: Unable to sign Tx. Signer is not present.')
@@ -404,48 +306,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
 				throw new Error('TxClient:sendMsgRemoveX509Cert: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgApproveAddX509RootCert({ value, fee, memo }: sendMsgApproveAddX509RootCertParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgApproveAddX509RootCert: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgApproveAddX509RootCert({ value: MsgApproveAddX509RootCert.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgApproveAddX509RootCert: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgRevokeNocX509IcaCert({ value, fee, memo }: sendMsgRevokeNocX509IcaCertParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgRevokeNocX509IcaCert: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgRevokeNocX509IcaCert({ value: MsgRevokeNocX509IcaCert.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgRevokeNocX509IcaCert: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgAddNocX509RootCert({ value, fee, memo }: sendMsgAddNocX509RootCertParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgAddNocX509RootCert: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgAddNocX509RootCert({ value: MsgAddNocX509RootCert.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgAddNocX509RootCert: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -463,17 +323,17 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgRejectAddX509RootCert({ value, fee, memo }: sendMsgRejectAddX509RootCertParams): Promise<DeliverTxResponse> {
+		async sendMsgAddNocX509IcaCert({ value, fee, memo }: sendMsgAddNocX509IcaCertParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgRejectAddX509RootCert: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgAddNocX509IcaCert: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgRejectAddX509RootCert({ value: MsgRejectAddX509RootCert.fromPartial(value) })
+				let msg = this.msgAddNocX509IcaCert({ value: MsgAddNocX509IcaCert.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgRejectAddX509RootCert: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgAddNocX509IcaCert: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -491,17 +351,73 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgAddPkiRevocationDistributionPoint({ value, fee, memo }: sendMsgAddPkiRevocationDistributionPointParams): Promise<DeliverTxResponse> {
+		async sendMsgProposeAddX509RootCert({ value, fee, memo }: sendMsgProposeAddX509RootCertParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgAddPkiRevocationDistributionPoint: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgProposeAddX509RootCert: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgAddPkiRevocationDistributionPoint({ value: MsgAddPkiRevocationDistributionPoint.fromPartial(value) })
+				let msg = this.msgProposeAddX509RootCert({ value: MsgProposeAddX509RootCert.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgAddPkiRevocationDistributionPoint: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgProposeAddX509RootCert: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgRevokeNocX509RootCert({ value, fee, memo }: sendMsgRevokeNocX509RootCertParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgRevokeNocX509RootCert: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgRevokeNocX509RootCert({ value: MsgRevokeNocX509RootCert.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgRevokeNocX509RootCert: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgDeletePkiRevocationDistributionPoint({ value, fee, memo }: sendMsgDeletePkiRevocationDistributionPointParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgDeletePkiRevocationDistributionPoint: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgDeletePkiRevocationDistributionPoint({ value: MsgDeletePkiRevocationDistributionPoint.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgDeletePkiRevocationDistributionPoint: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgRevokeNocX509IcaCert({ value, fee, memo }: sendMsgRevokeNocX509IcaCertParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgRevokeNocX509IcaCert: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgRevokeNocX509IcaCert({ value: MsgRevokeNocX509IcaCert.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgRevokeNocX509IcaCert: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgApproveAddX509RootCert({ value, fee, memo }: sendMsgApproveAddX509RootCertParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgApproveAddX509RootCert: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgApproveAddX509RootCert({ value: MsgApproveAddX509RootCert.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgApproveAddX509RootCert: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -519,36 +435,96 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		
-		msgRevokeNocX509RootCert({ value }: msgRevokeNocX509RootCertParams): EncodeObject {
-			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgRevokeNocX509RootCert", value: MsgRevokeNocX509RootCert.fromPartial( value ) }  
+		async sendMsgProposeRevokeX509RootCert({ value, fee, memo }: sendMsgProposeRevokeX509RootCertParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgProposeRevokeX509RootCert: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgProposeRevokeX509RootCert({ value: MsgProposeRevokeX509RootCert.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:MsgRevokeNocX509RootCert: Could not create message: ' + e.message)
+				throw new Error('TxClient:sendMsgProposeRevokeX509RootCert: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
-		msgRevokeX509Cert({ value }: msgRevokeX509CertParams): EncodeObject {
-			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgRevokeX509Cert", value: MsgRevokeX509Cert.fromPartial( value ) }  
+		async sendMsgAddPkiRevocationDistributionPoint({ value, fee, memo }: sendMsgAddPkiRevocationDistributionPointParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgAddPkiRevocationDistributionPoint: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgAddPkiRevocationDistributionPoint({ value: MsgAddPkiRevocationDistributionPoint.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:MsgRevokeX509Cert: Could not create message: ' + e.message)
+				throw new Error('TxClient:sendMsgAddPkiRevocationDistributionPoint: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
-		msgAddX509Cert({ value }: msgAddX509CertParams): EncodeObject {
-			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgAddX509Cert", value: MsgAddX509Cert.fromPartial( value ) }  
+		async sendMsgRejectAddX509RootCert({ value, fee, memo }: sendMsgRejectAddX509RootCertParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgRejectAddX509RootCert: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgRejectAddX509RootCert({ value: MsgRejectAddX509RootCert.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:MsgAddX509Cert: Could not create message: ' + e.message)
+				throw new Error('TxClient:sendMsgRejectAddX509RootCert: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
-		msgAddNocX509IcaCert({ value }: msgAddNocX509IcaCertParams): EncodeObject {
-			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgAddNocX509IcaCert", value: MsgAddNocX509IcaCert.fromPartial( value ) }  
+		async sendMsgAddX509Cert({ value, fee, memo }: sendMsgAddX509CertParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgAddX509Cert: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgAddX509Cert({ value: MsgAddX509Cert.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:MsgAddNocX509IcaCert: Could not create message: ' + e.message)
+				throw new Error('TxClient:sendMsgAddX509Cert: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgAddNocX509RootCert({ value, fee, memo }: sendMsgAddNocX509RootCertParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgAddNocX509RootCert: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgAddNocX509RootCert({ value: MsgAddNocX509RootCert.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgAddNocX509RootCert: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgRevokeX509Cert({ value, fee, memo }: sendMsgRevokeX509CertParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgRevokeX509Cert: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgRevokeX509Cert({ value: MsgRevokeX509Cert.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgRevokeX509Cert: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		
+		msgApproveRevokeX509RootCert({ value }: msgApproveRevokeX509RootCertParams): EncodeObject {
+			try {
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgApproveRevokeX509RootCert", value: MsgApproveRevokeX509RootCert.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgApproveRevokeX509RootCert: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -560,67 +536,11 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgProposeRevokeX509RootCert({ value }: msgProposeRevokeX509RootCertParams): EncodeObject {
-			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgProposeRevokeX509RootCert", value: MsgProposeRevokeX509RootCert.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgProposeRevokeX509RootCert: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgProposeAddX509RootCert({ value }: msgProposeAddX509RootCertParams): EncodeObject {
-			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgProposeAddX509RootCert", value: MsgProposeAddX509RootCert.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgProposeAddX509RootCert: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgDeletePkiRevocationDistributionPoint({ value }: msgDeletePkiRevocationDistributionPointParams): EncodeObject {
-			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgDeletePkiRevocationDistributionPoint", value: MsgDeletePkiRevocationDistributionPoint.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgDeletePkiRevocationDistributionPoint: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgApproveRevokeX509RootCert({ value }: msgApproveRevokeX509RootCertParams): EncodeObject {
-			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgApproveRevokeX509RootCert", value: MsgApproveRevokeX509RootCert.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgApproveRevokeX509RootCert: Could not create message: ' + e.message)
-			}
-		},
-		
 		msgRemoveX509Cert({ value }: msgRemoveX509CertParams): EncodeObject {
 			try {
 				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgRemoveX509Cert", value: MsgRemoveX509Cert.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgRemoveX509Cert: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgApproveAddX509RootCert({ value }: msgApproveAddX509RootCertParams): EncodeObject {
-			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgApproveAddX509RootCert", value: MsgApproveAddX509RootCert.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgApproveAddX509RootCert: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgRevokeNocX509IcaCert({ value }: msgRevokeNocX509IcaCertParams): EncodeObject {
-			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgRevokeNocX509IcaCert", value: MsgRevokeNocX509IcaCert.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgRevokeNocX509IcaCert: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgAddNocX509RootCert({ value }: msgAddNocX509RootCertParams): EncodeObject {
-			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgAddNocX509RootCert", value: MsgAddNocX509RootCert.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgAddNocX509RootCert: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -632,11 +552,11 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgRejectAddX509RootCert({ value }: msgRejectAddX509RootCertParams): EncodeObject {
+		msgAddNocX509IcaCert({ value }: msgAddNocX509IcaCertParams): EncodeObject {
 			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgRejectAddX509RootCert", value: MsgRejectAddX509RootCert.fromPartial( value ) }  
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgAddNocX509IcaCert", value: MsgAddNocX509IcaCert.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgRejectAddX509RootCert: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgAddNocX509IcaCert: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -648,11 +568,43 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgAddPkiRevocationDistributionPoint({ value }: msgAddPkiRevocationDistributionPointParams): EncodeObject {
+		msgProposeAddX509RootCert({ value }: msgProposeAddX509RootCertParams): EncodeObject {
 			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgAddPkiRevocationDistributionPoint", value: MsgAddPkiRevocationDistributionPoint.fromPartial( value ) }  
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgProposeAddX509RootCert", value: MsgProposeAddX509RootCert.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgAddPkiRevocationDistributionPoint: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgProposeAddX509RootCert: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgRevokeNocX509RootCert({ value }: msgRevokeNocX509RootCertParams): EncodeObject {
+			try {
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgRevokeNocX509RootCert", value: MsgRevokeNocX509RootCert.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgRevokeNocX509RootCert: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgDeletePkiRevocationDistributionPoint({ value }: msgDeletePkiRevocationDistributionPointParams): EncodeObject {
+			try {
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgDeletePkiRevocationDistributionPoint", value: MsgDeletePkiRevocationDistributionPoint.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgDeletePkiRevocationDistributionPoint: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgRevokeNocX509IcaCert({ value }: msgRevokeNocX509IcaCertParams): EncodeObject {
+			try {
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgRevokeNocX509IcaCert", value: MsgRevokeNocX509IcaCert.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgRevokeNocX509IcaCert: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgApproveAddX509RootCert({ value }: msgApproveAddX509RootCertParams): EncodeObject {
+			try {
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgApproveAddX509RootCert", value: MsgApproveAddX509RootCert.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgApproveAddX509RootCert: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -661,6 +613,54 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgRemoveNocX509RootCert", value: MsgRemoveNocX509RootCert.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgRemoveNocX509RootCert: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgProposeRevokeX509RootCert({ value }: msgProposeRevokeX509RootCertParams): EncodeObject {
+			try {
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgProposeRevokeX509RootCert", value: MsgProposeRevokeX509RootCert.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgProposeRevokeX509RootCert: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgAddPkiRevocationDistributionPoint({ value }: msgAddPkiRevocationDistributionPointParams): EncodeObject {
+			try {
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgAddPkiRevocationDistributionPoint", value: MsgAddPkiRevocationDistributionPoint.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgAddPkiRevocationDistributionPoint: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgRejectAddX509RootCert({ value }: msgRejectAddX509RootCertParams): EncodeObject {
+			try {
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgRejectAddX509RootCert", value: MsgRejectAddX509RootCert.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgRejectAddX509RootCert: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgAddX509Cert({ value }: msgAddX509CertParams): EncodeObject {
+			try {
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgAddX509Cert", value: MsgAddX509Cert.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgAddX509Cert: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgAddNocX509RootCert({ value }: msgAddNocX509RootCertParams): EncodeObject {
+			try {
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgAddNocX509RootCert", value: MsgAddNocX509RootCert.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgAddNocX509RootCert: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgRevokeX509Cert({ value }: msgRevokeX509CertParams): EncodeObject {
+			try {
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgRevokeX509Cert", value: MsgRevokeX509Cert.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgRevokeX509Cert: Could not create message: ' + e.message)
 			}
 		},
 		
