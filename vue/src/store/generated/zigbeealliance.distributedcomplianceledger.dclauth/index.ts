@@ -1,0 +1,591 @@
+import { Client, registry, MissingWalletError } from 'zigbee-alliance-distributed-compliance-ledger-client-ts'
+
+import { Account } from "zigbee-alliance-distributed-compliance-ledger-client-ts/zigbeealliance.distributedcomplianceledger.dclauth/types"
+import { AccountStat } from "zigbee-alliance-distributed-compliance-ledger-client-ts/zigbeealliance.distributedcomplianceledger.dclauth/types"
+import { Grant } from "zigbee-alliance-distributed-compliance-ledger-client-ts/zigbeealliance.distributedcomplianceledger.dclauth/types"
+import { PendingAccount } from "zigbee-alliance-distributed-compliance-ledger-client-ts/zigbeealliance.distributedcomplianceledger.dclauth/types"
+import { PendingAccountRevocation } from "zigbee-alliance-distributed-compliance-ledger-client-ts/zigbeealliance.distributedcomplianceledger.dclauth/types"
+import { RejectedAccount } from "zigbee-alliance-distributed-compliance-ledger-client-ts/zigbeealliance.distributedcomplianceledger.dclauth/types"
+import { RevokedAccount } from "zigbee-alliance-distributed-compliance-ledger-client-ts/zigbeealliance.distributedcomplianceledger.dclauth/types"
+
+
+export { Account, AccountStat, Grant, PendingAccount, PendingAccountRevocation, RejectedAccount, RevokedAccount };
+
+function initClient(vuexGetters) {
+	return new Client(vuexGetters['common/env/getEnv'], vuexGetters['common/wallet/signer'])
+}
+
+function mergeResults(value, next_values) {
+	for (let prop of Object.keys(next_values)) {
+		if (Array.isArray(next_values[prop])) {
+			value[prop]=[...value[prop], ...next_values[prop]]
+		}else{
+			value[prop]=next_values[prop]
+		}
+	}
+	return value
+}
+
+type Field = {
+	name: string;
+	type: unknown;
+}
+function getStructure(template) {
+	let structure: {fields: Field[]} = { fields: [] }
+	for (const [key, value] of Object.entries(template)) {
+		let field = { name: key, type: typeof value }
+		structure.fields.push(field)
+	}
+	return structure
+}
+const getDefaultState = () => {
+	return {
+				Account: {},
+				AccountAll: {},
+				PendingAccount: {},
+				PendingAccountAll: {},
+				PendingAccountRevocation: {},
+				PendingAccountRevocationAll: {},
+				AccountStat: {},
+				RevokedAccount: {},
+				RevokedAccountAll: {},
+				RejectedAccount: {},
+				RejectedAccountAll: {},
+				
+				_Structure: {
+						Account: getStructure(Account.fromPartial({})),
+						AccountStat: getStructure(AccountStat.fromPartial({})),
+						Grant: getStructure(Grant.fromPartial({})),
+						PendingAccount: getStructure(PendingAccount.fromPartial({})),
+						PendingAccountRevocation: getStructure(PendingAccountRevocation.fromPartial({})),
+						RejectedAccount: getStructure(RejectedAccount.fromPartial({})),
+						RevokedAccount: getStructure(RevokedAccount.fromPartial({})),
+						
+		},
+		_Registry: registry,
+		_Subscriptions: new Set(),
+	}
+}
+
+// initial state
+const state = getDefaultState()
+
+export default {
+	namespaced: true,
+	state,
+	mutations: {
+		RESET_STATE(state) {
+			Object.assign(state, getDefaultState())
+		},
+		QUERY(state, { query, key, value }) {
+			state[query][JSON.stringify(key)] = value
+		},
+		SUBSCRIBE(state, subscription) {
+			state._Subscriptions.add(JSON.stringify(subscription))
+		},
+		UNSUBSCRIBE(state, subscription) {
+			state._Subscriptions.delete(JSON.stringify(subscription))
+		}
+	},
+	getters: {
+				getAccount: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.Account[JSON.stringify(params)] ?? {}
+		},
+				getAccountAll: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.AccountAll[JSON.stringify(params)] ?? {}
+		},
+				getPendingAccount: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.PendingAccount[JSON.stringify(params)] ?? {}
+		},
+				getPendingAccountAll: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.PendingAccountAll[JSON.stringify(params)] ?? {}
+		},
+				getPendingAccountRevocation: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.PendingAccountRevocation[JSON.stringify(params)] ?? {}
+		},
+				getPendingAccountRevocationAll: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.PendingAccountRevocationAll[JSON.stringify(params)] ?? {}
+		},
+				getAccountStat: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.AccountStat[JSON.stringify(params)] ?? {}
+		},
+				getRevokedAccount: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.RevokedAccount[JSON.stringify(params)] ?? {}
+		},
+				getRevokedAccountAll: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.RevokedAccountAll[JSON.stringify(params)] ?? {}
+		},
+				getRejectedAccount: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.RejectedAccount[JSON.stringify(params)] ?? {}
+		},
+				getRejectedAccountAll: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.RejectedAccountAll[JSON.stringify(params)] ?? {}
+		},
+				
+		getTypeStructure: (state) => (type) => {
+			return state._Structure[type].fields
+		},
+		getRegistry: (state) => {
+			return state._Registry
+		}
+	},
+	actions: {
+		init({ dispatch, rootGetters }) {
+			console.log('Vuex module: zigbeealliance.distributedcomplianceledger.dclauth initialized!')
+			if (rootGetters['common/env/client']) {
+				rootGetters['common/env/client'].on('newblock', () => {
+					dispatch('StoreUpdate')
+				})
+			}
+		},
+		resetState({ commit }) {
+			commit('RESET_STATE')
+		},
+		unsubscribe({ commit }, subscription) {
+			commit('UNSUBSCRIBE', subscription)
+		},
+		async StoreUpdate({ state, dispatch }) {
+			state._Subscriptions.forEach(async (subscription) => {
+				try {
+					const sub=JSON.parse(subscription)
+					await dispatch(sub.action, sub.payload)
+				}catch(e) {
+					throw new Error('Subscriptions: ' + e.message)
+				}
+			})
+		},
+		
+		
+		
+		 		
+		
+		
+		async QueryAccount({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const client = initClient(rootGetters);
+				let value= (await client.ZigbeeallianceDistributedcomplianceledgerDclauth.query.queryAccount( key.address)).data
+				
+					
+				commit('QUERY', { query: 'Account', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryAccount', payload: { options: { all }, params: {...key},query }})
+				return getters['getAccount']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryAccount API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryAccountAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const client = initClient(rootGetters);
+				let value= (await client.ZigbeeallianceDistributedcomplianceledgerDclauth.query.queryAccountAll(query ?? undefined)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await client.ZigbeeallianceDistributedcomplianceledgerDclauth.query.queryAccountAll({...query ?? {}, 'pagination.key':(<any> value).pagination.next_key} as any)).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'AccountAll', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryAccountAll', payload: { options: { all }, params: {...key},query }})
+				return getters['getAccountAll']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryAccountAll API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryPendingAccount({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const client = initClient(rootGetters);
+				let value= (await client.ZigbeeallianceDistributedcomplianceledgerDclauth.query.queryPendingAccount( key.address)).data
+				
+					
+				commit('QUERY', { query: 'PendingAccount', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryPendingAccount', payload: { options: { all }, params: {...key},query }})
+				return getters['getPendingAccount']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryPendingAccount API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryPendingAccountAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const client = initClient(rootGetters);
+				let value= (await client.ZigbeeallianceDistributedcomplianceledgerDclauth.query.queryPendingAccountAll(query ?? undefined)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await client.ZigbeeallianceDistributedcomplianceledgerDclauth.query.queryPendingAccountAll({...query ?? {}, 'pagination.key':(<any> value).pagination.next_key} as any)).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'PendingAccountAll', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryPendingAccountAll', payload: { options: { all }, params: {...key},query }})
+				return getters['getPendingAccountAll']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryPendingAccountAll API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryPendingAccountRevocation({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const client = initClient(rootGetters);
+				let value= (await client.ZigbeeallianceDistributedcomplianceledgerDclauth.query.queryPendingAccountRevocation( key.address)).data
+				
+					
+				commit('QUERY', { query: 'PendingAccountRevocation', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryPendingAccountRevocation', payload: { options: { all }, params: {...key},query }})
+				return getters['getPendingAccountRevocation']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryPendingAccountRevocation API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryPendingAccountRevocationAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const client = initClient(rootGetters);
+				let value= (await client.ZigbeeallianceDistributedcomplianceledgerDclauth.query.queryPendingAccountRevocationAll(query ?? undefined)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await client.ZigbeeallianceDistributedcomplianceledgerDclauth.query.queryPendingAccountRevocationAll({...query ?? {}, 'pagination.key':(<any> value).pagination.next_key} as any)).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'PendingAccountRevocationAll', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryPendingAccountRevocationAll', payload: { options: { all }, params: {...key},query }})
+				return getters['getPendingAccountRevocationAll']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryPendingAccountRevocationAll API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryAccountStat({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const client = initClient(rootGetters);
+				let value= (await client.ZigbeeallianceDistributedcomplianceledgerDclauth.query.queryAccountStat()).data
+				
+					
+				commit('QUERY', { query: 'AccountStat', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryAccountStat', payload: { options: { all }, params: {...key},query }})
+				return getters['getAccountStat']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryAccountStat API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryRevokedAccount({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const client = initClient(rootGetters);
+				let value= (await client.ZigbeeallianceDistributedcomplianceledgerDclauth.query.queryRevokedAccount( key.address)).data
+				
+					
+				commit('QUERY', { query: 'RevokedAccount', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryRevokedAccount', payload: { options: { all }, params: {...key},query }})
+				return getters['getRevokedAccount']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryRevokedAccount API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryRevokedAccountAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const client = initClient(rootGetters);
+				let value= (await client.ZigbeeallianceDistributedcomplianceledgerDclauth.query.queryRevokedAccountAll(query ?? undefined)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await client.ZigbeeallianceDistributedcomplianceledgerDclauth.query.queryRevokedAccountAll({...query ?? {}, 'pagination.key':(<any> value).pagination.next_key} as any)).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'RevokedAccountAll', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryRevokedAccountAll', payload: { options: { all }, params: {...key},query }})
+				return getters['getRevokedAccountAll']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryRevokedAccountAll API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryRejectedAccount({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const client = initClient(rootGetters);
+				let value= (await client.ZigbeeallianceDistributedcomplianceledgerDclauth.query.queryRejectedAccount( key.address)).data
+				
+					
+				commit('QUERY', { query: 'RejectedAccount', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryRejectedAccount', payload: { options: { all }, params: {...key},query }})
+				return getters['getRejectedAccount']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryRejectedAccount API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryRejectedAccountAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const client = initClient(rootGetters);
+				let value= (await client.ZigbeeallianceDistributedcomplianceledgerDclauth.query.queryRejectedAccountAll(query ?? undefined)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await client.ZigbeeallianceDistributedcomplianceledgerDclauth.query.queryRejectedAccountAll({...query ?? {}, 'pagination.key':(<any> value).pagination.next_key} as any)).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'RejectedAccountAll', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryRejectedAccountAll', payload: { options: { all }, params: {...key},query }})
+				return getters['getRejectedAccountAll']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryRejectedAccountAll API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		async sendMsgProposeRevokeAccount({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerDclauth.tx.sendMsgProposeRevokeAccount({ value, fee: fullFee, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgProposeRevokeAccount:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgProposeRevokeAccount:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgApproveAddAccount({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerDclauth.tx.sendMsgApproveAddAccount({ value, fee: fullFee, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgApproveAddAccount:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgApproveAddAccount:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgRejectAddAccount({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerDclauth.tx.sendMsgRejectAddAccount({ value, fee: fullFee, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgRejectAddAccount:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgRejectAddAccount:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgProposeAddAccount({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerDclauth.tx.sendMsgProposeAddAccount({ value, fee: fullFee, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgProposeAddAccount:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgProposeAddAccount:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgApproveRevokeAccount({ rootGetters }, { value, fee = {amount: [], gas: "200000"}, memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const fullFee = Array.isArray(fee)  ? {amount: fee, gas: "200000"} :fee;
+				const result = await client.ZigbeeallianceDistributedcomplianceledgerDclauth.tx.sendMsgApproveRevokeAccount({ value, fee: fullFee, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgApproveRevokeAccount:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgApproveRevokeAccount:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		
+		async MsgProposeRevokeAccount({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerDclauth.tx.msgProposeRevokeAccount({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgProposeRevokeAccount:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgProposeRevokeAccount:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgApproveAddAccount({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerDclauth.tx.msgApproveAddAccount({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgApproveAddAccount:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgApproveAddAccount:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgRejectAddAccount({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerDclauth.tx.msgRejectAddAccount({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgRejectAddAccount:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgRejectAddAccount:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgProposeAddAccount({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerDclauth.tx.msgProposeAddAccount({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgProposeAddAccount:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgProposeAddAccount:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgApproveRevokeAccount({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.ZigbeeallianceDistributedcomplianceledgerDclauth.tx.msgApproveRevokeAccount({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgApproveRevokeAccount:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgApproveRevokeAccount:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		
+	}
+}

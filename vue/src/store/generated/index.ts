@@ -1,46 +1,38 @@
 // THIS FILE IS GENERATED AUTOMATICALLY. DO NOT MODIFY.
 
-import CosmosCosmosSdkCosmosAuthzV1Beta1 from './cosmos/cosmos-sdk/cosmos.authz.v1beta1'
-import CosmosCosmosSdkCosmosBankV1Beta1 from './cosmos/cosmos-sdk/cosmos.bank.v1beta1'
-import CosmosCosmosSdkCosmosCrisisV1Beta1 from './cosmos/cosmos-sdk/cosmos.crisis.v1beta1'
-import CosmosCosmosSdkCosmosDistributionV1Beta1 from './cosmos/cosmos-sdk/cosmos.distribution.v1beta1'
-import CosmosCosmosSdkCosmosEvidenceV1Beta1 from './cosmos/cosmos-sdk/cosmos.evidence.v1beta1'
-import CosmosCosmosSdkCosmosFeegrantV1Beta1 from './cosmos/cosmos-sdk/cosmos.feegrant.v1beta1'
-import CosmosCosmosSdkCosmosGovV1Beta1 from './cosmos/cosmos-sdk/cosmos.gov.v1beta1'
-import CosmosCosmosSdkCosmosSlashingV1Beta1 from './cosmos/cosmos-sdk/cosmos.slashing.v1beta1'
-import CosmosCosmosSdkCosmosStakingV1Beta1 from './cosmos/cosmos-sdk/cosmos.staking.v1beta1'
-import CosmosCosmosSdkCosmosVestingV1Beta1 from './cosmos/cosmos-sdk/cosmos.vesting.v1beta1'
-import CosmosIbcGoIbcApplicationsTransferV1 from './cosmos/ibc-go/ibc.applications.transfer.v1'
-import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerCompliance from './zigbee-alliance/distributed-compliance-ledger/zigbeealliance.distributedcomplianceledger.compliance'
-import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerCompliancetest from './zigbee-alliance/distributed-compliance-ledger/zigbeealliance.distributedcomplianceledger.compliancetest'
-import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerDclauth from './zigbee-alliance/distributed-compliance-ledger/zigbeealliance.distributedcomplianceledger.dclauth'
-import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerDclupgrade from './zigbee-alliance/distributed-compliance-ledger/zigbeealliance.distributedcomplianceledger.dclupgrade'
-import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerModel from './zigbee-alliance/distributed-compliance-ledger/zigbeealliance.distributedcomplianceledger.model'
-import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerPki from './zigbee-alliance/distributed-compliance-ledger/zigbeealliance.distributedcomplianceledger.pki'
-import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerValidator from './zigbee-alliance/distributed-compliance-ledger/zigbeealliance.distributedcomplianceledger.validator'
-import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerVendorinfo from './zigbee-alliance/distributed-compliance-ledger/zigbeealliance.distributedcomplianceledger.vendorinfo'
+import ZigbeeallianceDistributedcomplianceledgerCompliance from './zigbeealliance.distributedcomplianceledger.compliance'
+import ZigbeeallianceDistributedcomplianceledgerDclauth from './zigbeealliance.distributedcomplianceledger.dclauth'
+import ZigbeeallianceDistributedcomplianceledgerDclgenutil from './zigbeealliance.distributedcomplianceledger.dclgenutil'
+import ZigbeeallianceDistributedcomplianceledgerDclupgrade from './zigbeealliance.distributedcomplianceledger.dclupgrade'
+import ZigbeeallianceDistributedcomplianceledgerModel from './zigbeealliance.distributedcomplianceledger.model'
+import ZigbeeallianceDistributedcomplianceledgerPki from './zigbeealliance.distributedcomplianceledger.pki'
+import ZigbeeallianceDistributedcomplianceledgerValidator from './zigbeealliance.distributedcomplianceledger.validator'
+import ZigbeeallianceDistributedcomplianceledgerVendorinfo from './zigbeealliance.distributedcomplianceledger.vendorinfo'
+import CosmosAuthV1Beta1 from './cosmos.auth.v1beta1'
+import CosmosBaseTendermintV1Beta1 from './cosmos.base.tendermint.v1beta1'
+import CosmosConsensusV1 from './cosmos.consensus.v1'
+import CosmosParamsV1Beta1 from './cosmos.params.v1beta1'
+import CosmosTxV1Beta1 from './cosmos.tx.v1beta1'
+import CosmosUpgradeV1Beta1 from './cosmos.upgrade.v1beta1'
+import CosmosVestingV1Beta1 from './cosmos.vesting.v1beta1'
 
 
 export default { 
-  CosmosCosmosSdkCosmosAuthzV1Beta1: load(CosmosCosmosSdkCosmosAuthzV1Beta1, 'cosmos.authz.v1beta1'),
-  CosmosCosmosSdkCosmosBankV1Beta1: load(CosmosCosmosSdkCosmosBankV1Beta1, 'cosmos.bank.v1beta1'),
-  CosmosCosmosSdkCosmosCrisisV1Beta1: load(CosmosCosmosSdkCosmosCrisisV1Beta1, 'cosmos.crisis.v1beta1'),
-  CosmosCosmosSdkCosmosDistributionV1Beta1: load(CosmosCosmosSdkCosmosDistributionV1Beta1, 'cosmos.distribution.v1beta1'),
-  CosmosCosmosSdkCosmosEvidenceV1Beta1: load(CosmosCosmosSdkCosmosEvidenceV1Beta1, 'cosmos.evidence.v1beta1'),
-  CosmosCosmosSdkCosmosFeegrantV1Beta1: load(CosmosCosmosSdkCosmosFeegrantV1Beta1, 'cosmos.feegrant.v1beta1'),
-  CosmosCosmosSdkCosmosGovV1Beta1: load(CosmosCosmosSdkCosmosGovV1Beta1, 'cosmos.gov.v1beta1'),
-  CosmosCosmosSdkCosmosSlashingV1Beta1: load(CosmosCosmosSdkCosmosSlashingV1Beta1, 'cosmos.slashing.v1beta1'),
-  CosmosCosmosSdkCosmosStakingV1Beta1: load(CosmosCosmosSdkCosmosStakingV1Beta1, 'cosmos.staking.v1beta1'),
-  CosmosCosmosSdkCosmosVestingV1Beta1: load(CosmosCosmosSdkCosmosVestingV1Beta1, 'cosmos.vesting.v1beta1'),
-  CosmosIbcGoIbcApplicationsTransferV1: load(CosmosIbcGoIbcApplicationsTransferV1, 'ibc.applications.transfer.v1'),
-  ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerCompliance: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerCompliance, 'zigbeealliance.distributedcomplianceledger.compliance'),
-  ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerCompliancetest: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerCompliancetest, 'zigbeealliance.distributedcomplianceledger.compliancetest'),
-  ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerDclauth: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerDclauth, 'zigbeealliance.distributedcomplianceledger.dclauth'),
-  ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerDclupgrade: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerDclupgrade, 'zigbeealliance.distributedcomplianceledger.dclupgrade'),
-  ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerModel: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerModel, 'zigbeealliance.distributedcomplianceledger.model'),
-  ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerPki: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerPki, 'zigbeealliance.distributedcomplianceledger.pki'),
-  ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerValidator: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerValidator, 'zigbeealliance.distributedcomplianceledger.validator'),
-  ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerVendorinfo: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerVendorinfo, 'zigbeealliance.distributedcomplianceledger.vendorinfo'),
+  ZigbeeallianceDistributedcomplianceledgerCompliance: load(ZigbeeallianceDistributedcomplianceledgerCompliance, 'zigbeealliance.distributedcomplianceledger.compliance'),
+  ZigbeeallianceDistributedcomplianceledgerDclauth: load(ZigbeeallianceDistributedcomplianceledgerDclauth, 'zigbeealliance.distributedcomplianceledger.dclauth'),
+  ZigbeeallianceDistributedcomplianceledgerDclgenutil: load(ZigbeeallianceDistributedcomplianceledgerDclgenutil, 'zigbeealliance.distributedcomplianceledger.dclgenutil'),
+  ZigbeeallianceDistributedcomplianceledgerDclupgrade: load(ZigbeeallianceDistributedcomplianceledgerDclupgrade, 'zigbeealliance.distributedcomplianceledger.dclupgrade'),
+  ZigbeeallianceDistributedcomplianceledgerModel: load(ZigbeeallianceDistributedcomplianceledgerModel, 'zigbeealliance.distributedcomplianceledger.model'),
+  ZigbeeallianceDistributedcomplianceledgerPki: load(ZigbeeallianceDistributedcomplianceledgerPki, 'zigbeealliance.distributedcomplianceledger.pki'),
+  ZigbeeallianceDistributedcomplianceledgerValidator: load(ZigbeeallianceDistributedcomplianceledgerValidator, 'zigbeealliance.distributedcomplianceledger.validator'),
+  ZigbeeallianceDistributedcomplianceledgerVendorinfo: load(ZigbeeallianceDistributedcomplianceledgerVendorinfo, 'zigbeealliance.distributedcomplianceledger.vendorinfo'),
+  CosmosAuthV1Beta1: load(CosmosAuthV1Beta1, 'cosmos.auth.v1beta1'),
+  CosmosBaseTendermintV1Beta1: load(CosmosBaseTendermintV1Beta1, 'cosmos.base.tendermint.v1beta1'),
+  CosmosConsensusV1: load(CosmosConsensusV1, 'cosmos.consensus.v1'),
+  CosmosParamsV1Beta1: load(CosmosParamsV1Beta1, 'cosmos.params.v1beta1'),
+  CosmosTxV1Beta1: load(CosmosTxV1Beta1, 'cosmos.tx.v1beta1'),
+  CosmosUpgradeV1Beta1: load(CosmosUpgradeV1Beta1, 'cosmos.upgrade.v1beta1'),
+  CosmosVestingV1Beta1: load(CosmosVestingV1Beta1, 'cosmos.vesting.v1beta1'),
   
 }
 
