@@ -1,0 +1,4 @@
+resource_group_name  = "SomeResourceGroup"
+storage_account_name = "somestorageaccount"
+container_name       = "dcl-tf-backend"
+key                  = "dcl-node"

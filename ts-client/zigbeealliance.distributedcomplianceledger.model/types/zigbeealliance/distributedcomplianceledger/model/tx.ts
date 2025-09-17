@@ -31,6 +31,10 @@ export interface MsgCreateModel {
   maintenanceUrl: string;
   discoveryCapabilitiesBitmask: number;
   commissioningFallbackUrl: string;
+  icdUserActiveModeTriggerHint: number;
+  icdUserActiveModeTriggerInstruction: string;
+  factoryResetStepsHint: number;
+  factoryResetStepsInstruction: string;
 }
 
 export interface MsgCreateModelResponse {
@@ -60,6 +64,11 @@ export interface MsgUpdateModel {
   enhancedSetupFlowTCFileSize: number;
   maintenanceUrl: string;
   commissioningFallbackUrl: string;
+  commissioningModeSecondaryStepsHint: number;
+  icdUserActiveModeTriggerHint: number;
+  icdUserActiveModeTriggerInstruction: string;
+  factoryResetStepsHint: number;
+  factoryResetStepsInstruction: string;
 }
 
 export interface MsgUpdateModelResponse {
@@ -91,6 +100,7 @@ export interface MsgCreateModelVersion {
   maxApplicableSoftwareVersion: number;
   releaseNotesUrl: string;
   schemaVersion: number;
+  specificationVersion: number;
 }
 
 export interface MsgCreateModelVersionResponse {
@@ -152,6 +162,10 @@ function createBaseMsgCreateModel(): MsgCreateModel {
     maintenanceUrl: "",
     discoveryCapabilitiesBitmask: 0,
     commissioningFallbackUrl: "",
+    icdUserActiveModeTriggerHint: 0,
+    icdUserActiveModeTriggerInstruction: "",
+    factoryResetStepsHint: 0,
+    factoryResetStepsInstruction: "",
   };
 }
 
@@ -234,6 +248,18 @@ export const MsgCreateModel = {
     }
     if (message.commissioningFallbackUrl !== "") {
       writer.uint32(210).string(message.commissioningFallbackUrl);
+    }
+    if (message.icdUserActiveModeTriggerHint !== 0) {
+      writer.uint32(216).uint32(message.icdUserActiveModeTriggerHint);
+    }
+    if (message.icdUserActiveModeTriggerInstruction !== "") {
+      writer.uint32(226).string(message.icdUserActiveModeTriggerInstruction);
+    }
+    if (message.factoryResetStepsHint !== 0) {
+      writer.uint32(232).uint32(message.factoryResetStepsHint);
+    }
+    if (message.factoryResetStepsInstruction !== "") {
+      writer.uint32(242).string(message.factoryResetStepsInstruction);
     }
     return writer;
   },
@@ -323,6 +349,18 @@ export const MsgCreateModel = {
         case 26:
           message.commissioningFallbackUrl = reader.string();
           break;
+        case 27:
+          message.icdUserActiveModeTriggerHint = reader.uint32();
+          break;
+        case 28:
+          message.icdUserActiveModeTriggerInstruction = reader.string();
+          break;
+        case 29:
+          message.factoryResetStepsHint = reader.uint32();
+          break;
+        case 30:
+          message.factoryResetStepsInstruction = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -377,6 +415,16 @@ export const MsgCreateModel = {
         ? Number(object.discoveryCapabilitiesBitmask)
         : 0,
       commissioningFallbackUrl: isSet(object.commissioningFallbackUrl) ? String(object.commissioningFallbackUrl) : "",
+      icdUserActiveModeTriggerHint: isSet(object.icdUserActiveModeTriggerHint)
+        ? Number(object.icdUserActiveModeTriggerHint)
+        : 0,
+      icdUserActiveModeTriggerInstruction: isSet(object.icdUserActiveModeTriggerInstruction)
+        ? String(object.icdUserActiveModeTriggerInstruction)
+        : "",
+      factoryResetStepsHint: isSet(object.factoryResetStepsHint) ? Number(object.factoryResetStepsHint) : 0,
+      factoryResetStepsInstruction: isSet(object.factoryResetStepsInstruction)
+        ? String(object.factoryResetStepsInstruction)
+        : "",
     };
   },
 
@@ -419,6 +467,14 @@ export const MsgCreateModel = {
     message.discoveryCapabilitiesBitmask !== undefined
       && (obj.discoveryCapabilitiesBitmask = Math.round(message.discoveryCapabilitiesBitmask));
     message.commissioningFallbackUrl !== undefined && (obj.commissioningFallbackUrl = message.commissioningFallbackUrl);
+    message.icdUserActiveModeTriggerHint !== undefined
+      && (obj.icdUserActiveModeTriggerHint = Math.round(message.icdUserActiveModeTriggerHint));
+    message.icdUserActiveModeTriggerInstruction !== undefined
+      && (obj.icdUserActiveModeTriggerInstruction = message.icdUserActiveModeTriggerInstruction);
+    message.factoryResetStepsHint !== undefined
+      && (obj.factoryResetStepsHint = Math.round(message.factoryResetStepsHint));
+    message.factoryResetStepsInstruction !== undefined
+      && (obj.factoryResetStepsInstruction = message.factoryResetStepsInstruction);
     return obj;
   },
 
@@ -450,6 +506,10 @@ export const MsgCreateModel = {
     message.maintenanceUrl = object.maintenanceUrl ?? "";
     message.discoveryCapabilitiesBitmask = object.discoveryCapabilitiesBitmask ?? 0;
     message.commissioningFallbackUrl = object.commissioningFallbackUrl ?? "";
+    message.icdUserActiveModeTriggerHint = object.icdUserActiveModeTriggerHint ?? 0;
+    message.icdUserActiveModeTriggerInstruction = object.icdUserActiveModeTriggerInstruction ?? "";
+    message.factoryResetStepsHint = object.factoryResetStepsHint ?? 0;
+    message.factoryResetStepsInstruction = object.factoryResetStepsInstruction ?? "";
     return message;
   },
 };
@@ -518,6 +578,11 @@ function createBaseMsgUpdateModel(): MsgUpdateModel {
     enhancedSetupFlowTCFileSize: 0,
     maintenanceUrl: "",
     commissioningFallbackUrl: "",
+    commissioningModeSecondaryStepsHint: 0,
+    icdUserActiveModeTriggerHint: 0,
+    icdUserActiveModeTriggerInstruction: "",
+    factoryResetStepsHint: 0,
+    factoryResetStepsInstruction: "",
   };
 }
 
@@ -591,6 +656,21 @@ export const MsgUpdateModel = {
     }
     if (message.commissioningFallbackUrl !== "") {
       writer.uint32(186).string(message.commissioningFallbackUrl);
+    }
+    if (message.commissioningModeSecondaryStepsHint !== 0) {
+      writer.uint32(192).uint32(message.commissioningModeSecondaryStepsHint);
+    }
+    if (message.icdUserActiveModeTriggerHint !== 0) {
+      writer.uint32(200).uint32(message.icdUserActiveModeTriggerHint);
+    }
+    if (message.icdUserActiveModeTriggerInstruction !== "") {
+      writer.uint32(210).string(message.icdUserActiveModeTriggerInstruction);
+    }
+    if (message.factoryResetStepsHint !== 0) {
+      writer.uint32(216).uint32(message.factoryResetStepsHint);
+    }
+    if (message.factoryResetStepsInstruction !== "") {
+      writer.uint32(226).string(message.factoryResetStepsInstruction);
     }
     return writer;
   },
@@ -671,6 +751,21 @@ export const MsgUpdateModel = {
         case 23:
           message.commissioningFallbackUrl = reader.string();
           break;
+        case 24:
+          message.commissioningModeSecondaryStepsHint = reader.uint32();
+          break;
+        case 25:
+          message.icdUserActiveModeTriggerHint = reader.uint32();
+          break;
+        case 26:
+          message.icdUserActiveModeTriggerInstruction = reader.string();
+          break;
+        case 27:
+          message.factoryResetStepsHint = reader.uint32();
+          break;
+        case 28:
+          message.factoryResetStepsInstruction = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -718,6 +813,19 @@ export const MsgUpdateModel = {
         : 0,
       maintenanceUrl: isSet(object.maintenanceUrl) ? String(object.maintenanceUrl) : "",
       commissioningFallbackUrl: isSet(object.commissioningFallbackUrl) ? String(object.commissioningFallbackUrl) : "",
+      commissioningModeSecondaryStepsHint: isSet(object.commissioningModeSecondaryStepsHint)
+        ? Number(object.commissioningModeSecondaryStepsHint)
+        : 0,
+      icdUserActiveModeTriggerHint: isSet(object.icdUserActiveModeTriggerHint)
+        ? Number(object.icdUserActiveModeTriggerHint)
+        : 0,
+      icdUserActiveModeTriggerInstruction: isSet(object.icdUserActiveModeTriggerInstruction)
+        ? String(object.icdUserActiveModeTriggerInstruction)
+        : "",
+      factoryResetStepsHint: isSet(object.factoryResetStepsHint) ? Number(object.factoryResetStepsHint) : 0,
+      factoryResetStepsInstruction: isSet(object.factoryResetStepsInstruction)
+        ? String(object.factoryResetStepsInstruction)
+        : "",
     };
   },
 
@@ -754,6 +862,16 @@ export const MsgUpdateModel = {
       && (obj.enhancedSetupFlowTCFileSize = Math.round(message.enhancedSetupFlowTCFileSize));
     message.maintenanceUrl !== undefined && (obj.maintenanceUrl = message.maintenanceUrl);
     message.commissioningFallbackUrl !== undefined && (obj.commissioningFallbackUrl = message.commissioningFallbackUrl);
+    message.commissioningModeSecondaryStepsHint !== undefined
+      && (obj.commissioningModeSecondaryStepsHint = Math.round(message.commissioningModeSecondaryStepsHint));
+    message.icdUserActiveModeTriggerHint !== undefined
+      && (obj.icdUserActiveModeTriggerHint = Math.round(message.icdUserActiveModeTriggerHint));
+    message.icdUserActiveModeTriggerInstruction !== undefined
+      && (obj.icdUserActiveModeTriggerInstruction = message.icdUserActiveModeTriggerInstruction);
+    message.factoryResetStepsHint !== undefined
+      && (obj.factoryResetStepsHint = Math.round(message.factoryResetStepsHint));
+    message.factoryResetStepsInstruction !== undefined
+      && (obj.factoryResetStepsInstruction = message.factoryResetStepsInstruction);
     return obj;
   },
 
@@ -782,6 +900,11 @@ export const MsgUpdateModel = {
     message.enhancedSetupFlowTCFileSize = object.enhancedSetupFlowTCFileSize ?? 0;
     message.maintenanceUrl = object.maintenanceUrl ?? "";
     message.commissioningFallbackUrl = object.commissioningFallbackUrl ?? "";
+    message.commissioningModeSecondaryStepsHint = object.commissioningModeSecondaryStepsHint ?? 0;
+    message.icdUserActiveModeTriggerHint = object.icdUserActiveModeTriggerHint ?? 0;
+    message.icdUserActiveModeTriggerInstruction = object.icdUserActiveModeTriggerInstruction ?? "";
+    message.factoryResetStepsHint = object.factoryResetStepsHint ?? 0;
+    message.factoryResetStepsInstruction = object.factoryResetStepsInstruction ?? "";
     return message;
   },
 };
@@ -949,6 +1072,7 @@ function createBaseMsgCreateModelVersion(): MsgCreateModelVersion {
     maxApplicableSoftwareVersion: 0,
     releaseNotesUrl: "",
     schemaVersion: 0,
+    specificationVersion: 0,
   };
 }
 
@@ -1001,6 +1125,9 @@ export const MsgCreateModelVersion = {
     }
     if (message.schemaVersion !== 0) {
       writer.uint32(128).uint32(message.schemaVersion);
+    }
+    if (message.specificationVersion !== 0) {
+      writer.uint32(136).uint32(message.specificationVersion);
     }
     return writer;
   },
@@ -1060,6 +1187,9 @@ export const MsgCreateModelVersion = {
         case 16:
           message.schemaVersion = reader.uint32();
           break;
+        case 17:
+          message.specificationVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1090,6 +1220,7 @@ export const MsgCreateModelVersion = {
         : 0,
       releaseNotesUrl: isSet(object.releaseNotesUrl) ? String(object.releaseNotesUrl) : "",
       schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
+      specificationVersion: isSet(object.specificationVersion) ? Number(object.specificationVersion) : 0,
     };
   },
 
@@ -1113,6 +1244,7 @@ export const MsgCreateModelVersion = {
       && (obj.maxApplicableSoftwareVersion = Math.round(message.maxApplicableSoftwareVersion));
     message.releaseNotesUrl !== undefined && (obj.releaseNotesUrl = message.releaseNotesUrl);
     message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
+    message.specificationVersion !== undefined && (obj.specificationVersion = Math.round(message.specificationVersion));
     return obj;
   },
 
@@ -1134,6 +1266,7 @@ export const MsgCreateModelVersion = {
     message.maxApplicableSoftwareVersion = object.maxApplicableSoftwareVersion ?? 0;
     message.releaseNotesUrl = object.releaseNotesUrl ?? "";
     message.schemaVersion = object.schemaVersion ?? 0;
+    message.specificationVersion = object.specificationVersion ?? 0;
     return message;
   },
 };

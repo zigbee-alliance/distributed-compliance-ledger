@@ -17,27 +17,23 @@ set -euo pipefail
 source integration_tests/cli/common.sh
 
 # Upgrade constants
+
 # TODO it must be v1.5 before actual 1.5 release
-binary_version_old="v1.5.0-0.dev.5"
-
-DCLD_BIN_OLD="./dcld_old"
-DCLD_BIN_NEW="./dcld_new"
+DCLD_BIN_OLD="/tmp/dcld_bins/dcld_v1.5.0-0.dev.5"
+DCLD_BIN_NEW="/tmp/dcld_bins/dcld_master"
 DCL_DIR="/var/lib/dcl/.dcl"
-
-wget -O dcld_old "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/$binary_version_old/dcld"
-chmod ugo+x dcld_old
 
 MASTER_UPGRADE_DOCKERFILE="./integration_tests/upgrade/Dockerfile-build-master"
 
 cleanup_container $MASTER_UPGRADE_CONTAINER_NAME
 docker build -f "$MASTER_UPGRADE_DOCKERFILE" -t "$MASTER_UPGRADE_IMAGE" .
 docker container create --name "$MASTER_UPGRADE_CONTAINER_NAME" "$MASTER_UPGRADE_IMAGE"
-docker cp "$MASTER_UPGRADE_CONTAINER_NAME:/go/bin/dcld" "$DCLD_BIN_NEW"
+docker cp "$MASTER_UPGRADE_CONTAINER_NAME":/go/bin/dcld "$DCLD_BIN_NEW"
 MASTER_UPGRADE_PLAN_NAME="$(docker run "$MASTER_UPGRADE_IMAGE" /bin/sh -c "cd /go/src/distributed-compliance-ledger && git rev-parse --short HEAD")"
 
 for node_name in node0 node1 node2 node3 observer0 lightclient0; do
     if [[ -d "$LOCALNET_DIR/$node_name" ]]; then
-        docker cp "$MASTER_UPGRADE_CONTAINER_NAME:/go/bin/dcld" "$LOCALNET_DIR/$node_name/"
+        cp "$DCLD_BIN_NEW" "$LOCALNET_DIR/$node_name/dcld"
         docker exec "$node_name" /bin/sh -c "cosmovisor add-upgrade "$MASTER_UPGRADE_PLAN_NAME" "$DCL_DIR"/dcld"
     fi
 done
@@ -997,7 +993,4 @@ check_response "$result" "\"owner\": \"$validator_address\""
 
 test_divider
 
-echo "Upgrade from 1.4.4 to master passed"
-
-rm -f $DCLD_BIN_OLD
-rm -f $DCLD_BIN_NEW
+echo "Upgrade from 1.5 to master PASSED"

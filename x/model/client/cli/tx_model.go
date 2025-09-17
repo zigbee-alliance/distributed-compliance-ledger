@@ -26,6 +26,10 @@ func CmdCreateModel() *cobra.Command {
 		commissioningModeInitialStepsInstruction   string
 		commissioningModeSecondaryStepsHint        uint32
 		commissioningModeSecondaryStepsInstruction string
+		icdUserActiveModeTriggerHint               uint32
+		icdUserActiveModeTriggerInstruction        string
+		factoryResetStepsHint                      uint32
+		factoryResetStepsInstruction               string
 		userManualURL                              string
 		supportURL                                 string
 		productURL                                 string
@@ -77,6 +81,10 @@ func CmdCreateModel() *cobra.Command {
 				commissioningModeInitialStepsInstruction,
 				commissioningModeSecondaryStepsHint,
 				commissioningModeSecondaryStepsInstruction,
+				icdUserActiveModeTriggerHint,
+				icdUserActiveModeTriggerInstruction,
+				factoryResetStepsHint,
+				factoryResetStepsInstruction,
 				userManualURL,
 				supportURL,
 				productURL,
@@ -146,6 +154,23 @@ current CHIP Administrator to put the device into commissioning mode.`)
 of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, 
 as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
 and for these values the commissioningModeSecondaryStepInstruction SHALL be set`)
+	cmd.Flags().Uint32Var(&icdUserActiveModeTriggerHint, FlagIcdUserActiveModeTriggerHint, 0,
+		`IcdUserActiveModeTriggerHint (when provided) is applicable to 
+an ICD that supports the UserActiveModeTriggerFeature feature. This field SHALL indicate which user action(s) 
+will trigger the ICD to switch to Active mode. This field SHALL follow the requirements specified in UserActiveModeTriggerHint.`)
+	cmd.Flags().StringVar(&icdUserActiveModeTriggerInstruction, FlagIcdUserActiveModeTriggerInstruction, "",
+		`IcdUserActiveModeTriggerInstruction (when provided) is applicable to an ICD that supports the UserActiveModeTriggerFeature 
+feature. The meaning of this field is dependent upon the UserActiveModeTriggerHint field value, and the conformance is indicated 
+in the "dependency" column in UserActiveModeTriggerHintTable. This field SHALL follow the requirements specified in 
+UserActiveModeTriggerInstruction.`)
+	cmd.Flags().Uint32Var(&factoryResetStepsHint, FlagFactoryResetStepsHint, 0,
+		`FactoryResetStepsHint SHALL identify a hint for the steps that MAY be used to factory 
+reset a device. This field is a bitmap with values defined in the Pairing/Reset Hint Table. For example, 
+a value of 64 (bit 6 is set) indicates that a device will be factory reset when the Reset Button is pressed.`)
+	cmd.Flags().StringVar(&factoryResetStepsInstruction, FlagFactoryResetStepsInstruction, "",
+		`FactoryResetStepsInstruction SHALL be populated with the appropriate 
+factory reset instruction for those values of FactoryResetStepsHint, for which the Pairing/Reset Hint Table 
+indicates a dependency in the Instruction Dependency column.`)
 	cmd.Flags().StringVar(&userManualURL, FlagUserManualURL, "",
 		"URL that contains product specific web page that contains user manual for the device model.")
 	cmd.Flags().StringVar(&supportURL, FlagSupportURL, "",
@@ -189,6 +214,10 @@ func CmdUpdateModel() *cobra.Command {
 		commissioningCustomFlowURL                 string
 		commissioningModeInitialStepsInstruction   string
 		commissioningModeSecondaryStepsInstruction string
+		icdUserActiveModeTriggerHint               uint32
+		icdUserActiveModeTriggerInstruction        string
+		factoryResetStepsHint                      uint32
+		factoryResetStepsInstruction               string
 		userManualURL                              string
 		supportURL                                 string
 		productURL                                 string
@@ -246,6 +275,10 @@ func CmdUpdateModel() *cobra.Command {
 				maintenanceURL,
 				commissioningFallbackURL,
 				commissioningModeSecondaryStepsHint,
+				icdUserActiveModeTriggerHint,
+				icdUserActiveModeTriggerInstruction,
+				factoryResetStepsHint,
+				factoryResetStepsInstruction,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -281,6 +314,19 @@ values the commissioningModeInitialStepsInstruction SHALL be set`)
 of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, 
 as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
 and for these values the commissioningModeSecondaryStepInstruction SHALL be set`)
+	cmd.Flags().Uint32Var(&icdUserActiveModeTriggerHint, FlagIcdUserActiveModeTriggerHint, 0,
+		`IcdUserActiveModeTriggerHint (when provided) is applicable to 
+an ICD that supports the UserActiveModeTriggerFeature feature. This field SHALL indicate which user action(s) 
+will trigger the ICD to switch to Active mode. This field SHALL follow the requirements specified in UserActiveModeTriggerHint.`)
+	cmd.Flags().StringVar(&icdUserActiveModeTriggerInstruction, FlagIcdUserActiveModeTriggerInstruction, "",
+		`IcdUserActiveModeTriggerInstruction (when provided) is applicable to an ICD that supports the UserActiveModeTriggerFeature 
+feature. The meaning of this field is dependent upon the UserActiveModeTriggerHint field value, and the conformance is indicated 
+in the "dependency" column in UserActiveModeTriggerHintTable. This field SHALL follow the requirements specified in 
+UserActiveModeTriggerInstruction.`)
+	cmd.Flags().StringVar(&factoryResetStepsInstruction, FlagFactoryResetStepsInstruction, "",
+		`FactoryResetStepsInstruction SHALL be populated with the appropriate 
+factory reset instruction for those values of FactoryResetStepsHint, for which the Pairing/Reset Hint Table 
+indicates a dependency in the Instruction Dependency column.`)
 	cmd.Flags().StringVar(&userManualURL, FlagUserManualURL, "",
 		"URL that contains product specific web page that contains user manual for the device model.")
 	cmd.Flags().StringVar(&supportURL, FlagSupportURL, "",
@@ -303,6 +349,10 @@ identify a hint for the steps that can be used to put into commissioning mode a 
 has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. 
 For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned 
 will enter Commissioning Mode upon a power cycle. Note that this value cannot be updated to 0. (default 1).`)
+	cmd.Flags().Uint32Var(&factoryResetStepsHint, FlagFactoryResetStepsHint, 0,
+		`FactoryResetStepsHint SHALL identify a hint for the steps that MAY be used to factory 
+reset a device. This field is a bitmap with values defined in the Pairing/Reset Hint Table. For example, 
+a value of 64 (bit 6 is set) indicates that a device will be factory reset when the Reset Button is pressed.`)
 	cmd.Flags().Int32Var(&enhancedSetupFlowOptions, FlagEnhancedSetupFlowOptions, 0,
 		"enhancedSetupFlowOptions SHALL identify the configuration options for the Enhanced Setup Flow.")
 	cmd.Flags().StringVar(&enhancedSetupFlowTCURL, FlagEnhancedSetupFlowTCURL, "",

@@ -8,9 +8,9 @@ import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
 import { MsgDeleteComplianceInfo } from "./types/zigbeealliance/distributedcomplianceledger/compliance/tx";
-import { MsgCertifyModel } from "./types/zigbeealliance/distributedcomplianceledger/compliance/tx";
-import { MsgProvisionModel } from "./types/zigbeealliance/distributedcomplianceledger/compliance/tx";
 import { MsgUpdateComplianceInfo } from "./types/zigbeealliance/distributedcomplianceledger/compliance/tx";
+import { MsgProvisionModel } from "./types/zigbeealliance/distributedcomplianceledger/compliance/tx";
+import { MsgCertifyModel } from "./types/zigbeealliance/distributedcomplianceledger/compliance/tx";
 import { MsgRevokeModel } from "./types/zigbeealliance/distributedcomplianceledger/compliance/tx";
 
 import { CertifiedModel as typeCertifiedModel} from "./types"
@@ -20,7 +20,7 @@ import { DeviceSoftwareCompliance as typeDeviceSoftwareCompliance} from "./types
 import { ProvisionalModel as typeProvisionalModel} from "./types"
 import { RevokedModel as typeRevokedModel} from "./types"
 
-export { MsgDeleteComplianceInfo, MsgCertifyModel, MsgProvisionModel, MsgUpdateComplianceInfo, MsgRevokeModel };
+export { MsgDeleteComplianceInfo, MsgUpdateComplianceInfo, MsgProvisionModel, MsgCertifyModel, MsgRevokeModel };
 
 type sendMsgDeleteComplianceInfoParams = {
   value: MsgDeleteComplianceInfo,
@@ -28,8 +28,8 @@ type sendMsgDeleteComplianceInfoParams = {
   memo?: string
 };
 
-type sendMsgCertifyModelParams = {
-  value: MsgCertifyModel,
+type sendMsgUpdateComplianceInfoParams = {
+  value: MsgUpdateComplianceInfo,
   fee?: StdFee,
   memo?: string
 };
@@ -40,8 +40,8 @@ type sendMsgProvisionModelParams = {
   memo?: string
 };
 
-type sendMsgUpdateComplianceInfoParams = {
-  value: MsgUpdateComplianceInfo,
+type sendMsgCertifyModelParams = {
+  value: MsgCertifyModel,
   fee?: StdFee,
   memo?: string
 };
@@ -57,16 +57,16 @@ type msgDeleteComplianceInfoParams = {
   value: MsgDeleteComplianceInfo,
 };
 
-type msgCertifyModelParams = {
-  value: MsgCertifyModel,
+type msgUpdateComplianceInfoParams = {
+  value: MsgUpdateComplianceInfo,
 };
 
 type msgProvisionModelParams = {
   value: MsgProvisionModel,
 };
 
-type msgUpdateComplianceInfoParams = {
-  value: MsgUpdateComplianceInfo,
+type msgCertifyModelParams = {
+  value: MsgCertifyModel,
 };
 
 type msgRevokeModelParams = {
@@ -117,17 +117,17 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgCertifyModel({ value, fee, memo }: sendMsgCertifyModelParams): Promise<DeliverTxResponse> {
+		async sendMsgUpdateComplianceInfo({ value, fee, memo }: sendMsgUpdateComplianceInfoParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgCertifyModel: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgUpdateComplianceInfo: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgCertifyModel({ value: MsgCertifyModel.fromPartial(value) })
+				let msg = this.msgUpdateComplianceInfo({ value: MsgUpdateComplianceInfo.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgCertifyModel: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgUpdateComplianceInfo: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -145,17 +145,17 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgUpdateComplianceInfo({ value, fee, memo }: sendMsgUpdateComplianceInfoParams): Promise<DeliverTxResponse> {
+		async sendMsgCertifyModel({ value, fee, memo }: sendMsgCertifyModelParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgUpdateComplianceInfo: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgCertifyModel: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgUpdateComplianceInfo({ value: MsgUpdateComplianceInfo.fromPartial(value) })
+				let msg = this.msgCertifyModel({ value: MsgCertifyModel.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgUpdateComplianceInfo: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgCertifyModel: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -182,11 +182,11 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgCertifyModel({ value }: msgCertifyModelParams): EncodeObject {
+		msgUpdateComplianceInfo({ value }: msgUpdateComplianceInfoParams): EncodeObject {
 			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.compliance.MsgCertifyModel", value: MsgCertifyModel.fromPartial( value ) }  
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.compliance.MsgUpdateComplianceInfo", value: MsgUpdateComplianceInfo.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgCertifyModel: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgUpdateComplianceInfo: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -198,11 +198,11 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgUpdateComplianceInfo({ value }: msgUpdateComplianceInfoParams): EncodeObject {
+		msgCertifyModel({ value }: msgCertifyModelParams): EncodeObject {
 			try {
-				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.compliance.MsgUpdateComplianceInfo", value: MsgUpdateComplianceInfo.fromPartial( value ) }  
+				return { typeUrl: "/zigbeealliance.distributedcomplianceledger.compliance.MsgCertifyModel", value: MsgCertifyModel.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgUpdateComplianceInfo: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgCertifyModel: Could not create message: ' + e.message)
 			}
 		},
 		

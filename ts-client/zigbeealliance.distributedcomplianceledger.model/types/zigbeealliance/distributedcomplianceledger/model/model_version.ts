@@ -21,6 +21,7 @@ export interface ModelVersion {
   releaseNotesUrl: string;
   creator: string;
   schemaVersion: number;
+  specificationVersion: number;
 }
 
 function createBaseModelVersion(): ModelVersion {
@@ -41,6 +42,7 @@ function createBaseModelVersion(): ModelVersion {
     releaseNotesUrl: "",
     creator: "",
     schemaVersion: 0,
+    specificationVersion: 0,
   };
 }
 
@@ -93,6 +95,9 @@ export const ModelVersion = {
     }
     if (message.schemaVersion !== 0) {
       writer.uint32(128).uint32(message.schemaVersion);
+    }
+    if (message.specificationVersion !== 0) {
+      writer.uint32(136).uint32(message.specificationVersion);
     }
     return writer;
   },
@@ -152,6 +157,9 @@ export const ModelVersion = {
         case 16:
           message.schemaVersion = reader.uint32();
           break;
+        case 17:
+          message.specificationVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -182,6 +190,7 @@ export const ModelVersion = {
       releaseNotesUrl: isSet(object.releaseNotesUrl) ? String(object.releaseNotesUrl) : "",
       creator: isSet(object.creator) ? String(object.creator) : "",
       schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
+      specificationVersion: isSet(object.specificationVersion) ? Number(object.specificationVersion) : 0,
     };
   },
 
@@ -205,6 +214,7 @@ export const ModelVersion = {
     message.releaseNotesUrl !== undefined && (obj.releaseNotesUrl = message.releaseNotesUrl);
     message.creator !== undefined && (obj.creator = message.creator);
     message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
+    message.specificationVersion !== undefined && (obj.specificationVersion = Math.round(message.specificationVersion));
     return obj;
   },
 
@@ -226,6 +236,7 @@ export const ModelVersion = {
     message.releaseNotesUrl = object.releaseNotesUrl ?? "";
     message.creator = object.creator ?? "";
     message.schemaVersion = object.schemaVersion ?? 0;
+    message.specificationVersion = object.specificationVersion ?? 0;
     return message;
   },
 };

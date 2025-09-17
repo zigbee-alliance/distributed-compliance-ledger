@@ -8811,6 +8811,16 @@ paths:
                       format: int64
                     commissioningFallbackUrl:
                       type: string
+                    icdUserActiveModeTriggerHint:
+                      type: integer
+                      format: int64
+                    icdUserActiveModeTriggerInstruction:
+                      type: string
+                    factoryResetStepsHint:
+                      type: integer
+                      format: int64
+                    factoryResetStepsInstruction:
+                      type: string
               pagination:
                 type: object
                 properties:
@@ -9055,6 +9065,16 @@ paths:
                     format: int64
                   commissioningFallbackUrl:
                     type: string
+                  icdUserActiveModeTriggerHint:
+                    type: integer
+                    format: int64
+                  icdUserActiveModeTriggerInstruction:
+                    type: string
+                  factoryResetStepsHint:
+                    type: integer
+                    format: int64
+                  factoryResetStepsInstruction:
+                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -9200,7 +9220,7 @@ paths:
                     format: int64
                   specificationVersion:
                     type: integer
-                    format: int32
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -23526,6 +23546,16 @@ definitions:
         format: int64
       commissioningFallbackUrl:
         type: string
+      icdUserActiveModeTriggerHint:
+        type: integer
+        format: int64
+      icdUserActiveModeTriggerInstruction:
+        type: string
+      factoryResetStepsHint:
+        type: integer
+        format: int64
+      factoryResetStepsInstruction:
+        type: string
   zigbeealliance.distributedcomplianceledger.model.ModelVersion:
     type: object
     properties:
@@ -23572,7 +23602,7 @@ definitions:
         format: int64
       specificationVersion:
         type: integer
-        format: int32
+        format: int64
   zigbeealliance.distributedcomplianceledger.model.ModelVersions:
     type: object
     properties:
@@ -23677,6 +23707,16 @@ definitions:
               format: int64
             commissioningFallbackUrl:
               type: string
+            icdUserActiveModeTriggerHint:
+              type: integer
+              format: int64
+            icdUserActiveModeTriggerInstruction:
+              type: string
+            factoryResetStepsHint:
+              type: integer
+              format: int64
+            factoryResetStepsInstruction:
+              type: string
       pagination:
         type: object
         properties:
@@ -23775,6 +23815,16 @@ definitions:
             format: int64
           commissioningFallbackUrl:
             type: string
+          icdUserActiveModeTriggerHint:
+            type: integer
+            format: int64
+          icdUserActiveModeTriggerInstruction:
+            type: string
+          factoryResetStepsHint:
+            type: integer
+            format: int64
+          factoryResetStepsInstruction:
+            type: string
   zigbeealliance.distributedcomplianceledger.model.QueryGetModelVersionResponse:
     type: object
     properties:
@@ -23824,7 +23874,7 @@ definitions:
             format: int64
           specificationVersion:
             type: integer
-            format: int32
+            format: int64
   zigbeealliance.distributedcomplianceledger.model.QueryGetModelVersionsResponse:
     type: object
     properties:

@@ -148,6 +148,7 @@ export interface MsgAddNocX509RootCert {
   signer: string;
   cert: string;
   certSchemaVersion: number;
+  isVidVerificationSigner: boolean;
 }
 
 export interface MsgAddNocX509RootCertResponse {
@@ -167,6 +168,7 @@ export interface MsgAddNocX509IcaCert {
   signer: string;
   cert: string;
   certSchemaVersion: number;
+  isVidVerificationSigner: boolean;
 }
 
 export interface MsgAddNocX509IcaCertResponse {
@@ -1803,7 +1805,7 @@ export const MsgAssignVidResponse = {
 };
 
 function createBaseMsgAddNocX509RootCert(): MsgAddNocX509RootCert {
-  return { signer: "", cert: "", certSchemaVersion: 0 };
+  return { signer: "", cert: "", certSchemaVersion: 0, isVidVerificationSigner: false };
 }
 
 export const MsgAddNocX509RootCert = {
@@ -1816,6 +1818,9 @@ export const MsgAddNocX509RootCert = {
     }
     if (message.certSchemaVersion !== 0) {
       writer.uint32(32).uint32(message.certSchemaVersion);
+    }
+    if (message.isVidVerificationSigner === true) {
+      writer.uint32(40).bool(message.isVidVerificationSigner);
     }
     return writer;
   },
@@ -1836,6 +1841,9 @@ export const MsgAddNocX509RootCert = {
         case 4:
           message.certSchemaVersion = reader.uint32();
           break;
+        case 5:
+          message.isVidVerificationSigner = reader.bool();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1849,6 +1857,7 @@ export const MsgAddNocX509RootCert = {
       signer: isSet(object.signer) ? String(object.signer) : "",
       cert: isSet(object.cert) ? String(object.cert) : "",
       certSchemaVersion: isSet(object.certSchemaVersion) ? Number(object.certSchemaVersion) : 0,
+      isVidVerificationSigner: isSet(object.isVidVerificationSigner) ? Boolean(object.isVidVerificationSigner) : false,
     };
   },
 
@@ -1857,6 +1866,7 @@ export const MsgAddNocX509RootCert = {
     message.signer !== undefined && (obj.signer = message.signer);
     message.cert !== undefined && (obj.cert = message.cert);
     message.certSchemaVersion !== undefined && (obj.certSchemaVersion = Math.round(message.certSchemaVersion));
+    message.isVidVerificationSigner !== undefined && (obj.isVidVerificationSigner = message.isVidVerificationSigner);
     return obj;
   },
 
@@ -1865,6 +1875,7 @@ export const MsgAddNocX509RootCert = {
     message.signer = object.signer ?? "";
     message.cert = object.cert ?? "";
     message.certSchemaVersion = object.certSchemaVersion ?? 0;
+    message.isVidVerificationSigner = object.isVidVerificationSigner ?? false;
     return message;
   },
 };
@@ -2024,7 +2035,7 @@ export const MsgRemoveX509CertResponse = {
 };
 
 function createBaseMsgAddNocX509IcaCert(): MsgAddNocX509IcaCert {
-  return { signer: "", cert: "", certSchemaVersion: 0 };
+  return { signer: "", cert: "", certSchemaVersion: 0, isVidVerificationSigner: false };
 }
 
 export const MsgAddNocX509IcaCert = {
@@ -2037,6 +2048,9 @@ export const MsgAddNocX509IcaCert = {
     }
     if (message.certSchemaVersion !== 0) {
       writer.uint32(24).uint32(message.certSchemaVersion);
+    }
+    if (message.isVidVerificationSigner === true) {
+      writer.uint32(32).bool(message.isVidVerificationSigner);
     }
     return writer;
   },
@@ -2057,6 +2071,9 @@ export const MsgAddNocX509IcaCert = {
         case 3:
           message.certSchemaVersion = reader.uint32();
           break;
+        case 4:
+          message.isVidVerificationSigner = reader.bool();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -2070,6 +2087,7 @@ export const MsgAddNocX509IcaCert = {
       signer: isSet(object.signer) ? String(object.signer) : "",
       cert: isSet(object.cert) ? String(object.cert) : "",
       certSchemaVersion: isSet(object.certSchemaVersion) ? Number(object.certSchemaVersion) : 0,
+      isVidVerificationSigner: isSet(object.isVidVerificationSigner) ? Boolean(object.isVidVerificationSigner) : false,
     };
   },
 
@@ -2078,6 +2096,7 @@ export const MsgAddNocX509IcaCert = {
     message.signer !== undefined && (obj.signer = message.signer);
     message.cert !== undefined && (obj.cert = message.cert);
     message.certSchemaVersion !== undefined && (obj.certSchemaVersion = Math.round(message.certSchemaVersion));
+    message.isVidVerificationSigner !== undefined && (obj.isVidVerificationSigner = message.isVidVerificationSigner);
     return obj;
   },
 
@@ -2086,6 +2105,7 @@ export const MsgAddNocX509IcaCert = {
     message.signer = object.signer ?? "";
     message.cert = object.cert ?? "";
     message.certSchemaVersion = object.certSchemaVersion ?? 0;
+    message.isVidVerificationSigner = object.isVidVerificationSigner ?? false;
     return message;
   },
 };

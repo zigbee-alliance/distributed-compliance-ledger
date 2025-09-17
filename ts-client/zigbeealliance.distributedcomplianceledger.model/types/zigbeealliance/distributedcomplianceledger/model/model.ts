@@ -31,6 +31,10 @@ export interface Model {
   maintenanceUrl: string;
   discoveryCapabilitiesBitmask: number;
   commissioningFallbackUrl: string;
+  icdUserActiveModeTriggerHint: number;
+  icdUserActiveModeTriggerInstruction: string;
+  factoryResetStepsHint: number;
+  factoryResetStepsInstruction: string;
 }
 
 function createBaseModel(): Model {
@@ -62,6 +66,10 @@ function createBaseModel(): Model {
     maintenanceUrl: "",
     discoveryCapabilitiesBitmask: 0,
     commissioningFallbackUrl: "",
+    icdUserActiveModeTriggerHint: 0,
+    icdUserActiveModeTriggerInstruction: "",
+    factoryResetStepsHint: 0,
+    factoryResetStepsInstruction: "",
   };
 }
 
@@ -147,6 +155,18 @@ export const Model = {
     }
     if (message.commissioningFallbackUrl !== "") {
       writer.uint32(218).string(message.commissioningFallbackUrl);
+    }
+    if (message.icdUserActiveModeTriggerHint !== 0) {
+      writer.uint32(224).uint32(message.icdUserActiveModeTriggerHint);
+    }
+    if (message.icdUserActiveModeTriggerInstruction !== "") {
+      writer.uint32(234).string(message.icdUserActiveModeTriggerInstruction);
+    }
+    if (message.factoryResetStepsHint !== 0) {
+      writer.uint32(240).uint32(message.factoryResetStepsHint);
+    }
+    if (message.factoryResetStepsInstruction !== "") {
+      writer.uint32(250).string(message.factoryResetStepsInstruction);
     }
     return writer;
   },
@@ -239,6 +259,18 @@ export const Model = {
         case 27:
           message.commissioningFallbackUrl = reader.string();
           break;
+        case 28:
+          message.icdUserActiveModeTriggerHint = reader.uint32();
+          break;
+        case 29:
+          message.icdUserActiveModeTriggerInstruction = reader.string();
+          break;
+        case 30:
+          message.factoryResetStepsHint = reader.uint32();
+          break;
+        case 31:
+          message.factoryResetStepsInstruction = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -294,6 +326,16 @@ export const Model = {
         ? Number(object.discoveryCapabilitiesBitmask)
         : 0,
       commissioningFallbackUrl: isSet(object.commissioningFallbackUrl) ? String(object.commissioningFallbackUrl) : "",
+      icdUserActiveModeTriggerHint: isSet(object.icdUserActiveModeTriggerHint)
+        ? Number(object.icdUserActiveModeTriggerHint)
+        : 0,
+      icdUserActiveModeTriggerInstruction: isSet(object.icdUserActiveModeTriggerInstruction)
+        ? String(object.icdUserActiveModeTriggerInstruction)
+        : "",
+      factoryResetStepsHint: isSet(object.factoryResetStepsHint) ? Number(object.factoryResetStepsHint) : 0,
+      factoryResetStepsInstruction: isSet(object.factoryResetStepsInstruction)
+        ? String(object.factoryResetStepsInstruction)
+        : "",
     };
   },
 
@@ -337,6 +379,14 @@ export const Model = {
     message.discoveryCapabilitiesBitmask !== undefined
       && (obj.discoveryCapabilitiesBitmask = Math.round(message.discoveryCapabilitiesBitmask));
     message.commissioningFallbackUrl !== undefined && (obj.commissioningFallbackUrl = message.commissioningFallbackUrl);
+    message.icdUserActiveModeTriggerHint !== undefined
+      && (obj.icdUserActiveModeTriggerHint = Math.round(message.icdUserActiveModeTriggerHint));
+    message.icdUserActiveModeTriggerInstruction !== undefined
+      && (obj.icdUserActiveModeTriggerInstruction = message.icdUserActiveModeTriggerInstruction);
+    message.factoryResetStepsHint !== undefined
+      && (obj.factoryResetStepsHint = Math.round(message.factoryResetStepsHint));
+    message.factoryResetStepsInstruction !== undefined
+      && (obj.factoryResetStepsInstruction = message.factoryResetStepsInstruction);
     return obj;
   },
 
@@ -369,6 +419,10 @@ export const Model = {
     message.maintenanceUrl = object.maintenanceUrl ?? "";
     message.discoveryCapabilitiesBitmask = object.discoveryCapabilitiesBitmask ?? 0;
     message.commissioningFallbackUrl = object.commissioningFallbackUrl ?? "";
+    message.icdUserActiveModeTriggerHint = object.icdUserActiveModeTriggerHint ?? 0;
+    message.icdUserActiveModeTriggerInstruction = object.icdUserActiveModeTriggerInstruction ?? "";
+    message.factoryResetStepsHint = object.factoryResetStepsHint ?? 0;
+    message.factoryResetStepsInstruction = object.factoryResetStepsInstruction ?? "";
     return message;
   },
 };
