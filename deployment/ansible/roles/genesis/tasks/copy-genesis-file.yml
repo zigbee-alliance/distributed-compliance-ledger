@@ -27,33 +27,4 @@
     dest: "{{ playbook_dir }}/../persistent_chains/{{ chain_id }}/genesis.json"
   run_once: true
   delegate_to: localhost
-# - name: Check if local genesis exists
-#   stat:
-#     path: "{{ playbook_dir }}/../persistent_chains/{{ chain_id }}/genesis.json"
-#   register: local_genesis_file
-#   delegate_to: localhost
-#   run_once: true
-
-# - name: Copy genesis from local to remote (if exists locally)
-#   copy:
-#     src: "{{ playbook_dir }}/../persistent_chains/{{ chain_id }}/genesis.json"
-#     dest: "{{ dcl_home }}/config/genesis.json"
-#     owner: "{{ ansible_user | default('root') }}"
-#     mode: '0644'
-#   when: local_genesis_file.stat.exists
-#   run_once: true
-
-# - name: Read genesis from remote (if no local copy)
-#   command: "cat {{ dcl_home }}/config/genesis.json"
-#   register: genesis_file_content
-#   changed_when: false
-#   when: not local_genesis_file.stat.exists
-#   run_once: true
-
-# - name: Save remote genesis to local (if no local copy)
-#   copy:
-#     content: "{{ genesis_file_content.stdout }}"
-#     dest: "{{ playbook_dir }}/../persistent_chains/{{ chain_id }}/genesis.json"
-#   when: not local_genesis_file.stat.exists
-#   delegate_to: localhost
-#   run_once: true
+  
