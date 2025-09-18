@@ -24,14 +24,15 @@ accounts:
 chain_id: testnet-2.0
 company_name: CSA
 type_name: "" # "ON", "Priv-SN", "Pub-SN", "SeedN" or "VN"
-dcl_version: 1.5.0-0.dev.3
+dcld_version: 1.4.4
+cosmovisor_version: 1.5.0-0.dev.3
 
 dcl_home: /var/lib/dcl/.dcl
 dcld:
-  version: "{{ dcl_version }}"
+  version: "{{ dcld_version }}"
   path: "{{ dcl_home }}/cosmovisor/genesis/bin/dcld"
 cosmovisor:
-  version: "{{ dcl_version }}"
+  version: "{{ cosmovisor_version }}"
   user: cosmovisor
   group: dcl
   path: /usr/bin/cosmovisor
@@ -42,6 +43,8 @@ dcld_checksums:
   # TODO upgrade the version from development to release after release
   1.5.0-0.dev.3: bf2f800ebf1f92ee44392da702f54879b611df65d72921351e26d3fa4df0ab47
   1.5.0-0.dev.2: e81461c42a462c84ad58485f665692f20a0d545afd5556880f03c12a8bbc6dad
+  1.4.5: 61c164a1d6a5376c486bb92bd9dc66f90445079e18434a5ce8ecece7e6e6e406
+  1.4.4: e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958
   0.12.0: ac8dc75bcbebda04fbef644ddbcee4b852d721a3522ccf06ff5d1bb8464949c6
   0.11.0: 33986b277be76d3e7b5443a09232d87d58324ad7cb6123f3d550149f2dc28452
   0.10.0: ea0e16eed3cc30b5a7f17299aca01b5d827b9a04576662d957af02608bca0fb6
@@ -52,6 +55,8 @@ dcld_checksums:
 cosmovisor_checksums:
   1.5.0-0.dev.3: 21bff17f214e0bb0c078e7238b1ea5895388207faa6c6586a0f454097a54eb33
   1.5.0-0.dev.2: 1dbed08364bb9b767d1a88523f68ddc5a9f75b0a088ac8776fa5cf73a21f2067
+  1.4.5: 61c164a1d6a5376c486bb92bd9dc66f90445079e18434a5ce8ecece7e6e6e406  
+  1.4.4: e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958
   0.12.0: eae97a7207b5747dca9614e7b7ec478a4cc559669ad716b142dd5a2bc2266881
   0.11.0: 05bf568e34a7c92a61f268401a9f1d6df3c3f015e884a239da5d35c299da6adb
   0.10.0: 6dac8f0e0267bd930be91c6f3369eb9c35a649546ea071b223a7c8c00203d26a

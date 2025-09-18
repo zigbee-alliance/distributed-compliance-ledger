@@ -16,7 +16,7 @@
 config:
   p2p:
     pex: true
-    persistent_peers:
+    persistent_peers: ""
   rpc:
     laddr: "tcp://0.0.0.0:26657"
   statesync:

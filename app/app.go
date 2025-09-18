@@ -694,9 +694,16 @@ func New(
 	)
 
 	app.UpgradeKeeper.SetUpgradeHandler(
-		"v1.5",
+		"v1.4.5",
 		func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
-			return make(module.VersionMap), nil
+			return app.mm.RunMigrations(ctx, app.configurator, fromVM)
+		},
+	)
+
+	app.UpgradeKeeper.SetUpgradeHandler(
+		"v1.5.0",
+		func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+			return app.mm.RunMigrations(ctx, app.configurator, fromVM)
 		},
 	)
 
