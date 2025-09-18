@@ -24,7 +24,7 @@ log() {
 
 mkdir -p $TMP_DCLD_BINS_DIR
 
-for version in 0.12.0 0.12.1 1.2.2 1.4.3 1.4.4 1.4.5 1.5.0-0.dev.5; do
+for version in 0.12.0 0.12.1 1.2.2 1.4.3 1.4.4 1.5.0-0.dev.5; do
     DCLD_BIN_FILE="$TMP_DCLD_BINS_DIR/dcld_v$version"
 
     if [[ ! -f $DCLD_BIN_FILE || "$(stat -c %a $DCLD_BIN_FILE)" != "775" ]]; then
