@@ -54,13 +54,18 @@ func (k msgServer) CreateValidator(goCtx context.Context, msg *types.MsgCreateVa
 
 	// check key type
 	cp := ctx.ConsensusParams()
-	if cp != nil && cp.Validator != nil {
-		if !tmstrings.StringInSlice(pk.Type(), cp.Validator.PubKeyTypes) {
-			return nil, errors.Wrapf(
-				sdkstakingtypes.ErrValidatorPubKeyTypeNotSupported,
-				"got: %s, expected: %s", pk.Type(), cp.Validator.PubKeyTypes,
-			)
-		}
+	var pubKeyTypes []string
+	if cp != nil && cp.Validator != nil && len(cp.Validator.PubKeyTypes) > 0 {
+		pubKeyTypes = cp.Validator.PubKeyTypes
+	} else {
+		pubKeyTypes = []string{"ed25519"}
+	}
+
+	if !tmstrings.StringInSlice(pk.Type(), pubKeyTypes) {
+		return nil, errors.Wrapf(
+			sdkstakingtypes.ErrValidatorPubKeyTypeNotSupported,
+			"got: %s, expected: %s", pk.Type(), pubKeyTypes,
+		)
 	}
 
 	validator, err := types.NewValidator(valAddr, pk, msg.Description)

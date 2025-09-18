@@ -22,6 +22,7 @@ max_restart_cnt=10
 restart_cnt=0
 
 RUN_CMD="$HOME"/./cosmovisor_start.sh
+rm -f "$HOME"/.dcl/cosmovisor/cosmovisor_preupgrade.sh
 ln -s "$HOME"/cosmovisor_preupgrade.sh "$HOME"/.dcl/cosmovisor/cosmovisor_preupgrade.sh
 
 cosmovisor_stop() {
