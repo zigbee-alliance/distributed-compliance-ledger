@@ -50,6 +50,9 @@
         mode: preserve
         src: cosmovisor.service.j2
         dest: /etc/systemd/system/cosmovisor.service
+    - name: reload systemd
+      systemd:
+        daemon_reload: true
 
 - name: create destination directories
   file:

@@ -27,3 +27,4 @@
     dest: "{{ playbook_dir }}/../persistent_chains/{{ chain_id }}/genesis.json"
   run_once: true
   delegate_to: localhost
+  

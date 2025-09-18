@@ -16,7 +16,7 @@
 config:
   p2p:
     pex: true
-    persistent_peers:
+    persistent_peers: ""
     seeds:
     addr_book_strict: false
   rpc:
