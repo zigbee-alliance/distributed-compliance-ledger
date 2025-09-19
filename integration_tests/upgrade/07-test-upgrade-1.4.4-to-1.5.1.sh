@@ -18,13 +18,13 @@ source integration_tests/cli/common.sh
 
 # Upgrade constants
 
-plan_name="v1.5"
-upgrade_checksum="sha256:71128e28ce906a6f8b3454a68c8691f13f62097de03a3290b51751d3679f992d"
+plan_name="v1.5.1"
+upgrade_checksum="sha256:21550db9f1018b7d464b0bca7440dc4aee4ee13932ff4f9e2b405b342e2e0a75"
 # TODO it must be v1.5 before actual 1.5 release
-binary_version_new="v1.5.0-0.dev.5"
+binary_version_new="v1.5.1"
 
 DCLD_BIN_OLD="/tmp/dcld_bins/dcld_v1.4.4"
-DCLD_BIN_NEW="/tmp/dcld_bins/dcld_v1.5.0-0.dev.5"
+DCLD_BIN_NEW="/tmp/dcld_bins/dcld_v1.5.1"
 $DCLD_BIN_NEW config broadcast-mode sync
 ########################################################################################
 
@@ -486,41 +486,46 @@ check_response "$result" "\"owner\": \"$validator_address\""
 
 # after upgrade constants
 
-vid_for_1_5_0=65529
-pid_1_for_1_5_0=79
-pid_2_for_1_5_0=89
-pid_3_for_1_5_0=97
-device_type_id_for_1_5_0=4433
-product_name_for_1_5_0="ProductName_1_5_0"
-product_label_for_1_5_0="ProductLabel_1_5_0"
-part_number_for_1_5_0="RCU2245M"
-software_version_for_1_5_0=4
-software_version_string_for_1_5_0="4.3"
-cd_version_number_for_1_5_0=513
-min_applicable_software_version_for_1_5_0=8
-max_applicable_software_version_for_1_5_0=8000
+vid_for_1_5_1=65529
+pid_1_for_1_5_1=79
+pid_2_for_1_5_1=89
+pid_3_for_1_5_1=97
+device_type_id_for_1_5_1=4433
+product_name_for_1_5_1="ProductName_1_5_1"
+product_label_for_1_5_1="ProductLabel_1_5_1"
+icd_user_active_mode_trigger_hint_for_1_5_1=4
+icd_user_active_mode_trigger_instruction_for_1_5_1="icd_user_active_mode_trigger_hint_for_1_5_1"
+factory_reset_steps_hint_for_1_5_1=3
+factory_reset_steps_instruction_for_1_5_1="factory_reset_steps_instruction_for_1_5_1"
+specification_version_for_1_5_1=2
+part_number_for_1_5_1="RCU2245M"
+software_version_for_1_5_1=4
+software_version_string_for_1_5_1="4.3"
+cd_version_number_for_1_5_1=513
+min_applicable_software_version_for_1_5_1=8
+max_applicable_software_version_for_1_5_1=8000
 
-certification_type_for_1_5_0="matter"
-certification_date_for_1_5_0="2024-01-01T00:00:00Z"
-provisional_date_for_1_5_0="2016-12-12T00:00:00Z"
-cd_certificate_id_for_1_5_0="20DEXZ"
+certification_type_for_1_5_1="matter"
+certification_date_for_1_5_1="2024-01-01T00:00:00Z"
+provisional_date_for_1_5_1="2016-12-12T00:00:00Z"
+cd_certificate_id_for_1_5_1="20DEXZ"
 
-test_data_url_for_1_5_0="https://url.data.dclmodel-1.5"
+test_data_url_for_1_5_1="https://url.data.dclmodel-1.5"
 
-vendor_name_for_1_5_0="Vendor_1_5_0"
-company_legal_name_for_1_5_0="LegalCompanyName_1_5_0"
-company_preferred_name_for_1_5_0="CompanyPreferredName_1_5_0"
-vendor_landing_page_url_for_1_5_0="https://www.new_1_5_0_example.com"
+vendor_name_for_1_5_1="Vendor_1_5_1"
+company_legal_name_for_1_5_1="LegalCompanyName_1_5_1"
+company_preferred_name_for_1_5_1="CompanyPreferredName_1_5_1"
+vendor_landing_page_url_for_1_5_1="https://www.new_1_5_1_example.com"
 
-vendor_account_for_1_5_0="vendor_account_1_5_0"
+vendor_account_for_1_5_1="vendor_account_1_5_1"
 
-echo "Create Vendor account $vendor_account_for_1_5_0"
+echo "Create Vendor account $vendor_account_for_1_5_1"
 
-result="$(echo $passphrase | $DCLD_BIN_NEW keys add "$vendor_account_for_1_5_0")"
+result="$(echo $passphrase | $DCLD_BIN_NEW keys add "$vendor_account_for_1_5_1")"
 echo "keys add $result"
-_address=$(echo $passphrase | $DCLD_BIN_NEW keys show $vendor_account_for_1_5_0 -a)
-_pubkey=$(echo $passphrase | $DCLD_BIN_NEW keys show $vendor_account_for_1_5_0 -p)
-result=$(echo $passphrase | $DCLD_BIN_NEW tx auth propose-add-account --address="$_address" --pubkey="$_pubkey" --vid="$vid_for_1_5_0" --roles="Vendor" --from "$trustee_account_1" --yes)
+_address=$(echo $passphrase | $DCLD_BIN_NEW keys show $vendor_account_for_1_5_1 -a)
+_pubkey=$(echo $passphrase | $DCLD_BIN_NEW keys show $vendor_account_for_1_5_1 -p)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx auth propose-add-account --address="$_address" --pubkey="$_pubkey" --vid="$vid_for_1_5_1" --roles="Vendor" --from "$trustee_account_1" --yes)
 echo "propose-add-account $result"
 result=$(get_txn_result "$result")
 result=$(echo $passphrase | $DCLD_BIN_NEW tx auth approve-add-account --address="$_address" --from "$trustee_account_2" --yes)
@@ -554,15 +559,15 @@ user_15_pubkey=$(echo $passphrase | $DCLD_BIN_NEW keys show $user_15 -p)
 # send all ledger update transactions after upgrade
 
 # VENDOR_INFO
-echo "Add vendor $vendor_name_for_1_5_0"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx vendorinfo add-vendor --vid=$vid_for_1_5_0 --vendorName=$vendor_name_for_1_5_0 --companyLegalName=$company_legal_name_for_1_5_0 --companyPreferredName=$company_preferred_name_for_1_5_0 --vendorLandingPageURL=$vendor_landing_page_url_for_1_5_0 --from=$vendor_account_for_1_5_0 --yes)
+echo "Add vendor $vendor_name_for_1_5_1"
+result=$(echo $passphrase | $DCLD_BIN_NEW tx vendorinfo add-vendor --vid=$vid_for_1_5_1 --vendorName=$vendor_name_for_1_5_1 --companyLegalName=$company_legal_name_for_1_5_1 --companyPreferredName=$company_preferred_name_for_1_5_1 --vendorLandingPageURL=$vendor_landing_page_url_for_1_5_1 --from=$vendor_account_for_1_5_1 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Update vendor $vendor_name_for_1_2"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx vendorinfo update-vendor --vid=$vid_for_1_2 --vendorName=$vendor_name_for_1_2 --companyLegalName=$company_legal_name_for_1_2 --companyPreferredName=$company_preferred_name_for_1_5_0 --vendorLandingPageURL=$vendor_landing_page_url_for_1_5_0 --from=$vendor_account_for_1_2 --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx vendorinfo update-vendor --vid=$vid_for_1_2 --vendorName=$vendor_name_for_1_2 --companyLegalName=$company_legal_name_for_1_2 --companyPreferredName=$company_preferred_name_for_1_5_1 --vendorLandingPageURL=$vendor_landing_page_url_for_1_5_1 --from=$vendor_account_for_1_2 --yes)
 result=$(get_txn_result "$result")
 echo $result
 check_response "$result" "\"code\": 0"
@@ -571,62 +576,66 @@ test_divider
 
 # MODEL and MODEL_VERSION
 
-echo "Add model vid=$vid_for_1_5_0 pid=$pid_1_for_1_5_0"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_1_5_0 --pid=$pid_1_for_1_5_0 --deviceTypeID=$device_type_id_for_1_5_0 --productName=$product_name_for_1_5_0 --productLabel=$product_label_for_1_5_0 --partNumber=$part_number_for_1_5_0 --from=$vendor_account_for_1_5_0 --yes)
+echo "Add model vid=$vid_for_1_5_1 pid=$pid_1_for_1_5_1"
+result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_1_5_1 --pid=$pid_1_for_1_5_1 \
+  --deviceTypeID=$device_type_id_for_1_5_1 --productName=$product_name_for_1_5_1 --productLabel=$product_label_for_1_5_1 --partNumber=$part_number_for_1_5_1 \
+  --icdUserActiveModeTriggerHint="$icd_user_active_mode_trigger_hint_for_1_5_1" --icdUserActiveModeTriggerInstruction="$icd_user_active_mode_trigger_instruction_for_1_5_1" \
+  --factoryResetStepsHint="$factory_reset_steps_hint_for_1_5_1" --factoryResetStepsInstruction="$factory_reset_steps_instruction_for_1_5_1" \
+  --from=$vendor_account_for_1_5_1 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Add model version vid=$vid_for_1_5_0 pid=$pid_1_for_1_5_0"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model-version --vid=$vid_for_1_5_0 --pid=$pid_1_for_1_5_0 --softwareVersion=$software_version_for_1_5_0 --softwareVersionString=$software_version_string_for_1_5_0 --cdVersionNumber=$cd_version_number_for_1_5_0 --minApplicableSoftwareVersion=$min_applicable_software_version_for_1_5_0 --maxApplicableSoftwareVersion=$max_applicable_software_version_for_1_5_0 --from=$vendor_account_for_1_5_0 --yes)
+echo "Add model version vid=$vid_for_1_5_1 pid=$pid_1_for_1_5_1"
+result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model-version --vid=$vid_for_1_5_1 --pid=$pid_1_for_1_5_1 --softwareVersion=$software_version_for_1_5_1 --softwareVersionString=$software_version_string_for_1_5_1 --cdVersionNumber=$cd_version_number_for_1_5_1 --minApplicableSoftwareVersion=$min_applicable_software_version_for_1_5_1 --maxApplicableSoftwareVersion=$max_applicable_software_version_for_1_5_1 --specificationVersion="$specification_version_for_1_5_1" --from=$vendor_account_for_1_5_1 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Add model vid=$vid_for_1_5_0 pid=$pid_2_for_1_5_0"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_1_5_0 --pid=$pid_2_for_1_5_0 --deviceTypeID=$device_type_id_for_1_5_0 --productName=$product_name_for_1_5_0 --productLabel=$product_label_for_1_5_0 --partNumber=$part_number_for_1_5_0 --from=$vendor_account_for_1_5_0 --yes)
+echo "Add model vid=$vid_for_1_5_1 pid=$pid_2_for_1_5_1"
+result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_1_5_1 --pid=$pid_2_for_1_5_1 --deviceTypeID=$device_type_id_for_1_5_1 --productName=$product_name_for_1_5_1 --productLabel=$product_label_for_1_5_1 --partNumber=$part_number_for_1_5_1 --from=$vendor_account_for_1_5_1 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Add model version vid=$vid_for_1_5_0 pid=$pid_2_for_1_5_0"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model-version --vid=$vid_for_1_5_0 --pid=$pid_2_for_1_5_0 --softwareVersion=$software_version_for_1_5_0 --softwareVersionString=$software_version_string_for_1_5_0 --cdVersionNumber=$cd_version_number_for_1_5_0 --minApplicableSoftwareVersion=$min_applicable_software_version_for_1_5_0 --maxApplicableSoftwareVersion=$max_applicable_software_version_for_1_5_0 --from=$vendor_account_for_1_5_0 --yes)
+echo "Add model version vid=$vid_for_1_5_1 pid=$pid_2_for_1_5_1"
+result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model-version --vid=$vid_for_1_5_1 --pid=$pid_2_for_1_5_1 --softwareVersion=$software_version_for_1_5_1 --softwareVersionString=$software_version_string_for_1_5_1 --cdVersionNumber=$cd_version_number_for_1_5_1 --minApplicableSoftwareVersion=$min_applicable_software_version_for_1_5_1 --maxApplicableSoftwareVersion=$max_applicable_software_version_for_1_5_1 --from=$vendor_account_for_1_5_1 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Add model vid=$vid_for_1_5_0 pid=$pid_3_for_1_5_0"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_1_5_0 --pid=$pid_3_for_1_5_0 --deviceTypeID=$device_type_id_for_1_5_0 --productName=$product_name_for_1_5_0 --productLabel=$product_label_for_1_5_0 --partNumber=$part_number_for_1_5_0 --from=$vendor_account_for_1_5_0 --yes)
+echo "Add model vid=$vid_for_1_5_1 pid=$pid_3_for_1_5_1"
+result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_1_5_1 --pid=$pid_3_for_1_5_1 --deviceTypeID=$device_type_id_for_1_5_1 --productName=$product_name_for_1_5_1 --productLabel=$product_label_for_1_5_1 --partNumber=$part_number_for_1_5_1 --from=$vendor_account_for_1_5_1 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
-echo "Add model version vid=$vid_for_1_5_0 pid=$pid_3_for_1_5_0"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model-version --vid=$vid_for_1_5_0 --pid=$pid_3_for_1_5_0 --softwareVersion=$software_version_for_1_5_0 --softwareVersionString=$software_version_string_for_1_5_0 --cdVersionNumber=$cd_version_number_for_1_5_0 --minApplicableSoftwareVersion=$min_applicable_software_version_for_1_5_0 --maxApplicableSoftwareVersion=$max_applicable_software_version_for_1_5_0 --from=$vendor_account_for_1_5_0 --yes)
+echo "Add model version vid=$vid_for_1_5_1 pid=$pid_3_for_1_5_1"
+result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model-version --vid=$vid_for_1_5_1 --pid=$pid_3_for_1_5_1 --softwareVersion=$software_version_for_1_5_1 --softwareVersionString=$software_version_string_for_1_5_1 --cdVersionNumber=$cd_version_number_for_1_5_1 --minApplicableSoftwareVersion=$min_applicable_software_version_for_1_5_1 --maxApplicableSoftwareVersion=$max_applicable_software_version_for_1_5_1 --from=$vendor_account_for_1_5_1 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Delete model vid=$vid_for_1_5_0 pid=$pid_3_for_1_5_0"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx model delete-model --vid=$vid_for_1_5_0 --pid=$pid_3_for_1_5_0 --from=$vendor_account_for_1_5_0 --yes)
+echo "Delete model vid=$vid_for_1_5_1 pid=$pid_3_for_1_5_1"
+result=$(echo $passphrase | $DCLD_BIN_NEW tx model delete-model --vid=$vid_for_1_5_1 --pid=$pid_3_for_1_5_1 --from=$vendor_account_for_1_5_1 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Update model vid=$vid pid=$pid_2"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx model update-model --vid=$vid --pid=$pid_2 --productName=$product_name --productLabel=$product_label_for_1_5_0 --partNumber=$part_number_for_1_5_0 --from=$vendor_account --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx model update-model --vid=$vid --pid=$pid_2 --productName=$product_name --productLabel=$product_label_for_1_5_1 --partNumber=$part_number_for_1_5_1 --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Update model version vid=$vid pid=$pid_2"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx model update-model-version --vid=$vid --pid=$pid_2 --softwareVersion=$software_version --minApplicableSoftwareVersion=$min_applicable_software_version_for_1_5_0 --maxApplicableSoftwareVersion=$max_applicable_software_version_for_1_5_0 --from=$vendor_account --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx model update-model-version --vid=$vid --pid=$pid_2 --softwareVersion=$software_version --minApplicableSoftwareVersion=$min_applicable_software_version_for_1_5_1 --maxApplicableSoftwareVersion=$max_applicable_software_version_for_1_5_1 --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -634,29 +643,29 @@ test_divider
 
 # CERTIFY_DEVICE_COMPLIANCE
 
-echo "Certify model vid=$vid_for_1_5_0 pid=$pid_1_for_1_5_0"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance certify-model --vid=$vid_for_1_5_0 --pid=$pid_1_for_1_5_0 --softwareVersion=$software_version_for_1_5_0 --softwareVersionString=$software_version_string_for_1_5_0  --certificationType=$certification_type_for_1_5_0 --certificationDate=$certification_date_for_1_5_0 --cdCertificateId=$cd_certificate_id_for_1_5_0 --from=$certification_center_account --cdVersionNumber=$cd_version_number_for_1_5_0 --yes)
+echo "Certify model vid=$vid_for_1_5_1 pid=$pid_1_for_1_5_1"
+result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance certify-model --vid=$vid_for_1_5_1 --pid=$pid_1_for_1_5_1 --softwareVersion=$software_version_for_1_5_1 --softwareVersionString=$software_version_string_for_1_5_1  --certificationType=$certification_type_for_1_5_1 --certificationDate=$certification_date_for_1_5_1 --cdCertificateId=$cd_certificate_id_for_1_5_1 --from=$certification_center_account --cdVersionNumber=$cd_version_number_for_1_5_1 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Provision model vid=$vid_for_1_5_0 pid=$pid_2_for_1_5_0"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance provision-model --vid=$vid_for_1_5_0 --pid=$pid_2_for_1_5_0 --softwareVersion=$software_version_for_1_5_0 --softwareVersionString=$software_version_string_for_1_5_0 --certificationType=$certification_type_for_1_5_0 --provisionalDate=$provisional_date_for_1_5_0 --cdCertificateId=$cd_certificate_id_for_1_5_0 --from=$certification_center_account --cdVersionNumber=$cd_version_number_for_1_5_0 --yes)
+echo "Provision model vid=$vid_for_1_5_1 pid=$pid_2_for_1_5_1"
+result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance provision-model --vid=$vid_for_1_5_1 --pid=$pid_2_for_1_5_1 --softwareVersion=$software_version_for_1_5_1 --softwareVersionString=$software_version_string_for_1_5_1 --certificationType=$certification_type_for_1_5_1 --provisionalDate=$provisional_date_for_1_5_1 --cdCertificateId=$cd_certificate_id_for_1_5_1 --from=$certification_center_account --cdVersionNumber=$cd_version_number_for_1_5_1 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Certify model vid=$vid_for_1_5_0 pid=$pid_2_for_1_5_0"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance certify-model --vid=$vid_for_1_5_0 --pid=$pid_2_for_1_5_0 --softwareVersion=$software_version_for_1_5_0 --softwareVersionString=$software_version_string_for_1_5_0  --certificationType=$certification_type_for_1_5_0 --certificationDate=$certification_date_for_1_5_0 --cdCertificateId=$cd_certificate_id_for_1_5_0 --from=$certification_center_account --cdVersionNumber=$cd_version_number_for_1_5_0  --yes)
+echo "Certify model vid=$vid_for_1_5_1 pid=$pid_2_for_1_5_1"
+result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance certify-model --vid=$vid_for_1_5_1 --pid=$pid_2_for_1_5_1 --softwareVersion=$software_version_for_1_5_1 --softwareVersionString=$software_version_string_for_1_5_1  --certificationType=$certification_type_for_1_5_1 --certificationDate=$certification_date_for_1_5_1 --cdCertificateId=$cd_certificate_id_for_1_5_1 --from=$certification_center_account --cdVersionNumber=$cd_version_number_for_1_5_1  --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Revoke model certification vid=$vid_for_1_5_0 pid=$pid_2_for_1_5_0"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance revoke-model --vid=$vid_for_1_5_0 --pid=$pid_2_for_1_5_0 --softwareVersion=$software_version_for_1_5_0 --softwareVersionString=$software_version_string_for_1_5_0 --certificationType=$certification_type_for_1_5_0 --revocationDate=$certification_date_for_1_5_0 --from=$certification_center_account --cdVersionNumber=$cd_version_number_for_1_5_0 --yes)
+echo "Revoke model certification vid=$vid_for_1_5_1 pid=$pid_2_for_1_5_1"
+result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance revoke-model --vid=$vid_for_1_5_1 --pid=$pid_2_for_1_5_1 --softwareVersion=$software_version_for_1_5_1 --softwareVersionString=$software_version_string_for_1_5_1 --certificationType=$certification_type_for_1_5_1 --revocationDate=$certification_date_for_1_5_1 --from=$certification_center_account --cdVersionNumber=$cd_version_number_for_1_5_1 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -820,134 +829,140 @@ test_divider
 
 # VENDORINFO
 
-echo "Verify if VendorInfo Record for VID: $vid_for_1_5_0 is present or not"
-result=$($DCLD_BIN_NEW query vendorinfo vendor --vid=$vid_for_1_5_0)
-check_response "$result" "\"vendorID\": $vid_for_1_5_0"
-check_response "$result" "\"companyLegalName\": \"$company_legal_name_for_1_5_0\""
+echo "Verify if VendorInfo Record for VID: $vid_for_1_5_1 is present or not"
+result=$($DCLD_BIN_NEW query vendorinfo vendor --vid=$vid_for_1_5_1)
+check_response "$result" "\"vendorID\": $vid_for_1_5_1"
+check_response "$result" "\"companyLegalName\": \"$company_legal_name_for_1_5_1\""
 
 echo "Verify if VendorInfo Record for VID: $vid_for_1_2 updated or not"
 result=$($DCLD_BIN_NEW query vendorinfo vendor --vid=$vid_for_1_2)
 check_response "$result" "\"vendorID\": $vid_for_1_2"
 check_response "$result" "\"vendorName\": \"$vendor_name_for_1_2\""
-check_response "$result" "\"companyPreferredName\": \"$company_preferred_name_for_1_5_0\""
-check_response "$result" "\"vendorLandingPageURL\": \"$vendor_landing_page_url_for_1_5_0\""
+check_response "$result" "\"companyPreferredName\": \"$company_preferred_name_for_1_5_1\""
+check_response "$result" "\"vendorLandingPageURL\": \"$vendor_landing_page_url_for_1_5_1\""
 
 echo "Request all vendor infos"
 result=$($DCLD_BIN_NEW query vendorinfo all-vendors)
-check_response "$result" "\"vendorID\": $vid_for_1_5_0"
-check_response "$result" "\"companyLegalName\": \"$company_legal_name_for_1_5_0\""
-check_response "$result" "\"vendorName\": \"$vendor_name_for_1_5_0\""
+check_response "$result" "\"vendorID\": $vid_for_1_5_1"
+check_response "$result" "\"companyLegalName\": \"$company_legal_name_for_1_5_1\""
+check_response "$result" "\"vendorName\": \"$vendor_name_for_1_5_1\""
 
 test_divider
 
 # MODEL
 
-echo "Get Model with VID: $vid_for_1_5_0 PID: $pid_1_for_1_5_0"
-result=$($DCLD_BIN_NEW query model get-model --vid=$vid_for_1_5_0 --pid=$pid_1_for_1_5_0)
-check_response "$result" "\"vid\": $vid_for_1_5_0"
-check_response "$result" "\"pid\": $pid_1_for_1_5_0"
-check_response "$result" "\"productLabel\": \"$product_label_for_1_5_0\""
+echo "Get Model with VID: $vid_for_1_5_1 PID: $pid_1_for_1_5_1"
+result=$($DCLD_BIN_NEW query model get-model --vid=$vid_for_1_5_1 --pid=$pid_1_for_1_5_1)
+check_response "$result" "\"vid\": $vid_for_1_5_1"
+check_response "$result" "\"pid\": $pid_1_for_1_5_1"
+check_response "$result" "\"productLabel\": \"$product_label_for_1_5_1\""
+check_response "$result" "\"icdUserActiveModeTriggerHint\": $icd_user_active_mode_trigger_hint_for_1_5_1"
+check_response "$result" "\"icdUserActiveModeTriggerInstruction\": \"$icd_user_active_mode_trigger_instruction_for_1_5_1\""
+check_response "$result" "\"factoryResetStepsHint\": $factory_reset_steps_hint_for_1_5_1"
+check_response "$result" "\"factoryResetStepsInstruction\": \"$factory_reset_steps_instruction_for_1_5_1\""
 
-echo "Get Model with VID: $vid_for_1_5_0 PID: $pid_2_for_1_5_0"
-result=$($DCLD_BIN_NEW query model get-model --vid=$vid_for_1_5_0 --pid=$pid_2_for_1_5_0)
-check_response "$result" "\"vid\": $vid_for_1_5_0"
-check_response "$result" "\"pid\": $pid_2_for_1_5_0"
-check_response "$result" "\"productLabel\": \"$product_label_for_1_5_0\""
+echo "Get Model with VID: $vid_for_1_5_1 PID: $pid_2_for_1_5_1"
+result=$($DCLD_BIN_NEW query model get-model --vid=$vid_for_1_5_1 --pid=$pid_2_for_1_5_1)
+check_response "$result" "\"vid\": $vid_for_1_5_1"
+check_response "$result" "\"pid\": $pid_2_for_1_5_1"
+check_response "$result" "\"productLabel\": \"$product_label_for_1_5_1\""
 
-echo "Check Model with VID: $vid_for_1_5_0 PID: $pid_2_for_1_5_0 updated"
+echo "Check Model with VID: $vid_for_1_5_1 PID: $pid_2_for_1_5_1 updated"
 result=$($DCLD_BIN_NEW query model get-model --vid=$vid --pid=$pid_2)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid_2"
-check_response "$result" "\"productLabel\": \"$product_label_for_1_5_0\""
-check_response "$result" "\"partNumber\": \"$part_number_for_1_5_0\""
+check_response "$result" "\"productLabel\": \"$product_label_for_1_5_1\""
+check_response "$result" "\"partNumber\": \"$part_number_for_1_5_1\""
 
-echo "Check Model version with VID: $vid_for_1_5_0 PID: $pid_2_for_1_5_0 updated"
+echo "Check Model version with VID: $vid PID: $pid_2 updated"
 result=$($DCLD_BIN_NEW query model model-version --vid=$vid --pid=$pid_2  --softwareVersion=$software_version)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid_2"
-check_response "$result" "\"minApplicableSoftwareVersion\": $min_applicable_software_version_for_1_5_0"
-check_response "$result" "\"maxApplicableSoftwareVersion\": $max_applicable_software_version_for_1_5_0"
+check_response "$result" "\"minApplicableSoftwareVersion\": $min_applicable_software_version_for_1_5_1"
+check_response "$result" "\"maxApplicableSoftwareVersion\": $max_applicable_software_version_for_1_5_1"
+
 
 echo "Get all models"
 result=$($DCLD_BIN_NEW query model all-models)
-check_response "$result" "\"vid\": $vid_for_1_5_0"
-check_response "$result" "\"pid\": $pid_1_for_1_5_0"
-check_response "$result" "\"pid\": $pid_2_for_1_5_0"
+check_response "$result" "\"vid\": $vid_for_1_5_1"
+check_response "$result" "\"pid\": $pid_1_for_1_5_1"
+check_response "$result" "\"pid\": $pid_2_for_1_5_1"
 
 echo "Get all model versions"
-result=$($DCLD_BIN_NEW query model all-model-versions --vid=$vid_for_1_5_0 --pid=$pid_1_for_1_5_0)
-check_response "$result" "\"vid\": $vid_for_1_5_0"
-check_response "$result" "\"pid\": $pid_1_for_1_5_0"
+result=$($DCLD_BIN_NEW query model all-model-versions --vid=$vid_for_1_5_1 --pid=$pid_1_for_1_5_1)
+check_response "$result" "\"vid\": $vid_for_1_5_1"
+check_response "$result" "\"pid\": $pid_1_for_1_5_1"
 
-echo "Get Vendor Models with VID: ${vid_for_1_5_0}"
-result=$($DCLD_BIN_NEW query model vendor-models --vid=$vid_for_1_5_0)
-check_response "$result" "\"pid\": $pid_1_for_1_5_0"
-check_response "$result" "\"pid\": $pid_2_for_1_5_0"
+echo "Get Vendor Models with VID: ${vid_for_1_5_1}"
+result=$($DCLD_BIN_NEW query model vendor-models --vid=$vid_for_1_5_1)
+check_response "$result" "\"pid\": $pid_1_for_1_5_1"
+check_response "$result" "\"pid\": $pid_2_for_1_5_1"
 
-echo "Get model version VID: $vid_for_1_5_0 PID: $pid_1_for_1_5_0"
-result=$($DCLD_BIN_NEW query model model-version --vid=$vid_for_1_5_0 --pid=$pid_1_for_1_5_0 --softwareVersion=$software_version_for_1_5_0)
-check_response "$result" "\"vid\": $vid_for_1_5_0"
-check_response "$result" "\"pid\": $pid_1_for_1_5_0"
-check_response "$result" "\"softwareVersion\": $software_version_for_1_5_0"
+echo "Get model version VID: $vid_for_1_5_1 PID: $pid_1_for_1_5_1"
+result=$($DCLD_BIN_NEW query model model-version --vid=$vid_for_1_5_1 --pid=$pid_1_for_1_5_1 --softwareVersion=$software_version_for_1_5_1)
+check_response "$result" "\"vid\": $vid_for_1_5_1"
+check_response "$result" "\"pid\": $pid_1_for_1_5_1"
+check_response "$result" "\"softwareVersion\": $software_version_for_1_5_1"
+check_response "$result" "\"specificationVersion\": $specification_version_for_1_5_1"
 
-echo "Get model version VID: $vid_for_1_5_0 PID: $pid_2_for_1_5_0"
-result=$($DCLD_BIN_NEW query model model-version --vid=$vid_for_1_5_0 --pid=$pid_2_for_1_5_0 --softwareVersion=$software_version_for_1_5_0)
-check_response "$result" "\"vid\": $vid_for_1_5_0"
-check_response "$result" "\"pid\": $pid_2_for_1_5_0"
-check_response "$result" "\"softwareVersion\": $software_version_for_1_5_0"
+echo "Get model version VID: $vid_for_1_5_1 PID: $pid_2_for_1_5_1"
+result=$($DCLD_BIN_NEW query model model-version --vid=$vid_for_1_5_1 --pid=$pid_2_for_1_5_1 --softwareVersion=$software_version_for_1_5_1)
+check_response "$result" "\"vid\": $vid_for_1_5_1"
+check_response "$result" "\"pid\": $pid_2_for_1_5_1"
+check_response "$result" "\"softwareVersion\": $software_version_for_1_5_1"
 
 test_divider
 
 # COMPLIANCE
 
-echo "Get certified model vid=$vid_for_1_5_0 pid=$pid_1_for_1_5_0"
-result=$($DCLD_BIN_NEW query compliance certified-model --vid=$vid_for_1_5_0 --pid=$pid_1_for_1_5_0 --softwareVersion=$software_version_for_1_5_0 --certificationType=$certification_type_for_1_5_0)
+echo "Get certified model vid=$vid_for_1_5_1 pid=$pid_1_for_1_5_1"
+result=$($DCLD_BIN_NEW query compliance certified-model --vid=$vid_for_1_5_1 --pid=$pid_1_for_1_5_1 --softwareVersion=$software_version_for_1_5_1 --certificationType=$certification_type_for_1_5_1)
 check_response "$result" "\"value\": true"
-check_response "$result" "\"vid\": $vid_for_1_5_0"
-check_response "$result" "\"pid\": $pid_1_for_1_5_0"
-check_response "$result" "\"softwareVersion\": $software_version_for_1_5_0"
-check_response "$result" "\"certificationType\": \"$certification_type_for_1_5_0\""
+check_response "$result" "\"vid\": $vid_for_1_5_1"
+check_response "$result" "\"pid\": $pid_1_for_1_5_1"
+check_response "$result" "\"softwareVersion\": $software_version_for_1_5_1"
+check_response "$result" "\"certificationType\": \"$certification_type_for_1_5_1\""
 
-echo "Get revoked Model with VID: $vid_for_1_5_0 PID: $pid_2_for_1_5_0"
-result=$($DCLD_BIN_NEW query compliance revoked-model --vid=$vid_for_1_5_0 --pid=$pid_2_for_1_5_0 --softwareVersion=$software_version_for_1_5_0 --certificationType=$certification_type_for_1_5_0)
-check_response "$result" "\"vid\": $vid_for_1_5_0"
-check_response "$result" "\"pid\": $pid_2_for_1_5_0"
+echo "Get revoked Model with VID: $vid_for_1_5_1 PID: $pid_2_for_1_5_1"
+result=$($DCLD_BIN_NEW query compliance revoked-model --vid=$vid_for_1_5_1 --pid=$pid_2_for_1_5_1 --softwareVersion=$software_version_for_1_5_1 --certificationType=$certification_type_for_1_5_1)
+check_response "$result" "\"vid\": $vid_for_1_5_1"
+check_response "$result" "\"pid\": $pid_2_for_1_5_1"
 
-echo "Get certified model with VID: $vid_for_1_5_0 PID: $pid_1_for_1_5_0"
-result=$($DCLD_BIN_NEW query compliance certified-model --vid=$vid_for_1_5_0 --pid=$pid_1_for_1_5_0 --softwareVersion=$software_version_for_1_5_0 --certificationType=$certification_type_for_1_5_0)
+echo "Get certified model with VID: $vid_for_1_5_1 PID: $pid_1_for_1_5_1"
+result=$($DCLD_BIN_NEW query compliance certified-model --vid=$vid_for_1_5_1 --pid=$pid_1_for_1_5_1 --softwareVersion=$software_version_for_1_5_1 --certificationType=$certification_type_for_1_5_1)
 check_response "$result" "\"value\": true"
-check_response "$result" "\"vid\": $vid_for_1_5_0"
-check_response "$result" "\"pid\": $pid_1_for_1_5_0"
+check_response "$result" "\"vid\": $vid_for_1_5_1"
+check_response "$result" "\"pid\": $pid_1_for_1_5_1"
 
-echo "Get provisional model with VID: $vid_for_1_5_0 PID: $pid_2_for_1_5_0"
-result=$($DCLD_BIN_NEW query compliance provisional-model --vid=$vid_for_1_5_0 --pid=$pid_2_for_1_5_0 --softwareVersion=$software_version_for_1_5_0 --certificationType=$certification_type_for_1_5_0)
+echo "Get provisional model with VID: $vid_for_1_5_1 PID: $pid_2_for_1_5_1"
+result=$($DCLD_BIN_NEW query compliance provisional-model --vid=$vid_for_1_5_1 --pid=$pid_2_for_1_5_1 --softwareVersion=$software_version_for_1_5_1 --certificationType=$certification_type_for_1_5_1)
 check_response "$result" "\"value\": false"
-check_response "$result" "\"vid\": $vid_for_1_5_0"
-check_response "$result" "\"pid\": $pid_2_for_1_5_0"
+check_response "$result" "\"vid\": $vid_for_1_5_1"
+check_response "$result" "\"pid\": $pid_2_for_1_5_1"
 
-echo "Get compliance-info model with VID: $vid_for_1_5_0 PID: $pid_1_for_1_5_0"
-result=$($DCLD_BIN_NEW query compliance compliance-info --vid=$vid_for_1_5_0 --pid=$pid_1_for_1_5_0 --softwareVersion=$software_version_for_1_5_0 --certificationType=$certification_type_for_1_5_0)
-check_response "$result" "\"vid\": $vid_for_1_5_0"
-check_response "$result" "\"pid\": $pid_1_for_1_5_0"
-check_response "$result" "\"softwareVersion\": $software_version_for_1_5_0"
-check_response "$result" "\"certificationType\": \"$certification_type_for_1_5_0\""
+echo "Get compliance-info model with VID: $vid_for_1_5_1 PID: $pid_1_for_1_5_1"
+result=$($DCLD_BIN_NEW query compliance compliance-info --vid=$vid_for_1_5_1 --pid=$pid_1_for_1_5_1 --softwareVersion=$software_version_for_1_5_1 --certificationType=$certification_type_for_1_5_1)
+check_response "$result" "\"vid\": $vid_for_1_5_1"
+check_response "$result" "\"pid\": $pid_1_for_1_5_1"
+check_response "$result" "\"softwareVersion\": $software_version_for_1_5_1"
+check_response "$result" "\"certificationType\": \"$certification_type_for_1_5_1\""
 
-echo "Get compliance-info model with VID: $vid_for_1_5_0 PID: $pid_2_for_1_5_0"
-result=$($DCLD_BIN_NEW query compliance compliance-info --vid=$vid_for_1_5_0 --pid=$pid_2_for_1_5_0 --softwareVersion=$software_version_for_1_5_0 --certificationType=$certification_type_for_1_5_0)
-check_response "$result" "\"vid\": $vid_for_1_5_0"
-check_response "$result" "\"pid\": $pid_2_for_1_5_0"
-check_response "$result" "\"softwareVersion\": $software_version_for_1_5_0"
-check_response "$result" "\"certificationType\": \"$certification_type_for_1_5_0\""
+echo "Get compliance-info model with VID: $vid_for_1_5_1 PID: $pid_2_for_1_5_1"
+result=$($DCLD_BIN_NEW query compliance compliance-info --vid=$vid_for_1_5_1 --pid=$pid_2_for_1_5_1 --softwareVersion=$software_version_for_1_5_1 --certificationType=$certification_type_for_1_5_1)
+check_response "$result" "\"vid\": $vid_for_1_5_1"
+check_response "$result" "\"pid\": $pid_2_for_1_5_1"
+check_response "$result" "\"softwareVersion\": $software_version_for_1_5_1"
+check_response "$result" "\"certificationType\": \"$certification_type_for_1_5_1\""
 
-echo "Get device software compliance cDCertificateId=$cd_certificate_id_for_1_5_0"
-result=$($DCLD_BIN_NEW query compliance device-software-compliance --cdCertificateId=$cd_certificate_id_for_1_5_0)
-check_response "$result" "\"vid\": $vid_for_1_5_0"
-check_response "$result" "\"pid\": $pid_1_for_1_5_0"
+echo "Get device software compliance cDCertificateId=$cd_certificate_id_for_1_5_1"
+result=$($DCLD_BIN_NEW query compliance device-software-compliance --cdCertificateId=$cd_certificate_id_for_1_5_1)
+check_response "$result" "\"vid\": $vid_for_1_5_1"
+check_response "$result" "\"pid\": $pid_1_for_1_5_1"
 
 echo "Get all certified models"
 result=$($DCLD_BIN_NEW query compliance all-certified-models)
-check_response "$result" "\"vid\": $vid_for_1_5_0"
-check_response "$result" "\"pid\": $pid_1_for_1_5_0"
+check_response "$result" "\"vid\": $vid_for_1_5_1"
+check_response "$result" "\"pid\": $pid_1_for_1_5_1"
 
 echo "Get all provisional models"
 result=$($DCLD_BIN_NEW query compliance all-provisional-models)
@@ -956,20 +971,20 @@ check_response "$result" "\"pid\": $pid_3"
 
 echo "Get all revoked models"
 result=$($DCLD_BIN_NEW query compliance all-revoked-models)
-check_response "$result" "\"vid\": $vid_for_1_5_0"
-check_response "$result" "\"pid\": $pid_2_for_1_5_0"
+check_response "$result" "\"vid\": $vid_for_1_5_1"
+check_response "$result" "\"pid\": $pid_2_for_1_5_1"
 
 echo "Get all compliance infos"
 result=$($DCLD_BIN_NEW query compliance all-compliance-info)
-check_response "$result" "\"vid\": $vid_for_1_5_0"
-check_response "$result" "\"pid\": $pid_1_for_1_5_0"
-check_response "$result" "\"pid\": $pid_2_for_1_5_0"
+check_response "$result" "\"vid\": $vid_for_1_5_1"
+check_response "$result" "\"pid\": $pid_1_for_1_5_1"
+check_response "$result" "\"pid\": $pid_2_for_1_5_1"
 
 echo "Get all device software compliances"
 result=$($DCLD_BIN_NEW query compliance all-device-software-compliance)
-check_response "$result" "\"vid\": $vid_for_1_5_0"
-check_response "$result" "\"pid\": $pid_1_for_1_5_0"
-check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id_for_1_5_0\""
+check_response "$result" "\"vid\": $vid_for_1_5_1"
+check_response "$result" "\"pid\": $pid_1_for_1_5_1"
+check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id_for_1_5_1\""
 
 test_divider
 
@@ -982,4 +997,4 @@ check_response "$result" "\"owner\": \"$validator_address\""
 
 test_divider
 
-echo "Upgrade from 1.4.4 to 1.5 PASSED"
+echo "Upgrade from 1.4.4 to 1.5.1 PASSED"
