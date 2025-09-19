@@ -577,7 +577,7 @@ terraform apply
 #### 1.2.3 Generate ansible inventory from terraform output
 
 ```bash
-terraform output -raw ansible_inventory_yaml > ../../ansible/inventory/aws/aws_all.yaml
+terraform output -raw ansible_inventory_yaml > ../../ansible/inventory/cloud/all.yaml
 ```
 
 ## 2. Application Deployment
@@ -597,7 +597,7 @@ HOST_KEY_CHECKING=False
 
 #### 2.1.2 Set base DCL network parameters
 
-[`deployment/ansible/inventory/aws/group_vars/all.yaml`](../../deployment/ansible/inventory/aws/group_vars/all.yaml)
+[`deployment/ansible/inventory/cloud/group_vars/all.yaml`](../../deployment/ansible/inventory/cloud/group_vars/all.yaml)
 
 ```yaml
 chain_id: <chain-id>
