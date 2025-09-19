@@ -711,7 +711,6 @@ func New(
 		"v1.5.1",
 		func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
 			return app.mm.RunMigrations(ctx, app.configurator, fromVM)
-
 		},
 	)
 
