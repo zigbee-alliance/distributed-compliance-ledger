@@ -87,11 +87,14 @@ In case you choose [`s3`](https://developer.hashicorp.com/terraform/language/v1.
 <details>
 <summary> GCP </summary>
 
-In case you choose [`gcs`](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/gcs) as a terraform backend:
+The Google Cloud deployment automation logic considers the following:
 
-*   create a Cloud Storage bucket (e.g. like decribed [here](https://cloud.google.com/storage/docs/creating-buckets)), recommended:
-    *   enable the versioning (with limited number of concurrent versions and expiration days)
-    *   prevent the public access
+*   project exists
+    *   during the first terraform run you might encounter "API is disabled" error, so it shouldbe enabled (please see details [here](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/common_issues#403-service-api-disabled)) 
+*   in case you choose [`gcs`](https://developer.hashicorp.com/terraform/language/v1.5.x/settings/backends/gcs) as a terraform backend:
+    *   create a Cloud Storage bucket (e.g. like decribed [here](https://cloud.google.com/storage/docs/creating-buckets)), recommended:
+        *   enable the versioning (with limited number of concurrent versions and expiration days)
+        *   prevent the public access
 
 </details>
 
