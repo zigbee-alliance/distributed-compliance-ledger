@@ -9,7 +9,7 @@ ssh_public_key_path  = "~/.ssh/id_rsa.pub"
 ssh_private_key_path = "~/.ssh/id_rsa"
 
 validator_config = {
-  instance_size             = "Standard_B2s"
+  instance_size             = "Standard_D2as_v5"
   is_genesis                = true
   enable_encryption_at_host = true
 }
@@ -20,14 +20,14 @@ disable_validator_protection = false
 private_sentries_config = {
   enable        = true
   nodes_count   = 2
-  instance_size = "Standard_B2s"
+  instance_size = "Standard_D2as_v5"
 }
 
 public_sentries_config = {
   enable        = true
   enable_ipv6   = false # TODO
   nodes_count   = 2
-  instance_size = "Standard_B2s"
+  instance_size = "Standard_D2as_v5"
 
   locations = [
     1,
@@ -38,7 +38,7 @@ public_sentries_config = {
 observers_config = {
   enable           = true
   nodes_count      = 3
-  instance_size    = "Standard_B2s"
+  instance_size    = "Standard_D2as_v5"
   root_domain_name = "matterprotocol.com"
   enable_tls       = false # TODO
 
