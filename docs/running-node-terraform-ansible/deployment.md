@@ -152,7 +152,7 @@ Please see also Terraform [docs](https://developer.hashicorp.com/terraform/langu
 <details>
 <summary> Azure </summary>
 
-By default AWS infrastructure backend is set as `azurerm` (see [`deployment/terraform/azure/backend.tf`](../../deployment/terraform/azure/backend.tf)).
+By default Azure infrastructure backend is set as `azurerm` (see [`deployment/terraform/azure/backend.tf`](../../deployment/terraform/azure/backend.tf)).
 
 `azurerm` backend configuration implies:
 
@@ -541,12 +541,12 @@ prometheus_config = {
 #### 1.2.1 Initialize terraform
 
 ```bash
-cd deployment/terraform/aws
+cd deployment/terraform/<cloud> # where cloud is one of aws/gcp/azure
 
 terraform init -backend-config=<backend-config-file> # in case backend configuration is in a file
 ```
 
-where `<backend-config-file>` is the backend configuration file ([AWS S3 backend example](../../deployment/terraform/aws/config.s3.tfbackend.example)).
+where `<backend-config-file>` is the backend configuration file as described above.
 
 (optional) Create/Activate the deployment workspace:
 
@@ -588,7 +588,7 @@ terraform output -raw ansible_inventory_yaml > ../../ansible/inventory/cloud/all
 
 ##### 2.1.1.1 Disable host key checking for Ansible
 
-This is done to avoid host key checking when Ansible connects to AWS instances using ssh.
+This is done to avoid host key checking when Ansible connects to cloud instances using ssh.
 
 Create Ansible configuration file [`~/.ansible.cfg`] with the following content:
 
@@ -770,6 +770,18 @@ curl -s https://on.dcl.csa-iot.org:26657/commit | jq "{height: .result.signed_he
 *   `<host>` - RPC endpoint host of the network being joined
 *   `<port>` - RPC endpoint port of the network being joined
 
+#### 2.1.6 (Optional) Set explicit moniker index
+
+By default the logic automatically evaluates monikers for all the nodes as follows:
+
+*   `<company_name>-<type_name>-<moniker_index>`, where
+    *   `company_name` and `type_name` are equal to the variables with the same name
+    *   `moniker_index` by default is evaluated in a way to support multiple nodes of the same type (e.g. private sentries)
+
+As an option you may set `moniker_index` explicitly:
+*   in `deployment/ansible/inventory/cloud/group_vars/all.yaml`: the same index will be applied to all nodes regardless of a type
+*   in `deployment/ansible/inventory/cloud/group_vars/<node-type>.yaml`: the same index will be applied only to nodes with that specific type (overriding the above)
+
 ### 2.2 Deployment
 
 #### 2.2.1 Run Ansible
@@ -783,9 +795,10 @@ cd ./deployment/ansible
 Run the following command:
 
 ```bash
-ansible-playbook -i inventory/aws  -u ubuntu deploy.yml
+ansible-playbook -i inventory/cloud -u ubuntu deploy.yml
 ```
 
+*   Optionally you may consider to run in dry mode using `--check --diff` additional options to verify the planned changes
 *   Ansible provisioning can take several minutes depending on number of nodes being provisioned
 
 #### 2.2.2 (For non-genesis validator nodes) Add Validator to the network
@@ -823,7 +836,7 @@ ansible-playbook -i inventory/aws  -u ubuntu deploy.yml
     - add your `<root_domain_name>` with a free SSL certificate
 3. Your DCL UI should be available under `https://<root_domain_name>`
 
-## 5. Health and Monitoring
+## 5. Health and Monitoring (AWS only for now)
 
 ### Logs
 
@@ -854,7 +867,8 @@ ansible-playbook -i inventory/aws  -u ubuntu deploy.yml
 ### 1. Disable validator node termination protection
 
 ```bash
-cd deployment/terraform/aws
+cd deployment/terraform/<cloud> # where cloud is one of aws/gcp/azure
+
 terraform apply -var="disable_validator_protection=true"
 ```
 
