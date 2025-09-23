@@ -3,6 +3,9 @@ chain_id: testnet-2.0
 company_name: CSA
 dcld_version: 1.4.4
 cosmovisor_version: 1.5.0-0.dev.3
+# if defined forces moniker index for all node types
+# Note. fails in case multiple nodes of the same type are deployed
+moniker_index:
 
 dcl_home: /var/lib/dcl/.dcl
 dcld:

@@ -43,9 +43,31 @@
     type_name: "Genesis-{{ type_name }}"
   when: ('genesis' in group_names)
 
+- name: Fail if constant moniker index is set for multiple nodes of the same type
+  ansible.builtin.fail:
+    msg: moniler index cannot be set in case of multiple nodes of the same type [{{ group_names[0] }}]
+  when: moniker_index|default(false, true) and groups[group_names[0]]|length > 1
+
+- name: generate moniker index
+  set_fact:
+    moniker_index: "{{ moniker_index if moniker_index|default(false, true) else '%02d'|format(groups[group_names[0]].index(inventory_hostname)|int + 1) }}"
+  when: not genesis_file.stat.exists
+
+- name: debug moniker index
+  ansible.builtin.debug:
+    var: moniker_index
+    verbosity: 2
+  when: not genesis_file.stat.exists
+
 - name: generate moniker
   set_fact:
-    moniker: "{{ company_name }}-{{ type_name }}-{{'%02d'|format(groups[group_names[0]].index(inventory_hostname)|int + 1)}}"
+    moniker: "{{ company_name }}-{{ type_name }}-{{ moniker_index }}"
+  when: not genesis_file.stat.exists
+
+- name: debug moniker
+  ansible.builtin.debug:
+    var: moniker
+    verbosity: 2
   when: not genesis_file.stat.exists
 
 - name: initialize the layout
