@@ -229,6 +229,8 @@ location_1 = "eastus"
 location_2 = "westus2"
 ```
 
+>**_Note:_** you may use `az account list-locations -o table` to listthe availble locations
+
 >**_Note:_** ensure you have enough quota for the planned virtual machine sizes
 in the required locations and request the new quotes if needed (more details in
 [docs](https://learn.microsoft.com/en-us/azure/quotas/per-vm-quota-requests))
