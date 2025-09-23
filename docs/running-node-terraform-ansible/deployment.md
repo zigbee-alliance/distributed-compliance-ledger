@@ -584,7 +584,9 @@ terraform output -raw ansible_inventory_yaml > ../../ansible/inventory/cloud/all
 
 ### 2.1 Configuration
 
-#### 2.1.1 Disable host key checking for Ansible
+#### 2.1.1 SSH connection configuration
+
+##### 2.1.1.1 Disable host key checking for Ansible
 
 This is done to avoid host key checking when Ansible connects to AWS instances using ssh.
 
@@ -594,6 +596,19 @@ Create Ansible configuration file [`~/.ansible.cfg`] with the following content:
 [defaults]
 HOST_KEY_CHECKING=False
 ```
+
+##### 2.1.1.2 Configure SSH authentication
+
+The recommended way is to use `ssh-agent`, e.g.
+
+```bash
+
+# considering the agent is already running
+
+ssh-add <path-to-ssh-private-key>
+```
+
+Please read more about Ansible ssh connection configuration [here](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/ssh_connection.html)
 
 #### 2.1.2 Set base DCL network parameters
 
@@ -759,10 +774,16 @@ curl -s https://on.dcl.csa-iot.org:26657/commit | jq "{height: .result.signed_he
 
 #### 2.2.1 Run Ansible
 
-Run the following command from the project home:
+Switch the directory to ansible:
 
 ```bash
-ansible-playbook -i ./deployment/ansible/inventory/aws  -u ubuntu ./deployment/ansible/deploy.yml
+cd ./deployment/ansible
+```
+
+Run the following command:
+
+```bash
+ansible-playbook -i inventory/aws  -u ubuntu deploy.yml
 ```
 
 *   Ansible provisioning can take several minutes depending on number of nodes being provisioned
