@@ -1,0 +1,4 @@
+type_name: "SeedN"
+# if defined forces moniker index
+# Note. fails in case multiple nodes are deployed
+moniker_index:
