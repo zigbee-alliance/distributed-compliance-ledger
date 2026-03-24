@@ -25,7 +25,7 @@ from the revocation list.
   - softwareVersion: `uint32` - model software version
   - softwareVersionSting: `string` - model software version string
   - certificationDate: `string` - The date of model certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
-  - certificationType: `string` - Certification type - Currently 'zigbee', 'matter', 'access control', 'product security' types are supported
+  - certificationType: `string` - Certification type - Currently 'zigbee', 'matter' types are supported
   - cdCertificateId: `string` - CD Certificate ID 
   - reason `optional(string)` - optional comment describing the reason of the certification
   - cDVersionNumber `optional(uint32)` - optional field describing the CD version number
@@ -47,9 +47,9 @@ from the revocation list.
 - Who can send:
   - CertificationCenter
 - CLI command:
-  - `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string>  --certificationType=<matter|zigbee|access control|product security> --certificationDate=<rfc3339 encoded date> --cdCertificateId=<string> --from=<account>`
+  - `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string>  --certificationType=<matter|zigbee> --certificationDate=<rfc3339 encoded date> --cdCertificateId=<string> --from=<account>`
 - CLI command full:
-  - `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string>  --certificationType=<matter|zigbee|access control|product security> --certificationDate=<rfc3339 encoded date> --cdCertificateId=<string> --reason=<string> --cDVersionNumber=<uint32> --familyId=<string> --supportedClusters=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --OSVersion=<string> --certificationRoute=<string> --programType=<string> --programTypeVersion=<string> --transport=<string> --parentChild=<string> --certificationIDOfSoftwareComponent=<string> --from=<account>`
+  - `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string>  --certificationType=<matter|zigbee> --certificationDate=<rfc3339 encoded date> --cdCertificateId=<string> --reason=<string> --cDVersionNumber=<uint32> --familyId=<string> --supportedClusters=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --OSVersion=<string> --certificationRoute=<string> --programType=<string> --programTypeVersion=<string> --transport=<string> --parentChild=<string> --certificationIDOfSoftwareComponent=<string> --from=<account>`
 
 ### UPDATE_COMPLIANCE_INFO
 
@@ -62,7 +62,7 @@ Updates a compliance info by VID, PID, Software Version and Certification Type.
   - vid: `uint16` -  model vendor ID (positive non-zero)
   - pid: `uint16` -  model product ID (positive non-zero)
   - softwareVersion: `uint32` - model software version
-  - certificationType: `string` - Certification type - Currently 'zigbee', 'matter', 'access control', 'product security' types are supported
+  - certificationType: `string` - Certification type - Currently 'zigbee', 'matter' types are supported
   - certificationDate: `optional(string)` - The date of model certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
   - cdCertificateId: `optional(string)` - CD Certificate ID
   - reason `optional(string)` - optional comment describing the reason of the certification
@@ -100,11 +100,11 @@ The corresponding Compliance Info is required to be present on the ledger
   - vid: `uint16` - model vendor ID (positive non-zero)
   - pid: `uint16` - model product ID (positive non-zero)
   - softwareVersion: `uint32` - model software version
-  - certificationType: `string` - Certification type - Currently 'zigbee' and 'matter', 'access control', 'product security' types are supported
+  - certificationType: `string` - Certification type - Currently 'zigbee' and 'matter' types are supported
 - Who can send:
   - CertificationCenter
 - CLI command:
-  - `dcld tx compliance delete-compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee|access control|product security> --from=<account>`
+  - `dcld tx compliance delete-compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee> --from=<account>`
 
 ### REVOKE_MODEL_CERTIFICATION
 
@@ -124,7 +124,7 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
   - softwareVersion: `uint32` - model software version
   - softwareVersionSting: `string` - model software version string
   - revocationDate: `string` - The date of model revocation (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
-  - certificationType: `string`  - Certification type - Currently 'zigbee' and 'matter', 'access control', 'product security' types are supported
+  - certificationType: `string`  - Certification type - Currently 'zigbee' and 'matter' types are supported
   - reason `optional(string)`  - optional comment describing the reason of revocation
   - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State:
@@ -133,7 +133,7 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
 - Who can send:
   - CertificationCenter
 - CLI command:
-  - `dcld tx compliance revoke-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee|access control|product security> --revocationDate=<rfc3339 encoded date> --reason=<string> --from=<account>`
+  - `dcld tx compliance revoke-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee> --revocationDate=<rfc3339 encoded date> --reason=<string> --from=<account>`
 
 ### PROVISION_MODEL
 
@@ -151,7 +151,7 @@ Can not be set if there is already a certification record on the ledger (certifi
   - softwareVersion: `uint32` - model software version
   - softwareVersionSting: `string` - model software version string
   - provisionalDate: `string` - The date of model provisioning (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
-  - certificationType: `string`  - Certification type - Currently 'zigbee' and 'matter', 'access control', 'product security' types are supported
+  - certificationType: `string`  - Certification type - Currently 'zigbee' and 'matter' types are supported
   - cdCertificateId: `string` - CD Certificate ID 
   - reason `optional(string)`  - optional comment describing the reason of revocation
   - cDVersionNumber `optional(uint32)` - optional field describing the CD version number
@@ -173,9 +173,9 @@ Can not be set if there is already a certification record on the ledger (certifi
 - Who can send:
   - CertificationCenter
 - CLI command:
-  - `dcld tx compliance provision-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee|access control|product security> --provisionalDate=<rfc3339 encoded date> --from=<account>`
+  - `dcld tx compliance provision-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee> --provisionalDate=<rfc3339 encoded date> --from=<account>`
 - CLI command full:
-  - `dcld tx compliance provision-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee|access control|product security> --provisionalDate=<rfc3339 encoded date> --cdCertificateId=<string> --reason=<string> --cDVersionNumber=<uint32> --familyId=<string> --supportedClusters=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --OSVersion=<string> --certificationRoute=<string> --programType=<string> --programTypeVersion=<string> --transport=<string> --parentChild=<string> --certificationIDOfSoftwareComponent=<string> --from=<account>`
+  - `dcld tx compliance provision-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee> --provisionalDate=<rfc3339 encoded date> --cdCertificateId=<string> --reason=<string> --cDVersionNumber=<uint32> --familyId=<string> --supportedClusters=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --OSVersion=<string> --certificationRoute=<string> --programType=<string> --programTypeVersion=<string> --transport=<string> --parentChild=<string> --certificationIDOfSoftwareComponent=<string> --from=<account>`
 
 ### GET_CERTIFIED_MODEL
 
@@ -199,7 +199,7 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
   - softwareVersion: `uint32` - model software version
   - certification_type: `string`  - Certification type - Currently 'zigbee' and 'matter' types are supported
 - CLI command:
-  - `dcld query compliance certified-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter|access control|product security>`
+  - `dcld query compliance certified-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter>`
 - REST API:
   - GET `/dcl/compliance/certified-models/{vid}/{pid}/{software_version}/{certification_type}`
 
@@ -224,7 +224,7 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
   - softwareVersion: `uint32` - model software version
   - certification_type: `string`  - Certification type - Currently 'zigbee' and 'matter' types are supported
 - CLI command:
-  - `dcld query compliance revoked-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter|access control|product security>`
+  - `dcld query compliance revoked-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter>`
 - REST API:
   - GET `/dcl/compliance/revoked-models/{vid}/{pid}/{software_version}/{certification_type}`
 
@@ -246,7 +246,7 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
   - softwareVersion: `uint32` - model software version
   - certification_type: `string`  - Certification type - Currently 'zigbee' and 'matter' types are supported
 - CLI command:
-  - `dcld query compliance provisional-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter|access control|product security>`
+  - `dcld query compliance provisional-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter>`
 - REST API:
   - GET `/dcl/compliance/provisional-models/{vid}/{pid}/{software_version}/{certification_type}`
 
@@ -267,7 +267,7 @@ This function responds with `NotFound` (404 code) if compliance information is n
   - softwareVersion: `uint32` - model software version
   - certification_type: `string`  - Certification type - Currently 'zigbee' and 'matter' types are supported
 - CLI command:
-  - `dcld query compliance compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter|access control|product security>`
+  - `dcld query compliance compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter>`
 - REST API:
   - GET `/dcl/compliance/compliance-info/{vid}/{pid}/{software_version}/{certification_type}`
 
