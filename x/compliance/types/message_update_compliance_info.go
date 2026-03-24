@@ -110,5 +110,9 @@ func (msg *MsgUpdateComplianceInfo) ValidateBasic() error {
 		return NewErrInvalidPFCCertificationRoute(msg.ParentChild, PFCCertificationRouteList)
 	}
 
+	if msg.CertificationRoute != "" && !IsValidCertificationRoute(msg.CertificationRoute) {
+		return NewErrInvalidCertificationRoute(msg.CertificationRoute, CertificationRoutesList)
+	}
+
 	return nil
 }

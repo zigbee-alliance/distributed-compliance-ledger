@@ -124,7 +124,7 @@ var (
 	CompliantPlatformUsed              = "Some Compliance Platform Used"
 	CompliantPlatformVersion           = "Some Compliance Platform Version"
 	OSVersion                          = "Some OS Version"
-	CertificationRoute                 = "Some Certification Route"
+	CertificationRoute                 = "fullTested"
 	ProgramType                        = "Some Program Type"
 	ProgramTypeVersion                 = "Some Program Type Version"
 	Transport                          = "Some Transport"

@@ -350,6 +350,22 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
+			name: "invalid certificationRoute",
+			msg: MsgCertifyModel{
+				Signer:                sample.AccAddress(),
+				Pid:                   1,
+				Vid:                   1,
+				SoftwareVersionString: testconstants.TestDate,
+				CertificationDate:     testconstants.CertificationDate,
+				CertificationType:     testconstants.CertificationType,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				Reason:                testconstants.Reason,
+				CDCertificateId:       testconstants.CDCertificateID,
+				CertificationRoute:    "unsupported certification route",
+			},
+			err: ErrInvalidCertificationRoute,
+		},
+		{
 			name: "programType > 64",
 			msg: MsgCertifyModel{
 				Signer:                sample.AccAddress(),
@@ -634,6 +650,21 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 				Reason:                testconstants.Reason,
 				CDCertificateId:       testconstants.CDCertificateID,
 				CertificationRoute:    testconstants.CertificationRoute,
+			},
+		},
+		{
+			name: "supported CertificationRoute = similarity",
+			msg: MsgCertifyModel{
+				Signer:                sample.AccAddress(),
+				Pid:                   1,
+				Vid:                   1,
+				SoftwareVersionString: testconstants.TestDate,
+				CertificationDate:     testconstants.CertificationDate,
+				CertificationType:     testconstants.CertificationType,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				Reason:                testconstants.Reason,
+				CDCertificateId:       testconstants.CDCertificateID,
+				CertificationRoute:    CertificationRouteSimilarity,
 			},
 		},
 		{

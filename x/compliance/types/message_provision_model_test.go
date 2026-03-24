@@ -358,6 +358,22 @@ func TestMsgProvisionModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
+			name: "invalid certificationRoute",
+			msg: MsgProvisionModel{
+				Signer:                sample.AccAddress(),
+				Pid:                   1,
+				Vid:                   1,
+				ProvisionalDate:       testconstants.CertificationDate,
+				SoftwareVersionString: testconstants.TestDate,
+				CertificationType:     testconstants.CertificationType,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				Reason:                testconstants.Reason,
+				CDCertificateId:       testconstants.CDCertificateID,
+				CertificationRoute:    "unsupported certification route",
+			},
+			err: ErrInvalidCertificationRoute,
+		},
+		{
 			name: "programType > 64",
 			msg: MsgProvisionModel{
 				Signer:                sample.AccAddress(),
@@ -632,6 +648,21 @@ func TestMsgProvisionModel_ValidateBasic(t *testing.T) {
 				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 				CDCertificateId:       testconstants.CDCertificateID,
 				CertificationRoute:    testconstants.CertificationRoute,
+			},
+		},
+		{
+			name: "supported CertificationRoute = rapid-recert",
+			msg: MsgProvisionModel{
+				Signer:                sample.AccAddress(),
+				Pid:                   1,
+				Vid:                   1,
+				ProvisionalDate:       testconstants.CertificationDate,
+				SoftwareVersionString: testconstants.TestDate,
+				CertificationType:     testconstants.CertificationType,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				Reason:                testconstants.Reason,
+				CDCertificateId:       testconstants.CDCertificateID,
+				CertificationRoute:    CertificationRouteRapidRecert,
 			},
 		},
 		{

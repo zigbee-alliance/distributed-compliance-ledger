@@ -102,7 +102,7 @@ func TestMsgUpdateComplianceInfo_ValidateBasic(t *testing.T) {
 				CDCertificateId:                    testconstants.CDCertificateID,
 				Date:                               testconstants.CertificationDate,
 				ParentChild:                        "parent",
-				CertificationRoute:                 tmrand.Str(60),
+				CertificationRoute:                 testconstants.CertificationRoute,
 				ProgramType:                        testconstants.ProgramType,
 				ProgramTypeVersion:                 testconstants.ProgramTypeVersion,
 				CompliantPlatformUsed:              testconstants.CompliantPlatformUsed,

@@ -448,7 +448,7 @@ func newMsgUpdateComplianceInfoWithAllOptionalFlags(
 		Date:                               testconstants.ProvisionalDate,
 		CDCertificateId:                    testconstants.CDCertificateID,
 		Reason:                             "new Reason",
-		CertificationRoute:                 "123",
+		CertificationRoute:                 "fullTested",
 		Owner:                              "new Owner",
 		ProgramType:                        "new programType",
 		ProgramTypeVersion:                 "new ProgramTypeVersion",

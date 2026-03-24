@@ -19,6 +19,7 @@ var (
 	ErrInvalidPFCCertificationRoute    = errors.Register(ModuleName, 309, "invalid PFC certification route")
 	ErrComplianceInfoDoesNotExist      = errors.Register(ModuleName, 310, "compliance info not found")
 	ErrInvalidUint32ForCdVersionNumber = errors.Register(ModuleName, 311, "invalid uint32 for cd version number")
+	ErrInvalidCertificationRoute       = errors.Register(ModuleName, 312, "invalid certification route")
 )
 
 func NewErrInconsistentDates(err interface{}) error {
@@ -116,6 +117,13 @@ func NewErrInvalidCertificationType(certType interface{}, certList interface{}) 
 func NewErrInvalidPFCCertificationRoute(certRoute interface{}, certList interface{}) error {
 	return errors.Wrapf(ErrInvalidPFCCertificationRoute,
 		"Invalid PFCCertificationRoute: \"%s\". Supported types: [%s]",
+		certRoute, certList,
+	)
+}
+
+func NewErrInvalidCertificationRoute(certRoute interface{}, certList interface{}) error {
+	return errors.Wrapf(ErrInvalidCertificationRoute,
+		"Invalid CertificationRoute: \"%s\". Supported routes: [%s]",
 		certRoute, certList,
 	)
 }

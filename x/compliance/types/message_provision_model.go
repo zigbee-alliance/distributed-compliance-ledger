@@ -93,5 +93,9 @@ func (msg *MsgProvisionModel) ValidateBasic() error {
 		return NewErrInvalidPFCCertificationRoute(msg.ParentChild, PFCCertificationRouteList)
 	}
 
+	if msg.CertificationRoute != "" && !IsValidCertificationRoute(msg.CertificationRoute) {
+		return NewErrInvalidCertificationRoute(msg.CertificationRoute, CertificationRoutesList)
+	}
+
 	return nil
 }

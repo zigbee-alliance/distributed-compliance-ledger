@@ -46,3 +46,28 @@ func IsValidPFCCertificationRoute(certificationRoute string) bool {
 
 	return false
 }
+
+const (
+	CertificationRouteFullTested  = "fullTested"
+	CertificationRouteSimilarity  = "similarity"
+	CertificationRouteRapidRecert = "rapid-recert"
+	CertificationRouteFastTrack   = "fastTrack"
+	CertificationRouteCtp         = "ctp"
+	CertificationRouteFamily      = "family"
+	CertificationRoutePortfolio   = "portfolio"
+)
+
+// List of Certification Routes.
+type CertificationRoutes []string
+
+var CertificationRoutesList = CertificationRoutes{CertificationRouteFullTested, CertificationRouteSimilarity, CertificationRouteRapidRecert, CertificationRouteFastTrack, CertificationRouteCtp, CertificationRouteFamily, CertificationRoutePortfolio}
+
+func IsValidCertificationRoute(certificationRoute string) bool {
+	for _, i := range CertificationRoutesList {
+		if i == certificationRoute {
+			return true
+		}
+	}
+
+	return false
+}
