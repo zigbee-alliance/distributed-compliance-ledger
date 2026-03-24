@@ -1,7 +1,5 @@
 package types
 
-const MaxComplianceHistoryItem = 20
-
 func (d *ComplianceInfo) SetCertifiedStatus(date string, reason string, cdCertificateID string) {
 	svCertificationStatus := CodeCertified
 	historyItem := ComplianceHistoryItem{
@@ -10,7 +8,7 @@ func (d *ComplianceInfo) SetCertifiedStatus(date string, reason string, cdCertif
 		Reason:                             d.Reason,
 		CDVersionNumber:                    d.CDVersionNumber,
 	}
-	d.updateHistory(&historyItem)
+	d.History = append(d.History, &historyItem)
 	d.SoftwareVersionCertificationStatus = svCertificationStatus
 	d.Date = date
 	d.Reason = reason
@@ -25,19 +23,10 @@ func (d *ComplianceInfo) SetRevokedStatus(date string, reason string) {
 		Reason:                             d.Reason,
 		CDVersionNumber:                    d.CDVersionNumber,
 	}
-	d.updateHistory(&historyItem)
+	d.History = append(d.History, &historyItem)
 	d.SoftwareVersionCertificationStatus = svCertificationStatus
 	d.Date = date
 	d.Reason = reason
-}
-
-func (d *ComplianceInfo) updateHistory(item *ComplianceHistoryItem) {
-	d.History = append(d.History, item)
-
-	if len(d.History) > MaxComplianceHistoryItem {
-		// TODO Can be changed to another better logic/way to update history
-		d.History = d.History[len(d.History)-MaxComplianceHistoryItem:]
-	}
 }
 
 func (d *ComplianceInfo) SetOptionalFields(optionalFields *OptionalFields) {

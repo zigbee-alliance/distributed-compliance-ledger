@@ -13,7 +13,7 @@ In DCL, different schemas and respective endpoints are used for write (txn messa
 4. Device Attestation PKI Revocation Distribution Points [schema](https://github.com/CHIP-Specifications/connectedhomeip-spec/blob/master/src/service_device_management/DistributedComplianceLedger.adoc#9-device-attestation-pki-revocation-distribution-points-schema) correspond to [PKI Revocation Distribution Point](../proto/zigbeealliance/distributedcomplianceledger/pki/pki_revocation_distribution_point.proto) entity and the associated `write/read` requests can be found in the [revocation points section](transactions.md#x509-pki).
 
 ## Model Module
-
+ 
 In DCL, the [Model module](transactions/model.md) is responsible to handle records regarding device and device software version models.
 
 1. The [Device Model schema](https://github.com/CHIP-Specifications/connectedhomeip-spec/blob/master/src/service_device_management/DistributedComplianceLedger.adoc#ref_DeviceModelSchema) corresponds to the [Model](../proto/zigbeealliance/distributedcomplianceledger/model/model.proto) entity, and the associated `write/read` requests can be found in the [Model and Model Version section](transactions.md#model-and-model-version).
