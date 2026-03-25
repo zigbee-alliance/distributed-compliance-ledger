@@ -294,7 +294,7 @@ test_divider
 # CERTIFY_DEVICE_COMPLIANCE
 
 echo "Certify model vid=$vid pid=$pid_1"
-result=$(echo $passphrase | $DCLD_BIN tx compliance certify-model --vid=$vid --pid=$pid_1 --softwareVersion=$software_version --softwareVersionString=$software_version_string  --certificationType=$certification_type --certificationDate=$certification_date --cdCertificateId=$cd_certificate_id --certificationIDOfSoftwareComponent="comp" --from=$certification_center_account --yes)
+result=$(echo $passphrase | $DCLD_BIN tx compliance certify-model --vid=$vid --pid=$pid_1 --softwareVersion=$software_version --softwareVersionString=$software_version_string  --certificationType=$certification_type --certificationDate=$certification_date --cdCertificateId=$cd_certificate_id --from=$certification_center_account --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
