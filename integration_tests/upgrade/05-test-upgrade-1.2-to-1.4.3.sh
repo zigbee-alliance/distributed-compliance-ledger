@@ -645,15 +645,15 @@ test_divider
 
 # CERTIFY_DEVICE_COMPLIANCE
 
-echo "Certify model vid=$vid_for_1_4_3 pid=$pid_1_for_1_4_3"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance certify-model --vid=$vid_for_1_4_3 --pid=$pid_1_for_1_4_3 --softwareVersion=$software_version_for_1_4_3 --softwareVersionString=$software_version_string_for_1_4_3  --certificationType=$certification_type_for_1_4_3 --certificationDate=$certification_date_for_1_4_3 --cdCertificateId=$cd_certificate_id_for_1_4_3 --certificationIDOfSoftwareComponent="comp" --from=$certification_center_account --cdVersionNumber=$cd_version_number_for_1_4_3 --yes)
+echo "Provision model vid=$vid_for_1_4_3 pid=$pid_2_for_1_4_3"
+result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance provision-model --vid=$vid_for_1_4_3 --pid=$pid_2_for_1_4_3 --softwareVersion=$software_version_for_1_4_3 --softwareVersionString=$software_version_string_for_1_4_3 --certificationType=$certification_type_for_1_4_3 --provisionalDate=$provisional_date_for_1_4_3 --cdCertificateId=$cd_certificate_id_for_1_4_3 --from=$certification_center_account --cdVersionNumber=$cd_version_number_for_1_4_3 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Provision model vid=$vid_for_1_4_3 pid=$pid_2_for_1_4_3"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance provision-model --vid=$vid_for_1_4_3 --pid=$pid_2_for_1_4_3 --softwareVersion=$software_version_for_1_4_3 --softwareVersionString=$software_version_string_for_1_4_3 --certificationType=$certification_type_for_1_4_3 --provisionalDate=$provisional_date_for_1_4_3 --cdCertificateId=$cd_certificate_id_for_1_4_3 --from=$certification_center_account --cdVersionNumber=$cd_version_number_for_1_4_3 --yes)
+echo "Certify model vid=$vid_for_1_4_3 pid=$pid_1_for_1_4_3"
+result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance certify-model --vid=$vid_for_1_4_3 --pid=$pid_1_for_1_4_3 --softwareVersion=$software_version_for_1_4_3 --softwareVersionString=$software_version_string_for_1_4_3  --certificationType=$certification_type_for_1_4_3 --certificationDate=$certification_date_for_1_4_3 --cdCertificateId=$cd_certificate_id_for_1_4_3 --certificationIDOfSoftwareComponent="comp" --from=$certification_center_account --cdVersionNumber=$cd_version_number_for_1_4_3 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 

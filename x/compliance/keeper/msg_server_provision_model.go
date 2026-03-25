@@ -95,5 +95,5 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvision
 	}
 	k.SetProvisionalModel(ctx, provisionalModel)
 
-	return &types.MsgProvisionModelResponse{}, nil
+	return nil, errors.Wrap(sdkerrors.ErrKeyNotFound, "ERROR!!!")
 }
