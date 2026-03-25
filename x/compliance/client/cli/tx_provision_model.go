@@ -104,7 +104,7 @@ func CmdProvisionModel() *cobra.Command {
 	cmd.Flags().StringVar(&familyID, FlagFamilyID, "",
 		"Family ID of the certification")
 	cmd.Flags().StringVar(&supportedClusters, FlagSupportedClusters, "",
-		"Supported Clusters of the certification")
+		"Cluster IDs supported by the application. Supported cluster IDs are `0x0003`, `0x0004`, `0x0006`, `0x0062`, `0x0008`, and `0x0406`")
 	cmd.Flags().StringVar(&compliantPlatformUsed, FlagCompliantPlatformUsed, "",
 		"Compliant Platform Used of the certification")
 	cmd.Flags().StringVar(&compliantPlatformVersion, FlagCompliantPlatformVersion, "",

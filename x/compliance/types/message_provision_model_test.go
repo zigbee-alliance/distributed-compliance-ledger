@@ -278,7 +278,7 @@ func TestMsgProvisionModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "supportedClusters > 64",
+			name: "supportedClusters > 128",
 			msg: MsgProvisionModel{
 				Signer:                sample.AccAddress(),
 				Pid:                   1,
@@ -289,7 +289,7 @@ func TestMsgProvisionModel_ValidateBasic(t *testing.T) {
 				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 				Reason:                testconstants.Reason,
 				CDCertificateId:       testconstants.CDCertificateID,
-				SupportedClusters:     tmrand.Str(65),
+				SupportedClusters:     tmrand.Str(129),
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
@@ -576,7 +576,7 @@ func TestMsgProvisionModel_ValidateBasic(t *testing.T) {
 			},
 		},
 		{
-			name: "SupportedClusters >= 0 && SupportedClusters <= 64",
+			name: "SupportedClusters >= 0 && SupportedClusters <= 128",
 			msg: MsgProvisionModel{
 				Signer:                sample.AccAddress(),
 				SoftwareVersionString: "1",
