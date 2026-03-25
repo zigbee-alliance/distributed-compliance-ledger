@@ -64,7 +64,6 @@ export interface ComplianceComplianceInfo {
   supportedClusters?: string;
   OSVersion?: string;
   parentChild?: string;
-  certificationIdOfSoftwareComponent?: string;
 
     /** @format int64 */
     schemaVersion?: number;

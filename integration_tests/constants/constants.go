@@ -131,10 +131,9 @@ var (
 	SoftwareVersionCertificationStatus = uint32(
 		3,
 	)
-	ParentChild1                       = "parent"
-	ParentChild2                       = "child"
-	CertificationIDOfSoftwareComponent = "some certification ID of software component"
-	FirstJanuary                       = "2020-01-01T00:00:01Z"
+	ParentChild1 = "parent"
+	ParentChild2 = "child"
+	FirstJanuary = "2020-01-01T00:00:01Z"
 
 	// Testing Result.
 	TestResult = "http://test.result.com"

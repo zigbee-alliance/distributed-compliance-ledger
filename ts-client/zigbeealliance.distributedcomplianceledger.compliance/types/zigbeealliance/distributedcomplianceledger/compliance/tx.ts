@@ -24,7 +24,6 @@ export interface MsgCertifyModel {
   programType: string;
   transport: string;
   parentChild: string;
-  certificationIdOfSoftwareComponent: string;
   schemaVersion: number;
 }
 
@@ -68,7 +67,6 @@ export interface MsgProvisionModel {
   programType: string;
   transport: string;
   parentChild: string;
-  certificationIdOfSoftwareComponent: string;
   schemaVersion: number;
 }
 
@@ -96,7 +94,6 @@ export interface MsgUpdateComplianceInfo {
   supportedClusters: string;
   OSVersion: string;
   parentChild: string;
-  certificationIdOfSoftwareComponent: string;
   schemaVersion: number;
 }
 
@@ -136,7 +133,6 @@ function createBaseMsgCertifyModel(): MsgCertifyModel {
     programType: "",
     transport: "",
     parentChild: "",
-    certificationIdOfSoftwareComponent: "",
     schemaVersion: 0,
   };
 }
@@ -202,9 +198,6 @@ export const MsgCertifyModel = {
     }
     if (message.parentChild !== "") {
       writer.uint32(162).string(message.parentChild);
-    }
-    if (message.certificationIdOfSoftwareComponent !== "") {
-      writer.uint32(170).string(message.certificationIdOfSoftwareComponent);
     }
     if (message.schemaVersion !== 0) {
       writer.uint32(176).uint32(message.schemaVersion);
@@ -279,9 +272,6 @@ export const MsgCertifyModel = {
         case 20:
           message.parentChild = reader.string();
           break;
-        case 21:
-          message.certificationIdOfSoftwareComponent = reader.string();
-          break;
         case 22:
           message.schemaVersion = reader.uint32();
           break;
@@ -315,9 +305,6 @@ export const MsgCertifyModel = {
       programType: isSet(object.programType) ? String(object.programType) : "",
       transport: isSet(object.transport) ? String(object.transport) : "",
       parentChild: isSet(object.parentChild) ? String(object.parentChild) : "",
-      certificationIdOfSoftwareComponent: isSet(object.certificationIdOfSoftwareComponent)
-        ? String(object.certificationIdOfSoftwareComponent)
-        : "",
       schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
@@ -344,8 +331,6 @@ export const MsgCertifyModel = {
     message.programType !== undefined && (obj.programType = message.programType);
     message.transport !== undefined && (obj.transport = message.transport);
     message.parentChild !== undefined && (obj.parentChild = message.parentChild);
-    message.certificationIdOfSoftwareComponent !== undefined
-      && (obj.certificationIdOfSoftwareComponent = message.certificationIdOfSoftwareComponent);
     message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
@@ -372,7 +357,6 @@ export const MsgCertifyModel = {
     message.programType = object.programType ?? "";
     message.transport = object.transport ?? "";
     message.parentChild = object.parentChild ?? "";
-    message.certificationIdOfSoftwareComponent = object.certificationIdOfSoftwareComponent ?? "";
     message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
@@ -619,7 +603,6 @@ function createBaseMsgProvisionModel(): MsgProvisionModel {
     programType: "",
     transport: "",
     parentChild: "",
-    certificationIdOfSoftwareComponent: "",
     schemaVersion: 0,
   };
 }
@@ -685,9 +668,6 @@ export const MsgProvisionModel = {
     }
     if (message.parentChild !== "") {
       writer.uint32(162).string(message.parentChild);
-    }
-    if (message.certificationIdOfSoftwareComponent !== "") {
-      writer.uint32(170).string(message.certificationIdOfSoftwareComponent);
     }
     if (message.schemaVersion !== 0) {
       writer.uint32(176).uint32(message.schemaVersion);
@@ -762,9 +742,6 @@ export const MsgProvisionModel = {
         case 20:
           message.parentChild = reader.string();
           break;
-        case 21:
-          message.certificationIdOfSoftwareComponent = reader.string();
-          break;
         case 22:
           message.schemaVersion = reader.uint32();
           break;
@@ -798,9 +775,6 @@ export const MsgProvisionModel = {
       programType: isSet(object.programType) ? String(object.programType) : "",
       transport: isSet(object.transport) ? String(object.transport) : "",
       parentChild: isSet(object.parentChild) ? String(object.parentChild) : "",
-      certificationIdOfSoftwareComponent: isSet(object.certificationIdOfSoftwareComponent)
-        ? String(object.certificationIdOfSoftwareComponent)
-        : "",
       schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
@@ -827,8 +801,6 @@ export const MsgProvisionModel = {
     message.programType !== undefined && (obj.programType = message.programType);
     message.transport !== undefined && (obj.transport = message.transport);
     message.parentChild !== undefined && (obj.parentChild = message.parentChild);
-    message.certificationIdOfSoftwareComponent !== undefined
-      && (obj.certificationIdOfSoftwareComponent = message.certificationIdOfSoftwareComponent);
     message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
@@ -855,7 +827,6 @@ export const MsgProvisionModel = {
     message.programType = object.programType ?? "";
     message.transport = object.transport ?? "";
     message.parentChild = object.parentChild ?? "";
-    message.certificationIdOfSoftwareComponent = object.certificationIdOfSoftwareComponent ?? "";
     message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },
@@ -922,7 +893,6 @@ function createBaseMsgUpdateComplianceInfo(): MsgUpdateComplianceInfo {
     supportedClusters: "",
     OSVersion: "",
     parentChild: "",
-    certificationIdOfSoftwareComponent: "",
     schemaVersion: 0,
   };
 }
@@ -988,9 +958,6 @@ export const MsgUpdateComplianceInfo = {
     }
     if (message.parentChild !== "") {
       writer.uint32(162).string(message.parentChild);
-    }
-    if (message.certificationIdOfSoftwareComponent !== "") {
-      writer.uint32(170).string(message.certificationIdOfSoftwareComponent);
     }
     if (message.schemaVersion !== 0) {
       writer.uint32(176).uint32(message.schemaVersion);
@@ -1065,9 +1032,6 @@ export const MsgUpdateComplianceInfo = {
         case 20:
           message.parentChild = reader.string();
           break;
-        case 21:
-          message.certificationIdOfSoftwareComponent = reader.string();
-          break;
         case 22:
           message.schemaVersion = reader.uint32();
           break;
@@ -1101,9 +1065,6 @@ export const MsgUpdateComplianceInfo = {
       supportedClusters: isSet(object.supportedClusters) ? String(object.supportedClusters) : "",
       OSVersion: isSet(object.OSVersion) ? String(object.OSVersion) : "",
       parentChild: isSet(object.parentChild) ? String(object.parentChild) : "",
-      certificationIdOfSoftwareComponent: isSet(object.certificationIdOfSoftwareComponent)
-        ? String(object.certificationIdOfSoftwareComponent)
-        : "",
       schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
@@ -1130,8 +1091,6 @@ export const MsgUpdateComplianceInfo = {
     message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters);
     message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion);
     message.parentChild !== undefined && (obj.parentChild = message.parentChild);
-    message.certificationIdOfSoftwareComponent !== undefined
-      && (obj.certificationIdOfSoftwareComponent = message.certificationIdOfSoftwareComponent);
     message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
@@ -1158,7 +1117,6 @@ export const MsgUpdateComplianceInfo = {
     message.supportedClusters = object.supportedClusters ?? "";
     message.OSVersion = object.OSVersion ?? "";
     message.parentChild = object.parentChild ?? "";
-    message.certificationIdOfSoftwareComponent = object.certificationIdOfSoftwareComponent ?? "";
     message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },

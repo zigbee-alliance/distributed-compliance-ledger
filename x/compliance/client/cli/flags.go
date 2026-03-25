@@ -41,7 +41,6 @@ const (
 	FlagProgramType                        = "programType"
 	FlagTransport                          = "transport"
 	FlagParentChild                        = "parentChild"
-	FlagCertificationIDOfSoftwareComponent = "certificationIDOfSoftwareComponent"
 	FlagOwner                              = "owner"
 	FlagSoftwareVersionCertificationStatus = "softwareVersionCertificationStatus"
 

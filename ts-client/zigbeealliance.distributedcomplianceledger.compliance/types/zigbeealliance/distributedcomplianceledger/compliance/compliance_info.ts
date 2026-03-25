@@ -27,7 +27,6 @@ export interface ComplianceInfo {
   supportedClusters: string;
   OSVersion: string;
   parentChild: string;
-  certificationIdOfSoftwareComponent: string;
   schemaVersion: number;
 }
 
@@ -55,7 +54,6 @@ function createBaseComplianceInfo(): ComplianceInfo {
     supportedClusters: "",
     OSVersion: "",
     parentChild: "",
-    certificationIdOfSoftwareComponent: "",
     schemaVersion: 0,
   };
 }
@@ -127,9 +125,6 @@ export const ComplianceInfo = {
     }
     if (message.parentChild !== "") {
       writer.uint32(178).string(message.parentChild);
-    }
-    if (message.certificationIdOfSoftwareComponent !== "") {
-      writer.uint32(186).string(message.certificationIdOfSoftwareComponent);
     }
     if (message.schemaVersion !== 0) {
       writer.uint32(192).uint32(message.schemaVersion);
@@ -210,9 +205,6 @@ export const ComplianceInfo = {
         case 22:
           message.parentChild = reader.string();
           break;
-        case 23:
-          message.certificationIdOfSoftwareComponent = reader.string();
-          break;
         case 24:
           message.schemaVersion = reader.uint32();
           break;
@@ -250,9 +242,6 @@ export const ComplianceInfo = {
       supportedClusters: isSet(object.supportedClusters) ? String(object.supportedClusters) : "",
       OSVersion: isSet(object.OSVersion) ? String(object.OSVersion) : "",
       parentChild: isSet(object.parentChild) ? String(object.parentChild) : "",
-      certificationIdOfSoftwareComponent: isSet(object.certificationIdOfSoftwareComponent)
-        ? String(object.certificationIdOfSoftwareComponent)
-        : "",
       schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
@@ -286,8 +275,6 @@ export const ComplianceInfo = {
     message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters);
     message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion);
     message.parentChild !== undefined && (obj.parentChild = message.parentChild);
-    message.certificationIdOfSoftwareComponent !== undefined
-      && (obj.certificationIdOfSoftwareComponent = message.certificationIdOfSoftwareComponent);
     message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
     return obj;
   },
@@ -316,7 +303,6 @@ export const ComplianceInfo = {
     message.supportedClusters = object.supportedClusters ?? "";
     message.OSVersion = object.OSVersion ?? "";
     message.parentChild = object.parentChild ?? "";
-    message.certificationIdOfSoftwareComponent = object.certificationIdOfSoftwareComponent ?? "";
     message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },

@@ -72,15 +72,14 @@ func (d *ComplianceInfo) SetOptionalFields(optionalFields *OptionalFields) {
 }
 
 type OptionalFields struct {
-	ProgramTypeVersion                 string
-	FamilyID                           string
-	SupportedClusters                  string
-	CompliantPlatformUsed              string
-	CompliantPlatformVersion           string
-	OSVersion                          string
-	CertificationRoute                 string
-	ProgramType                        string
-	Transport                          string
-	ParentChild                        string
-	CertificationIDOfSoftwareComponent string
+	ProgramTypeVersion       string
+	FamilyID                 string
+	SupportedClusters        string
+	CompliantPlatformUsed    string
+	CompliantPlatformVersion string
+	OSVersion                string
+	CertificationRoute       string
+	ProgramType              string
+	Transport                string
+	ParentChild              string
 }

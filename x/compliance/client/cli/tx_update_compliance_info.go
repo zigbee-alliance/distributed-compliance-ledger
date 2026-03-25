@@ -17,27 +17,26 @@ var _ = strconv.Itoa(0)
 
 func CmdUpdateComplianceInfo() *cobra.Command {
 	var (
-		vid                                int32
-		pid                                int32
-		softwareVersion                    uint32
-		certificationType                  string
-		cdVersionNumber                    string
-		certificationDate                  string
-		reason                             string
-		owner                              string
-		CDCertificateID                    string
-		certificationRoute                 string
-		programType                        string
-		programTypeVersion                 string
-		compliantPlatformUsed              string
-		compliantPlatformVersion           string
-		transport                          string
-		familyID                           string
-		supportedClusters                  string
-		OSVersion                          string
-		parentChild                        string
-		certificationIDOfSoftwareComponent string
-		schemaVersion                      uint32
+		vid                      int32
+		pid                      int32
+		softwareVersion          uint32
+		certificationType        string
+		cdVersionNumber          string
+		certificationDate        string
+		reason                   string
+		owner                    string
+		CDCertificateID          string
+		certificationRoute       string
+		programType              string
+		programTypeVersion       string
+		compliantPlatformUsed    string
+		compliantPlatformVersion string
+		transport                string
+		familyID                 string
+		supportedClusters        string
+		OSVersion                string
+		parentChild              string
+		schemaVersion            uint32
 	)
 
 	cmd := &cobra.Command{
@@ -71,7 +70,6 @@ func CmdUpdateComplianceInfo() *cobra.Command {
 				supportedClusters,
 				OSVersion,
 				parentChild,
-				certificationIDOfSoftwareComponent,
 				schemaVersion,
 			)
 
@@ -119,8 +117,6 @@ func CmdUpdateComplianceInfo() *cobra.Command {
 		"Transport of the certification")
 	cmd.Flags().StringVar(&parentChild, FlagParentChild, "",
 		"Parent or Child  of the PFC certification route")
-	cmd.Flags().StringVar(&certificationIDOfSoftwareComponent, FlagCertificationIDOfSoftwareComponent, "",
-		"certification ID of software component")
 	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
 
 	_ = cmd.MarkFlagRequired(FlagVID)

@@ -225,8 +225,6 @@ paths:
                       type: string
                     parentChild:
                       type: string
-                    certificationIdOfSoftwareComponent:
-                      type: string
                     schemaVersion:
                       type: integer
                       format: int64
@@ -357,8 +355,6 @@ paths:
                     type: string
                   parentChild:
                     type: string
-                  certificationIdOfSoftwareComponent:
-                    type: string
                   schemaVersion:
                     type: integer
                     format: int64
@@ -484,8 +480,6 @@ paths:
                           OSVersion:
                             type: string
                           parentChild:
-                            type: string
-                          certificationIdOfSoftwareComponent:
                             type: string
                           schemaVersion:
                             type: integer
@@ -623,8 +617,6 @@ paths:
                         OSVersion:
                           type: string
                         parentChild:
-                          type: string
-                        certificationIdOfSoftwareComponent:
                           type: string
                         schemaVersion:
                           type: integer
@@ -1105,8 +1097,6 @@ definitions:
               type: string
             parentChild:
               type: string
-            certificationIdOfSoftwareComponent:
-              type: string
             schemaVersion:
               type: integer
               format: int64
@@ -1195,8 +1185,6 @@ definitions:
                   OSVersion:
                     type: string
                   parentChild:
-                    type: string
-                  certificationIdOfSoftwareComponent:
                     type: string
                   schemaVersion:
                     type: integer
@@ -1357,8 +1345,6 @@ definitions:
             type: string
           parentChild:
             type: string
-          certificationIdOfSoftwareComponent:
-            type: string
           schemaVersion:
             type: integer
             format: int64
@@ -1436,8 +1422,6 @@ definitions:
                 OSVersion:
                   type: string
                 parentChild:
-                  type: string
-                certificationIdOfSoftwareComponent:
                   type: string
                 schemaVersion:
                   type: integer
@@ -1561,8 +1545,6 @@ definitions:
         type: string
       parentChild:
         type: string
-      certificationIdOfSoftwareComponent:
-        type: string
       schemaVersion:
         type: integer
         format: int64
@@ -1637,8 +1619,6 @@ definitions:
             OSVersion:
               type: string
             parentChild:
-              type: string
-            certificationIdOfSoftwareComponent:
               type: string
             schemaVersion:
               type: integer

@@ -39,7 +39,6 @@ from the revocation list.
 - certificationTypeVersion `optional(string)` - optional field describing the version of the certification program (see `certificationType` for supported programs)
   - transport `optional(string)` - optional field describing the underlying communication technology the device uses to connect and exchange data. Supported values are `thread`, `wi-fi`, `ethernet`, and `bluetooth`
   - parentChild `optional(string)` - optional field describing the parent vs. child characteristic when using the Product Family Certification or Portfolio Certification Program. Supported values are `parent` and `child`.
-  - certificationIDOfSoftwareComponent `optional(string)` - optional field describing the certification ID of software component
   - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State:
   - `compliance/ComplianceInfo/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
@@ -49,7 +48,7 @@ from the revocation list.
 - CLI command:
   - `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string>  --certificationType=<matter|zigbee> --certificationDate=<rfc3339 encoded date> --cdCertificateId=<string> --from=<account>`
 - CLI command full:
-  - `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string>  --certificationType=<matter|zigbee> --certificationDate=<rfc3339 encoded date> --cdCertificateId=<string> --reason=<string> --cDVersionNumber=<uint32> --familyId=<string> --supportedClusters=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --OSName=<string> --certificationRoute=<string> --productType=<string> --certificationTypeVersion=<string> --transport=<string> --parentChild=<string> --certificationIDOfSoftwareComponent=<string> --from=<account>`
+  - `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string>  --certificationType=<matter|zigbee> --certificationDate=<rfc3339 encoded date> --cdCertificateId=<string> --reason=<string> --cDVersionNumber=<uint32> --familyId=<string> --supportedClusters=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --OSName=<string> --certificationRoute=<string> --productType=<string> --certificationTypeVersion=<string> --transport=<string> --parentChild=<string> --from=<account>`
 
 ### UPDATE_COMPLIANCE_INFO
 
@@ -77,14 +76,13 @@ Updates a compliance info by VID, PID, Software Version and Certification Type.
   - certificationTypeVersion `optional(string)` - optional field describing the version of the certification program (see `certificationType` for supported programs)
   - transport `optional(string)` - optional field describing the underlying communication technology the device uses to connect and exchange data. Supported values are `thread`, `wi-fi`, `ethernet`, and `bluetooth`
   - parentChild `optional(string)` - optional field describing the parent vs. child characteristic when using the Product Family Certification or Portfolio Certification Program. Supported values are `parent` and `child`.
-  - certificationIDOfSoftwareComponent `optional(string)` - optional field describing the certification ID of software component
   - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - Who can send:
   - CertificationCenter
 - CLI command:
   - `dcld tx compliance update-compliance-info`
 - CLI command full:
-  - `dcld tx compliance update-compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<string> --cdVersionNumber=<string> --certificationDate=$upd_certification_date --reason=$upd_reason --cdCertificateId=$upd_cd_certificate_id --certificationRoute=$upd_certification_route --productType=$upd_program_type --certificationTypeVersion=$upd_program_type_version --compliantPlatformUsed=$upd_compliant_platform_used --compliantPlatformVersion=$upd_compliant_platform_version --transport=$upd_transport --familyId=$upd_familyID --supportedClusters=$upd_supported_clusters --OSName=$upd_os_version --parentChild=$upd_parent_child --certificationIDOfSoftwareComponent=$upd_certification_id_of_software_component --from=$zb_account`
+  - `dcld tx compliance update-compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<string> --cdVersionNumber=<string> --certificationDate=$upd_certification_date --reason=$upd_reason --cdCertificateId=$upd_cd_certificate_id --certificationRoute=$upd_certification_route --productType=$upd_program_type --certificationTypeVersion=$upd_program_type_version --compliantPlatformUsed=$upd_compliant_platform_used --compliantPlatformVersion=$upd_compliant_platform_version --transport=$upd_transport --familyId=$upd_familyID --supportedClusters=$upd_supported_clusters --OSName=$upd_os_version --parentChild=$upd_parent_child --from=$zb_account`
 - REST API:
   - `/dcl/compliance/update-compliance-info`
 
@@ -165,7 +163,6 @@ Can not be set if there is already a certification record on the ledger (certifi
   - certificationTypeVersion `optional(string)` - optional field describing the version of the certification program (see `certificationType` for supported programs)
   - transport `optional(string)` - optional field describing the underlying communication technology the device uses to connect and exchange data. Supported values are `thread`, `wi-fi`, `ethernet`, and `bluetooth`
   - parentChild `optional(string)` - optional field describing the parent vs. child characteristic when using the Product Family Certification or Portfolio Certification Program. Supported values are `parent` and `child`.
-  - certificationIDOfSoftwareComponent `optional(string)` - optional field describing the certification ID of software component
   - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State:
   - `compliance/ComplianceInfo/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
@@ -175,7 +172,7 @@ Can not be set if there is already a certification record on the ledger (certifi
 - CLI command:
   - `dcld tx compliance provision-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee> --provisionalDate=<rfc3339 encoded date> --from=<account>`
 - CLI command full:
-  - `dcld tx compliance provision-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee> --provisionalDate=<rfc3339 encoded date> --cdCertificateId=<string> --reason=<string> --cDVersionNumber=<uint32> --familyId=<string> --supportedClusters=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --OSName=<string> --certificationRoute=<string> --productType=<string> --certificationTypeVersion=<string> --transport=<string> --parentChild=<string> --certificationIDOfSoftwareComponent=<string> --from=<account>`
+  - `dcld tx compliance provision-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee> --provisionalDate=<rfc3339 encoded date> --cdCertificateId=<string> --reason=<string> --cDVersionNumber=<uint32> --familyId=<string> --supportedClusters=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --OSName=<string> --certificationRoute=<string> --productType=<string> --certificationTypeVersion=<string> --transport=<string> --parentChild=<string> --from=<account>`
 
 ### GET_CERTIFIED_MODEL
 

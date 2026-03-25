@@ -16,27 +16,26 @@ var _ = strconv.Itoa(0)
 
 func CmdProvisionModel() *cobra.Command {
 	var (
-		vid                                int32
-		pid                                int32
-		softwareVersion                    uint32
-		softwareVersionString              string
-		provisionalDate                    string
-		certificationType                  string
-		reason                             string
-		cdVersionNumber                    uint32
-		programTypeVersion                 string
-		CDCertificateID                    string
-		familyID                           string
-		supportedClusters                  string
-		compliantPlatformUsed              string
-		compliantPlatformVersion           string
-		OSVersion                          string
-		certificationRoute                 string
-		programType                        string
-		transport                          string
-		parentChild                        string
-		certificationIDOfSoftwareComponent string
-		schemaVersion                      uint32
+		vid                      int32
+		pid                      int32
+		softwareVersion          uint32
+		softwareVersionString    string
+		provisionalDate          string
+		certificationType        string
+		reason                   string
+		cdVersionNumber          uint32
+		programTypeVersion       string
+		CDCertificateID          string
+		familyID                 string
+		supportedClusters        string
+		compliantPlatformUsed    string
+		compliantPlatformVersion string
+		OSVersion                string
+		certificationRoute       string
+		programType              string
+		transport                string
+		parentChild              string
+		schemaVersion            uint32
 	)
 
 	cmd := &cobra.Command{
@@ -70,7 +69,6 @@ func CmdProvisionModel() *cobra.Command {
 				programType,
 				transport,
 				parentChild,
-				certificationIDOfSoftwareComponent,
 				schemaVersion,
 			)
 
@@ -121,8 +119,6 @@ func CmdProvisionModel() *cobra.Command {
 		"Transport of the certification")
 	cmd.Flags().StringVar(&parentChild, FlagParentChild, "",
 		"Parent or Child  of the PFC certification route")
-	cmd.Flags().StringVar(&certificationIDOfSoftwareComponent, FlagCertificationIDOfSoftwareComponent, "",
-		"certification ID of software component")
 	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
 
 	_ = cmd.MarkFlagRequired(FlagVID)
