@@ -96,7 +96,7 @@ func (k msgServer) UpdateVendorInfo(goCtx context.Context, msg *types.MsgUpdateV
 
 	k.SetVendorInfo(ctx, vendorInfo)
 
-	return &types.MsgUpdateVendorInfoResponse{}, nil
+	return nil, errors.Wrap(sdkerrors.ErrKeyNotFound, "ERROR!!!")
 }
 
 // func (k msgServer) DeleteVendorInfo(goCtx context.Context, msg *types.MsgDeleteVendorInfo) (*types.MsgDeleteVendorInfoResponse, error) {

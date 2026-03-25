@@ -451,7 +451,7 @@ func New(
 		app.DclauthKeeper,
 		app.ModelKeeper,
 	)
-	logger.Info("--------------CURRENT--------------")
+
 	app.ModelKeeper.SetComplianceKeeper(app.ComplianceKeeper)
 
 	modelModule := modelmodule.NewAppModule(appCodec, app.ModelKeeper)
