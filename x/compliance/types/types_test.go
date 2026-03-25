@@ -7,7 +7,6 @@ import (
 )
 
 func TestIsValidFamilyID(t *testing.T) {
-
 	testCases := []struct {
 		name    string
 		id      string

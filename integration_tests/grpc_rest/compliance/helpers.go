@@ -1052,7 +1052,6 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	// not updated fields
 	require.Equal(suite.T, updatedComplianceInfo.CDCertificateId, oldComplianceInfo.CDCertificateId)
 	require.Equal(suite.T, updatedComplianceInfo.CDVersionNumber, oldComplianceInfo.CDVersionNumber)
-	require.Equal(suite.T, updatedComplianceInfo.CertificationIdOfSoftwareComponent, oldComplianceInfo.CertificationIdOfSoftwareComponent)
 	require.Equal(suite.T, updatedComplianceInfo.Date, oldComplianceInfo.Date)
 	require.Equal(suite.T, updatedComplianceInfo.SoftwareVersionCertificationStatus, oldComplianceInfo.SoftwareVersionCertificationStatus)
 
@@ -1166,7 +1165,6 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.CertificationRoute, complianceInfo.CertificationRoute)
 	require.Equal(suite.T, testconstants.Transport, complianceInfo.Transport)
 	require.Equal(suite.T, testconstants.ParentChild1, complianceInfo.ParentChild)
-	require.Equal(suite.T, testconstants.CertificationIDOfSoftwareComponent, complianceInfo.CertificationIdOfSoftwareComponent)
 
 	modelIsCertified, _ = GetCertifiedModel(suite, vid, pid, sv, compliancetypes.ZigbeeCertificationType)
 	require.True(suite.T, modelIsCertified.Value)
@@ -1196,7 +1194,6 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.CertificationRoute, deviceSoftwareCompliance.ComplianceInfo[0].CertificationRoute)
 	require.Equal(suite.T, testconstants.Transport, deviceSoftwareCompliance.ComplianceInfo[0].Transport)
 	require.Equal(suite.T, testconstants.ParentChild1, deviceSoftwareCompliance.ComplianceInfo[0].ParentChild)
-	require.Equal(suite.T, testconstants.CertificationIDOfSoftwareComponent, deviceSoftwareCompliance.ComplianceInfo[0].CertificationIdOfSoftwareComponent)
 
 	// Get all models
 	complianceInfos, _ = GetAllComplianceInfo(suite)
@@ -1641,7 +1638,6 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.CertificationRoute, complianceInfo.CertificationRoute)
 	require.Equal(suite.T, testconstants.Transport, complianceInfo.Transport)
 	require.Equal(suite.T, testconstants.ParentChild1, complianceInfo.ParentChild)
-	require.Equal(suite.T, testconstants.CertificationIDOfSoftwareComponent, complianceInfo.CertificationIdOfSoftwareComponent)
 
 	_, err = GetCertifiedModel(suite, vid, pid, sv, compliancetypes.MatterCertificationType)
 	suite.AssertNotFound(err)
@@ -1702,7 +1698,6 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, "sClusters", complianceInfo.SupportedClusters)
 	require.Equal(suite.T, "WIFI", complianceInfo.CompliantPlatformUsed)
 	require.Equal(suite.T, "V1", complianceInfo.CompliantPlatformVersion)
-	require.Equal(suite.T, "x5732", complianceInfo.CertificationIdOfSoftwareComponent)
 	require.Equal(suite.T, testconstants.OSVersion, complianceInfo.OSVersion)
 	require.Equal(suite.T, testconstants.CertificationRoute, complianceInfo.CertificationRoute)
 	require.Equal(suite.T, testconstants.Transport, complianceInfo.Transport)
@@ -1732,7 +1727,6 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, "sClusters", deviceSoftwareCompliance.ComplianceInfo[3].SupportedClusters)
 	require.Equal(suite.T, "WIFI", deviceSoftwareCompliance.ComplianceInfo[3].CompliantPlatformUsed)
 	require.Equal(suite.T, "V1", deviceSoftwareCompliance.ComplianceInfo[3].CompliantPlatformVersion)
-	require.Equal(suite.T, "x5732", deviceSoftwareCompliance.ComplianceInfo[3].CertificationIdOfSoftwareComponent)
 	require.Equal(suite.T, testconstants.OSVersion, deviceSoftwareCompliance.ComplianceInfo[3].OSVersion)
 	require.Equal(suite.T, testconstants.CertificationRoute, deviceSoftwareCompliance.ComplianceInfo[3].CertificationRoute)
 	require.Equal(suite.T, testconstants.Transport, deviceSoftwareCompliance.ComplianceInfo[3].Transport)
