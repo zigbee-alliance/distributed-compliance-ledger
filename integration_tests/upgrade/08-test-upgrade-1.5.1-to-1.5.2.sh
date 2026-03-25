@@ -310,7 +310,7 @@ check_response "$result" "\"code\": 0"
 echo "Get compliance-info model with VID: $vid_for_1_5_2 PID: $pid_1_for_1_5_2"
 result=$($DCLD_BIN_NEW query compliance compliance-info --vid=$vid_for_1_5_2 --pid=$pid_1_for_1_5_2 --softwareVersion=$software_version_for_1_5_2 --certificationType=$certification_type_for_1_5_2)
 check_response "$result" "\"vid\": $vid_for_1_5_2"
-check_response "$result" "\"pid\": $pid_2_for_1_5_2"
+check_response "$result" "\"pid\": $pid_1_for_1_5_2"
 check_response "$result" "\"softwareVersion\": $software_version_for_1_5_2"
 check_response "$result" "\"certificationType\": \"$certification_type_for_1_5_2\""
 
