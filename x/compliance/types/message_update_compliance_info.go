@@ -114,5 +114,9 @@ func (msg *MsgUpdateComplianceInfo) ValidateBasic() error {
 		return NewErrInvalidCertificationRoute(msg.CertificationRoute, CertificationRoutesList)
 	}
 
+	if msg.FamilyId != "" && !IsValidFamilyID(msg.FamilyId) {
+		return NewErrInvalidFamilyID(msg.FamilyId)
+	}
+
 	return nil
 }

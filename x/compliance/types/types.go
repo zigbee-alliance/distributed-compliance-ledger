@@ -1,5 +1,7 @@
 package types
 
+import "regexp"
+
 const (
 	ZigbeeCertificationType string = "zigbee"
 	MatterCertificationType string = "matter"
@@ -70,4 +72,10 @@ func IsValidCertificationRoute(certificationRoute string) bool {
 	}
 
 	return false
+}
+
+var familyIDRegex = regexp.MustCompile(`^FAM[a-zA-Z0-9]+$`)
+
+func IsValidFamilyID(id string) bool {
+	return familyIDRegex.MatchString(id)
 }

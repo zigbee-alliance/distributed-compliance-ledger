@@ -452,7 +452,7 @@ func newMsgUpdateComplianceInfoWithAllOptionalFlags(
 		CompliantPlatformUsed:              "new CompliantPlatformUsed",
 		CompliantPlatformVersion:           "new CompliantPlatformVersion",
 		Transport:                          "new Transport",
-		FamilyId:                           "new FamilyId",
+		FamilyId:                           "FAM123456",
 		SupportedClusters:                  "new SupportedClusters",
 		OSVersion:                          "new OSVersion",
 		ParentChild:                        "new ParentChild",

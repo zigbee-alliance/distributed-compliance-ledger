@@ -573,7 +573,7 @@ test_divider
 
 # ADD CERTIFY MODEL WITH ALL OPTIONAL FIELDS
 echo "Certify Model with VID: $vid PID: $pid SV: ${sv} with zigbee certification"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=$cd_version_number --programTypeVersion="1.0" --familyId="someFID" --supportedClusters="someClusters" --compliantPlatformUsed="WIFI" --compliantPlatformVersion="V1" --OSVersion="someV" --certificationRoute="fullTested" --programType="pType" --transport="someTransport" --parentChild="parent" --certificationIDOfSoftwareComponent="someIDOfSoftwareComponent" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=$cd_version_number --programTypeVersion="1.0" --familyId="FAM123456abc" --supportedClusters="someClusters" --compliantPlatformUsed="WIFI" --compliantPlatformVersion="V1" --OSVersion="someV" --certificationRoute="fullTested" --programType="pType" --transport="someTransport" --parentChild="parent" --certificationIDOfSoftwareComponent="someIDOfSoftwareComponent" --from $zb_account --yes)
 result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "\"code\": 0"
@@ -749,7 +749,7 @@ upd_program_type_version="brand_new_program_type_version"
 upd_compliant_platform_used="brand_new_compliant_platform_used"
 upd_compliant_platform_version="brand_new_compliant_platform_version"
 upd_transport="brand_new_transport"
-upd_familyID="brand_new_family_ID"
+upd_familyID="FAM123456abc"
 upd_supported_clusters="brand_new_clusters"
 upd_os_version="brand_new_os_version"
 upd_parent_child="parent"

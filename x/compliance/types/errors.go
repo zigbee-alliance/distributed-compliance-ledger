@@ -20,6 +20,7 @@ var (
 	ErrComplianceInfoDoesNotExist      = errors.Register(ModuleName, 310, "compliance info not found")
 	ErrInvalidUint32ForCdVersionNumber = errors.Register(ModuleName, 311, "invalid uint32 for cd version number")
 	ErrInvalidCertificationRoute       = errors.Register(ModuleName, 312, "invalid certification route")
+	ErrInvalidFamilyID                 = errors.Register(ModuleName, 313, "invalid familyID")
 )
 
 func NewErrInconsistentDates(err interface{}) error {
@@ -125,5 +126,13 @@ func NewErrInvalidCertificationRoute(certRoute interface{}, certList interface{}
 	return errors.Wrapf(ErrInvalidCertificationRoute,
 		"Invalid CertificationRoute: \"%s\". Supported routes: [%s]",
 		certRoute, certList,
+	)
+}
+
+func NewErrInvalidFamilyID(familyID interface{}) error {
+	return errors.Wrapf(
+		ErrInvalidFamilyID,
+		"Invalid FamilyID: \"%v\", It should start with the 'FAM' prefix, followed by alphanumeric characters",
+		familyID,
 	)
 }
