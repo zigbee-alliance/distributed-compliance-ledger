@@ -53,10 +53,6 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		complianceInfo.CDVersionNumber = uint32(cdVersionNumber)
 	}
 
-	if msg.CertificationIdOfSoftwareComponent != "" {
-		complianceInfo.CertificationIdOfSoftwareComponent = msg.CertificationIdOfSoftwareComponent
-	}
-
 	if msg.CertificationRoute != "" {
 		complianceInfo.CertificationRoute = msg.CertificationRoute
 	}

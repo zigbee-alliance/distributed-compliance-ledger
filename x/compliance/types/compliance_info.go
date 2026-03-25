@@ -69,10 +69,6 @@ func (d *ComplianceInfo) SetOptionalFields(optionalFields *OptionalFields) {
 	if optionalFields.ParentChild != "" {
 		d.ParentChild = optionalFields.ParentChild
 	}
-
-	if optionalFields.CertificationIDOfSoftwareComponent != "" {
-		d.CertificationIdOfSoftwareComponent = optionalFields.CertificationIDOfSoftwareComponent
-	}
 }
 
 type OptionalFields struct {

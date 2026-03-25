@@ -300,7 +300,6 @@ func checkProvisionalModelInfo(
 	require.Equal(t, provisionalModelMsg.ProgramType, receivedComplianceInfo.ProgramType)
 	require.Equal(t, provisionalModelMsg.Transport, receivedComplianceInfo.Transport)
 	require.Equal(t, provisionalModelMsg.ParentChild, receivedComplianceInfo.ParentChild)
-	require.Equal(t, provisionalModelMsg.CertificationIdOfSoftwareComponent, receivedComplianceInfo.CertificationIdOfSoftwareComponent)
 }
 
 func checkCertifiedModelInfo(
@@ -326,7 +325,6 @@ func checkCertifiedModelInfo(
 	require.Equal(t, certifyModelMsg.ProgramType, receivedComplianceInfo.ProgramType)
 	require.Equal(t, certifyModelMsg.Transport, receivedComplianceInfo.Transport)
 	require.Equal(t, certifyModelMsg.ParentChild, receivedComplianceInfo.ParentChild)
-	require.Equal(t, certifyModelMsg.CertificationIdOfSoftwareComponent, receivedComplianceInfo.CertificationIdOfSoftwareComponent)
 }
 
 func checkDeviceSoftwareCompliance(
@@ -352,7 +350,6 @@ func checkDeviceSoftwareCompliance(
 	require.Equal(t, info.ProgramType, receivedComplianceInfo.ProgramType)
 	require.Equal(t, info.Transport, receivedComplianceInfo.Transport)
 	require.Equal(t, info.ParentChild, receivedComplianceInfo.ParentChild)
-	require.Equal(t, info.CertificationIdOfSoftwareComponent, receivedComplianceInfo.CertificationIdOfSoftwareComponent)
 	require.Equal(t, info.SchemaVersion, receivedComplianceInfo.SchemaVersion)
 }
 
