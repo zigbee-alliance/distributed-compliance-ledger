@@ -646,7 +646,7 @@ test_divider
 # CERTIFY_DEVICE_COMPLIANCE
 
 echo "Certify model vid=$vid_for_1_5_1 pid=$pid_1_for_1_5_1"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance certify-model --vid=$vid_for_1_5_1 --pid=$pid_1_for_1_5_1 --softwareVersion=$software_version_for_1_5_1 --softwareVersionString=$software_version_string_for_1_5_1  --certificationType=$certification_type_for_1_5_1 --certificationDate=$certification_date_for_1_5_1 --cdCertificateId=$cd_certificate_id_for_1_5_1 --certificationIDOfSoftwareComponent="comp" --from=$certification_center_account --cdVersionNumber=$cd_version_number_for_1_5_1 --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance certify-model --vid=$vid_for_1_5_1 --pid=$pid_1_for_1_5_1 --softwareVersion=$software_version_for_1_5_1 --softwareVersionString=$software_version_string_for_1_5_1  --certificationType=$certification_type_for_1_5_1 --certificationDate=$certification_date_for_1_5_1 --cdCertificateId=$cd_certificate_id_for_1_5_1 --from=$certification_center_account --cdVersionNumber=$cd_version_number_for_1_5_1 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 

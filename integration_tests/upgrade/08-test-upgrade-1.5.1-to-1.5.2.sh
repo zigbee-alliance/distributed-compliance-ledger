@@ -176,7 +176,6 @@ certification_date_for_1_5_2="2024-01-01T00:00:00Z"
 provisional_date_for_1_5_2="2016-12-12T00:00:00Z"
 cd_certificate_id_for_1_5_2="20DEXZ"
 cd_certificate_id_for_1_5_2="20DEXZ"
-certification_id_of_software_component_1_5_2="some_component"
 
 test_data_url_for_1_5_2="https://url.data.dclmodel-1.5"
 
@@ -303,7 +302,7 @@ test_divider
 # COMPLIANCE
 
 echo "Certify model vid=$vid_for_1_5_2 pid=$pid_1_for_1_5_2"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance certify-model --vid=$vid_for_1_5_2 --pid=$pid_1_for_1_5_2 --softwareVersion=$software_version_for_1_5_2 --softwareVersionString=$software_version_string_for_1_5_2  --certificationType=$certification_type_for_1_5_2 --certificationDate=$certification_date_for_1_5_2 --cdCertificateId=$cd_certificate_id_for_1_5_2 --cdVersionNumber=$cd_version_number_for_1_5_2 --certificationIDOfSoftwareComponent=$certification_id_of_software_component_1_5_2 --from=$certification_center_account --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance certify-model --vid=$vid_for_1_5_2 --pid=$pid_1_for_1_5_2 --softwareVersion=$software_version_for_1_5_2 --softwareVersionString=$software_version_string_for_1_5_2  --certificationType=$certification_type_for_1_5_2 --certificationDate=$certification_date_for_1_5_2 --cdCertificateId=$cd_certificate_id_for_1_5_2 --cdVersionNumber=$cd_version_number_for_1_5_2 --from=$certification_center_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -313,7 +312,7 @@ check_response "$result" "\"vid\": $vid_for_1_5_2"
 check_response "$result" "\"pid\": $pid_1_for_1_5_2"
 check_response "$result" "\"softwareVersion\": $software_version_for_1_5_2"
 check_response "$result" "\"certificationType\": \"$certification_type_for_1_5_2\""
-check_response "$result" "\"certificationIDOfSoftwareComponent\": \"$certification_id_of_software_component_1_5_2\""
+check_response "$result" "\"certificationIDOfSoftwareComponent\": \"\""
 
 test_divider
 
