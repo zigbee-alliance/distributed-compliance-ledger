@@ -15,7 +15,7 @@ var _ sdk.Msg = &MsgCertifyModel{}
 
 func NewMsgCertifyModel(
 	signer string, vid int32, pid int32, softwareVersion uint32, softwareVersionString string, cdVersionNumber uint32,
-	certificationDate string, certificationType string, reason string, programTypeVersion string, cDCertificateID string,
+	certificationDate string, certificationType string, reason string, certificationTypeVersion string, cDCertificateID string,
 	familyID string, supportedClusters string, compliantPlatformUsed string, compliantPlatformVersion string, osVersion string,
 	certificationRoute string, productType string, transport string, parentChild string,
 	schemaVersion uint32,
@@ -30,7 +30,7 @@ func NewMsgCertifyModel(
 		CertificationDate:        certificationDate,
 		CertificationType:        certificationType,
 		Reason:                   reason,
-		ProgramTypeVersion:       programTypeVersion,
+		CertificationTypeVersion: certificationTypeVersion,
 		CDCertificateId:          cDCertificateID,
 		FamilyId:                 familyID,
 		SupportedClusters:        supportedClusters,

@@ -24,7 +24,7 @@ func CmdCertifyModel() *cobra.Command {
 		certificationType        string
 		reason                   string
 		cdVersionNumber          uint32
-		programTypeVersion       string
+		certificationTypeVersion string
 		CDCertificateID          string
 		familyID                 string
 		supportedClusters        string
@@ -58,7 +58,7 @@ func CmdCertifyModel() *cobra.Command {
 				certificationDate,
 				certificationType,
 				reason,
-				programTypeVersion,
+				certificationTypeVersion,
 				CDCertificateID,
 				familyID,
 				supportedClusters,
@@ -96,7 +96,7 @@ func CmdCertifyModel() *cobra.Command {
 		"The date of model certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z")
 	cmd.Flags().StringVar(&reason, FlagReason, "",
 		"Optional comment describing the reason of certification")
-	cmd.Flags().StringVar(&programTypeVersion, FlagProgramTypeVersion, "",
+	cmd.Flags().StringVar(&certificationTypeVersion, FlagProgramTypeVersion, "",
 		"Program Type Version of the certification")
 	cmd.Flags().StringVar(&CDCertificateID, FlagCDCertificateID, "",
 		"CD Certification ID of the certification")

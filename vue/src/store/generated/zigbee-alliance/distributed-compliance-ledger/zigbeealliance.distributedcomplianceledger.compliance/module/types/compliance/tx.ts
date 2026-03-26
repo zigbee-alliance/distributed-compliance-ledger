@@ -13,7 +13,7 @@ export interface MsgCertifyModel {
   certificationDate: string
   certificationType: string
   reason: string
-  programTypeVersion: string
+  certificationTypeVersion: string
   cDCertificateId: string
   familyId: string
   supportedClusters: string
@@ -54,7 +54,7 @@ export interface MsgProvisionModel {
   provisionalDate: string
   certificationType: string
   reason: string
-  programTypeVersion: string
+  certificationTypeVersion: string
   cDCertificateId: string
   familyId: string
   supportedClusters: string
@@ -83,7 +83,7 @@ export interface MsgUpdateComplianceInfo {
   cDCertificateId: string
   certificationRoute: string
   productType: string
-  programTypeVersion: string
+  certificationTypeVersion: string
   compliantPlatformUsed: string
   compliantPlatformVersion: string
   transport: string
@@ -116,7 +116,7 @@ const baseMsgCertifyModel: object = {
   certificationDate: '',
   certificationType: '',
   reason: '',
-  programTypeVersion: '',
+  certificationTypeVersion: '',
   cDCertificateId: '',
   familyId: '',
   supportedClusters: '',
@@ -159,8 +159,8 @@ export const MsgCertifyModel = {
     if (message.reason !== '') {
       writer.uint32(74).string(message.reason)
     }
-    if (message.programTypeVersion !== '') {
-      writer.uint32(82).string(message.programTypeVersion)
+    if (message.certificationTypeVersion !== '') {
+      writer.uint32(82).string(message.certificationTypeVersion)
     }
     if (message.cDCertificateId !== '') {
       writer.uint32(90).string(message.cDCertificateId)
@@ -233,7 +233,7 @@ export const MsgCertifyModel = {
           message.reason = reader.string()
           break
         case 10:
-          message.programTypeVersion = reader.string()
+          message.certificationTypeVersion = reader.string()
           break
         case 11:
           message.cDCertificateId = reader.string()
@@ -323,10 +323,10 @@ export const MsgCertifyModel = {
     } else {
       message.reason = ''
     }
-    if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
-      message.programTypeVersion = String(object.programTypeVersion)
+    if (object.certificationTypeVersion !== undefined && object.certificationTypeVersion !== null) {
+      message.certificationTypeVersion = String(object.certificationTypeVersion)
     } else {
-      message.programTypeVersion = ''
+      message.certificationTypeVersion = ''
     }
     if (object.cDCertificateId !== undefined && object.cDCertificateId !== null) {
       message.cDCertificateId = String(object.cDCertificateId)
@@ -397,7 +397,7 @@ export const MsgCertifyModel = {
     message.certificationDate !== undefined && (obj.certificationDate = message.certificationDate)
     message.certificationType !== undefined && (obj.certificationType = message.certificationType)
     message.reason !== undefined && (obj.reason = message.reason)
-    message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion)
+    message.certificationTypeVersion !== undefined && (obj.certificationTypeVersion = message.certificationTypeVersion)
     message.cDCertificateId !== undefined && (obj.cDCertificateId = message.cDCertificateId)
     message.familyId !== undefined && (obj.familyId = message.familyId)
     message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters)
@@ -459,10 +459,10 @@ export const MsgCertifyModel = {
     } else {
       message.reason = ''
     }
-    if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
-      message.programTypeVersion = object.programTypeVersion
+    if (object.certificationTypeVersion !== undefined && object.certificationTypeVersion !== null) {
+      message.certificationTypeVersion = object.certificationTypeVersion
     } else {
-      message.programTypeVersion = ''
+      message.certificationTypeVersion = ''
     }
     if (object.cDCertificateId !== undefined && object.cDCertificateId !== null) {
       message.cDCertificateId = object.cDCertificateId
@@ -828,7 +828,7 @@ const baseMsgProvisionModel: object = {
   provisionalDate: '',
   certificationType: '',
   reason: '',
-  programTypeVersion: '',
+  certificationTypeVersion: '',
   cDCertificateId: '',
   familyId: '',
   supportedClusters: '',
@@ -871,8 +871,8 @@ export const MsgProvisionModel = {
     if (message.reason !== '') {
       writer.uint32(74).string(message.reason)
     }
-    if (message.programTypeVersion !== '') {
-      writer.uint32(82).string(message.programTypeVersion)
+    if (message.certificationTypeVersion !== '') {
+      writer.uint32(82).string(message.certificationTypeVersion)
     }
     if (message.cDCertificateId !== '') {
       writer.uint32(90).string(message.cDCertificateId)
@@ -945,7 +945,7 @@ export const MsgProvisionModel = {
           message.reason = reader.string()
           break
         case 10:
-          message.programTypeVersion = reader.string()
+          message.certificationTypeVersion = reader.string()
           break
         case 11:
           message.cDCertificateId = reader.string()
@@ -1035,10 +1035,10 @@ export const MsgProvisionModel = {
     } else {
       message.reason = ''
     }
-    if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
-      message.programTypeVersion = String(object.programTypeVersion)
+    if (object.certificationTypeVersion !== undefined && object.certificationTypeVersion !== null) {
+      message.certificationTypeVersion = String(object.certificationTypeVersion)
     } else {
-      message.programTypeVersion = ''
+      message.certificationTypeVersion = ''
     }
     if (object.cDCertificateId !== undefined && object.cDCertificateId !== null) {
       message.cDCertificateId = String(object.cDCertificateId)
@@ -1109,7 +1109,7 @@ export const MsgProvisionModel = {
     message.provisionalDate !== undefined && (obj.provisionalDate = message.provisionalDate)
     message.certificationType !== undefined && (obj.certificationType = message.certificationType)
     message.reason !== undefined && (obj.reason = message.reason)
-    message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion)
+    message.certificationTypeVersion !== undefined && (obj.certificationTypeVersion = message.certificationTypeVersion)
     message.cDCertificateId !== undefined && (obj.cDCertificateId = message.cDCertificateId)
     message.familyId !== undefined && (obj.familyId = message.familyId)
     message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters)
@@ -1171,10 +1171,10 @@ export const MsgProvisionModel = {
     } else {
       message.reason = ''
     }
-    if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
-      message.programTypeVersion = object.programTypeVersion
+    if (object.certificationTypeVersion !== undefined && object.certificationTypeVersion !== null) {
+      message.certificationTypeVersion = object.certificationTypeVersion
     } else {
-      message.programTypeVersion = ''
+      message.certificationTypeVersion = ''
     }
     if (object.cDCertificateId !== undefined && object.cDCertificateId !== null) {
       message.cDCertificateId = object.cDCertificateId
@@ -1286,7 +1286,7 @@ const baseMsgUpdateComplianceInfo: object = {
   cDCertificateId: '',
   certificationRoute: '',
   productType: '',
-  programTypeVersion: '',
+  certificationTypeVersion: '',
   compliantPlatformUsed: '',
   compliantPlatformVersion: '',
   transport: '',
@@ -1335,8 +1335,8 @@ export const MsgUpdateComplianceInfo = {
     if (message.productType !== '') {
       writer.uint32(98).string(message.productType)
     }
-    if (message.programTypeVersion !== '') {
-      writer.uint32(106).string(message.programTypeVersion)
+    if (message.certificationTypeVersion !== '') {
+      writer.uint32(106).string(message.certificationTypeVersion)
     }
     if (message.compliantPlatformUsed !== '') {
       writer.uint32(114).string(message.compliantPlatformUsed)
@@ -1409,7 +1409,7 @@ export const MsgUpdateComplianceInfo = {
           message.productType = reader.string()
           break
         case 13:
-          message.programTypeVersion = reader.string()
+          message.certificationTypeVersion = reader.string()
           break
         case 14:
           message.compliantPlatformUsed = reader.string()
@@ -1505,10 +1505,10 @@ export const MsgUpdateComplianceInfo = {
     } else {
       message.productType = ''
     }
-    if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
-      message.programTypeVersion = String(object.programTypeVersion)
+    if (object.certificationTypeVersion !== undefined && object.certificationTypeVersion !== null) {
+      message.certificationTypeVersion = String(object.certificationTypeVersion)
     } else {
-      message.programTypeVersion = ''
+      message.certificationTypeVersion = ''
     }
     if (object.compliantPlatformUsed !== undefined && object.compliantPlatformUsed !== null) {
       message.compliantPlatformUsed = String(object.compliantPlatformUsed)
@@ -1567,7 +1567,7 @@ export const MsgUpdateComplianceInfo = {
     message.cDCertificateId !== undefined && (obj.cDCertificateId = message.cDCertificateId)
     message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute)
     message.productType !== undefined && (obj.productType = message.productType)
-    message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion)
+    message.certificationTypeVersion !== undefined && (obj.certificationTypeVersion = message.certificationTypeVersion)
     message.compliantPlatformUsed !== undefined && (obj.compliantPlatformUsed = message.compliantPlatformUsed)
     message.compliantPlatformVersion !== undefined && (obj.compliantPlatformVersion = message.compliantPlatformVersion)
     message.transport !== undefined && (obj.transport = message.transport)
@@ -1641,10 +1641,10 @@ export const MsgUpdateComplianceInfo = {
     } else {
       message.productType = ''
     }
-    if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
-      message.programTypeVersion = object.programTypeVersion
+    if (object.certificationTypeVersion !== undefined && object.certificationTypeVersion !== null) {
+      message.certificationTypeVersion = object.certificationTypeVersion
     } else {
-      message.programTypeVersion = ''
+      message.certificationTypeVersion = ''
     }
     if (object.compliantPlatformUsed !== undefined && object.compliantPlatformUsed !== null) {
       message.compliantPlatformUsed = object.compliantPlatformUsed

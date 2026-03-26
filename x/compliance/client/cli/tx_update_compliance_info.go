@@ -28,7 +28,7 @@ func CmdUpdateComplianceInfo() *cobra.Command {
 		CDCertificateID          string
 		certificationRoute       string
 		productType              string
-		programTypeVersion       string
+		certificationTypeVersion string
 		compliantPlatformUsed    string
 		compliantPlatformVersion string
 		transport                string
@@ -62,7 +62,7 @@ func CmdUpdateComplianceInfo() *cobra.Command {
 				CDCertificateID,
 				certificationRoute,
 				productType,
-				programTypeVersion,
+				certificationTypeVersion,
 				compliantPlatformUsed,
 				compliantPlatformVersion,
 				transport,
@@ -95,7 +95,7 @@ func CmdUpdateComplianceInfo() *cobra.Command {
 	cmd.Flags().StringVar(&reason, FlagReason, "",
 		"Optional comment describing the reason of certification")
 	cmd.Flags().StringVar(&owner, FlagOwner, "", "Signer of certification")
-	cmd.Flags().StringVar(&programTypeVersion, FlagProgramTypeVersion, "",
+	cmd.Flags().StringVar(&certificationTypeVersion, FlagProgramTypeVersion, "",
 		"Program Type Version of the certification")
 	cmd.Flags().StringVar(&CDCertificateID, FlagCDCertificateID, "",
 		"CD Certification ID of the certification")

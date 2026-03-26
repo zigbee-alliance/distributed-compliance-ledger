@@ -96,7 +96,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 	}
 
 	optionalFields := &types.OptionalFields{
-		ProgramTypeVersion:       msg.ProgramTypeVersion,
+		CertificationTypeVersion: msg.CertificationTypeVersion,
 		FamilyID:                 msg.FamilyId,
 		SupportedClusters:        msg.SupportedClusters,
 		CompliantPlatformUsed:    msg.CompliantPlatformUsed,

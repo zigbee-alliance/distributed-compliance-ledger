@@ -290,7 +290,7 @@ func checkProvisionalModelInfo(
 	require.Equal(t, provisionalModelMsg.Reason, receivedComplianceInfo.Reason)
 	require.Equal(t, provisionalModelMsg.CertificationType, receivedComplianceInfo.CertificationType)
 	require.Equal(t, provisionalModelMsg.CDCertificateId, receivedComplianceInfo.CDCertificateId)
-	require.Equal(t, provisionalModelMsg.ProgramTypeVersion, receivedComplianceInfo.ProgramTypeVersion)
+	require.Equal(t, provisionalModelMsg.CertificationTypeVersion, receivedComplianceInfo.CertificationTypeVersion)
 	require.Equal(t, provisionalModelMsg.FamilyId, receivedComplianceInfo.FamilyId)
 	require.Equal(t, provisionalModelMsg.SupportedClusters, receivedComplianceInfo.SupportedClusters)
 	require.Equal(t, provisionalModelMsg.CompliantPlatformUsed, receivedComplianceInfo.CompliantPlatformUsed)
@@ -315,7 +315,7 @@ func checkCertifiedModelInfo(
 	require.Equal(t, certifyModelMsg.Reason, receivedComplianceInfo.Reason)
 	require.Equal(t, certifyModelMsg.CertificationType, receivedComplianceInfo.CertificationType)
 	require.Equal(t, certifyModelMsg.CDCertificateId, receivedComplianceInfo.CDCertificateId)
-	require.Equal(t, certifyModelMsg.ProgramTypeVersion, receivedComplianceInfo.ProgramTypeVersion)
+	require.Equal(t, certifyModelMsg.CertificationTypeVersion, receivedComplianceInfo.CertificationTypeVersion)
 	require.Equal(t, certifyModelMsg.FamilyId, receivedComplianceInfo.FamilyId)
 	require.Equal(t, certifyModelMsg.SupportedClusters, receivedComplianceInfo.SupportedClusters)
 	require.Equal(t, certifyModelMsg.CompliantPlatformUsed, receivedComplianceInfo.CompliantPlatformUsed)
@@ -340,14 +340,14 @@ func checkDeviceSoftwareCompliance(
 	require.Equal(t, info.Reason, receivedComplianceInfo.Reason)
 	require.Equal(t, info.CertificationType, receivedComplianceInfo.CertificationType)
 	require.Equal(t, info.CDCertificateId, receivedComplianceInfo.CDCertificateId)
-	require.Equal(t, info.ProgramTypeVersion, receivedComplianceInfo.ProgramTypeVersion)
+	require.Equal(t, info.CertificationTypeVersion, receivedComplianceInfo.CertificationTypeVersion)
 	require.Equal(t, info.FamilyId, receivedComplianceInfo.FamilyId)
 	require.Equal(t, info.SupportedClusters, receivedComplianceInfo.SupportedClusters)
 	require.Equal(t, info.CompliantPlatformUsed, receivedComplianceInfo.CompliantPlatformUsed)
 	require.Equal(t, info.CompliantPlatformVersion, receivedComplianceInfo.CompliantPlatformVersion)
 	require.Equal(t, info.OSVersion, receivedComplianceInfo.OSVersion)
 	require.Equal(t, info.CertificationRoute, receivedComplianceInfo.CertificationRoute)
-	require.Equal(t, info.ProgramType, receivedComplianceInfo.ProgramType)
+	require.Equal(t, info.ProductType, receivedComplianceInfo.ProductType)
 	require.Equal(t, info.Transport, receivedComplianceInfo.Transport)
 	require.Equal(t, info.ParentChild, receivedComplianceInfo.ParentChild)
 	require.Equal(t, info.SchemaVersion, receivedComplianceInfo.SchemaVersion)
@@ -414,8 +414,8 @@ func newMsgUpdateComplianceInfo(
 		Owner:                    "",
 		CDCertificateId:          "",
 		CertificationRoute:       "",
-		ProgramType:              "",
-		ProgramTypeVersion:       "",
+		ProductType:              "",
+		CertificationTypeVersion: "",
 		CompliantPlatformUsed:    "",
 		CompliantPlatformVersion: "",
 		Transport:                "",
@@ -446,8 +446,8 @@ func newMsgUpdateComplianceInfoWithAllOptionalFlags(
 		Reason:                   "new Reason",
 		CertificationRoute:       "fullTested",
 		Owner:                    "new Owner",
-		ProgramType:              "new productType",
-		ProgramTypeVersion:       "new ProgramTypeVersion",
+		ProductType:              "new productType",
+		CertificationTypeVersion: "new CertificationTypeVersion",
 		CompliantPlatformUsed:    "new CompliantPlatformUsed",
 		CompliantPlatformVersion: "new CompliantPlatformVersion",
 		Transport:                "new Transport",
@@ -478,14 +478,14 @@ func newMsgProvisionModelWithAllOptionalFlags(
 		CertificationType:        certificationType,
 		Reason:                   testconstants.Reason,
 		CDCertificateId:          testconstants.CDCertificateID,
-		ProgramTypeVersion:       testconstants.ProgramTypeVersion,
+		CertificationTypeVersion: testconstants.CertificationTypeVersion,
 		FamilyId:                 testconstants.FamilyID,
 		SupportedClusters:        testconstants.SupportedClusters,
 		CompliantPlatformUsed:    testconstants.CompliantPlatformUsed,
 		CompliantPlatformVersion: testconstants.CompliantPlatformVersion,
 		OSVersion:                testconstants.OSVersion,
 		CertificationRoute:       testconstants.CertificationRoute,
-		ProgramType:              testconstants.ProductType,
+		ProductType:              testconstants.ProductType,
 		Transport:                testconstants.Transport,
 		ParentChild:              testconstants.ParentChild1,
 	}
@@ -548,14 +548,14 @@ func newMsgCertifyModelWithAllOptionalFlags(
 		CertificationType:        certificationType,
 		Reason:                   testconstants.Reason,
 		CDCertificateId:          testconstants.CDCertificateID,
-		ProgramTypeVersion:       testconstants.ProgramTypeVersion,
+		CertificationTypeVersion: testconstants.CertificationTypeVersion,
 		FamilyId:                 testconstants.FamilyID,
 		SupportedClusters:        testconstants.SupportedClusters,
 		CompliantPlatformUsed:    testconstants.CompliantPlatformUsed,
 		CompliantPlatformVersion: testconstants.CompliantPlatformVersion,
 		OSVersion:                testconstants.OSVersion,
 		CertificationRoute:       testconstants.CertificationRoute,
-		ProgramType:              testconstants.ProductType,
+		ProductType:              testconstants.ProductType,
 		Transport:                testconstants.Transport,
 		ParentChild:              testconstants.ParentChild1,
 	}

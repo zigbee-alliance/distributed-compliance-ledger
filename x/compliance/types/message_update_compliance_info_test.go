@@ -104,7 +104,7 @@ func TestMsgUpdateComplianceInfo_ValidateBasic(t *testing.T) {
 				ParentChild:              "parent",
 				CertificationRoute:       testconstants.CertificationRoute,
 				ProductType:              testconstants.ProductType,
-				ProgramTypeVersion:       testconstants.ProgramTypeVersion,
+				CertificationTypeVersion: testconstants.CertificationTypeVersion,
 				CompliantPlatformUsed:    testconstants.CompliantPlatformUsed,
 				CompliantPlatformVersion: testconstants.CompliantPlatformVersion,
 				Transport:                testconstants.Transport,

@@ -68,7 +68,7 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvision
 		SoftwareVersionCertificationStatus: types.CodeProvisional,
 		History:                            []*types.ComplianceHistoryItem{},
 		CDVersionNumber:                    msg.CDVersionNumber,
-		ProgramTypeVersion:                 msg.ProgramTypeVersion,
+		CertificationTypeVersion:           msg.CertificationTypeVersion,
 		CDCertificateId:                    msg.CDCertificateId,
 		FamilyId:                           msg.FamilyId,
 		SupportedClusters:                  msg.SupportedClusters,

@@ -56,7 +56,7 @@ export interface ComplianceComplianceInfo {
   cDCertificateId?: string;
   certificationRoute?: string;
 	productType?: string;
-  programTypeVersion?: string;
+  certificationTypeVersion?: string;
   compliantPlatformUsed?: string;
   compliantPlatformVersion?: string;
   transport?: string;

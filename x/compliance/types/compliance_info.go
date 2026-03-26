@@ -30,8 +30,8 @@ func (d *ComplianceInfo) SetRevokedStatus(date string, reason string) {
 }
 
 func (d *ComplianceInfo) SetOptionalFields(optionalFields *OptionalFields) {
-	if optionalFields.ProgramTypeVersion != "" {
-		d.ProgramTypeVersion = optionalFields.ProgramTypeVersion
+	if optionalFields.CertificationTypeVersion != "" {
+		d.CertificationTypeVersion = optionalFields.CertificationTypeVersion
 	}
 
 	if optionalFields.FamilyID != "" {
@@ -72,7 +72,7 @@ func (d *ComplianceInfo) SetOptionalFields(optionalFields *OptionalFields) {
 }
 
 type OptionalFields struct {
-	ProgramTypeVersion       string
+	CertificationTypeVersion string
 	FamilyID                 string
 	SupportedClusters        string
 	CompliantPlatformUsed    string

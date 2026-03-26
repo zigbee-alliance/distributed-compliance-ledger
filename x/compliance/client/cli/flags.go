@@ -30,7 +30,7 @@ const (
 	FlagReasonShortcut                     = "r"
 	FlagCDVersionNumber                    = "cdVersionNumber"
 	FlagProvisionalDate                    = "provisionalDate"
-	FlagProgramTypeVersion                 = "programTypeVersion"
+	FlagProgramTypeVersion                 = "certificationTypeVersion"
 	FlagCDCertificateID                    = "cdCertificateId"
 	FlagFamilyID                           = "familyId"
 	FlagSupportedClusters                  = "supportedClusters"

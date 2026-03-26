@@ -13,7 +13,7 @@ export interface MsgCertifyModel {
   certificationDate: string;
   certificationType: string;
   reason: string;
-  programTypeVersion: string;
+  certificationTypeVersion: string;
   cDCertificateId: string;
   familyId: string;
   supportedClusters: string;
@@ -57,7 +57,7 @@ export interface MsgProvisionModel {
   provisionalDate: string;
   certificationType: string;
   reason: string;
-  programTypeVersion: string;
+  certificationTypeVersion: string;
   cDCertificateId: string;
   familyId: string;
   supportedClusters: string;
@@ -88,7 +88,7 @@ export interface MsgUpdateComplianceInfo {
   cDCertificateId: string;
   certificationRoute: string;
   productType: string;
-  programTypeVersion: string;
+  certificationTypeVersion: string;
   compliantPlatformUsed: string;
   compliantPlatformVersion: string;
   transport: string;
@@ -125,7 +125,7 @@ function createBaseMsgCertifyModel(): MsgCertifyModel {
     certificationDate: "",
     certificationType: "",
     reason: "",
-    programTypeVersion: "",
+    certificationTypeVersion: "",
     cDCertificateId: "",
     familyId: "",
     supportedClusters: "",
@@ -170,8 +170,8 @@ export const MsgCertifyModel = {
     if (message.reason !== "") {
       writer.uint32(74).string(message.reason);
     }
-    if (message.programTypeVersion !== "") {
-      writer.uint32(82).string(message.programTypeVersion);
+    if (message.certificationTypeVersion !== "") {
+      writer.uint32(82).string(message.certificationTypeVersion);
     }
     if (message.cDCertificateId !== "") {
       writer.uint32(90).string(message.cDCertificateId);
@@ -247,7 +247,7 @@ export const MsgCertifyModel = {
           message.reason = reader.string();
           break;
         case 10:
-          message.programTypeVersion = reader.string();
+          message.certificationTypeVersion = reader.string();
           break;
         case 11:
           message.cDCertificateId = reader.string();
@@ -304,7 +304,7 @@ export const MsgCertifyModel = {
       certificationDate: isSet(object.certificationDate) ? String(object.certificationDate) : "",
       certificationType: isSet(object.certificationType) ? String(object.certificationType) : "",
       reason: isSet(object.reason) ? String(object.reason) : "",
-      programTypeVersion: isSet(object.programTypeVersion) ? String(object.programTypeVersion) : "",
+      certificationTypeVersion: isSet(object.certificationTypeVersion) ? String(object.certificationTypeVersion) : "",
       cDCertificateId: isSet(object.cDCertificateId) ? String(object.cDCertificateId) : "",
       familyId: isSet(object.familyId) ? String(object.familyId) : "",
       supportedClusters: isSet(object.supportedClusters) ? String(object.supportedClusters) : "",
@@ -333,7 +333,7 @@ export const MsgCertifyModel = {
     message.certificationDate !== undefined && (obj.certificationDate = message.certificationDate);
     message.certificationType !== undefined && (obj.certificationType = message.certificationType);
     message.reason !== undefined && (obj.reason = message.reason);
-    message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion);
+    message.certificationTypeVersion !== undefined && (obj.certificationTypeVersion = message.certificationTypeVersion);
     message.cDCertificateId !== undefined && (obj.cDCertificateId = message.cDCertificateId);
     message.familyId !== undefined && (obj.familyId = message.familyId);
     message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters);
@@ -361,7 +361,7 @@ export const MsgCertifyModel = {
     message.certificationDate = object.certificationDate ?? "";
     message.certificationType = object.certificationType ?? "";
     message.reason = object.reason ?? "";
-    message.programTypeVersion = object.programTypeVersion ?? "";
+    message.certificationTypeVersion = object.certificationTypeVersion ?? "";
     message.cDCertificateId = object.cDCertificateId ?? "";
     message.familyId = object.familyId ?? "";
     message.supportedClusters = object.supportedClusters ?? "";
@@ -608,7 +608,7 @@ function createBaseMsgProvisionModel(): MsgProvisionModel {
     provisionalDate: "",
     certificationType: "",
     reason: "",
-    programTypeVersion: "",
+    certificationTypeVersion: "",
     cDCertificateId: "",
     familyId: "",
     supportedClusters: "",
@@ -653,8 +653,8 @@ export const MsgProvisionModel = {
     if (message.reason !== "") {
       writer.uint32(74).string(message.reason);
     }
-    if (message.programTypeVersion !== "") {
-      writer.uint32(82).string(message.programTypeVersion);
+    if (message.certificationTypeVersion !== "") {
+      writer.uint32(82).string(message.certificationTypeVersion);
     }
     if (message.cDCertificateId !== "") {
       writer.uint32(90).string(message.cDCertificateId);
@@ -730,7 +730,7 @@ export const MsgProvisionModel = {
           message.reason = reader.string();
           break;
         case 10:
-          message.programTypeVersion = reader.string();
+          message.certificationTypeVersion = reader.string();
           break;
         case 11:
           message.cDCertificateId = reader.string();
@@ -787,7 +787,7 @@ export const MsgProvisionModel = {
       provisionalDate: isSet(object.provisionalDate) ? String(object.provisionalDate) : "",
       certificationType: isSet(object.certificationType) ? String(object.certificationType) : "",
       reason: isSet(object.reason) ? String(object.reason) : "",
-      programTypeVersion: isSet(object.programTypeVersion) ? String(object.programTypeVersion) : "",
+      certificationTypeVersion: isSet(object.certificationTypeVersion) ? String(object.certificationTypeVersion) : "",
       cDCertificateId: isSet(object.cDCertificateId) ? String(object.cDCertificateId) : "",
       familyId: isSet(object.familyId) ? String(object.familyId) : "",
       supportedClusters: isSet(object.supportedClusters) ? String(object.supportedClusters) : "",
@@ -816,7 +816,7 @@ export const MsgProvisionModel = {
     message.provisionalDate !== undefined && (obj.provisionalDate = message.provisionalDate);
     message.certificationType !== undefined && (obj.certificationType = message.certificationType);
     message.reason !== undefined && (obj.reason = message.reason);
-    message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion);
+    message.certificationTypeVersion !== undefined && (obj.certificationTypeVersion = message.certificationTypeVersion);
     message.cDCertificateId !== undefined && (obj.cDCertificateId = message.cDCertificateId);
     message.familyId !== undefined && (obj.familyId = message.familyId);
     message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters);
@@ -844,7 +844,7 @@ export const MsgProvisionModel = {
     message.provisionalDate = object.provisionalDate ?? "";
     message.certificationType = object.certificationType ?? "";
     message.reason = object.reason ?? "";
-    message.programTypeVersion = object.programTypeVersion ?? "";
+    message.certificationTypeVersion = object.certificationTypeVersion ?? "";
     message.cDCertificateId = object.cDCertificateId ?? "";
     message.familyId = object.familyId ?? "";
     message.supportedClusters = object.supportedClusters ?? "";
@@ -914,7 +914,7 @@ function createBaseMsgUpdateComplianceInfo(): MsgUpdateComplianceInfo {
     cDCertificateId: "",
     certificationRoute: "",
     productType: "",
-    programTypeVersion: "",
+    certificationTypeVersion: "",
     compliantPlatformUsed: "",
     compliantPlatformVersion: "",
     transport: "",
@@ -965,8 +965,8 @@ export const MsgUpdateComplianceInfo = {
     if (message.productType !== "") {
       writer.uint32(98).string(message.productType);
     }
-    if (message.programTypeVersion !== "") {
-      writer.uint32(106).string(message.programTypeVersion);
+    if (message.certificationTypeVersion !== "") {
+      writer.uint32(106).string(message.certificationTypeVersion);
     }
     if (message.compliantPlatformUsed !== "") {
       writer.uint32(114).string(message.compliantPlatformUsed);
@@ -1042,7 +1042,7 @@ export const MsgUpdateComplianceInfo = {
           message.productType = reader.string();
           break;
         case 13:
-          message.programTypeVersion = reader.string();
+          message.certificationTypeVersion = reader.string();
           break;
         case 14:
           message.compliantPlatformUsed = reader.string();
@@ -1093,7 +1093,7 @@ export const MsgUpdateComplianceInfo = {
       cDCertificateId: isSet(object.cDCertificateId) ? String(object.cDCertificateId) : "",
       certificationRoute: isSet(object.certificationRoute) ? String(object.certificationRoute) : "",
       productType: isSet(object.productType) ? String(object.productType) : "",
-      programTypeVersion: isSet(object.programTypeVersion) ? String(object.programTypeVersion) : "",
+      certificationTypeVersion: isSet(object.certificationTypeVersion) ? String(object.certificationTypeVersion) : "",
       compliantPlatformUsed: isSet(object.compliantPlatformUsed) ? String(object.compliantPlatformUsed) : "",
       compliantPlatformVersion: isSet(object.compliantPlatformVersion) ? String(object.compliantPlatformVersion) : "",
       transport: isSet(object.transport) ? String(object.transport) : "",
@@ -1122,7 +1122,7 @@ export const MsgUpdateComplianceInfo = {
     message.cDCertificateId !== undefined && (obj.cDCertificateId = message.cDCertificateId);
     message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute);
     message.productType !== undefined && (obj.productType = message.productType);
-    message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion);
+    message.certificationTypeVersion !== undefined && (obj.certificationTypeVersion = message.certificationTypeVersion);
     message.compliantPlatformUsed !== undefined && (obj.compliantPlatformUsed = message.compliantPlatformUsed);
     message.compliantPlatformVersion !== undefined && (obj.compliantPlatformVersion = message.compliantPlatformVersion);
     message.transport !== undefined && (obj.transport = message.transport);
@@ -1150,7 +1150,7 @@ export const MsgUpdateComplianceInfo = {
     message.cDCertificateId = object.cDCertificateId ?? "";
     message.certificationRoute = object.certificationRoute ?? "";
     message.productType = object.productType ?? "";
-    message.programTypeVersion = object.programTypeVersion ?? "";
+    message.certificationTypeVersion = object.certificationTypeVersion ?? "";
     message.compliantPlatformUsed = object.compliantPlatformUsed ?? "";
     message.compliantPlatformVersion = object.compliantPlatformVersion ?? "";
     message.transport = object.transport ?? "";

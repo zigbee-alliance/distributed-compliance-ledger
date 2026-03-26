@@ -281,7 +281,7 @@ paths:
                       type: string
                     productType:
                       type: string
-                    programTypeVersion:
+                    certificationTypeVersion:
                       type: string
                     compliantPlatformUsed:
                       type: string
@@ -467,7 +467,7 @@ paths:
                     type: string
                   productType:
                     type: string
-                  programTypeVersion:
+                  certificationTypeVersion:
                     type: string
                   compliantPlatformUsed:
                     type: string
@@ -597,7 +597,7 @@ paths:
                             type: string
                           productType:
                             type: string
-                          programTypeVersion:
+                          certificationTypeVersion:
                             type: string
                           compliantPlatformUsed:
                             type: string
@@ -793,7 +793,7 @@ paths:
                           type: string
                         productType:
                           type: string
-                        programTypeVersion:
+                        certificationTypeVersion:
                           type: string
                         compliantPlatformUsed:
                           type: string
@@ -17358,7 +17358,7 @@ definitions:
         type: string
       productType:
         type: string
-      programTypeVersion:
+      certificationTypeVersion:
         type: string
       compliantPlatformUsed:
         type: string
@@ -17436,7 +17436,7 @@ definitions:
               type: string
             productType:
               type: string
-            programTypeVersion:
+            certificationTypeVersion:
               type: string
             compliantPlatformUsed:
               type: string
@@ -17584,7 +17584,7 @@ definitions:
               type: string
             productType:
               type: string
-            programTypeVersion:
+            certificationTypeVersion:
               type: string
             compliantPlatformUsed:
               type: string
@@ -17693,7 +17693,7 @@ definitions:
                     type: string
                   productType:
                     type: string
-                  programTypeVersion:
+                  certificationTypeVersion:
                     type: string
                   compliantPlatformUsed:
                     type: string
@@ -17918,7 +17918,7 @@ definitions:
             type: string
           productType:
             type: string
-          programTypeVersion:
+          certificationTypeVersion:
             type: string
           compliantPlatformUsed:
             type: string
@@ -17999,7 +17999,7 @@ definitions:
                   type: string
                 productType:
                   type: string
-                programTypeVersion:
+                certificationTypeVersion:
                   type: string
                 compliantPlatformUsed:
                   type: string

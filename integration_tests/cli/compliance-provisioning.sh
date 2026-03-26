@@ -496,7 +496,7 @@ create_model_and_version $vid $pid $sv $svs $vendor_account
 
 # ADD PROVISION MODEL WITH ALL OPTIONAL FIELDS
 echo "Provision Model with VID: $vid PID: $pid  SV: ${sv} with zigbee certification"
-result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificateId="$cd_certificate_id" --programTypeVersion="1.0" --familyId="FAM123456abc" --supportedClusters="someClusters" --compliantPlatformUsed="WIFI" --compliantPlatformVersion="V1" --OSVersion="someV" --certificationRoute="fullTested" --productType="pType" --transport="someTransport" --parentChild="parent" --cdVersionNumber=1 --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificateId="$cd_certificate_id" --certificationTypeVersion="1.0" --familyId="FAM123456abc" --supportedClusters="someClusters" --compliantPlatformUsed="WIFI" --compliantPlatformVersion="V1" --OSVersion="someV" --certificationRoute="fullTested" --productType="pType" --transport="someTransport" --parentChild="parent" --cdVersionNumber=1 --from $zb_account --yes)
 result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "\"code\": 0"
@@ -518,7 +518,7 @@ check_response "$result" "\"softwareVersionCertificationStatus\": 1"
 check_response "$result" "\"reason\": \"$provision_reason\""
 check_response "$result" "\"date\": \"$provision_date\""
 check_response "$result" "\"certificationType\": \"$certification_type_zb\""
-check_response "$result" "\"programTypeVersion\": \"1.0\""
+check_response "$result" "\"certificationTypeVersion\": \"1.0\""
 check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id\""
 check_response "$result" "\"familyId\": \"someFID\""
 check_response "$result" "\"supportedClusters\": \"someClusters\""
@@ -537,7 +537,7 @@ test_divider
 ###########################################################################################################################################
 # ADD CERTIFY MODEL WITH SOME OPTIONAL FIELDS
 echo "Certify Model with VID: $vid PID: $pid SV: ${sv} with zigbee certification"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --cdVersionNumber=1 --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --programTypeVersion="2.0" --familyId="FAM123456abc" --supportedClusters="someClusters2" --compliantPlatformUsed="ETHERNET" --compliantPlatformVersion="V2" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --cdVersionNumber=1 --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --certificationTypeVersion="2.0" --familyId="FAM123456abc" --supportedClusters="someClusters2" --compliantPlatformUsed="ETHERNET" --compliantPlatformVersion="V2" --from $zb_account --yes)
 result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "\"code\": 0"
@@ -558,7 +558,7 @@ check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"softwareVersionCertificationStatus\": 1"
 check_response "$result" "\"date\": \"$certification_date\""
 check_response "$result" "\"certificationType\": \"$certification_type_zb\""
-check_response "$result" "\"programTypeVersion\": \"2.0\""
+check_response "$result" "\"certificationTypeVersion\": \"2.0\""
 check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id\""
 check_response "$result" "\"familyId\": \"someFID2\""
 check_response "$result" "\"supportedClusters\": \"someClusters2\""
@@ -580,7 +580,7 @@ check_response "$result" "\"softwareVersionCertificationStatus\": 1"
 check_response "$result" "\"date\": \"$certification_date\""
 check_response "$result" "\"certificationType\": \"$certification_type_zb\""
 check_response "$result" "\"certificationType\": \"$certification_type_matter\""
-check_response "$result" "\"programTypeVersion\": \"2.0\""
+check_response "$result" "\"certificationTypeVersion\": \"2.0\""
 check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id\""
 check_response "$result" "\"familyId\": \"someFID2\""
 check_response "$result" "\"supportedClusters\": \"someClusters2\""

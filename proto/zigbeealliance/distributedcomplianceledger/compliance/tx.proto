@@ -28,7 +28,7 @@ message MsgCertifyModel {
   string certificationDate = 7 [(gogoproto.moretags) = "validate:\"required\""];
   string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=100\""];
   string reason = 9 [(gogoproto.moretags) = "validate:\"max=51200\""];
-  string programTypeVersion = 10 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string certificationTypeVersion = 10 [(gogoproto.moretags) = "validate:\"max=64\""];
   string cDCertificateId = 11 [(gogoproto.moretags) = "validate:\"required,max=64\""];
   string familyId = 12 [(gogoproto.moretags) = "validate:\"max=64\""];
   string supportedClusters = 13 [(gogoproto.moretags) = "validate:\"max=128\""];
@@ -72,7 +72,7 @@ message MsgProvisionModel {
   string provisionalDate = 7 [(gogoproto.moretags) = "validate:\"required\""];
   string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=100\""];
   string reason = 9 [(gogoproto.moretags) = "validate:\"max=51200\""];
-  string programTypeVersion = 10 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string certificationTypeVersion = 10 [(gogoproto.moretags) = "validate:\"max=64\""];
   string cDCertificateId = 11 [(gogoproto.moretags) = "validate:\"required,max=64\""];
   string familyId = 12 [(gogoproto.moretags) = "validate:\"max=64\""];
   string supportedClusters = 13 [(gogoproto.moretags) = "validate:\"max=128\""];
@@ -103,7 +103,7 @@ message MsgUpdateComplianceInfo {
   string cDCertificateId = 10 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string certificationRoute = 11 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string productType = 12 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
-  string programTypeVersion = 13 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
+  string certificationTypeVersion = 13 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string compliantPlatformUsed = 14 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string compliantPlatformVersion = 15 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string transport = 16 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];

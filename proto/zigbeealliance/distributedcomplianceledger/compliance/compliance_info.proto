@@ -21,7 +21,7 @@ message ComplianceInfo {
   string cDCertificateId = 12;
   string certificationRoute = 13;
   string productType = 14;
-  string programTypeVersion = 15;
+  string certificationTypeVersion = 15;
   string compliantPlatformUsed = 16;
   string compliantPlatformVersion = 17;
   string transport = 18;
