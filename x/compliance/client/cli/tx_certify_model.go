@@ -30,7 +30,7 @@ func CmdCertifyModel() *cobra.Command {
 		supportedClusters        string
 		compliantPlatformUsed    string
 		compliantPlatformVersion string
-		OSVersion                string
+		OSName                   string
 		certificationRoute       string
 		productType              string
 		transport                string
@@ -64,7 +64,7 @@ func CmdCertifyModel() *cobra.Command {
 				supportedClusters,
 				compliantPlatformUsed,
 				compliantPlatformVersion,
-				OSVersion,
+				OSName,
 				certificationRoute,
 				productType,
 				transport,
@@ -108,7 +108,7 @@ func CmdCertifyModel() *cobra.Command {
 		"Compliant Platform Used of the certification")
 	cmd.Flags().StringVar(&compliantPlatformVersion, FlagCompliantPlatformVersion, "",
 		"Compliant Platform Version of the certification")
-	cmd.Flags().StringVar(&OSVersion, FlagOSVersion, "",
+	cmd.Flags().StringVar(&OSName, FlagOSName, "",
 		"OS Version of the certification")
 	cmd.Flags().StringVar(&certificationRoute, FlagCertificationRoute, "",
 		"Certification Route of the certification")

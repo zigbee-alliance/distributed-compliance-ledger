@@ -73,8 +73,8 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		complianceInfo.FamilyId = msg.FamilyId
 	}
 
-	if msg.OSVersion != "" {
-		complianceInfo.OSVersion = msg.OSVersion
+	if msg.OSName != "" {
+		complianceInfo.OSName = msg.OSName
 	}
 
 	if msg.ParentChild != "" {

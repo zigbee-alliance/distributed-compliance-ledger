@@ -19,7 +19,7 @@ export interface MsgCertifyModel {
   supportedClusters: string
   compliantPlatformUsed: string
   compliantPlatformVersion: string
-  OSVersion: string
+  OSName: string
   certificationRoute: string
 	productType: string
   transport: string
@@ -60,7 +60,7 @@ export interface MsgProvisionModel {
   supportedClusters: string
   compliantPlatformUsed: string
   compliantPlatformVersion: string
-  OSVersion: string
+  OSName: string
   certificationRoute: string
   productType: string
   transport: string
@@ -89,7 +89,7 @@ export interface MsgUpdateComplianceInfo {
   transport: string
   familyId: string
   supportedClusters: string
-  OSVersion: string
+  OSName: string
   parentChild: string
   schemaVersion: number
 }
@@ -122,7 +122,7 @@ const baseMsgCertifyModel: object = {
   supportedClusters: '',
   compliantPlatformUsed: '',
   compliantPlatformVersion: '',
-  OSVersion: '',
+  OSName: '',
   certificationRoute: '',
   productType: '',
   transport: '',
@@ -177,8 +177,8 @@ export const MsgCertifyModel = {
     if (message.compliantPlatformVersion !== '') {
       writer.uint32(122).string(message.compliantPlatformVersion)
     }
-    if (message.OSVersion !== '') {
-      writer.uint32(130).string(message.OSVersion)
+    if (message.OSName !== '') {
+      writer.uint32(130).string(message.OSName)
     }
     if (message.certificationRoute !== '') {
       writer.uint32(138).string(message.certificationRoute)
@@ -251,7 +251,7 @@ export const MsgCertifyModel = {
           message.compliantPlatformVersion = reader.string()
           break
         case 16:
-          message.OSVersion = reader.string()
+          message.OSName = reader.string()
           break
         case 17:
           message.certificationRoute = reader.string()
@@ -353,10 +353,10 @@ export const MsgCertifyModel = {
     } else {
       message.compliantPlatformVersion = ''
     }
-    if (object.OSVersion !== undefined && object.OSVersion !== null) {
-      message.OSVersion = String(object.OSVersion)
+    if (object.OSName !== undefined && object.OSName !== null) {
+      message.OSName = String(object.OSName)
     } else {
-      message.OSVersion = ''
+      message.OSName = ''
     }
     if (object.certificationRoute !== undefined && object.certificationRoute !== null) {
       message.certificationRoute = String(object.certificationRoute)
@@ -403,7 +403,7 @@ export const MsgCertifyModel = {
     message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters)
     message.compliantPlatformUsed !== undefined && (obj.compliantPlatformUsed = message.compliantPlatformUsed)
     message.compliantPlatformVersion !== undefined && (obj.compliantPlatformVersion = message.compliantPlatformVersion)
-    message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion)
+    message.OSName !== undefined && (obj.OSName = message.OSName)
     message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute)
     message.productType !== undefined && (obj.productType = message.productType)
     message.transport !== undefined && (obj.transport = message.transport)
@@ -489,10 +489,10 @@ export const MsgCertifyModel = {
     } else {
       message.compliantPlatformVersion = ''
     }
-    if (object.OSVersion !== undefined && object.OSVersion !== null) {
-      message.OSVersion = object.OSVersion
+    if (object.OSName !== undefined && object.OSName !== null) {
+      message.OSName = object.OSName
     } else {
-      message.OSVersion = ''
+      message.OSName = ''
     }
     if (object.certificationRoute !== undefined && object.certificationRoute !== null) {
       message.certificationRoute = object.certificationRoute
@@ -834,7 +834,7 @@ const baseMsgProvisionModel: object = {
   supportedClusters: '',
   compliantPlatformUsed: '',
   compliantPlatformVersion: '',
-  OSVersion: '',
+  OSName: '',
   certificationRoute: '',
   productType: '',
   transport: '',
@@ -889,8 +889,8 @@ export const MsgProvisionModel = {
     if (message.compliantPlatformVersion !== '') {
       writer.uint32(122).string(message.compliantPlatformVersion)
     }
-    if (message.OSVersion !== '') {
-      writer.uint32(130).string(message.OSVersion)
+    if (message.OSName !== '') {
+      writer.uint32(130).string(message.OSName)
     }
     if (message.certificationRoute !== '') {
       writer.uint32(138).string(message.certificationRoute)
@@ -963,7 +963,7 @@ export const MsgProvisionModel = {
           message.compliantPlatformVersion = reader.string()
           break
         case 16:
-          message.OSVersion = reader.string()
+          message.OSName = reader.string()
           break
         case 17:
           message.certificationRoute = reader.string()
@@ -1065,10 +1065,10 @@ export const MsgProvisionModel = {
     } else {
       message.compliantPlatformVersion = ''
     }
-    if (object.OSVersion !== undefined && object.OSVersion !== null) {
-      message.OSVersion = String(object.OSVersion)
+    if (object.OSName !== undefined && object.OSName !== null) {
+      message.OSName = String(object.OSName)
     } else {
-      message.OSVersion = ''
+      message.OSName = ''
     }
     if (object.certificationRoute !== undefined && object.certificationRoute !== null) {
       message.certificationRoute = String(object.certificationRoute)
@@ -1115,7 +1115,7 @@ export const MsgProvisionModel = {
     message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters)
     message.compliantPlatformUsed !== undefined && (obj.compliantPlatformUsed = message.compliantPlatformUsed)
     message.compliantPlatformVersion !== undefined && (obj.compliantPlatformVersion = message.compliantPlatformVersion)
-    message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion)
+    message.OSName !== undefined && (obj.OSName = message.OSName)
     message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute)
     message.productType !== undefined && (obj.productType = message.productType)
     message.transport !== undefined && (obj.transport = message.transport)
@@ -1201,10 +1201,10 @@ export const MsgProvisionModel = {
     } else {
       message.compliantPlatformVersion = ''
     }
-    if (object.OSVersion !== undefined && object.OSVersion !== null) {
-      message.OSVersion = object.OSVersion
+    if (object.OSName !== undefined && object.OSName !== null) {
+      message.OSName = object.OSName
     } else {
-      message.OSVersion = ''
+      message.OSName = ''
     }
     if (object.certificationRoute !== undefined && object.certificationRoute !== null) {
       message.certificationRoute = object.certificationRoute
@@ -1292,7 +1292,7 @@ const baseMsgUpdateComplianceInfo: object = {
   transport: '',
   familyId: '',
   supportedClusters: '',
-  OSVersion: '',
+  OSName: '',
   parentChild: '',
   schemaVersion: 0
 }
@@ -1353,8 +1353,8 @@ export const MsgUpdateComplianceInfo = {
     if (message.supportedClusters !== '') {
       writer.uint32(146).string(message.supportedClusters)
     }
-    if (message.OSVersion !== '') {
-      writer.uint32(154).string(message.OSVersion)
+    if (message.OSName !== '') {
+      writer.uint32(154).string(message.OSName)
     }
     if (message.parentChild !== '') {
       writer.uint32(162).string(message.parentChild)
@@ -1427,7 +1427,7 @@ export const MsgUpdateComplianceInfo = {
           message.supportedClusters = reader.string()
           break
         case 19:
-          message.OSVersion = reader.string()
+          message.OSName = reader.string()
           break
         case 20:
           message.parentChild = reader.string()
@@ -1535,10 +1535,10 @@ export const MsgUpdateComplianceInfo = {
     } else {
       message.supportedClusters = ''
     }
-    if (object.OSVersion !== undefined && object.OSVersion !== null) {
-      message.OSVersion = String(object.OSVersion)
+    if (object.OSName !== undefined && object.OSName !== null) {
+      message.OSName = String(object.OSName)
     } else {
-      message.OSVersion = ''
+      message.OSName = ''
     }
     if (object.parentChild !== undefined && object.parentChild !== null) {
       message.parentChild = String(object.parentChild)
@@ -1573,7 +1573,7 @@ export const MsgUpdateComplianceInfo = {
     message.transport !== undefined && (obj.transport = message.transport)
     message.familyId !== undefined && (obj.familyId = message.familyId)
     message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters)
-    message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion)
+    message.OSName !== undefined && (obj.OSName = message.OSName)
     message.parentChild !== undefined && (obj.parentChild = message.parentChild)
     message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
@@ -1671,10 +1671,10 @@ export const MsgUpdateComplianceInfo = {
     } else {
       message.supportedClusters = ''
     }
-    if (object.OSVersion !== undefined && object.OSVersion !== null) {
-      message.OSVersion = object.OSVersion
+    if (object.OSName !== undefined && object.OSName !== null) {
+      message.OSName = object.OSName
     } else {
-      message.OSVersion = ''
+      message.OSName = ''
     }
     if (object.parentChild !== undefined && object.parentChild !== null) {
       message.parentChild = object.parentChild

@@ -123,7 +123,7 @@ var (
 	SupportedClusters                  = "Some Supported Clusters"
 	CompliantPlatformUsed              = "Some Compliance Platform Used"
 	CompliantPlatformVersion           = "Some Compliance Platform Version"
-	OSVersion                          = "Some OS Version"
+	OSName                             = "Some OS Version"
 	CertificationRoute                 = "fullTested"
 	ProductType                        = "Some Product Type"
 	CertificationTypeVersion           = "Some Program Type Version"

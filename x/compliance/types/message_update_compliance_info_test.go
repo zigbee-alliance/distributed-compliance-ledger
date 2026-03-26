@@ -110,7 +110,7 @@ func TestMsgUpdateComplianceInfo_ValidateBasic(t *testing.T) {
 				Transport:                testconstants.Transport,
 				FamilyId:                 testconstants.FamilyID,
 				SupportedClusters:        testconstants.SupportedClusters,
-				OSVersion:                testconstants.OSVersion,
+				OSName:                   testconstants.OSName,
 			},
 		},
 		{

@@ -173,7 +173,7 @@ export interface DistributedcomplianceledgercomplianceComplianceInfo {
   transport?: string;
   familyId?: string;
   supportedClusters?: string;
-  OSVersion?: string;
+  OSName?: string;
   parentChild?: string;
 
   /** @format int64 */

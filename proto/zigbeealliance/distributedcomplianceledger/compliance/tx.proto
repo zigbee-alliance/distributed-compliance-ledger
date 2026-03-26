@@ -34,7 +34,7 @@ message MsgCertifyModel {
   string supportedClusters = 13 [(gogoproto.moretags) = "validate:\"max=128\""];
   string compliantPlatformUsed = 14 [(gogoproto.moretags) = "validate:\"max=64\""];
   string compliantPlatformVersion = 15 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string OSVersion = 16 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string OSName = 16 [(gogoproto.moretags) = "validate:\"max=64\""];
   string certificationRoute = 17 [(gogoproto.moretags) = "validate:\"max=64\""];
   string productType = 18 [(gogoproto.moretags) = "validate:\"max=64\""];
   string transport = 19 [(gogoproto.moretags) = "validate:\"max=64\""];
@@ -78,7 +78,7 @@ message MsgProvisionModel {
   string supportedClusters = 13 [(gogoproto.moretags) = "validate:\"max=128\""];
   string compliantPlatformUsed = 14 [(gogoproto.moretags) = "validate:\"max=64\""];
   string compliantPlatformVersion = 15 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string OSVersion = 16 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string OSName = 16 [(gogoproto.moretags) = "validate:\"max=64\""];
   string certificationRoute = 17 [(gogoproto.moretags) = "validate:\"max=64\""];
   string productType = 18 [(gogoproto.moretags) = "validate:\"max=64\""];
   string transport = 19 [(gogoproto.moretags) = "validate:\"max=64\""];
@@ -109,7 +109,7 @@ message MsgUpdateComplianceInfo {
   string transport = 16 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string familyId = 17 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string supportedClusters = 18 [(gogoproto.moretags) = "validate:\"omitempty,max=128\""];
-  string OSVersion = 19 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
+  string OSName = 19 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string parentChild = 20 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string certificationIdOfSoftwareComponent = 21 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   uint32 schemaVersion = 22 [(gogoproto.moretags) = "validate:\"eq=0\""];

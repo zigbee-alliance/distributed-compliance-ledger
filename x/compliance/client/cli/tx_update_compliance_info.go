@@ -34,7 +34,7 @@ func CmdUpdateComplianceInfo() *cobra.Command {
 		transport                string
 		familyID                 string
 		supportedClusters        string
-		OSVersion                string
+		OSName                   string
 		parentChild              string
 		schemaVersion            uint32
 	)
@@ -68,7 +68,7 @@ func CmdUpdateComplianceInfo() *cobra.Command {
 				transport,
 				familyID,
 				supportedClusters,
-				OSVersion,
+				OSName,
 				parentChild,
 				schemaVersion,
 			)
@@ -107,7 +107,7 @@ func CmdUpdateComplianceInfo() *cobra.Command {
 		"Compliant Platform Used of the certification")
 	cmd.Flags().StringVar(&compliantPlatformVersion, FlagCompliantPlatformVersion, "",
 		"Compliant Platform Version of the certification")
-	cmd.Flags().StringVar(&OSVersion, FlagOSVersion, "",
+	cmd.Flags().StringVar(&OSName, FlagOSName, "",
 		"OS Version of the certification")
 	cmd.Flags().StringVar(&certificationRoute, FlagCertificationRoute, "",
 		"Certification Route of the certification")

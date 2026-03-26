@@ -27,7 +27,7 @@ message ComplianceInfo {
   string transport = 18;
   string familyId = 19;
   string supportedClusters = 20;
-  string OSVersion = 21;
+  string OSName = 21;
   string parentChild = 22;
   uint32 schemaVersion = 24;
 }

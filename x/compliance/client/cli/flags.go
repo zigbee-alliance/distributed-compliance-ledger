@@ -36,7 +36,7 @@ const (
 	FlagSupportedClusters                  = "supportedClusters"
 	FlagCompliantPlatformUsed              = "compliantPlatformUsed"
 	FlagCompliantPlatformVersion           = "compliantPlatformVersion"
-	FlagOSVersion                          = "OSVersion"
+	FlagOSName                             = "OSName"
 	FlagCertificationRoute                 = "certificationRoute"
 	FlagProductType                        = "productType"
 	FlagTransport                          = "transport"
