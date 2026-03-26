@@ -312,7 +312,7 @@ check_response "$result" "\"vid\": $vid_for_1_5_2"
 check_response "$result" "\"pid\": $pid_1_for_1_5_2"
 check_response "$result" "\"softwareVersion\": $software_version_for_1_5_2"
 check_response "$result" "\"certificationType\": \"$certification_type_for_1_5_2\""
-check_response "$result" "\"certificationIDOfSoftwareComponent\": \"\""
+check_response "$result" "\"certificationIdOfSoftwareComponent\": \"\""
 
 test_divider
 
