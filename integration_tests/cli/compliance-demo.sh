@@ -573,7 +573,7 @@ test_divider
 
 # ADD CERTIFY MODEL WITH ALL OPTIONAL FIELDS
 echo "Certify Model with VID: $vid PID: $pid SV: ${sv} with zigbee certification"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=$cd_version_number --programTypeVersion="1.0" --familyId="FAM123456abc" --supportedClusters="someClusters" --compliantPlatformUsed="WIFI" --compliantPlatformVersion="V1" --OSVersion="someV" --certificationRoute="fullTested" --programType="pType" --transport="someTransport" --parentChild="parent" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=$cd_version_number --programTypeVersion="1.0" --familyId="FAM123456abc" --supportedClusters="someClusters" --compliantPlatformUsed="WIFI" --compliantPlatformVersion="V1" --OSVersion="someV" --certificationRoute="fullTested" --productType="pType" --transport="someTransport" --parentChild="parent" --from $zb_account --yes)
 result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "\"code\": 0"
@@ -606,7 +606,7 @@ check_response "$result" "\"compliantPlatformUsed\": \"WIFI\""
 check_response "$result" "\"compliantPlatformVersion\": \"V1\""
 check_response "$result" "\"OSVersion\": \"someV\""
 check_response "$result" "\"certificationRoute\": \"fullTested\""
-check_response "$result" "\"programType\": \"pType\""
+check_response "$result" "\"productType\": \"pType\""
 check_response "$result" "\"transport\": \"someTransport\""
 check_response "$result" "\"parentChild\": \"parent\""
 echo "$result"
@@ -629,7 +629,7 @@ check_response "$result" "\"compliantPlatformUsed\": \"WIFI\""
 check_response "$result" "\"compliantPlatformVersion\": \"V1\""
 check_response "$result" "\"OSVersion\": \"someV\""
 check_response "$result" "\"certificationRoute\": \"fullTested\""
-check_response "$result" "\"programType\": \"pType\""
+check_response "$result" "\"productType\": \"pType\""
 check_response "$result" "\"transport\": \"someTransport\""
 check_response "$result" "\"parentChild\": \"parent\""
 echo "$result"
@@ -644,7 +644,7 @@ new_transport="new_transport"
 
 # UPDATE COMPLIANCE INFO BY CERTIFICATION CENTER ACCOUNT
 echo "Update Compliance Info for Model with VID: ${vid} PID: ${pid} SV: ${sv} for $zigbee_certification_type with some optional fields set"
-result=$(echo "$passphrase" | dcld tx compliance update-compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$zigbee_certification_type --reason=$new_reason --programType=$new_program_type --parentChild=$new_parent_child --transport=$new_transport --from=$zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance update-compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$zigbee_certification_type --reason=$new_reason --productType=$new_program_type --parentChild=$new_parent_child --transport=$new_transport --from=$zb_account --yes)
 result=$(get_txn_result "$result")
 echo "$result"
 
@@ -662,7 +662,7 @@ check_response "$result" "\"compliantPlatformUsed\": \"WIFI\""
 check_response "$result" "\"compliantPlatformVersion\": \"V1\""
 check_response "$result" "\"OSVersion\": \"someV\""
 check_response "$result" "\"certificationRoute\": \"fullTested\""
-check_response "$result" "\"programType\": \"$new_program_type\""
+check_response "$result" "\"productType\": \"$new_program_type\""
 check_response "$result" "\"transport\": \"$new_transport\""
 check_response "$result" "\"parentChild\": \"$new_parent_child\""
 check_response "$result" "\"reason\": \"$new_reason\""
@@ -677,7 +677,7 @@ test_divider
 
 # UPDATE COMPLIANCE INFO BY *NON CERTIFICATION CENTER ACCOUNT
 echo "Update Compliance Info for Model with VID: ${vid} PID: ${pid} SV: ${sv} for $zigbee_certification_type by non Certification Center account"
-result=$(echo "$passphrase" | dcld tx compliance update-compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$zigbee_certification_type --reason=$by_vendor_reason --programType=$by_vendor_program_type --parentChild=$by_vendor_parent_child --transport=$by_vendor_transport --from=$vendor_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance update-compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$zigbee_certification_type --reason=$by_vendor_reason --productType=$by_vendor_program_type --parentChild=$by_vendor_parent_child --transport=$by_vendor_transport --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "unauthorized"
 
@@ -696,7 +696,7 @@ check_response "$result" "\"compliantPlatformUsed\": \"WIFI\""
 check_response "$result" "\"compliantPlatformVersion\": \"V1\""
 check_response "$result" "\"OSVersion\": \"someV\""
 check_response "$result" "\"certificationRoute\": \"fullTested\""
-check_response "$result" "\"programType\": \"$new_program_type\""
+check_response "$result" "\"productType\": \"$new_program_type\""
 check_response "$result" "\"transport\": \"$new_transport\""
 check_response "$result" "\"parentChild\": \"$new_parent_child\""
 check_response "$result" "\"reason\": \"$new_reason\""
@@ -725,7 +725,7 @@ check_response "$result" "\"compliantPlatformUsed\": \"WIFI\""
 check_response "$result" "\"compliantPlatformVersion\": \"V1\""
 check_response "$result" "\"OSVersion\": \"someV\""
 check_response "$result" "\"certificationRoute\": \"fullTested\""
-check_response "$result" "\"programType\": \"$new_program_type\""
+check_response "$result" "\"productType\": \"$new_program_type\""
 check_response "$result" "\"transport\": \"$new_transport\""
 check_response "$result" "\"parentChild\": \"$new_parent_child\""
 check_response "$result" "\"reason\": \"$new_reason\""
@@ -750,7 +750,7 @@ upd_os_version="brand_new_os_version"
 upd_parent_child="parent"
 
 echo "Update Compliance Info for Model with VID: ${vid} PID: ${pid} SV: ${sv} for $zigbee_certification_type with all optional fields set"
-result=$(echo "$passphrase" | dcld tx compliance update-compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$zigbee_certification_type --cdVersionNumber=$upd_cd_version_number --certificationDate=$upd_certification_date --reason=$upd_reason --cdCertificateId=$upd_cd_certificate_id --certificationRoute=$upd_certification_route --programType=$upd_program_type --programTypeVersion=$upd_program_type_version --compliantPlatformUsed=$upd_compliant_platform_used --compliantPlatformVersion=$upd_compliant_platform_version --transport=$upd_transport --familyId=$upd_familyID --supportedClusters=$upd_supported_clusters --OSVersion=$upd_os_version --parentChild=$upd_parent_child --schemaVersion=$schema_version_0 --from=$zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance update-compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$zigbee_certification_type --cdVersionNumber=$upd_cd_version_number --certificationDate=$upd_certification_date --reason=$upd_reason --cdCertificateId=$upd_cd_certificate_id --certificationRoute=$upd_certification_route --productType=$upd_program_type --programTypeVersion=$upd_program_type_version --compliantPlatformUsed=$upd_compliant_platform_used --compliantPlatformVersion=$upd_compliant_platform_version --transport=$upd_transport --familyId=$upd_familyID --supportedClusters=$upd_supported_clusters --OSVersion=$upd_os_version --parentChild=$upd_parent_child --schemaVersion=$schema_version_0 --from=$zb_account --yes)
 result=$(get_txn_result "$result")
 echo "$result"
 
@@ -762,11 +762,11 @@ check_response "$result" "\"softwareVersion\": $sv"
 check_response "$result" "\"certificationType\": \"$zigbee_certification_type\""
 check_response "$result" "\"cDVersionNumber\": $(($upd_cd_version_number + 0))"
 check_response "$result" "\"date\": \"$upd_certification_date\""
-result=$(echo "$passphrase" | dcld tx compliance update-compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$zigbee_certification_type --cdVersionNumber=$upd_cd_version_number --certificationDate=$upd_certification_date --reason=$upd_reason --cdCertificateId=$upd_cd_certificate_id --certificationRoute=$upd_certification_route --programType=$upd_program_type --programTypeVersion=$upd_program_type_version --compliantPlatformUsed=$upd_compliant_platform_used --compliantPlatformVersion=$upd_compliant_platform_version --transport=$upd_transport --familyId=$upd_familyID --supportedClusters=$upd_supported_clusters --OSVersion=$upd_os_version --parentChild=$upd_parent_child --schemaVersion=$schema_version_0 --from=$zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance update-compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$zigbee_certification_type --cdVersionNumber=$upd_cd_version_number --certificationDate=$upd_certification_date --reason=$upd_reason --cdCertificateId=$upd_cd_certificate_id --certificationRoute=$upd_certification_route --productType=$upd_program_type --programTypeVersion=$upd_program_type_version --compliantPlatformUsed=$upd_compliant_platform_used --compliantPlatformVersion=$upd_compliant_platform_version --transport=$upd_transport --familyId=$upd_familyID --supportedClusters=$upd_supported_clusters --OSVersion=$upd_os_version --parentChild=$upd_parent_child --schemaVersion=$schema_version_0 --from=$zb_account --yes)
 check_response "$result" "\"reason\": \"$upd_reason\""
 check_response "$result" "\"cDCertificateId\": \"$upd_cd_certificate_id\""
 check_response "$result" "\"certificationRoute\": \"$upd_certification_route\""
-check_response "$result" "\"programType\": \"$upd_program_type\""
+check_response "$result" "\"productType\": \"$upd_program_type\""
 check_response "$result" "\"programTypeVersion\": \"$upd_program_type_version\""
 check_response "$result" "\"compliantPlatformUsed\": \"$upd_compliant_platform_used\""
 check_response "$result" "\"compliantPlatformVersion\": \"$upd_compliant_platform_version\""

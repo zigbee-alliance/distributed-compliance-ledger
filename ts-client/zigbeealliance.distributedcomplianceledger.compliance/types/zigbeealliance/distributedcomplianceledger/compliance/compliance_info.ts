@@ -18,7 +18,7 @@ export interface ComplianceInfo {
   history: ComplianceHistoryItem[];
   cDCertificateId: string;
   certificationRoute: string;
-  programType: string;
+  productType: string;
   programTypeVersion: string;
   compliantPlatformUsed: string;
   compliantPlatformVersion: string;
@@ -45,7 +45,7 @@ function createBaseComplianceInfo(): ComplianceInfo {
     history: [],
     cDCertificateId: "",
     certificationRoute: "",
-    programType: "",
+    productType: "",
     programTypeVersion: "",
     compliantPlatformUsed: "",
     compliantPlatformVersion: "",
@@ -99,8 +99,8 @@ export const ComplianceInfo = {
     if (message.certificationRoute !== "") {
       writer.uint32(106).string(message.certificationRoute);
     }
-    if (message.programType !== "") {
-      writer.uint32(114).string(message.programType);
+    if (message.productType !== "") {
+      writer.uint32(114).string(message.productType);
     }
     if (message.programTypeVersion !== "") {
       writer.uint32(122).string(message.programTypeVersion);
@@ -179,7 +179,7 @@ export const ComplianceInfo = {
           message.certificationRoute = reader.string();
           break;
         case 14:
-          message.programType = reader.string();
+          message.productType = reader.string();
           break;
         case 15:
           message.programTypeVersion = reader.string();
@@ -233,7 +233,7 @@ export const ComplianceInfo = {
       history: Array.isArray(object?.history) ? object.history.map((e: any) => ComplianceHistoryItem.fromJSON(e)) : [],
       cDCertificateId: isSet(object.cDCertificateId) ? String(object.cDCertificateId) : "",
       certificationRoute: isSet(object.certificationRoute) ? String(object.certificationRoute) : "",
-      programType: isSet(object.programType) ? String(object.programType) : "",
+      productType: isSet(object.productType) ? String(object.productType) : "",
       programTypeVersion: isSet(object.programTypeVersion) ? String(object.programTypeVersion) : "",
       compliantPlatformUsed: isSet(object.compliantPlatformUsed) ? String(object.compliantPlatformUsed) : "",
       compliantPlatformVersion: isSet(object.compliantPlatformVersion) ? String(object.compliantPlatformVersion) : "",
@@ -266,7 +266,7 @@ export const ComplianceInfo = {
     }
     message.cDCertificateId !== undefined && (obj.cDCertificateId = message.cDCertificateId);
     message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute);
-    message.programType !== undefined && (obj.programType = message.programType);
+    message.productType !== undefined && (obj.productType = message.productType);
     message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion);
     message.compliantPlatformUsed !== undefined && (obj.compliantPlatformUsed = message.compliantPlatformUsed);
     message.compliantPlatformVersion !== undefined && (obj.compliantPlatformVersion = message.compliantPlatformVersion);
@@ -294,7 +294,7 @@ export const ComplianceInfo = {
     message.history = object.history?.map((e) => ComplianceHistoryItem.fromPartial(e)) || [];
     message.cDCertificateId = object.cDCertificateId ?? "";
     message.certificationRoute = object.certificationRoute ?? "";
-    message.programType = object.programType ?? "";
+    message.productType = object.productType ?? "";
     message.programTypeVersion = object.programTypeVersion ?? "";
     message.compliantPlatformUsed = object.compliantPlatformUsed ?? "";
     message.compliantPlatformVersion = object.compliantPlatformVersion ?? "";

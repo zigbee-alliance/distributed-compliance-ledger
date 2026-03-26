@@ -1035,7 +1035,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 		CDCertificateId:   testconstants.CDCertificateID,
 		CDVersionNumber:   "312",
 		CertificationType: compliancetypes.ZigbeeCertificationType,
-		ProgramType:       "new program type",
+		ProductType:       "new program type",
 		Reason:            "new reason",
 		ParentChild:       "child",
 	}
@@ -1045,7 +1045,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	updatedComplianceInfo, _ := GetComplianceInfo(suite, vid, pid, sv, compliancetypes.ZigbeeCertificationType)
 
 	// updated fields
-	require.Equal(suite.T, updatedComplianceInfo.ProgramType, updateComplianceInfoMsg.ProgramType)
+	require.Equal(suite.T, updatedComplianceInfo.ProductType, updateComplianceInfoMsg.ProductType)
 	require.Equal(suite.T, updatedComplianceInfo.Reason, updateComplianceInfoMsg.Reason)
 	require.Equal(suite.T, updatedComplianceInfo.ParentChild, updateComplianceInfoMsg.ParentChild)
 
@@ -1135,7 +1135,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 		CompliantPlatformVersion: testconstants.CompliantPlatformVersion,
 		OSVersion:                testconstants.OSVersion,
 		CertificationRoute:       testconstants.CertificationRoute,
-		ProgramType:              testconstants.ProgramType,
+		ProductType:              testconstants.ProductType,
 		Transport:                testconstants.Transport,
 		ParentChild:              testconstants.ParentChild1,
 		CDVersionNumber:          uint32(testconstants.CdVersionNumber),
@@ -1607,7 +1607,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 		CompliantPlatformVersion: testconstants.CompliantPlatformVersion,
 		OSVersion:                testconstants.OSVersion,
 		CertificationRoute:       testconstants.CertificationRoute,
-		ProgramType:              testconstants.ProgramType,
+		ProductType:              testconstants.ProductType,
 		Transport:                testconstants.Transport,
 		ParentChild:              testconstants.ParentChild1,
 		CDVersionNumber:          uint32(testconstants.CdVersionNumber),

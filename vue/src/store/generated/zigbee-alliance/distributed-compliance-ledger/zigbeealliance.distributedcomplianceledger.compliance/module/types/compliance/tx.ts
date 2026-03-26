@@ -21,7 +21,7 @@ export interface MsgCertifyModel {
   compliantPlatformVersion: string
   OSVersion: string
   certificationRoute: string
-  programType: string
+	productType: string
   transport: string
   parentChild: string
   schemaVersion: number
@@ -62,7 +62,7 @@ export interface MsgProvisionModel {
   compliantPlatformVersion: string
   OSVersion: string
   certificationRoute: string
-  programType: string
+  productType: string
   transport: string
   parentChild: string
   schemaVersion: number
@@ -82,7 +82,7 @@ export interface MsgUpdateComplianceInfo {
   owner: string
   cDCertificateId: string
   certificationRoute: string
-  programType: string
+  productType: string
   programTypeVersion: string
   compliantPlatformUsed: string
   compliantPlatformVersion: string
@@ -124,7 +124,7 @@ const baseMsgCertifyModel: object = {
   compliantPlatformVersion: '',
   OSVersion: '',
   certificationRoute: '',
-  programType: '',
+  productType: '',
   transport: '',
   parentChild: '',
   schemaVersion: 0
@@ -183,8 +183,8 @@ export const MsgCertifyModel = {
     if (message.certificationRoute !== '') {
       writer.uint32(138).string(message.certificationRoute)
     }
-    if (message.programType !== '') {
-      writer.uint32(146).string(message.programType)
+    if (message.productType !== '') {
+      writer.uint32(146).string(message.productType)
     }
     if (message.transport !== '') {
       writer.uint32(154).string(message.transport)
@@ -257,7 +257,7 @@ export const MsgCertifyModel = {
           message.certificationRoute = reader.string()
           break
         case 18:
-          message.programType = reader.string()
+          message.productType = reader.string()
           break
         case 19:
           message.transport = reader.string()
@@ -363,10 +363,10 @@ export const MsgCertifyModel = {
     } else {
       message.certificationRoute = ''
     }
-    if (object.programType !== undefined && object.programType !== null) {
-      message.programType = String(object.programType)
+    if (object.productType !== undefined && object.productType !== null) {
+      message.productType = String(object.productType)
     } else {
-      message.programType = ''
+      message.productType = ''
     }
     if (object.transport !== undefined && object.transport !== null) {
       message.transport = String(object.transport)
@@ -405,7 +405,7 @@ export const MsgCertifyModel = {
     message.compliantPlatformVersion !== undefined && (obj.compliantPlatformVersion = message.compliantPlatformVersion)
     message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion)
     message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute)
-    message.programType !== undefined && (obj.programType = message.programType)
+    message.productType !== undefined && (obj.productType = message.productType)
     message.transport !== undefined && (obj.transport = message.transport)
     message.parentChild !== undefined && (obj.parentChild = message.parentChild)
     message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
@@ -499,10 +499,10 @@ export const MsgCertifyModel = {
     } else {
       message.certificationRoute = ''
     }
-    if (object.programType !== undefined && object.programType !== null) {
-      message.programType = object.programType
+    if (object.productType !== undefined && object.productType !== null) {
+      message.productType = object.productType
     } else {
-      message.programType = ''
+      message.productType = ''
     }
     if (object.transport !== undefined && object.transport !== null) {
       message.transport = object.transport
@@ -836,7 +836,7 @@ const baseMsgProvisionModel: object = {
   compliantPlatformVersion: '',
   OSVersion: '',
   certificationRoute: '',
-  programType: '',
+  productType: '',
   transport: '',
   parentChild: '',
   schemaVersion: 0
@@ -895,8 +895,8 @@ export const MsgProvisionModel = {
     if (message.certificationRoute !== '') {
       writer.uint32(138).string(message.certificationRoute)
     }
-    if (message.programType !== '') {
-      writer.uint32(146).string(message.programType)
+    if (message.productType !== '') {
+      writer.uint32(146).string(message.productType)
     }
     if (message.transport !== '') {
       writer.uint32(154).string(message.transport)
@@ -969,7 +969,7 @@ export const MsgProvisionModel = {
           message.certificationRoute = reader.string()
           break
         case 18:
-          message.programType = reader.string()
+          message.productType = reader.string()
           break
         case 19:
           message.transport = reader.string()
@@ -1075,10 +1075,10 @@ export const MsgProvisionModel = {
     } else {
       message.certificationRoute = ''
     }
-    if (object.programType !== undefined && object.programType !== null) {
-      message.programType = String(object.programType)
+    if (object.productType !== undefined && object.productType !== null) {
+      message.productType = String(object.productType)
     } else {
-      message.programType = ''
+      message.productType = ''
     }
     if (object.transport !== undefined && object.transport !== null) {
       message.transport = String(object.transport)
@@ -1117,7 +1117,7 @@ export const MsgProvisionModel = {
     message.compliantPlatformVersion !== undefined && (obj.compliantPlatformVersion = message.compliantPlatformVersion)
     message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion)
     message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute)
-    message.programType !== undefined && (obj.programType = message.programType)
+    message.productType !== undefined && (obj.productType = message.productType)
     message.transport !== undefined && (obj.transport = message.transport)
     message.parentChild !== undefined && (obj.parentChild = message.parentChild)
     message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
@@ -1211,10 +1211,10 @@ export const MsgProvisionModel = {
     } else {
       message.certificationRoute = ''
     }
-    if (object.programType !== undefined && object.programType !== null) {
-      message.programType = object.programType
+    if (object.productType !== undefined && object.productType !== null) {
+      message.productType = object.productType
     } else {
-      message.programType = ''
+      message.productType = ''
     }
     if (object.transport !== undefined && object.transport !== null) {
       message.transport = object.transport
@@ -1285,7 +1285,7 @@ const baseMsgUpdateComplianceInfo: object = {
   owner: '',
   cDCertificateId: '',
   certificationRoute: '',
-  programType: '',
+  productType: '',
   programTypeVersion: '',
   compliantPlatformUsed: '',
   compliantPlatformVersion: '',
@@ -1332,8 +1332,8 @@ export const MsgUpdateComplianceInfo = {
     if (message.certificationRoute !== '') {
       writer.uint32(90).string(message.certificationRoute)
     }
-    if (message.programType !== '') {
-      writer.uint32(98).string(message.programType)
+    if (message.productType !== '') {
+      writer.uint32(98).string(message.productType)
     }
     if (message.programTypeVersion !== '') {
       writer.uint32(106).string(message.programTypeVersion)
@@ -1406,7 +1406,7 @@ export const MsgUpdateComplianceInfo = {
           message.certificationRoute = reader.string()
           break
         case 12:
-          message.programType = reader.string()
+          message.productType = reader.string()
           break
         case 13:
           message.programTypeVersion = reader.string()
@@ -1500,10 +1500,10 @@ export const MsgUpdateComplianceInfo = {
     } else {
       message.certificationRoute = ''
     }
-    if (object.programType !== undefined && object.programType !== null) {
-      message.programType = String(object.programType)
+    if (object.productType !== undefined && object.productType !== null) {
+      message.productType = String(object.productType)
     } else {
-      message.programType = ''
+      message.productType = ''
     }
     if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
       message.programTypeVersion = String(object.programTypeVersion)
@@ -1566,7 +1566,7 @@ export const MsgUpdateComplianceInfo = {
     message.owner !== undefined && (obj.owner = message.owner)
     message.cDCertificateId !== undefined && (obj.cDCertificateId = message.cDCertificateId)
     message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute)
-    message.programType !== undefined && (obj.programType = message.programType)
+    message.productType !== undefined && (obj.productType = message.productType)
     message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion)
     message.compliantPlatformUsed !== undefined && (obj.compliantPlatformUsed = message.compliantPlatformUsed)
     message.compliantPlatformVersion !== undefined && (obj.compliantPlatformVersion = message.compliantPlatformVersion)
@@ -1636,10 +1636,10 @@ export const MsgUpdateComplianceInfo = {
     } else {
       message.certificationRoute = ''
     }
-    if (object.programType !== undefined && object.programType !== null) {
-      message.programType = object.programType
+    if (object.productType !== undefined && object.productType !== null) {
+      message.productType = object.productType
     } else {
-      message.programType = ''
+      message.productType = ''
     }
     if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
       message.programTypeVersion = object.programTypeVersion

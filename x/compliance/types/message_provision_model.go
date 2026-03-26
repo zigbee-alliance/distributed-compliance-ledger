@@ -17,7 +17,7 @@ func NewMsgProvisionModel(
 	signer string, vid int32, pid int32, softwareVersion uint32, softwareVersionString string, cDVersionNumber uint32,
 	provisionalDate string, certificationType string, reason string, programTypeVersion string, cDCertificateID string,
 	familyID string, supportedClusters string, compliantPlatformUsed string, compliantPlatformVersion string, osVersion string,
-	certificationRoute string, programType string, transport string, parentChild string, schemaVersion uint32,
+	certificationRoute string, productType string, transport string, parentChild string, schemaVersion uint32,
 ) *MsgProvisionModel {
 	return &MsgProvisionModel{
 		Signer:                   signer,
@@ -37,7 +37,7 @@ func NewMsgProvisionModel(
 		CompliantPlatformVersion: compliantPlatformVersion,
 		OSVersion:                osVersion,
 		CertificationRoute:       certificationRoute,
-		ProgramType:              programType,
+		ProductType:              productType,
 		Transport:                transport,
 		ParentChild:              parentChild,
 		SchemaVersion:            schemaVersion,

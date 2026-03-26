@@ -17,7 +17,7 @@ func NewMsgCertifyModel(
 	signer string, vid int32, pid int32, softwareVersion uint32, softwareVersionString string, cdVersionNumber uint32,
 	certificationDate string, certificationType string, reason string, programTypeVersion string, cDCertificateID string,
 	familyID string, supportedClusters string, compliantPlatformUsed string, compliantPlatformVersion string, osVersion string,
-	certificationRoute string, programType string, transport string, parentChild string,
+	certificationRoute string, productType string, transport string, parentChild string,
 	schemaVersion uint32,
 ) *MsgCertifyModel {
 	return &MsgCertifyModel{
@@ -38,7 +38,7 @@ func NewMsgCertifyModel(
 		CompliantPlatformVersion: compliantPlatformVersion,
 		OSVersion:                osVersion,
 		CertificationRoute:       certificationRoute,
-		ProgramType:              programType,
+		ProductType:              productType,
 		Transport:                transport,
 		ParentChild:              parentChild,
 		SchemaVersion:            schemaVersion,

@@ -18,7 +18,7 @@ export interface ComplianceInfo {
   history: ComplianceHistoryItem[]
   cDCertificateId: string
   certificationRoute: string
-  programType: string
+  productType: string
   programTypeVersion: string
   compliantPlatformUsed: string
   compliantPlatformVersion: string
@@ -43,7 +43,7 @@ const baseComplianceInfo: object = {
   owner: '',
   cDCertificateId: '',
   certificationRoute: '',
-  programType: '',
+  productType: '',
   programTypeVersion: '',
   compliantPlatformUsed: '',
   compliantPlatformVersion: '',
@@ -96,8 +96,8 @@ export const ComplianceInfo = {
     if (message.certificationRoute !== '') {
       writer.uint32(106).string(message.certificationRoute)
     }
-    if (message.programType !== '') {
-      writer.uint32(114).string(message.programType)
+    if (message.productType !== '') {
+      writer.uint32(114).string(message.productType)
     }
     if (message.programTypeVersion !== '') {
       writer.uint32(122).string(message.programTypeVersion)
@@ -177,7 +177,7 @@ export const ComplianceInfo = {
           message.certificationRoute = reader.string()
           break
         case 14:
-          message.programType = reader.string()
+          message.productType = reader.string()
           break
         case 15:
           message.programTypeVersion = reader.string()
@@ -282,10 +282,10 @@ export const ComplianceInfo = {
     } else {
       message.certificationRoute = ''
     }
-    if (object.programType !== undefined && object.programType !== null) {
-      message.programType = String(object.programType)
+    if (object.productType !== undefined && object.productType !== null) {
+      message.productType = String(object.productType)
     } else {
-      message.programType = ''
+      message.productType = ''
     }
     if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
       message.programTypeVersion = String(object.programTypeVersion)
@@ -354,7 +354,7 @@ export const ComplianceInfo = {
     }
     message.cDCertificateId !== undefined && (obj.cDCertificateId = message.cDCertificateId)
     message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute)
-    message.programType !== undefined && (obj.programType = message.programType)
+    message.productType !== undefined && (obj.productType = message.productType)
     message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion)
     message.compliantPlatformUsed !== undefined && (obj.compliantPlatformUsed = message.compliantPlatformUsed)
     message.compliantPlatformVersion !== undefined && (obj.compliantPlatformVersion = message.compliantPlatformVersion)
@@ -435,10 +435,10 @@ export const ComplianceInfo = {
     } else {
       message.certificationRoute = ''
     }
-    if (object.programType !== undefined && object.programType !== null) {
-      message.programType = object.programType
+    if (object.productType !== undefined && object.productType !== null) {
+      message.productType = object.productType
     } else {
-      message.programType = ''
+      message.productType = ''
     }
     if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
       message.programTypeVersion = object.programTypeVersion

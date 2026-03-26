@@ -81,8 +81,8 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		complianceInfo.ParentChild = msg.ParentChild
 	}
 
-	if msg.ProgramType != "" {
-		complianceInfo.ProgramType = msg.ProgramType
+	if msg.ProductType != "" {
+		complianceInfo.ProductType = msg.ProductType
 	}
 
 	if msg.ProgramTypeVersion != "" {

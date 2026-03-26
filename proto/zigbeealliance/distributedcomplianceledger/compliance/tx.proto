@@ -36,7 +36,7 @@ message MsgCertifyModel {
   string compliantPlatformVersion = 15 [(gogoproto.moretags) = "validate:\"max=64\""];
   string OSVersion = 16 [(gogoproto.moretags) = "validate:\"max=64\""];
   string certificationRoute = 17 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string programType = 18 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string productType = 18 [(gogoproto.moretags) = "validate:\"max=64\""];
   string transport = 19 [(gogoproto.moretags) = "validate:\"max=64\""];
   string parentChild = 20 [(gogoproto.moretags) = "validate:\"max=64\""];
   string certificationIdOfSoftwareComponent = 21 [(gogoproto.moretags) = "validate:\"max=64\""];
@@ -80,7 +80,7 @@ message MsgProvisionModel {
   string compliantPlatformVersion = 15 [(gogoproto.moretags) = "validate:\"max=64\""];
   string OSVersion = 16 [(gogoproto.moretags) = "validate:\"max=64\""];
   string certificationRoute = 17 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string programType = 18 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string productType = 18 [(gogoproto.moretags) = "validate:\"max=64\""];
   string transport = 19 [(gogoproto.moretags) = "validate:\"max=64\""];
   string parentChild = 20 [(gogoproto.moretags) = "validate:\"max=64\""];
   string certificationIdOfSoftwareComponent = 21 [(gogoproto.moretags) = "validate:\"max=64\""];
@@ -102,7 +102,7 @@ message MsgUpdateComplianceInfo {
   string owner = 9 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   string cDCertificateId = 10 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string certificationRoute = 11 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
-  string programType = 12 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
+  string productType = 12 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string programTypeVersion = 13 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string compliantPlatformUsed = 14 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string compliantPlatformVersion = 15 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];

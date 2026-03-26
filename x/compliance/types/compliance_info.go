@@ -58,8 +58,8 @@ func (d *ComplianceInfo) SetOptionalFields(optionalFields *OptionalFields) {
 		d.CertificationRoute = optionalFields.CertificationRoute
 	}
 
-	if optionalFields.ProgramType != "" {
-		d.ProgramType = optionalFields.ProgramType
+	if optionalFields.ProductType != "" {
+		d.ProductType = optionalFields.ProductType
 	}
 
 	if optionalFields.Transport != "" {
@@ -79,7 +79,7 @@ type OptionalFields struct {
 	CompliantPlatformVersion string
 	OSVersion                string
 	CertificationRoute       string
-	ProgramType              string
+	ProductType              string
 	Transport                string
 	ParentChild              string
 }

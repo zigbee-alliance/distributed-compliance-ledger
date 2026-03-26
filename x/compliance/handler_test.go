@@ -297,7 +297,7 @@ func checkProvisionalModelInfo(
 	require.Equal(t, provisionalModelMsg.CompliantPlatformVersion, receivedComplianceInfo.CompliantPlatformVersion)
 	require.Equal(t, provisionalModelMsg.OSVersion, receivedComplianceInfo.OSVersion)
 	require.Equal(t, provisionalModelMsg.CertificationRoute, receivedComplianceInfo.CertificationRoute)
-	require.Equal(t, provisionalModelMsg.ProgramType, receivedComplianceInfo.ProgramType)
+	require.Equal(t, provisionalModelMsg.ProductType, receivedComplianceInfo.ProductType)
 	require.Equal(t, provisionalModelMsg.Transport, receivedComplianceInfo.Transport)
 	require.Equal(t, provisionalModelMsg.ParentChild, receivedComplianceInfo.ParentChild)
 }
@@ -322,7 +322,7 @@ func checkCertifiedModelInfo(
 	require.Equal(t, certifyModelMsg.CompliantPlatformVersion, receivedComplianceInfo.CompliantPlatformVersion)
 	require.Equal(t, certifyModelMsg.OSVersion, receivedComplianceInfo.OSVersion)
 	require.Equal(t, certifyModelMsg.CertificationRoute, receivedComplianceInfo.CertificationRoute)
-	require.Equal(t, certifyModelMsg.ProgramType, receivedComplianceInfo.ProgramType)
+	require.Equal(t, certifyModelMsg.ProductType, receivedComplianceInfo.ProductType)
 	require.Equal(t, certifyModelMsg.Transport, receivedComplianceInfo.Transport)
 	require.Equal(t, certifyModelMsg.ParentChild, receivedComplianceInfo.ParentChild)
 }
@@ -446,7 +446,7 @@ func newMsgUpdateComplianceInfoWithAllOptionalFlags(
 		Reason:                   "new Reason",
 		CertificationRoute:       "fullTested",
 		Owner:                    "new Owner",
-		ProgramType:              "new programType",
+		ProgramType:              "new productType",
 		ProgramTypeVersion:       "new ProgramTypeVersion",
 		CompliantPlatformUsed:    "new CompliantPlatformUsed",
 		CompliantPlatformVersion: "new CompliantPlatformVersion",
@@ -485,7 +485,7 @@ func newMsgProvisionModelWithAllOptionalFlags(
 		CompliantPlatformVersion: testconstants.CompliantPlatformVersion,
 		OSVersion:                testconstants.OSVersion,
 		CertificationRoute:       testconstants.CertificationRoute,
-		ProgramType:              testconstants.ProgramType,
+		ProgramType:              testconstants.ProductType,
 		Transport:                testconstants.Transport,
 		ParentChild:              testconstants.ParentChild1,
 	}
@@ -555,7 +555,7 @@ func newMsgCertifyModelWithAllOptionalFlags(
 		CompliantPlatformVersion: testconstants.CompliantPlatformVersion,
 		OSVersion:                testconstants.OSVersion,
 		CertificationRoute:       testconstants.CertificationRoute,
-		ProgramType:              testconstants.ProgramType,
+		ProgramType:              testconstants.ProductType,
 		Transport:                testconstants.Transport,
 		ParentChild:              testconstants.ParentChild1,
 	}

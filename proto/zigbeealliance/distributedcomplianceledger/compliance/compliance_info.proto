@@ -20,7 +20,7 @@ message ComplianceInfo {
   repeated ComplianceHistoryItem history = 11;
   string cDCertificateId = 12;
   string certificationRoute = 13;
-  string programType = 14;
+  string productType = 14;
   string programTypeVersion = 15;
   string compliantPlatformUsed = 16;
   string compliantPlatformVersion = 17;

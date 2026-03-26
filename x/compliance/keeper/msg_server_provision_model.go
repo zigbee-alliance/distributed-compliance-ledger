@@ -76,7 +76,7 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvision
 		CompliantPlatformVersion:           msg.CompliantPlatformVersion,
 		OSVersion:                          msg.OSVersion,
 		CertificationRoute:                 msg.CertificationRoute,
-		ProgramType:                        msg.ProgramType,
+		ProductType:                        msg.ProductType,
 		Transport:                          msg.Transport,
 		ParentChild:                        msg.ParentChild,
 		SchemaVersion:                      msg.SchemaVersion,

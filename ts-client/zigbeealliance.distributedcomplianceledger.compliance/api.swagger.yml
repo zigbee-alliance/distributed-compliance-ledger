@@ -207,7 +207,7 @@ paths:
                       type: string
                     certificationRoute:
                       type: string
-                    programType:
+                    productType:
                       type: string
                     programTypeVersion:
                       type: string
@@ -337,7 +337,7 @@ paths:
                     type: string
                   certificationRoute:
                     type: string
-                  programType:
+                  productType:
                     type: string
                   programTypeVersion:
                     type: string
@@ -463,7 +463,7 @@ paths:
                             type: string
                           certificationRoute:
                             type: string
-                          programType:
+                          productType:
                             type: string
                           programTypeVersion:
                             type: string
@@ -600,7 +600,7 @@ paths:
                           type: string
                         certificationRoute:
                           type: string
-                        programType:
+                        productType:
                           type: string
                         programTypeVersion:
                           type: string
@@ -1079,7 +1079,7 @@ definitions:
               type: string
             certificationRoute:
               type: string
-            programType:
+            productType:
               type: string
             programTypeVersion:
               type: string
@@ -1168,7 +1168,7 @@ definitions:
                     type: string
                   certificationRoute:
                     type: string
-                  programType:
+                  productType:
                     type: string
                   programTypeVersion:
                     type: string
@@ -1327,7 +1327,7 @@ definitions:
             type: string
           certificationRoute:
             type: string
-          programType:
+          productType:
             type: string
           programTypeVersion:
             type: string
@@ -1405,7 +1405,7 @@ definitions:
                   type: string
                 certificationRoute:
                   type: string
-                programType:
+                productType:
                   type: string
                 programTypeVersion:
                   type: string
@@ -1527,7 +1527,7 @@ definitions:
         type: string
       certificationRoute:
         type: string
-      programType:
+      productType:
         type: string
       programTypeVersion:
         type: string
@@ -1602,7 +1602,7 @@ definitions:
               type: string
             certificationRoute:
               type: string
-            programType:
+            productType:
               type: string
             programTypeVersion:
               type: string

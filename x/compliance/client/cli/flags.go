@@ -38,7 +38,7 @@ const (
 	FlagCompliantPlatformVersion           = "compliantPlatformVersion"
 	FlagOSVersion                          = "OSVersion"
 	FlagCertificationRoute                 = "certificationRoute"
-	FlagProgramType                        = "programType"
+	FlagProductType                        = "productType"
 	FlagTransport                          = "transport"
 	FlagParentChild                        = "parentChild"
 	FlagOwner                              = "owner"

@@ -125,7 +125,7 @@ var (
 	CompliantPlatformVersion           = "Some Compliance Platform Version"
 	OSVersion                          = "Some OS Version"
 	CertificationRoute                 = "fullTested"
-	ProgramType                        = "Some Program Type"
+	ProductType                        = "Some Product Type"
 	ProgramTypeVersion                 = "Some Program Type Version"
 	Transport                          = "Some Transport"
 	SoftwareVersionCertificationStatus = uint32(

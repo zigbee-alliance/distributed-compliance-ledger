@@ -103,7 +103,7 @@ func TestMsgUpdateComplianceInfo_ValidateBasic(t *testing.T) {
 				Date:                     testconstants.CertificationDate,
 				ParentChild:              "parent",
 				CertificationRoute:       testconstants.CertificationRoute,
-				ProgramType:              testconstants.ProgramType,
+				ProductType:              testconstants.ProductType,
 				ProgramTypeVersion:       testconstants.ProgramTypeVersion,
 				CompliantPlatformUsed:    testconstants.CompliantPlatformUsed,
 				CompliantPlatformVersion: testconstants.CompliantPlatformVersion,

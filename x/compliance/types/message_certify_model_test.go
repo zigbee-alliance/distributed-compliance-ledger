@@ -366,7 +366,7 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 			err: ErrInvalidCertificationRoute,
 		},
 		{
-			name: "programType > 64",
+			name: "productType > 64",
 			msg: MsgCertifyModel{
 				Signer:                sample.AccAddress(),
 				Pid:                   1,
@@ -377,7 +377,7 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 				Reason:                testconstants.Reason,
 				CDCertificateId:       testconstants.CDCertificateID,
-				ProgramType:           tmrand.Str(65),
+				ProductType:           tmrand.Str(65),
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
@@ -668,7 +668,7 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 			},
 		},
 		{
-			name: "ProgramType >= 0 && ProgramType <= 64",
+			name: "ProductType >= 0 && ProductType <= 64",
 			msg: MsgCertifyModel{
 				Signer:                sample.AccAddress(),
 				Pid:                   1,
@@ -679,7 +679,7 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 				Reason:                testconstants.Reason,
 				CDCertificateId:       testconstants.CDCertificateID,
-				ProgramType:           testconstants.ProgramType,
+				ProductType:           testconstants.ProductType,
 			},
 		},
 		{

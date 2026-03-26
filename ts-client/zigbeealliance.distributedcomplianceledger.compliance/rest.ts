@@ -166,7 +166,7 @@ export interface DistributedcomplianceledgercomplianceComplianceInfo {
   history?: ComplianceComplianceHistoryItem[];
   cDCertificateId?: string;
   certificationRoute?: string;
-  programType?: string;
+  productType?: string;
   programTypeVersion?: string;
   compliantPlatformUsed?: string;
   compliantPlatformVersion?: string;

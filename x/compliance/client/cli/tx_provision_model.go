@@ -32,7 +32,7 @@ func CmdProvisionModel() *cobra.Command {
 		compliantPlatformVersion string
 		OSVersion                string
 		certificationRoute       string
-		programType              string
+		productType              string
 		transport                string
 		parentChild              string
 		schemaVersion            uint32
@@ -66,7 +66,7 @@ func CmdProvisionModel() *cobra.Command {
 				compliantPlatformVersion,
 				OSVersion,
 				certificationRoute,
-				programType,
+				productType,
 				transport,
 				parentChild,
 				schemaVersion,
@@ -113,7 +113,7 @@ func CmdProvisionModel() *cobra.Command {
 		"OS Version of the certification")
 	cmd.Flags().StringVar(&certificationRoute, FlagCertificationRoute, "",
 		"Certification Route of the certification")
-	cmd.Flags().StringVar(&programType, FlagProgramType, "",
+	cmd.Flags().StringVar(&productType, FlagProductType, "",
 		"Program Type of the certification")
 	cmd.Flags().StringVar(&transport, FlagTransport, "",
 		"Transport of the certification")
