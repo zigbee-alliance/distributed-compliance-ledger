@@ -81,43 +81,26 @@ func CmdUpdateComplianceInfo() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().Int32Var(&vid, FlagVID, 0,
-		"Model vendor ID (positive non-zero uint16)")
-	cmd.Flags().Int32Var(&pid, FlagPID, 0,
-		"Model product ID (positive non-zero uint16)")
-	cmd.Flags().Uint32VarP(&softwareVersion, FlagSoftwareVersion, FlagSoftwareVersionShortcut, math.MaxUint32,
-		"Software Version of model (uint32)")
-	cmd.Flags().StringVar(&cdVersionNumber, FlagCDVersionNumber, "",
-		"CD Version Number of the certification")
+	cmd.Flags().Int32Var(&vid, FlagVID, 0, TextVID)
+	cmd.Flags().Int32Var(&pid, FlagPID, 0, TextPID)
+	cmd.Flags().Uint32VarP(&softwareVersion, FlagSoftwareVersion, FlagSoftwareVersionShortcut, math.MaxUint32, TextSoftwareVersion)
+	cmd.Flags().StringVar(&cdVersionNumber, FlagCDVersionNumber, "", TextCDVersionNumber)
 	cmd.Flags().StringVarP(&certificationType, FlagCertificationType, FlagCertificationTypeShortcut, "", TextCertificationType)
-	cmd.Flags().StringVarP(&certificationDate, FlagCertificationDate, FlagDateShortcut, "",
-		"The date of model certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z")
-	cmd.Flags().StringVar(&reason, FlagReason, "",
-		"Optional comment describing the reason of certification")
-	cmd.Flags().StringVar(&owner, FlagOwner, "", "Signer of certification")
-	cmd.Flags().StringVar(&certificationTypeVersion, FlagProgramTypeVersion, "",
-		"Program Type Version of the certification")
-	cmd.Flags().StringVar(&CDCertificateID, FlagCDCertificateID, "",
-		"CD Certification ID of the certification")
-	cmd.Flags().StringVar(&familyID, FlagFamilyID, "",
-		"Family ID of the certification")
-	cmd.Flags().StringVar(&supportedClusters, FlagSupportedClusters, "",
-		"Cluster IDs supported by the application. Supported cluster IDs are `0x0003`, `0x0004`, `0x0006`, `0x0062`, `0x0008`, and `0x0406`")
-	cmd.Flags().StringVar(&compliantPlatformUsed, FlagCompliantPlatformUsed, "",
-		"Compliant Platform Used of the certification")
-	cmd.Flags().StringVar(&compliantPlatformVersion, FlagCompliantPlatformVersion, "",
-		"Compliant Platform Version of the certification")
-	cmd.Flags().StringVar(&OSName, FlagOSName, "",
-		"OS Version of the certification")
-	cmd.Flags().StringVar(&certificationRoute, FlagCertificationRoute, "",
-		"Certification Route of the certification")
-	cmd.Flags().StringVar(&productType, FlagProductType, "",
-		"Program Type of the certification")
-	cmd.Flags().StringVar(&transport, FlagTransport, "",
-		"Transport of the certification")
-	cmd.Flags().StringVar(&parentChild, FlagParentChild, "",
-		"Parent or Child  of the PFC certification route")
-	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
+	cmd.Flags().StringVarP(&certificationDate, FlagCertificationDate, FlagDateShortcut, "", TextCertificationDate)
+	cmd.Flags().StringVar(&reason, FlagReason, "", TextCertificationReason)
+	cmd.Flags().StringVar(&owner, FlagOwner, "", TextOwner)
+	cmd.Flags().StringVar(&certificationTypeVersion, FlagCertificationTypeVersion, "", TextCertificationTypeVersion)
+	cmd.Flags().StringVar(&CDCertificateID, FlagCDCertificateID, "", TextCDCertificateID)
+	cmd.Flags().StringVar(&familyID, FlagFamilyID, "", TextFamilyID)
+	cmd.Flags().StringVar(&supportedClusters, FlagSupportedClusters, "", TextSupportedClusters)
+	cmd.Flags().StringVar(&compliantPlatformUsed, FlagCompliantPlatformUsed, "", TextCompliantPlatformUsed)
+	cmd.Flags().StringVar(&compliantPlatformVersion, FlagCompliantPlatformVersion, "", TextCompliantPlatformVersion)
+	cmd.Flags().StringVar(&OSName, FlagOSName, "", TextOSName)
+	cmd.Flags().StringVar(&certificationRoute, FlagCertificationRoute, "", TextCertificationRoute)
+	cmd.Flags().StringVar(&productType, FlagProductType, "", TextProductType)
+	cmd.Flags().StringVar(&transport, FlagTransport, "", TextTransport)
+	cmd.Flags().StringVar(&parentChild, FlagParentChild, "", TextParentChild)
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, TextSchemaVersion)
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)

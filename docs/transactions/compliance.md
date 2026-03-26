@@ -34,7 +34,7 @@ from the revocation list.
   - compliantPlatformUsed `optional(string)` - optional field describing the Certification ID of the compliant platform used with the product.
   - compliantPlatformVersion `optional(string)` - optional field describing the compliant platform version
   - OSName `optional(string)` - optional field describing the operating system name and version running on the device at the time of certification
-  - certificationRoute `optional(string)` - optional field describing the certification route
+  - certificationRoute `optional(string)` - optional field describing the various certification paths, such as Fully Tested, Certification by Similarity, Family/Portfolio Certification, Certification Transfer etc. Supported values are  `fullTested`, `similarity`, `rapid-recert`, `fastTrack`, `ctp`, `family`, and `portfolio`
   - productType `optional(string)` - optional field describing the product type. Supported values are `endProduct`, `softwareComponent` or `compliantPlatform`.
 - certificationTypeVersion `optional(string)` - optional field describing the version of the certification program (see `certificationType` for supported programs)
   - transport `optional(string)` - optional field describing the underlying communication technology the device uses to connect and exchange data. Supported values are `thread`, `wi-fi`, `ethernet`, and `bluetooth`
@@ -61,8 +61,8 @@ Updates a compliance info by VID, PID, Software Version and Certification Type.
   - vid: `uint16` -  model vendor ID (positive non-zero)
   - pid: `uint16` -  model product ID (positive non-zero)
   - softwareVersion: `uint32` - model software version
-  - certificationType: `string` - Certification program applied to the model. Currently, 'zigbee' or 'matter' types are supported
-  - certificationDate: `optional(string)` - The date of model certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z. If not provided, the existing value will be preserved.
+  - certificationType: `string` - certification program applied to the model. Currently, 'zigbee' or 'matter' types are supported
+  - certificationDate: `optional(string)` - the date of model certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z. If not provided, the existing value will be preserved.
   - cdCertificateId: `optional(string)` - Connectivity Standards Alliance certification's certificate ID applied to the model certification. If not provided, the existing value will be preserved.
   - reason `optional(string)` - optional comment describing the reason of the certification
   - cDVersionNumber `optional(string)` - optional field (a uint32-parsable string) describing the CD version number, must be the same with the associated model version
@@ -76,7 +76,7 @@ Updates a compliance info by VID, PID, Software Version and Certification Type.
   - certificationTypeVersion `optional(string)` - optional field describing the version of the certification program (see `certificationType` for supported programs)
   - transport `optional(string)` - optional field describing the underlying communication technology the device uses to connect and exchange data. Supported values are `thread`, `wi-fi`, `ethernet`, and `bluetooth`
   - parentChild `optional(string)` - optional field describing the parent vs. child characteristic when using the Product Family Certification or Portfolio Certification Program. Supported values are `parent` and `child`.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
+  - schemaVersion: `optional(uint16)` - schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - Who can send:
   - CertificationCenter
 - CLI command:
@@ -148,8 +148,8 @@ Can not be set if there is already a certification record on the ledger (certifi
   - pid: `uint16` -  model product ID (positive non-zero)
   - softwareVersion: `uint32` - model software version
   - softwareVersionSting: `string` - model software version string
-  - provisionalDate: `string` - The date of model provisioning (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
-  - certificationType: `string`  - Certification program applied to the model. Currently, 'zigbee' or 'matter' types are supported
+  - provisionalDate: `string` - the date of model provisioning (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
+  - certificationType: `string`  - certification program applied to the model. Currently, 'zigbee' or 'matter' types are supported
   - cdCertificateId: `string` - Connectivity Standards Alliance certification's certificate ID applied to the model certification
   - reason `optional(string)`  - optional comment describing the reason of revocation
   - cDVersionNumber `optional(uint32)` - optional field describing the CD version number
@@ -163,7 +163,7 @@ Can not be set if there is already a certification record on the ledger (certifi
   - certificationTypeVersion `optional(string)` - optional field describing the version of the certification program (see `certificationType` for supported programs)
   - transport `optional(string)` - optional field describing the underlying communication technology the device uses to connect and exchange data. Supported values are `thread`, `wi-fi`, `ethernet`, and `bluetooth`
   - parentChild `optional(string)` - optional field describing the parent vs. child characteristic when using the Product Family Certification or Portfolio Certification Program. Supported values are `parent` and `child`.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
+  - schemaVersion: `optional(uint16)` - schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State:
   - `compliance/ComplianceInfo/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
   - `compliance/ProvisionalModel/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
