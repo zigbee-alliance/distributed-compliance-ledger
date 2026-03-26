@@ -1128,7 +1128,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 		CertificationType:        "zigbee",
 		Reason:                   certReason,
 		CDCertificateId:          testconstants.CDCertificateID,
-		ProgramTypeVersion:       testconstants.ProgramTypeVersion,
+		CertificationTypeVersion: testconstants.CertificationTypeVersion,
 		FamilyId:                 testconstants.FamilyID,
 		SupportedClusters:        testconstants.SupportedClusters,
 		CompliantPlatformUsed:    testconstants.CompliantPlatformUsed,
@@ -1155,7 +1155,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.CDCertificateID, complianceInfo.CDCertificateId)
 	require.Equal(suite.T, certReason, complianceInfo.Reason)
 	require.Equal(suite.T, certDate, complianceInfo.Date)
-	require.Equal(suite.T, testconstants.ProgramTypeVersion, complianceInfo.ProgramTypeVersion)
+	require.Equal(suite.T, testconstants.CertificationTypeVersion, complianceInfo.CertificationTypeVersion)
 	require.Equal(suite.T, testconstants.FamilyID, complianceInfo.FamilyId)
 	require.Equal(suite.T, testconstants.SupportedClusters, complianceInfo.SupportedClusters)
 	require.Equal(suite.T, testconstants.CompliantPlatformUsed, complianceInfo.CompliantPlatformUsed)
@@ -1184,7 +1184,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.CDCertificateID, deviceSoftwareCompliance.ComplianceInfo[0].CDCertificateId)
 	require.Equal(suite.T, certReason, deviceSoftwareCompliance.ComplianceInfo[0].Reason)
 	require.Equal(suite.T, certDate, deviceSoftwareCompliance.ComplianceInfo[0].Date)
-	require.Equal(suite.T, testconstants.ProgramTypeVersion, deviceSoftwareCompliance.ComplianceInfo[0].ProgramTypeVersion)
+	require.Equal(suite.T, testconstants.CertificationTypeVersion, deviceSoftwareCompliance.ComplianceInfo[0].CertificationTypeVersion)
 	require.Equal(suite.T, testconstants.FamilyID, deviceSoftwareCompliance.ComplianceInfo[0].FamilyId)
 	require.Equal(suite.T, testconstants.SupportedClusters, deviceSoftwareCompliance.ComplianceInfo[0].SupportedClusters)
 	require.Equal(suite.T, testconstants.CompliantPlatformUsed, deviceSoftwareCompliance.ComplianceInfo[0].CompliantPlatformUsed)
@@ -1600,7 +1600,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 		CertificationType:        "matter",
 		Reason:                   provReason,
 		CDCertificateId:          testconstants.CDCertificateID,
-		ProgramTypeVersion:       testconstants.ProgramTypeVersion,
+		CertificationTypeVersion: testconstants.CertificationTypeVersion,
 		FamilyId:                 testconstants.FamilyID,
 		SupportedClusters:        testconstants.SupportedClusters,
 		CompliantPlatformUsed:    testconstants.CompliantPlatformUsed,
@@ -1627,7 +1627,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, provReason, complianceInfo.Reason)
 	require.Equal(suite.T, testconstants.CDCertificateID, complianceInfo.CDCertificateId)
 	require.Equal(suite.T, provDate, complianceInfo.Date)
-	require.Equal(suite.T, testconstants.ProgramTypeVersion, complianceInfo.ProgramTypeVersion)
+	require.Equal(suite.T, testconstants.CertificationTypeVersion, complianceInfo.CertificationTypeVersion)
 	require.Equal(suite.T, testconstants.FamilyID, complianceInfo.FamilyId)
 	require.Equal(suite.T, testconstants.SupportedClusters, complianceInfo.SupportedClusters)
 	require.Equal(suite.T, testconstants.CompliantPlatformUsed, complianceInfo.CompliantPlatformUsed)
@@ -1667,7 +1667,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 		CertificationType:        "matter",
 		Reason:                   certReason,
 		CDCertificateId:          testconstants.CDCertificateID,
-		ProgramTypeVersion:       "pTypeVersion",
+		CertificationTypeVersion: "pTypeVersion",
 		FamilyId:                 "familyID",
 		SupportedClusters:        "sClusters",
 		CompliantPlatformUsed:    "WIFI",
@@ -1690,7 +1690,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.CDCertificateID, complianceInfo.CDCertificateId)
 	require.Equal(suite.T, certReason, complianceInfo.Reason)
 	require.Equal(suite.T, certDate, complianceInfo.Date)
-	require.Equal(suite.T, "pTypeVersion", complianceInfo.ProgramTypeVersion)
+	require.Equal(suite.T, "pTypeVersion", complianceInfo.CertificationTypeVersion)
 	require.Equal(suite.T, "familyID", complianceInfo.FamilyId)
 	require.Equal(suite.T, "sClusters", complianceInfo.SupportedClusters)
 	require.Equal(suite.T, "WIFI", complianceInfo.CompliantPlatformUsed)
@@ -1719,7 +1719,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.CDCertificateID, deviceSoftwareCompliance.ComplianceInfo[3].CDCertificateId)
 	require.Equal(suite.T, certReason, deviceSoftwareCompliance.ComplianceInfo[3].Reason)
 	require.Equal(suite.T, certDate, deviceSoftwareCompliance.ComplianceInfo[3].Date)
-	require.Equal(suite.T, "pTypeVersion", deviceSoftwareCompliance.ComplianceInfo[3].ProgramTypeVersion)
+	require.Equal(suite.T, "pTypeVersion", deviceSoftwareCompliance.ComplianceInfo[3].CertificationTypeVersion)
 	require.Equal(suite.T, "familyID", deviceSoftwareCompliance.ComplianceInfo[3].FamilyId)
 	require.Equal(suite.T, "sClusters", deviceSoftwareCompliance.ComplianceInfo[3].SupportedClusters)
 	require.Equal(suite.T, "WIFI", deviceSoftwareCompliance.ComplianceInfo[3].CompliantPlatformUsed)

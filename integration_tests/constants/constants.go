@@ -126,7 +126,7 @@ var (
 	OSVersion                          = "Some OS Version"
 	CertificationRoute                 = "fullTested"
 	ProductType                        = "Some Product Type"
-	ProgramTypeVersion                 = "Some Program Type Version"
+	CertificationTypeVersion           = "Some Program Type Version"
 	Transport                          = "Some Transport"
 	SoftwareVersionCertificationStatus = uint32(
 		3,
