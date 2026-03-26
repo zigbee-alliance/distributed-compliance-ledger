@@ -763,7 +763,6 @@ check_response "$result" "\"softwareVersion\": $sv"
 check_response "$result" "\"certificationType\": \"$zigbee_certification_type\""
 check_response "$result" "\"cDVersionNumber\": $(($upd_cd_version_number + 0))"
 check_response "$result" "\"date\": \"$upd_certification_date\""
-result=$(echo "$passphrase" | dcld tx compliance update-compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$zigbee_certification_type --cdVersionNumber=$upd_cd_version_number --certificationDate=$upd_certification_date --reason=$upd_reason --cdCertificateId=$upd_cd_certificate_id --certificationRoute=$upd_certification_route --productType=$upd_program_type --certificationTypeVersion=$upd_program_type_version --compliantPlatformUsed=$upd_compliant_platform_used --compliantPlatformVersion=$upd_compliant_platform_version --transport=$upd_transport --familyId=$upd_familyID --supportedClusters=$upd_supported_clusters --OSName=$upd_os_version --parentChild=$upd_parent_child --schemaVersion=$schema_version_0 --from=$zb_account --yes)
 check_response "$result" "\"reason\": \"$upd_reason\""
 check_response "$result" "\"cDCertificateId\": \"$upd_cd_certificate_id\""
 check_response "$result" "\"certificationRoute\": \"$upd_certification_route\""
