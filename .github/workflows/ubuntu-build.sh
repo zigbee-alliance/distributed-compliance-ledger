@@ -44,10 +44,11 @@ _GO_ROOT_BIN="$_GO_ROOT/bin"
     chown -R "$(id -u):$(id -g)" "$BUILD_DIR"
 EOF
 
+UBUNTU_VERSION="${UBUNTU_VERSION:-20.04}"
 
 docker run --rm -w "$PWD" \
     -e GOROOT="$_GO_ROOT" \
     -e HOME="$_HOME" \
     -v "$HOME":"$_HOME" \
     -v "$GO_ROOT:$_GO_ROOT" \
-    ubuntu:20.04 bash -c "$script"
+    ubuntu:${UBUNTU_VERSION} bash -c "$script"

@@ -15,8 +15,11 @@
 
 services:
   node0:
-    image: dcledger
-    build: .
+    image: dcledger-20.04
+    build:
+      context: .
+      args:
+        UBUNTU_VERSION: 20.04
     container_name: node0
     ports:
       - "26656-26657:26656-26657"
@@ -31,8 +34,11 @@ services:
     command: /var/lib/dcl/./node_helper.sh
 
   node1:
-    image: dcledger
-    build: .
+    image: dcledger-20.04
+    build:
+      context: .
+      args:
+        UBUNTU_VERSION: 20.04
     container_name: node1
     ports:
       - "26658-26659:26656-26657"
@@ -47,8 +53,11 @@ services:
     command: /var/lib/dcl/./node_helper.sh
 
   node2:
-    image: dcledger
-    build: .
+    image: dcledger-24.04
+    build:
+      context: .
+      args:
+        UBUNTU_VERSION: 24.04
     container_name: node2
     ports:
       - "26660-26661:26656-26657"
@@ -63,8 +72,11 @@ services:
     command: /var/lib/dcl/./node_helper.sh
 
   node3:
-    image: dcledger
-    build: .
+    image: dcledger-24.04
+    build:
+      context: .
+      args:
+        UBUNTU_VERSION: 24.04
     container_name: node3
     ports:
       - "26662-26663:26656-26657"
@@ -79,8 +91,11 @@ services:
     command: /var/lib/dcl/./node_helper.sh
 
   observer0:
-    image: dcledger
-    build: .
+    image: dcledger-24.04
+    build:
+      context: .
+      args:
+        UBUNTU_VERSION: 24.04
     profiles:
       - observers
     container_name: observer0
@@ -97,8 +112,11 @@ services:
     command: /var/lib/dcl/./node_helper.sh
 
   lightclient0:
-    image: dcledger
-    build: .
+    image: dcledger-24.04
+    build:
+      context: .
+      args:
+        UBUNTU_VERSION: 24.04
     # profiles:
     #   - lightclients
     container_name: lightclient0

@@ -32,3 +32,9 @@ variable "instance_type" {
 variable "iam_instance_profile" {
   description = "IAM instance profile"
 }
+
+variable "ubuntu_version" {
+  description = "Ubuntu version to use"
+  type        = string
+  default     = "24.04"
+}

@@ -19,7 +19,8 @@
 ############################
 # STEP 1 build cosmovisor
 ############################
-FROM ubuntu:20.04 AS builder
+ARG UBUNTU_VERSION=20.04
+FROM --platform=linux/amd64 ubuntu:${UBUNTU_VERSION} AS builder
 
 ARG GO_VERSION
 ENV GO_VERSION=1.20
@@ -41,7 +42,8 @@ RUN go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v1.5.0
 ############################
 # STEP 2 build node image
 ############################
-FROM ubuntu:20.04
+ARG UBUNTU_VERSION=20.04
+FROM --platform=linux/amd64 ubuntu:${UBUNTU_VERSION}
 
 COPY --from=builder /go/bin/cosmovisor /usr/bin/
 

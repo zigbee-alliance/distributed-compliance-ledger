@@ -5,11 +5,12 @@ IMAGE_TAG="${2:-dcld-build}"
 VERSION_DIR="${3:-genesis}"
 MAINNET_STABLE_VERSION="${4:-""}"
 LOCALNET_DIR=".localnet"
+UBUNTU_VERSION="${UBUNTU_VERSION:-24.04}"
 
 if env | grep GOCOVER=1; then
-    docker build --build-arg "GOCOVER=1" -f ${DOCKERFILE} -t ${IMAGE_TAG} .
+    docker build --build-arg "GOCOVER=1" --build-arg "UBUNTU_VERSION=${UBUNTU_VERSION}" -f ${DOCKERFILE} -t ${IMAGE_TAG} .
 else
-    docker build --build-arg "GOCOVER=" -f ${DOCKERFILE} -t ${IMAGE_TAG} .
+    docker build --build-arg "GOCOVER=" --build-arg "UBUNTU_VERSION=${UBUNTU_VERSION}" -f ${DOCKERFILE} -t ${IMAGE_TAG} .
 fi
 
 docker container create --name ${IMAGE_TAG}-inst ${IMAGE_TAG}

@@ -1,6 +1,12 @@
-# TODO
 # - tags for root_block_device (boot disk in GCP)
 # - disk type configuration variable (AWS/GCP)
+
+locals {
+  ubuntu_codenames = {
+    "20.04" = "focal"
+    "24.04" = "noble"
+  }
+}
 
 data "aws_ami" "ubuntu" {
   most_recent = true
@@ -8,7 +14,7 @@ data "aws_ami" "ubuntu" {
 
   filter {
     name   = "name"
-    values = ["ubuntu-minimal/images/hvm-ssd/ubuntu-focal-20.04-amd64-minimal-*"]
+    values = ["ubuntu-minimal/images/hvm-ssd/ubuntu-${local.ubuntu_codenames[var.ubuntu_version]}-${var.ubuntu_version}-amd64-minimal-*"]
   }
 
   filter {
