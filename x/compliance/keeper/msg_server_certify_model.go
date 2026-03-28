@@ -110,7 +110,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 
 	complianceInfo.SetOptionalFields(optionalFields)
 
-	// store compliance info
+	// store compliance info.
 	k.SetComplianceInfo(ctx, complianceInfo)
 
 	deviceSoftwareCompliance, found := k.GetDeviceSoftwareCompliance(ctx, msg.CDCertificateId)
