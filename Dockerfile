@@ -20,7 +20,7 @@
 # STEP 1 build cosmovisor
 ############################
 ARG UBUNTU_VERSION=20.04
-FROM --platform=linux/amd64 ubuntu:${UBUNTU_VERSION} AS builder
+FROM ubuntu:${UBUNTU_VERSION} AS builder
 
 ARG GO_VERSION
 ENV GO_VERSION=1.20
@@ -43,9 +43,11 @@ RUN go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v1.5.0
 # STEP 2 build node image
 ############################
 ARG UBUNTU_VERSION=20.04
-FROM --platform=linux/amd64 ubuntu:${UBUNTU_VERSION}
+FROM ubuntu:${UBUNTU_VERSION}
 
 COPY --from=builder /go/bin/cosmovisor /usr/bin/
+
+RUN apt-get update && apt-get install -y adduser ca-certificates && update-ca-certificates
 
 # test user
 ARG TEST_USER
@@ -63,11 +65,6 @@ ENV DAEMON_NAME=dcld
 ENV DAEMON_ALLOW_DOWNLOAD_BINARIES=true
 ENV COSMOVISOR_CUSTOM_PREUPGRADE=cosmovisor_preupgrade.sh
 ENV GOCOVERDIR=/var/lib/${TEST_USER}/.dcl/gocover
-
-RUN apt-get update
-RUN apt-get install -y ca-certificates
-
-RUN update-ca-certificates
 
 VOLUME /var/lib/${TEST_USER}
 

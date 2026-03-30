@@ -11,6 +11,7 @@ endif
 NAME ?= dcl
 APPNAME ?= $(NAME)d
 LEDGER_ENABLED ?= true
+CGO_ENABLED ?= 0
 
 OUTPUT_DIR ?= build
 
@@ -23,6 +24,7 @@ ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=DcLedger \
 
 # DB backend selection
 ifeq (cleveldb,$(findstring cleveldb,$(COSMOS_BUILD_OPTIONS)))
+  CGO_ENABLED = 1
   ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=cleveldb
 endif
 
@@ -100,7 +102,7 @@ TEST_TARGETS= ${LOCALNET_TARGETS} ${TEST_DEPLOY_TARGETS}
 all: install
 
 build: go.sum
-	go build -mod=readonly $(DCLD_BUILD_FLAGS) -o $(OUTPUT_DIR)/dcld ./cmd/dcld
+	CGO_ENABLED=${CGO_ENABLED} go build -mod=readonly $(DCLD_BUILD_FLAGS) -o $(OUTPUT_DIR)/dcld ./cmd/dcld
 
 install: go.sum
 	go install -mod=readonly $(DCLD_BUILD_FLAGS) ./cmd/dcld

@@ -15,7 +15,7 @@
 ################################################################################
 # Image of a clean machine to deploy the new node onto.
 ################################################################################
-ARG UBUNTU_VERSION=24.04
+ARG UBUNTU_VERSION=20.04
 FROM jrei/systemd-ubuntu:${UBUNTU_VERSION}
 
 RUN apt-get update && apt-get install -y \
@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install -y \
         curl \
         netcat \
         iproute2 \
+        adduser \
     && rm -rf /var/lib/apt/lists/*
 
 # test user
@@ -35,10 +36,10 @@ ENV TEST_USER=${TEST_USER:-dcl}
 ARG TEST_UID
 ENV TEST_UID=${TEST_UID:-1000}
 #ARG gid=1000
-RUN adduser --disabled-password -uid ${TEST_UID} --home /var/lib/${TEST_USER} --gecos 'DCLedger user' ${TEST_USER}
+RUN adduser --disabled-password --uid ${TEST_UID} --home /var/lib/${TEST_USER} --gecos 'DCLedger user' ${TEST_USER}
 
-RUN usermod -aG sudo dcl \
-    && echo "dcl     ALL=(ALL:ALL) NOPASSWD:ALL" >>/etc/sudoers
+RUN usermod -aG sudo ${TEST_USER} \
+    && echo "${TEST_USER}     ALL=(ALL:ALL) NOPASSWD:ALL" >>/etc/sudoers
 
 EXPOSE 26656 26657 1317 26660
 

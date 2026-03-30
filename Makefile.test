@@ -13,7 +13,7 @@ LOCALNET_DIR ?= .localnet
 LOCALNET_DOCKER_NETWORK = "distributed-compliance-ledger_localnet"
 
 IMAGE_NAME = "dcledger"
-UBUNTU_VERSION ?= 24.04
+UBUNTU_VERSION ?= 20.04
 
 remove_containers = $(if $(1),docker rm -f $(1),true)
 localnet_containers = $(shell docker ps --format '{{.ID}}' --filter network=$(LOCALNET_DOCKER_NETWORK))
