@@ -34,10 +34,10 @@ func TestMsgAddNocX509IcaCert_ValidateBasic(t *testing.T) {
 			err: validator.ErrRequiredFieldMissing,
 		},
 		{
-			name: "cert len > 10485760",
+			name: "cert size > 20480 (20KB)",
 			msg: MsgAddNocX509IcaCert{
 				Signer: sample.AccAddress(),
-				Cert:   tmrand.Str(10485761),
+				Cert:   tmrand.Str(20490),
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},

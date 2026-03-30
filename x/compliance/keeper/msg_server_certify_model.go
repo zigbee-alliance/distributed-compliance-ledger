@@ -95,19 +95,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 		}
 	}
 
-	optionalFields := &types.OptionalFields{
-		CertificationTypeVersion: msg.CertificationTypeVersion,
-		FamilyID:                 msg.FamilyId,
-		SupportedClusters:        msg.SupportedClusters,
-		CompliantPlatformUsed:    msg.CompliantPlatformUsed,
-		CompliantPlatformVersion: msg.CompliantPlatformVersion,
-		OSName:                   msg.OSName,
-		CertificationRoute:       msg.CertificationRoute,
-		ProductType:              msg.ProductType,
-		Transport:                msg.Transport,
-		ParentChild:              msg.ParentChild,
-	}
-
+	optionalFields := k.setOptionalFields(msg)
 	complianceInfo.SetOptionalFields(optionalFields)
 
 	// store compliance info.
@@ -149,4 +137,20 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 	k.SetProvisionalModel(ctx, provisionalModel)
 
 	return &types.MsgCertifyModelResponse{}, nil
+}
+
+// Helper function to set optional fields
+func (k msgServer) setOptionalFields(msg *types.MsgCertifyModel) *types.OptionalFields {
+	return &types.OptionalFields{
+		CertificationTypeVersion: msg.CertificationTypeVersion,
+		FamilyID:                 msg.FamilyId,
+		SupportedClusters:        msg.SupportedClusters,
+		CompliantPlatformUsed:    msg.CompliantPlatformUsed,
+		CompliantPlatformVersion: msg.CompliantPlatformVersion,
+		OSName:                   msg.OSName,
+		CertificationRoute:       msg.CertificationRoute,
+		ProductType:              msg.ProductType,
+		Transport:                msg.Transport,
+		ParentChild:              msg.ParentChild,
+	}
 }
