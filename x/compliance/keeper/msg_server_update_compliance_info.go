@@ -53,52 +53,11 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		complianceInfo.CDVersionNumber = uint32(cdVersionNumber)
 	}
 
-	if msg.CertificationRoute != "" {
-		complianceInfo.CertificationRoute = msg.CertificationRoute
-	}
-
-	if msg.CompliantPlatformUsed != "" {
-		complianceInfo.CompliantPlatformUsed = msg.CompliantPlatformUsed
-	}
-
-	if msg.CompliantPlatformVersion != "" {
-		complianceInfo.CompliantPlatformVersion = msg.CompliantPlatformVersion
-	}
+	optionalFields := k.optionalFieldsFromMsgUpdateComplianceInfo(msg)
+	complianceInfo.SetOptionalFields(optionalFields)
 
 	if msg.Date != "" {
 		complianceInfo.Date = msg.Date
-	}
-
-	if msg.FamilyId != "" {
-		complianceInfo.FamilyId = msg.FamilyId
-	}
-
-	if msg.OSName != "" {
-		complianceInfo.OSName = msg.OSName
-	}
-
-	if msg.ParentChild != "" {
-		complianceInfo.ParentChild = msg.ParentChild
-	}
-
-	if msg.ProductType != "" {
-		complianceInfo.ProductType = msg.ProductType
-	}
-
-	if msg.CertificationTypeVersion != "" {
-		complianceInfo.CertificationTypeVersion = msg.CertificationTypeVersion
-	}
-
-	if msg.Reason != "" {
-		complianceInfo.Reason = msg.Reason
-	}
-
-	if msg.SupportedClusters != "" {
-		complianceInfo.SupportedClusters = msg.SupportedClusters
-	}
-
-	if msg.Transport != "" {
-		complianceInfo.Transport = msg.Transport
 	}
 
 	complianceInfo.SchemaVersion = msg.SchemaVersion
@@ -144,4 +103,21 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 	k.SetComplianceInfo(ctx, complianceInfo)
 
 	return &types.MsgUpdateComplianceInfoResponse{}, nil
+}
+
+// Helper function to set optional fields
+func (k msgServer) optionalFieldsFromMsgUpdateComplianceInfo(msg *types.MsgUpdateComplianceInfo) *types.OptionalFields {
+	return &types.OptionalFields{
+		CertificationTypeVersion: msg.CertificationTypeVersion,
+		FamilyID:                 msg.FamilyId,
+		SupportedClusters:        msg.SupportedClusters,
+		CompliantPlatformUsed:    msg.CompliantPlatformUsed,
+		CompliantPlatformVersion: msg.CompliantPlatformVersion,
+		OSName:                   msg.OSName,
+		CertificationRoute:       msg.CertificationRoute,
+		ProductType:              msg.ProductType,
+		Transport:                msg.Transport,
+		ParentChild:              msg.ParentChild,
+		Reason:                   msg.Reason,
+	}
 }

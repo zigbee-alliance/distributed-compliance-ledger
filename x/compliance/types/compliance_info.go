@@ -69,6 +69,10 @@ func (d *ComplianceInfo) SetOptionalFields(optionalFields *OptionalFields) {
 	if optionalFields.ParentChild != "" {
 		d.ParentChild = optionalFields.ParentChild
 	}
+
+	if optionalFields.Reason != "" {
+		d.Reason = optionalFields.Reason
+	}
 }
 
 type OptionalFields struct {
@@ -82,4 +86,5 @@ type OptionalFields struct {
 	ProductType              string
 	Transport                string
 	ParentChild              string
+	Reason                   string
 }

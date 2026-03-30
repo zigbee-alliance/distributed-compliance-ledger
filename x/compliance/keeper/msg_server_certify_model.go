@@ -85,7 +85,6 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 			SoftwareVersionString:              msg.SoftwareVersionString,
 			CertificationType:                  msg.CertificationType,
 			Date:                               msg.CertificationDate,
-			Reason:                             msg.Reason,
 			Owner:                              msg.Signer,
 			SoftwareVersionCertificationStatus: types.CodeCertified,
 			History:                            []*types.ComplianceHistoryItem{},
@@ -95,7 +94,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 		}
 	}
 
-	optionalFields := k.setOptionalFields(msg)
+	optionalFields := k.optionalFieldsFromMsgCertify(msg)
 	complianceInfo.SetOptionalFields(optionalFields)
 
 	// store compliance info.
@@ -140,7 +139,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 }
 
 // Helper function to set optional fields
-func (k msgServer) setOptionalFields(msg *types.MsgCertifyModel) *types.OptionalFields {
+func (k msgServer) optionalFieldsFromMsgCertify(msg *types.MsgCertifyModel) *types.OptionalFields {
 	return &types.OptionalFields{
 		CertificationTypeVersion: msg.CertificationTypeVersion,
 		FamilyID:                 msg.FamilyId,
@@ -152,5 +151,6 @@ func (k msgServer) setOptionalFields(msg *types.MsgCertifyModel) *types.Optional
 		ProductType:              msg.ProductType,
 		Transport:                msg.Transport,
 		ParentChild:              msg.ParentChild,
+		Reason:                   msg.Reason,
 	}
 }
