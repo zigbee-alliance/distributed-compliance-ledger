@@ -252,11 +252,9 @@ execute_with_retry() {
   local _error=${2:-"EOF"}
   local _result=$($_command)
 
-  docker logs --tail 20 node0
   for i in {1..10}; do
     if [[ "$(_check_response "$_result" "$_error" "raw")" == true ]]; then
       #echo "EOF detected, re-trying"
-      docker logs --tail 20 node0
       sleep 2
       _result=$($_command)
     else
