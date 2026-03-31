@@ -29,3 +29,5 @@ for node_name in node0 node1 node2 node3 observer0 lightclient0; do
 done
 
 docker rm ${IMAGE_TAG}-inst
+
+chmod 777 -R $LOCALNET_DIR
