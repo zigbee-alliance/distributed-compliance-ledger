@@ -30,4 +30,4 @@ done
 
 docker rm ${IMAGE_TAG}-inst
 
-chmod -R 777 $LOCALNET_DIR
+chmod 777 -R $LOCALNET_DIR

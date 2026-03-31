@@ -32,6 +32,7 @@ DCL_BINARY=dcld
 
 rm -rf "$DCL_DIR"
 
+echo "1------------RUN FROM $(shell whoami)"
 rm -rf "$LOCALNET_DIR"
 mkdir "$LOCALNET_DIR" "$LOCALNET_DIR"/{client,node0,node1,node2,node3}
 
