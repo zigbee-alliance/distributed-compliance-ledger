@@ -216,4 +216,3 @@ if [[ -n "$DCL_LIGHT_CLIENT_PROXY" ]]; then
 fi
 
 chmod 777 -R $DCL_DIR
-chmod 777 -R $LOCALNET_DIR
