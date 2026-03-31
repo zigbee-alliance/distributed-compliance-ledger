@@ -69,7 +69,6 @@ localnet_reset: localnet_stop
 	fi
 
 localnet_clean: localnet_stop
-	ls -ld $(LOCALNET_DIR)
 	rm -rf $(LOCALNET_DIR)
 	rm -rf $(HOME)/.dcl
 
