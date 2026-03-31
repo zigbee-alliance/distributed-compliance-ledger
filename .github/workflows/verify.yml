@@ -107,7 +107,7 @@ jobs:
         run: |
           set -euo pipefail
           # shellcheck disable=SC2046
-          go test -json -v $(go list ./... | grep -v '/integration_tests') -coverprofile=./cover.out -covermode=atomic -coverpkg=./... 2>&1 | tee /tmp/gotest.log | gotestfmt
+          go test -json -v $(go list ./... | grep -v '/integration_tests') -coverprofile=./cover.out -covermode=set -coverpkg=./... 2>&1 | tee /tmp/gotest.log | gotestfmt
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
       - name: Store test coverage
@@ -139,6 +139,7 @@ jobs:
         run: integration_tests/run-all.sh all cover
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GOCOVER_MODE: set  # Ensure integration tests use the same mode as unit tests
       - name: Generate test coverage
         shell: bash
         run: go tool covdata textfmt -i=integration_tests/gocover -o cover.out
