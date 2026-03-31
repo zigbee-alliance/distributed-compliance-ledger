@@ -41,6 +41,8 @@ RUN adduser --disabled-password --uid ${TEST_UID} --home /var/lib/${TEST_USER} -
 RUN usermod -aG sudo ${TEST_USER} \
     && echo "${TEST_USER}     ALL=(ALL:ALL) NOPASSWD:ALL" >>/etc/sudoers
 
+RUN mkdir -p /var/lib/${TEST_USER} && chown -R ${TEST_USER}:${TEST_USER} /var/lib/${TEST_USER}
+
 EXPOSE 26656 26657 1317 26660
 
 # USER ${TEST_USER}

@@ -47,7 +47,7 @@ FROM ubuntu:${UBUNTU_VERSION}
 
 COPY --from=builder /go/bin/cosmovisor /usr/bin/
 
-RUN apt-get update && apt-get install -y adduser ca-certificates && update-ca-certificates
+RUN apt-get update && apt-get install -y adduser ca-certificates sudo && update-ca-certificates
 
 # test user
 ARG TEST_USER
@@ -60,11 +60,16 @@ ARG TEST_UID
 ENV TEST_UID=${TEST_UID:-900}
 #ARG gid=1000
 RUN adduser --disabled-password --uid ${TEST_UID} --home /var/lib/${TEST_USER} --gecos 'DCLedger user' ${TEST_USER}
+RUN usermod -aG sudo ${TEST_USER} \
+    && echo "${TEST_USER}     ALL=(ALL:ALL) NOPASSWD:ALL" >>/etc/sudoers
+
 ENV DAEMON_HOME=/var/lib/${TEST_USER}/.dcl
 ENV DAEMON_NAME=dcld
 ENV DAEMON_ALLOW_DOWNLOAD_BINARIES=true
 ENV COSMOVISOR_CUSTOM_PREUPGRADE=cosmovisor_preupgrade.sh
 ENV GOCOVERDIR=/var/lib/${TEST_USER}/.dcl/gocover
+
+RUN mkdir -p /var/lib/${TEST_USER} && chown -R ${TEST_USER}:${TEST_USER} /var/lib/${TEST_USER}
 
 VOLUME /var/lib/${TEST_USER}
 
@@ -74,9 +79,9 @@ STOPSIGNAL SIGTERM
 
 USER ${TEST_USER}
 
-COPY integration_tests/node_helper.sh /var/lib/${TEST_USER}/
-COPY deployment/ansible/roles/bootstrap/files/cosmovisor_start.sh /var/lib/${TEST_USER}/
-COPY deployment/ansible/roles/bootstrap/files/cosmovisor_preupgrade.sh /var/lib/${TEST_USER}/
+COPY --chown=${TEST_USER}:${TEST_USER} integration_tests/node_helper.sh /var/lib/${TEST_USER}/
+COPY --chown=${TEST_USER}:${TEST_USER} deployment/ansible/roles/bootstrap/files/cosmovisor_start.sh /var/lib/${TEST_USER}/
+COPY --chown=${TEST_USER}:${TEST_USER} deployment/ansible/roles/bootstrap/files/cosmovisor_preupgrade.sh /var/lib/${TEST_USER}/
 
 ENV PATH=$PATH:${DAEMON_HOME}/cosmovisor/current/bin
 
