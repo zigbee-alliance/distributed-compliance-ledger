@@ -69,8 +69,7 @@ localnet_reset: localnet_stop
 	fi
 
 localnet_clean: localnet_stop
-	chmod -R 777 $(LOCALNET_DIR) 2>/dev/null || true
-	rm -rf $(LOCALNET_DIR)
+	sudo rm -rf $(LOCALNET_DIR)
 	rm -rf $(HOME)/.dcl
 
 
