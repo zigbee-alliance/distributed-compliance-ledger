@@ -90,7 +90,9 @@ jobs:
             asset_cv_url="$(echo "$release_info" | jq -r ".assets[] | select(.name == \"cosmovisor-v${{ env.COSMOVISOR_VERSION }}-$os\") | .browser_download_url")"
 
             # Check if we need to run the job for this OS
-            if [[ -z "$asset_bin_url" || -z "$asset_tgz_url" || -z "$asset_cv_url" || \
+            # For 22.04, we don't care if BIN or CV are missing (we only want TGZ and common assets)
+            if [[ -z "$asset_tgz_url" || \
+                  ( "$os" == "ubuntu-24.04" && ( -z "$asset_bin_url" || -z "$asset_cv_url" ) ) || \
                   ( "$os" == "ubuntu-22.04" && ( -z "$asset_service_url" || -z "$asset_service_conf_url" || -z "$asset_start_url" || -z "$asset_preupgrade_url" || -z "$asset_deploy_script_url" ) ) ]]; then
               
               # For non-22.04, we don't want to re-check/re-upload generic assets if they are being handled by 22.04 or already exist
@@ -189,14 +191,14 @@ jobs:
         shell: bash
 
       - name: upload to GitHub (application binary)
-        if: ${{ !matrix.bin && !startsWith(matrix.os, 'macos-') }}
+        if: ${{ !matrix.bin && matrix.os == 'ubuntu-24.04' }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.checks.outputs.upload_url }}
           asset_path: build/${{ env.BIN_NAME }}
-          asset_name: ${{ env.BIN_NAME }}-${{ matrix.os }}
+          asset_name: ${{ env.BIN_NAME }}
           asset_content_type: application/octet-stream  # TODO check for less generic type
 
       - name: build cosmovisor binary
@@ -235,14 +237,14 @@ jobs:
           asset_content_type: application/x-gtar
 
       - name: upload to GitHub (cosmovisor binary)
-        if: ${{ !matrix.cosmovisor }}
+        if: ${{ !matrix.cosmovisor && matrix.os == 'ubuntu-24.04' }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.checks.outputs.upload_url }}
           asset_path: build/cosmovisor
-          asset_name: cosmovisor-v${{ env.COSMOVISOR_VERSION }}-${{ matrix.os }}
+          asset_name: cosmovisor
           asset_content_type: application/octet-stream  # TODO check for less generic type
 
       - name: upload to GitHub (service file)
