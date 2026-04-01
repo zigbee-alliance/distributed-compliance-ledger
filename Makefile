@@ -105,7 +105,7 @@ build: go.sum
 	CGO_ENABLED=${CGO_ENABLED} go build -mod=readonly $(DCLD_BUILD_FLAGS) -o $(OUTPUT_DIR)/dcld ./cmd/dcld
 
 install: go.sum
-	go install -mod=readonly $(DCLD_BUILD_FLAGS) ./cmd/dcld
+	CGO_ENABLED=${CGO_ENABLED} go install -mod=readonly $(DCLD_BUILD_FLAGS) ./cmd/dcld
 
 go.sum: go.mod
 	@echo "--> Ensure dependencies have not been modified"
