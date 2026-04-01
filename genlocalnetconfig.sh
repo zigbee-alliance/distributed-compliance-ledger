@@ -30,9 +30,8 @@ KEYPASSWD=test1234  # NOTE not necessary actually since we yse 'test' keyring ba
 CHAIN_ID=dclchain
 DCL_BINARY=dcld
 
+chmod -R 777 "$DCL_DIR" "$LOCALNET_DIR" 2>/dev/null || true
 rm -rf "$DCL_DIR"
-
-echo "1------------RUN FROM $(shell whoami)"
 rm -rf "$LOCALNET_DIR"
 mkdir "$LOCALNET_DIR" "$LOCALNET_DIR"/{client,node0,node1,node2,node3}
 
@@ -215,5 +214,3 @@ if [[ -n "$DCL_LIGHT_CLIENT_PROXY" ]]; then
     mkdir "$LOCALNET_DIR/lightclient0"
     init_light_client_proxy lightclient0
 fi
-
-chmod 777 -R $DCL_DIR
