@@ -31,7 +31,11 @@ CHAIN_ID=dclchain
 DCL_BINARY=dcld
 
 rm -rf "$DCL_DIR"
-sudo rm -rf "$LOCALNET_DIR"
+# Ensure files are owned by the current user before deletion
+if [ -d "$LOCALNET_DIR" ]; then
+    find "$LOCALNET_DIR" -exec chmod 700 {} \; 2>/dev/null || true
+    rm -rf "$LOCALNET_DIR"
+fi
 mkdir "$LOCALNET_DIR" "$LOCALNET_DIR"/{client,node0,node1,node2,node3}
 
 if [[ -n "$DCL_OBSERVERS" ]]; then

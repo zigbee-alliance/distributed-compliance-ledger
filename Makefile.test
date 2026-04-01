@@ -68,9 +68,16 @@ localnet_reset: localnet_stop
 		docker compose run observer0 dcld unsafe-reset-all;\
 	fi
 
-localnet_clean: localnet_stop
-	sudo rm -rf $(LOCALNET_DIR)
-	rm -rf $(HOME)/.dcl
+localnet_clean:
+	# Remove container-created files using docker exec
+	docker compose exec -T node0 rm -rf $(LOCALNET_DIR) 2>/dev/null || true
+	docker compose exec -T node1 rm -rf $(LOCALNET_DIR) 2>/dev/null || true
+	docker compose exec -T node2 rm -rf $(LOCALNET_DIR) 2>/dev/null || true
+	docker compose exec -T node3 rm -rf $(LOCALNET_DIR) 2>/dev/null || true
+	# Remove any remaining host-side files
+	rm -rf $(LOCALNET_DIR) $(HOME)/.dcl 2>/dev/null || true
+	# Stop containers and clean network
+	@$(MAKE) localnet_stop
 
 
 localnet_rebuild: localnet_clean localnet_init
