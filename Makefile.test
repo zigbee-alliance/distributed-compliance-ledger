@@ -69,13 +69,9 @@ localnet_reset: localnet_stop
 	fi
 
 localnet_clean:
-	# Remove container-created files using docker exec
-	docker compose exec -T node0 rm -rf $(LOCALNET_DIR) 2>/dev/null || true
-	docker compose exec -T node1 rm -rf $(LOCALNET_DIR) 2>/dev/null || true
-	docker compose exec -T node2 rm -rf $(LOCALNET_DIR) 2>/dev/null || true
-	docker compose exec -T node3 rm -rf $(LOCALNET_DIR) 2>/dev/null || true
-	# Remove any remaining host-side files
-	rm -rf $(LOCALNET_DIR) $(HOME)/.dcl 2>/dev/null || true
+	# Try removing without sudo first, fall back to sudo if needed
+	rm -rf $(LOCALNET_DIR) 2>/dev/null || sudo rm -rf $(LOCALNET_DIR)
+	rm -rf $(HOME)/.dcl 2>/dev/null || sudo rm -rf $(HOME)/.dcl
 	# Stop containers and clean network
 	@$(MAKE) localnet_stop
 
