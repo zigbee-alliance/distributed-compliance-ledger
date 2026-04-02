@@ -238,6 +238,7 @@ wait_for_height() {
 
     if ((waited > wait_time)); then
       echo "Height $target_height is not reached in $wait_time seconds"
+      docker logs --tail 50 node0
       exit 1
     fi
 
