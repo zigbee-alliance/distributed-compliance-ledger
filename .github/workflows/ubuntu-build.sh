@@ -44,7 +44,7 @@ _GO_ROOT_BIN="$_GO_ROOT/bin"
     chown -R "$(id -u):$(id -g)" "$BUILD_DIR"
 EOF
 
-UBUNTU_VERSION="${UBUNTU_VERSION:-20.04}"
+UBUNTU_VERSION="${UBUNTU_VERSION:-24.04}"
 
 docker run --rm -w "$PWD" \
     -e GOROOT="$_GO_ROOT" \

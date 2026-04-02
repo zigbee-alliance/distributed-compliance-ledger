@@ -15,7 +15,7 @@
 ################################################################################
 # Image of a clean machine to deploy the new node onto.
 ################################################################################
-ARG UBUNTU_VERSION=20.04
+ARG UBUNTU_VERSION=24.04
 FROM jrei/systemd-ubuntu:${UBUNTU_VERSION}
 
 RUN apt-get update && apt-get install -y \

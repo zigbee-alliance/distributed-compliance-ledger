@@ -29,7 +29,7 @@ jobs:
 
   checks:
     name: verify release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       included: ${{ steps.release_info.outputs.included }}
       matrix_os: ${{ steps.release_info.outputs.matrix_os }}

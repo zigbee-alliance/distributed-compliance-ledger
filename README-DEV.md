@@ -1,7 +1,7 @@
 # Development Guideline
 
 Please note, that the only officially supported platform now is Linux.
-It's recommended to develop and deploy the App on Ubuntu 20.04 or Ubuntu 24.04.
+It's recommended to develop and deploy the App on Ubuntu 24.04 (20.4 and 22.04 versions are also supported).
 
 ## Pre-requisites
 
