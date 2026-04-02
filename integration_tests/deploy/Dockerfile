@@ -34,7 +34,7 @@ ENV TEST_USER=${TEST_USER:-dcl}
 #ENV TEST_USER_GROUP=${TEST_USER_GROUP:-dcl}
 
 ARG TEST_UID
-ENV TEST_UID=${TEST_UID:-900}
+ENV TEST_UID=${TEST_UID:-1000}
 #ARG gid=1000
 RUN adduser --disabled-password --uid ${TEST_UID} --home /var/lib/${TEST_USER} --gecos 'DCLedger user' ${TEST_USER}
 
