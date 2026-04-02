@@ -68,12 +68,10 @@ localnet_reset: localnet_stop
 		docker compose run observer0 dcld unsafe-reset-all;\
 	fi
 
-localnet_clean:
+localnet_clean: localnet_stop
 	# Try removing without sudo first, fall back to sudo if needed
 	rm -rf $(LOCALNET_DIR) 2>/dev/null || sudo rm -rf $(LOCALNET_DIR)
-	rm -rf $(HOME)/.dcl 2>/dev/null || sudo rm -rf $(HOME)/.dcl
-	# Stop containers and clean network
-	@$(MAKE) localnet_stop
+	rm -rf $(HOME)/.dcl
 
 
 localnet_rebuild: localnet_clean localnet_init

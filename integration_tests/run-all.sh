@@ -163,29 +163,6 @@ make image &>${DETAILED_OUTPUT_TARGET}
 
 cleanup_pool
 
-# Light Client Proxy Cli shell tests
-if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "light" ]]; then
-  CLI_SHELL_TESTS=$(find integration_tests/light_client_proxy -type f -name '*.sh' -not -name "common.sh")
-
-  for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
-    init_pool
-
-    log "*****************************************************************************************"
-    log "Running $CLI_SHELL_TEST"
-    log "*****************************************************************************************"
-
-    if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-      log "$CLI_SHELL_TEST finished successfully"
-    else
-      log "$CLI_SHELL_TEST failed"
-      exit 1
-    fi
-
-    collect_cover
-    cleanup_pool
-  done
-fi
-
 # Upgrade procedure tests
 if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
   UPGRADE_SHELL_TEST="./integration_tests/upgrade/test-upgrade.sh"
@@ -248,6 +225,29 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
       collect_cover
     fi
 
+    cleanup_pool
+  done
+fi
+
+# Light Client Proxy Cli shell tests
+if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "light" ]]; then
+  CLI_SHELL_TESTS=$(find integration_tests/light_client_proxy -type f -name '*.sh' -not -name "common.sh")
+
+  for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
+    init_pool
+
+    log "*****************************************************************************************"
+    log "Running $CLI_SHELL_TEST"
+    log "*****************************************************************************************"
+
+    if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+      log "$CLI_SHELL_TEST finished successfully"
+    else
+      log "$CLI_SHELL_TEST failed"
+      exit 1
+    fi
+
+    collect_cover
     cleanup_pool
   done
 fi

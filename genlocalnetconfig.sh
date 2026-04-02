@@ -216,3 +216,5 @@ if [[ -n "$DCL_LIGHT_CLIENT_PROXY" ]]; then
     mkdir "$LOCALNET_DIR/lightclient0"
     init_light_client_proxy lightclient0
 fi
+
+chmod 777 -R $DCL_DIR
