@@ -94,7 +94,7 @@ jobs:
             if [[ -z "$asset_tgz_url" || \
                   ( "$os" == "ubuntu-24.04" && ( -z "$asset_bin_url" || -z "$asset_cv_url" ) ) || \
                   ( "$os" == "ubuntu-22.04" && ( -z "$asset_service_url" || -z "$asset_service_conf_url" || -z "$asset_start_url" || -z "$asset_preupgrade_url" || -z "$asset_deploy_script_url" ) ) ]]; then
-              
+          
               # For non-22.04, we don't want to re-check/re-upload generic assets if they are being handled by 22.04 or already exist
               # If they are missing, 22.04 job will upload them.
               if [[ "$os" == "ubuntu-22.04" ]]; then
@@ -201,6 +201,15 @@ jobs:
           asset_name: ${{ env.BIN_NAME }}
           asset_content_type: application/octet-stream  # TODO check for less generic type
 
+      - name: build cosmovisor binary
+        if: ${{ !startsWith(matrix.os, 'ubuntu-') && (!matrix.cosmovisor || !matrix.tgz) }}
+        run: |
+          go install "cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v${{ env.COSMOVISOR_VERSION }}"
+          GOPATH="${GOPATH:-${HOME}/go}"
+          GOBIN="${GOBIN:-${GOPATH}/bin}"
+          cp "$GOBIN/cosmovisor" build
+        shell: bash
+
       - name: create archive with all artifacts
         if: ${{ !matrix.tgz }}
         run: |
@@ -226,15 +235,6 @@ jobs:
           asset_path: build/${{ matrix.tgz_filename }}
           asset_name: ${{ matrix.tgz_filename }}
           asset_content_type: application/x-gtar
-
-      - name: build cosmovisor binary
-        if: ${{ !startsWith(matrix.os, 'ubuntu-') && (!matrix.cosmovisor || !matrix.tgz) }}
-        run: |
-          go install "cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v${{ env.COSMOVISOR_VERSION }}"
-          GOPATH="${GOPATH:-${HOME}/go}"
-          GOBIN="${GOBIN:-${GOPATH}/bin}"
-          cp "$GOBIN/cosmovisor" build
-        shell: bash
 
       - name: upload to GitHub (cosmovisor binary)
         if: ${{ !matrix.cosmovisor && matrix.os == 'ubuntu-24.04' }}
