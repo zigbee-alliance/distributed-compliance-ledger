@@ -75,7 +75,7 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 echo "Wait for block height to become greater than upgrade $MASTER_UPGRADE_PLAN_NAME plan height"
-wait_for_height $(expr $plan_height + 1) 500 outage-safe
+wait_for_height $(expr $plan_height + 1) 300 outage-safe
 
 test_divider
 
