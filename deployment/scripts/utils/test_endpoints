@@ -35,7 +35,7 @@ Usage: $0 [persistent-endpoints-file]
 Tests connections to ip:port pairs from the persistent endpoints file.
 If the file is not specified './persistent_endpoints.txt' is used.
 
-The tool uses netcat. It tries to install it if not available!
+The tool uses netcat (netcat-openbsd). It tries to install it if not available!
 
 TIMEOUT environment variable may be used to set connections
 timeout (seconds). Default: 3 seconds.
@@ -67,7 +67,7 @@ fi
 
 if [[ -z "$(which nc)" ]]; then
     echo '"netcat" not found. installing...'
-    sudo apt-get update -y && sudo apt-get install netcat -y
+    sudo apt-get update -y && sudo apt-get install netcat-openbsd -y
 fi
 
 IFS=',' read -a peers <<< "$(cat "$PERSISTENT_ENDPOINTS_FILE")"

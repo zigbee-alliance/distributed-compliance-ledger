@@ -21,7 +21,7 @@ FROM jrei/systemd-ubuntu:${UBUNTU_VERSION}
 RUN apt-get update && apt-get install -y \
         sudo \
         curl \
-        netcat \
+        netcat-openbsd \
         iproute2 \
         adduser \
     && rm -rf /var/lib/apt/lists/*
