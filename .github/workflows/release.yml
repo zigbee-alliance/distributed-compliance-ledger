@@ -201,15 +201,6 @@ jobs:
           asset_name: ${{ env.BIN_NAME }}
           asset_content_type: application/octet-stream  # TODO check for less generic type
 
-      - name: build cosmovisor binary
-        if: ${{ !startsWith(matrix.os, 'ubuntu-') && (!matrix.cosmovisor || !matrix.tgz) }}
-        run: |
-          go install "cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v${{ env.COSMOVISOR_VERSION }}"
-          GOPATH="${GOPATH:-${HOME}/go}"
-          GOBIN="${GOBIN:-${GOPATH}/bin}"
-          cp "$GOBIN/cosmovisor" build
-        shell: bash
-
       - name: create archive with all artifacts
         if: ${{ !matrix.tgz }}
         run: |
@@ -235,6 +226,15 @@ jobs:
           asset_path: build/${{ matrix.tgz_filename }}
           asset_name: ${{ matrix.tgz_filename }}
           asset_content_type: application/x-gtar
+
+      - name: build cosmovisor binary
+        if: ${{ !startsWith(matrix.os, 'ubuntu-') && (!matrix.cosmovisor || !matrix.tgz) }}
+        run: |
+          go install "cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v${{ env.COSMOVISOR_VERSION }}"
+          GOPATH="${GOPATH:-${HOME}/go}"
+          GOBIN="${GOBIN:-${GOPATH}/bin}"
+          cp "$GOBIN/cosmovisor" build
+        shell: bash
 
       - name: upload to GitHub (cosmovisor binary)
         if: ${{ !matrix.cosmovisor && matrix.os == 'ubuntu-24.04' }}

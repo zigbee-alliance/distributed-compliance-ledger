@@ -238,10 +238,6 @@ wait_for_height() {
 
     if ((waited > wait_time)); then
       echo "Height $target_height is not reached in $wait_time seconds"
-      docker logs --tail 50 node0
-      echo "----------------------------------node0"
-      docker logs --tail 50 node2
-      echo "----------------------------------node2"
       exit 1
     fi
 
@@ -256,9 +252,9 @@ execute_with_retry() {
   local _error=${2:-"EOF"}
   local _result=$($_command)
 
-  for i in {1..30}; do
+  for i in {1..10}; do
     if [[ "$(_check_response "$_result" "$_error" "raw")" == true ]]; then
-#      echo "EOF detected, re-trying"
+      #echo "EOF detected, re-trying"
       sleep 2
       _result=$($_command)
     else

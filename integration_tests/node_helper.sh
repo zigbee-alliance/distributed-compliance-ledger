@@ -17,11 +17,6 @@
 
 set -euo pipefail
 
-# ensure we have permissions to our home directory (especially if it was mounted or docker cp was used)
-sudo chown -R "$(id -u):$(id -g)" "$HOME"
-
-mkdir -p "$HOME"/.dcl/cosmovisor
-
 timestamp=0
 max_restart_cnt=10
 restart_cnt=0
