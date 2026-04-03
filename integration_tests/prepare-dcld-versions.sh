@@ -24,21 +24,14 @@ log() {
 
 mkdir -p $TMP_DCLD_BINS_DIR
 
-for version in 0.12.0 0.12.1 1.2.2 1.4.3 1.4.4 1.5.1 1.5.2; do
+for version in 0.12.0 0.12.1 1.2.2 1.4.3 1.4.4 1.5.1 1.5.2 1.6.0-0.dev.2; do
     DCLD_BIN_FILE="$TMP_DCLD_BINS_DIR/dcld_v$version"
 
     if [[ ! -f $DCLD_BIN_FILE || "$(stat -c %a $DCLD_BIN_FILE)" != "775" ]]; then
         log "$DCLD_BIN_FILE not found! The download is running"
 
-        # Try to download from the new comprehensive archive format first (defaulting to ubuntu-24.04)
-        ARCHIVE_URL="https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v$version/ubuntu-24.04.tar.gz"
-        if wget -q --spider "$ARCHIVE_URL"; then
-            wget -q --show-progress -O - "$ARCHIVE_URL" | tar -xz -C "$TMP_DCLD_BINS_DIR" ./dcld
-            mv "$TMP_DCLD_BINS_DIR/dcld" "$DCLD_BIN_FILE"
-        else
-            # Fallback to bare binary for older versions
-            wget -q --show-progress -O $DCLD_BIN_FILE "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v$version/dcld"
-        fi
+        wget -q --show-progress -O $DCLD_BIN_FILE "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v$version/dcld"
+
         chmod ugo+x $DCLD_BIN_FILE
     fi
 done
