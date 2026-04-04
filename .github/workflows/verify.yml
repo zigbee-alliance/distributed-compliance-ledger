@@ -121,10 +121,6 @@ jobs:
     runs-on: ubuntu-24.04
     needs:
       - changes
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        ubuntu_version: ["20.04", "24.04"]
     steps:
       - uses: actions/setup-go@v5
         with:
@@ -187,7 +183,7 @@ jobs:
         run: go build github.com/wadey/gocovmerge
       - name: Merge test coverage
         shell: bash
-        run: ./gocovmerge unit_cover/cover.out integration_cover_20.04/cover.out integration_cover_24.04/cover.out > cover.out
+        run: ./gocovmerge unit_cover/cover.out integration_cover/cover.out > cover.out
       - name: Filter test coverage
         shell: bash
         run: .github/workflows/filter_coverage.sh
@@ -211,8 +207,7 @@ jobs:
       - uses: geekyeggo/delete-artifact@v5
         with:
           name: |
-            integration_cover_20.04
-            integration_cover_24.04
+            integration_cover
             unit_cover
   check:
     if: always()
