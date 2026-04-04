@@ -139,8 +139,8 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 }
 
 // Helper function to set optional fields
-func (k msgServer) optionalFieldsFromMsgCertify(msg *types.MsgCertifyModel) *types.OptionalFields {
-	return &types.OptionalFields{
+func (k msgServer) optionalFieldsFromMsgCertify(msg *types.MsgCertifyModel) *types.ComplianceOptionalFields {
+	return &types.ComplianceOptionalFields{
 		CertificationTypeVersion: msg.CertificationTypeVersion,
 		FamilyID:                 msg.FamilyId,
 		SupportedClusters:        msg.SupportedClusters,
