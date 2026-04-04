@@ -110,6 +110,7 @@ jobs:
           go test -json -v $(go list ./... | grep -v '/integration_tests') -coverprofile=./cover.out -covermode=set -coverpkg=./... 2>&1 | tee /tmp/gotest.log | gotestfmt
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GOCOVER_MODE: set
       - name: Store test coverage
         uses: actions/upload-artifact@v4
         with:

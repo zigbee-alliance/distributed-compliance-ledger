@@ -70,7 +70,7 @@ func (d *ComplianceInfo) SetOptionalFields(optionalFields *OptionalFields) {
 		d.ParentChild = optionalFields.ParentChild
 	}
 
-	if optionalFields.Reason != "" {
+	if len(optionalFields.Reason) > 0 {
 		d.Reason = optionalFields.Reason
 	}
 }
