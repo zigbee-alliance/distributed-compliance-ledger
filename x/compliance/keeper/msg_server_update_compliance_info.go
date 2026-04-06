@@ -106,8 +106,8 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 }
 
 // Helper function to set optional fields
-func (k msgServer) optionalFieldsFromMsgUpdateComplianceInfo(msg *types.MsgUpdateComplianceInfo) *types.ComplianceOptionalFields {
-	return &types.ComplianceOptionalFields{
+func (k msgServer) optionalFieldsFromMsgUpdateComplianceInfo(msg *types.MsgUpdateComplianceInfo) *types.OptionalFields {
+	return &types.OptionalFields{
 		CertificationTypeVersion: msg.CertificationTypeVersion,
 		FamilyID:                 msg.FamilyId,
 		SupportedClusters:        msg.SupportedClusters,
