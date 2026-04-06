@@ -43,7 +43,7 @@ func TestMsgUpdateComplianceInfo_ValidateBasic(t *testing.T) {
 				Pid:               1,
 				Vid:               1,
 				Date:              testconstants.CertificationDate,
-				CertificationType: "invalid certification type",
+				CertificationType: "invalid type",
 				CDVersionNumber:   "312",
 				Reason:            testconstants.Reason,
 				CDCertificateId:   testconstants.CDCertificateID,
