@@ -19,12 +19,12 @@ source integration_tests/cli/common.sh
 # Upgrade constants
 
 plan_name="v1.6.0"
-upgrade_checksum="sha256:9adea41e7a26dfd69057f707aec074e2463ac55456a4e069871f4353cf0d2b12"
+upgrade_checksum="sha256:ec097fd754c6ea57eaca6c5e1e282ea76731eec11077ab9769d3a3290d195a56"
 # TODO it must be v1.6.0 before actual release
-binary_version_new="v1.6.0-0.dev.1"
+binary_version_new="v1.6.0-0.dev.2"
 
 DCLD_BIN_OLD="/tmp/dcld_bins/dcld_v1.5.2"
-DCLD_BIN_NEW="/tmp/dcld_bins/dcld_v1.6.0-0.dev.1" # TODO it must be v1.6.0 before actual release
+DCLD_BIN_NEW="/tmp/dcld_bins/dcld_v1.6.0-0.dev.2" # TODO it must be v1.6.0 before actual release
 $DCLD_BIN_NEW config broadcast-mode sync
 ########################################################################################
 
