@@ -307,6 +307,39 @@ func GetModelVersion(
 	return &res, nil
 }
 
+func GetModelVersions(
+	suite *utils.TestSuite,
+	vid int32,
+	pid int32,
+) (*modeltypes.ModelVersions, error) {
+	var res modeltypes.ModelVersions
+
+	if suite.Rest {
+		var resp modeltypes.QueryGetModelVersionsResponse
+		err := suite.QueryREST(fmt.Sprintf("/dcl/model/versions/%v/%v", vid, pid), &resp)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetModelVersions()
+	} else {
+		grpcConn := suite.GetGRPCConn()
+		defer grpcConn.Close()
+
+		// This creates a gRPC client to query the x/dclauth service.
+		modelClient := modeltypes.NewQueryClient(grpcConn)
+		resp, err := modelClient.ModelVersions(
+			context.Background(),
+			&modeltypes.QueryGetModelVersionsRequest{Vid: vid, Pid: pid},
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetModelVersions()
+	}
+
+	return &res, nil
+}
+
 func GetModels(suite *utils.TestSuite) (res []modeltypes.Model, err error) {
 	if suite.Rest {
 		var resp modeltypes.QueryAllModelResponse
@@ -738,6 +771,11 @@ func DeleteModelVersionBeforeDeletingModel(suite *utils.TestSuite) {
 	deleteModelVersionMsg := NewMsgDeleteModelVersion(vid, pid, createModelVersion1Msg.SoftwareVersion, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModelVersionMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
+
+	modelVersions, err := GetModelVersions(suite, vid, pid)
+	require.NoError(suite.T, err)
+	require.Len(suite.T, modelVersions.SoftwareVersions, 1)
+	require.Equal(suite.T, modelVersions.SoftwareVersions[0], createModelVersion2Msg.SoftwareVersion)
 
 	deleteModelMsg := NewMsgDeleteModel(vid, pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModelMsg}, vendorName, vendorAccount)

@@ -27,3 +27,16 @@ func (m Migrator) Migrate3to4(ctx sdk.Context) error {
 
 	return nil
 }
+
+// Migrate4to5 migrates from version 4 to 5.
+func (m Migrator) Migrate4to5(ctx sdk.Context) error {
+	modelVersions := m.keeper.GetAllModelVersions(ctx)
+	for _, version := range modelVersions {
+		_, found := m.keeper.GetModel(ctx, version.Vid, version.Pid)
+		if !found {
+			m.keeper.RemoveModelVersions(ctx, version.Vid, version.Pid)
+		}
+	}
+
+	return nil
+}

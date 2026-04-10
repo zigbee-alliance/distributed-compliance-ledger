@@ -48,3 +48,22 @@ func TestMigrator_Migrate3to4(t *testing.T) {
 		}
 	}
 }
+
+func TestMigrator_Migrate4to5(t *testing.T) {
+	_keeper, ctx := keepertest.ModelKeeper(t, nil, nil)
+	_keeper.SetModel(ctx, types.Model{Pid: 1, Vid: 1})
+
+	modelVersions1 := types.ModelVersions{Pid: 1, Vid: 1, SoftwareVersions: []uint32{1}}
+	modelVersions2 := types.ModelVersions{Pid: 2, Vid: 1, SoftwareVersions: []uint32{1, 2}}
+	_keeper.SetModelVersions(ctx, modelVersions1)
+	// Add ModelVersions for non-existing model
+	_keeper.SetModelVersions(ctx, modelVersions2)
+
+	migrator := keeper.NewMigrator(*_keeper)
+	err := migrator.Migrate4to5(ctx)
+	require.NoError(t, err)
+
+	modelVersions := _keeper.GetAllModelVersions(ctx)
+	require.Len(t, modelVersions, 1)
+	require.Equal(t, modelVersions1, modelVersions[0])
+}
