@@ -289,4 +289,10 @@ check_response "$result" "\"specificationVersion\": $specification_version_for_1
 
 test_divider
 
+
+echo "ISSUE #593. Migration should remove ghost model versions: Get all model versions"
+result=$($DCLD_BIN_NEW query model all-model-versions --vid=$vid_for_1_6_0 --pid=$pid_3_for_1_6_0)
+echo "$result"
+check_response "$result" "Not Found"
+
 echo "Upgrade from 1.5.2 to 1.6.0 PASSED"
