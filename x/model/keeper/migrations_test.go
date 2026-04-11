@@ -51,12 +51,13 @@ func TestMigrator_Migrate3to4(t *testing.T) {
 
 func TestMigrator_Migrate4to5(t *testing.T) {
 	_keeper, ctx := keepertest.ModelKeeper(t, nil, nil)
-	_keeper.SetModel(ctx, types.Model{Pid: 1, Vid: 1})
 
+	_keeper.SetModelVersion(ctx, types.ModelVersion{Pid: 1, Vid: 1, SoftwareVersion: 1})
 	modelVersions1 := types.ModelVersions{Pid: 1, Vid: 1, SoftwareVersions: []uint32{1}}
-	modelVersions2 := types.ModelVersions{Pid: 2, Vid: 1, SoftwareVersions: []uint32{1, 2}}
 	_keeper.SetModelVersions(ctx, modelVersions1)
-	// Add ModelVersions for non-existing model
+
+	// Add ModelVersions for non-existing ModelVersion
+	modelVersions2 := types.ModelVersions{Pid: 2, Vid: 1, SoftwareVersions: []uint32{1, 2}}
 	_keeper.SetModelVersions(ctx, modelVersions2)
 
 	migrator := keeper.NewMigrator(*_keeper)

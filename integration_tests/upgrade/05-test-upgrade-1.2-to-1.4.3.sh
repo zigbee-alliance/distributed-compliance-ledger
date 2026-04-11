@@ -19,21 +19,21 @@ source integration_tests/cli/common.sh
 
 # Add model and model versions to reproduce issue #593
 
-vid_for_1_6_0=vid_for_1_2
+vid_for_1_6_0=$vid_for_1_2
 pid_3_for_1_6_0=160
 device_type_id_for_1_6_0=4321
 product_name_for_1_6_0="ProductName13"
 product_label_for_1_6_0="ProductLabel13"
 part_number_for_1_6_0="RCU2225B"
-software_version_1_for_1_6_0=1
-software_version_2_for_1_6_0=2
+software_version_1_for_1_6_0=100001
+software_version_2_for_1_6_0=200002
 software_version_string_for_1_6_0="3.0"
 cd_version_number_for_1_6_0=413
 min_applicable_software_version_for_1_6_0=3
 max_applicable_software_version_for_1_6_0=3000
 
 echo "ISSUE #593: Add model vid=$vid_for_1_6_0 pid=$pid_3_for_1_6_0"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_1_6_0 --pid=$pid_3_for_1_4_3 --deviceTypeID=$device_type_id_for_1_6_0 --productName=$product_name_for_1_6_0 --productLabel=$product_label_for_1_6_0 --partNumber=$part_number_for_1_6_0 --from=$vendor_account_for_1_2 --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_1_6_0 --pid=$pid_3_for_1_6_0 --deviceTypeID=$device_type_id_for_1_6_0 --productName=$product_name_for_1_6_0 --productLabel=$product_label_for_1_6_0 --partNumber=$part_number_for_1_6_0 --from=$vendor_account_for_1_2 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -47,7 +47,7 @@ result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model-version --vid=$vid_
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
-echo "ISSUE #593: Delete model versions vid=$vid_for_1_6_0 pid=$pid_3_for_1_6_0 softwareVersion=$software_version_2_for_1_6_0"
+echo "ISSUE #593: Delete model versions vid=$vid_for_1_6_0 pid=$pid_3_for_1_6_0 softwareVersion=$software_version_1_for_1_6_0"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx model delete-model-version --vid=$vid_for_1_6_0 --pid=$pid_3_for_1_6_0 --softwareVersion=$software_version_1_for_1_6_0 --from=$vendor_account_for_1_2 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
@@ -662,19 +662,6 @@ echo "Delete model vid=$vid_for_1_4_3 pid=$pid_3_for_1_4_3"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx model delete-model --vid=$vid_for_1_4_3 --pid=$pid_3_for_1_4_3 --from=$vendor_account_for_1_4_3 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
-
-test_divider
-
-echo "ISSUE #593: Delete model vid=$vid_for_1_6_0 pid=$pid_3_for_1_6_0"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx model delete-model --vid=$vid_for_1_6_0 --pid=$pid_3_for_1_6_0 --from=$vendor_account_for_1_4_3 --yes)
-result=$(get_txn_result "$result")
-check_response "$result" "\"code\": 0"
-
-echo "ISSUE #593: Ghost Model Version should be returned: Get all model versions"
-result=$($DCLD_BIN_NEW query model all-model-versions --vid=$vid_for_1_6_0 --pid=$pid_3_for_1_6_0)
-check_response "$result" "\"vid\": $vid_for_1_6_0"
-check_response "$result" "\"pid\": $pid_3_for_1_6_0"
-check_response "$result" "\"softwareVersions\""
 
 test_divider
 

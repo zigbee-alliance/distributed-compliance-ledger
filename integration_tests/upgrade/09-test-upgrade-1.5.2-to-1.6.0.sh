@@ -16,10 +16,24 @@
 set -euo pipefail
 source integration_tests/cli/common.sh
 
+echo "ISSUE #593: Delete model version vid=$vid_for_1_6_0 pid=$pid_3_for_1_6_0 sv=$software_version_2_for_1_6_0"
+result=$(echo $passphrase | $DCLD_BIN_NEW tx model delete-model-version --vid=$vid_for_1_6_0 --pid=$pid_3_for_1_6_0 --softwareVersion=$software_version_2_for_1_6_0 --from=$vendor_account_for_1_2 --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+echo "ISSUE #593: Get all model versions(ghost Model Version should be returned)"
+result=$($DCLD_BIN_NEW query model all-model-versions --vid=$vid_for_1_6_0 --pid=$pid_3_for_1_6_0)
+check_response "$result" "\"vid\": $vid_for_1_6_0"
+check_response "$result" "\"pid\": $pid_3_for_1_6_0"
+check_response "$result" "$software_version_1_for_1_6_0"
+response_does_not_contain "$result" "$software_version_2_for_1_6_0"
+
+test_divider
+
 # Upgrade constants
 
 plan_name="v1.6.0"
-upgrade_checksum="sha256:ec097fd754c6ea57eaca6c5e1e282ea76731eec11077ab9769d3a3290d195a56"
+upgrade_checksum="sha256:63a27d50985947dc79f03421a2f7c6475adb84932b431d26d0b6d0a2e2d539ad"
 # TODO it must be v1.6.0 before actual release
 binary_version_new="v1.6.0-0.dev.2"
 
@@ -86,6 +100,16 @@ echo "Verify that new data is not corrupted"
 test_divider
 
 # MODEL
+
+echo "ISSUE #593: After migration, ghost Model Versions must be removed: Get all model versions for VID: $vid_for_1_6_0 PID: $pid_3_for_1_6_0"
+result=$($DCLD_BIN_NEW query model all-model-versions --vid=$vid_for_1_6_0 --pid=$pid_3_for_1_6_0)
+echo "$result"
+check_response "$result" "Not Found"
+
+echo "ISSUE #593: Now we can remove Model. Delete model vid=$vid_for_1_6_0 pid=$pid_3_for_1_6_0"
+result=$(echo $passphrase | $DCLD_BIN_NEW tx model delete-model --vid=$vid_for_1_6_0 --pid=$pid_3_for_1_6_0 --from=$vendor_account_for_1_2 --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
 
 echo "Get Model with VID: $vid_for_1_5_2 PID: $pid_1_for_1_5_2"
 result=$($DCLD_BIN_NEW query model get-model --vid=$vid_for_1_5_2 --pid=$pid_1_for_1_5_2)
@@ -288,11 +312,5 @@ check_response "$result" "\"softwareVersion\": $software_version_for_1_6_0"
 check_response "$result" "\"specificationVersion\": $specification_version_for_1_6_0"
 
 test_divider
-
-
-echo "ISSUE #593. Migration should remove ghost model versions: Get all model versions"
-result=$($DCLD_BIN_NEW query model all-model-versions --vid=$vid_for_1_6_0 --pid=$pid_3_for_1_6_0)
-echo "$result"
-check_response "$result" "Not Found"
 
 echo "Upgrade from 1.5.2 to 1.6.0 PASSED"
