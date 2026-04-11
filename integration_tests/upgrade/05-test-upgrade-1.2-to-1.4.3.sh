@@ -33,7 +33,7 @@ min_applicable_software_version_for_1_6_0=3
 max_applicable_software_version_for_1_6_0=3000
 
 echo "ISSUE #593: Add model vid=$vid_for_1_6_0 pid=$pid_3_for_1_6_0"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_1_4_3 --pid=$pid_3_for_1_4_3 --deviceTypeID=$device_type_id_for_1_6_0 --productName=$product_name_for_1_6_0 --productLabel=$product_label_for_1_6_0 --partNumber=$part_number_for_1_6_0 --from=$vendor_account_for_1_2 --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_1_6_0 --pid=$pid_3_for_1_4_3 --deviceTypeID=$device_type_id_for_1_6_0 --productName=$product_name_for_1_6_0 --productLabel=$product_label_for_1_6_0 --partNumber=$part_number_for_1_6_0 --from=$vendor_account_for_1_2 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
