@@ -31,10 +31,12 @@ func (m Migrator) Migrate3to4(ctx sdk.Context) error {
 // Migrate4to5 migrates from version 4 to 5.
 func (m Migrator) Migrate4to5(ctx sdk.Context) error {
 	modelVersions := m.keeper.GetAllModelVersions(ctx)
-	for _, version := range modelVersions {
-		_, found := m.keeper.GetModel(ctx, version.Vid, version.Pid)
-		if !found {
-			m.keeper.RemoveModelVersions(ctx, version.Vid, version.Pid)
+	for _, modelVersion := range modelVersions {
+		for _, softwareVersion := range modelVersion.SoftwareVersions {
+			_, found := m.keeper.GetModelVersion(ctx, modelVersion.Vid, modelVersion.Pid, softwareVersion)
+			if !found {
+				m.keeper.RemoveSoftwareVersion(ctx, modelVersion.Vid, modelVersion.Pid, softwareVersion)
+			}
 		}
 	}
 
