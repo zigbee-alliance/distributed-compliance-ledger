@@ -96,7 +96,7 @@ func CmdProvisionModel() *cobra.Command {
 	cmd.Flags().StringVar(&supportedClusters, FlagSupportedClusters, "", TextSupportedClusters)
 	cmd.Flags().StringVar(&compliantPlatformUsed, FlagCompliantPlatformUsed, "", TextCompliantPlatformUsed)
 	cmd.Flags().StringVar(&compliantPlatformVersion, FlagCompliantPlatformVersion, "", TextCompliantPlatformVersion)
-	cmd.Flags().StringVar(&OSName, FlagOSName, "", TextOSName)
+	cmd.Flags().StringVar(&OSName, FlagOSNameAndVersion, "", TextOSNameAndVersion)
 	cmd.Flags().StringVar(&certificationRoute, FlagCertificationRoute, "", TextCertificationRoute)
 	cmd.Flags().StringVar(&productType, FlagProductType, "", TextProductType)
 	cmd.Flags().StringVar(&transport, FlagTransport, "", TextTransport)

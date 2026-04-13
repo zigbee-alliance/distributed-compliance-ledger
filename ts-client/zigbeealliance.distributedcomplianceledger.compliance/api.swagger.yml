@@ -221,7 +221,7 @@ paths:
                       type: string
                     supportedClusters:
                       type: string
-                    OSName:
+                    OSNameAndVersion:
                       type: string
                     parentChild:
                       type: string
@@ -351,7 +351,7 @@ paths:
                     type: string
                   supportedClusters:
                     type: string
-                  OSName:
+                  OSNameAndVersion:
                     type: string
                   parentChild:
                     type: string
@@ -477,7 +477,7 @@ paths:
                             type: string
                           supportedClusters:
                             type: string
-                          OSName:
+                          OSNameAndVersion:
                             type: string
                           parentChild:
                             type: string
@@ -614,7 +614,7 @@ paths:
                           type: string
                         supportedClusters:
                           type: string
-                        OSName:
+                        OSNameAndVersion:
                           type: string
                         parentChild:
                           type: string
@@ -1093,7 +1093,7 @@ definitions:
               type: string
             supportedClusters:
               type: string
-            OSName:
+            OSNameAndVersion:
               type: string
             parentChild:
               type: string
@@ -1182,7 +1182,7 @@ definitions:
                     type: string
                   supportedClusters:
                     type: string
-                  OSName:
+                  OSNameAndVersion:
                     type: string
                   parentChild:
                     type: string
@@ -1341,7 +1341,7 @@ definitions:
             type: string
           supportedClusters:
             type: string
-          OSName:
+          OSNameAndVersion:
             type: string
           parentChild:
             type: string
@@ -1419,7 +1419,7 @@ definitions:
                   type: string
                 supportedClusters:
                   type: string
-                OSName:
+                OSNameAndVersion:
                   type: string
                 parentChild:
                   type: string
@@ -1541,7 +1541,7 @@ definitions:
         type: string
       supportedClusters:
         type: string
-      OSName:
+      OSNameAndVersion:
         type: string
       parentChild:
         type: string
@@ -1616,7 +1616,7 @@ definitions:
               type: string
             supportedClusters:
               type: string
-            OSName:
+            OSNameAndVersion:
               type: string
             parentChild:
               type: string

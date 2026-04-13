@@ -62,7 +62,7 @@ export interface ComplianceComplianceInfo {
   transport?: string;
   familyId?: string;
   supportedClusters?: string;
-  OSName?: string;
+  OSNameAndVersion?: string;
   parentChild?: string;
 
     /** @format int64 */

@@ -295,7 +295,7 @@ func checkProvisionalModelInfo(
 	require.Equal(t, provisionalModelMsg.SupportedClusters, receivedComplianceInfo.SupportedClusters)
 	require.Equal(t, provisionalModelMsg.CompliantPlatformUsed, receivedComplianceInfo.CompliantPlatformUsed)
 	require.Equal(t, provisionalModelMsg.CompliantPlatformVersion, receivedComplianceInfo.CompliantPlatformVersion)
-	require.Equal(t, provisionalModelMsg.OSName, receivedComplianceInfo.OSName)
+	require.Equal(t, provisionalModelMsg.OSNameAndVersion, receivedComplianceInfo.OSNameAndVersion)
 	require.Equal(t, provisionalModelMsg.CertificationRoute, receivedComplianceInfo.CertificationRoute)
 	require.Equal(t, provisionalModelMsg.ProductType, receivedComplianceInfo.ProductType)
 	require.Equal(t, provisionalModelMsg.Transport, receivedComplianceInfo.Transport)
@@ -320,7 +320,7 @@ func checkCertifiedModelInfo(
 	require.Equal(t, certifyModelMsg.SupportedClusters, receivedComplianceInfo.SupportedClusters)
 	require.Equal(t, certifyModelMsg.CompliantPlatformUsed, receivedComplianceInfo.CompliantPlatformUsed)
 	require.Equal(t, certifyModelMsg.CompliantPlatformVersion, receivedComplianceInfo.CompliantPlatformVersion)
-	require.Equal(t, certifyModelMsg.OSName, receivedComplianceInfo.OSName)
+	require.Equal(t, certifyModelMsg.OSNameAndVersion, receivedComplianceInfo.OSNameAndVersion)
 	require.Equal(t, certifyModelMsg.CertificationRoute, receivedComplianceInfo.CertificationRoute)
 	require.Equal(t, certifyModelMsg.ProductType, receivedComplianceInfo.ProductType)
 	require.Equal(t, certifyModelMsg.Transport, receivedComplianceInfo.Transport)
@@ -345,7 +345,7 @@ func checkDeviceSoftwareCompliance(
 	require.Equal(t, info.SupportedClusters, receivedComplianceInfo.SupportedClusters)
 	require.Equal(t, info.CompliantPlatformUsed, receivedComplianceInfo.CompliantPlatformUsed)
 	require.Equal(t, info.CompliantPlatformVersion, receivedComplianceInfo.CompliantPlatformVersion)
-	require.Equal(t, info.OSName, receivedComplianceInfo.OSName)
+	require.Equal(t, info.OSNameAndVersion, receivedComplianceInfo.OSNameAndVersion)
 	require.Equal(t, info.CertificationRoute, receivedComplianceInfo.CertificationRoute)
 	require.Equal(t, info.ProductType, receivedComplianceInfo.ProductType)
 	require.Equal(t, info.Transport, receivedComplianceInfo.Transport)
@@ -421,7 +421,7 @@ func newMsgUpdateComplianceInfo(
 		Transport:                "",
 		FamilyId:                 "",
 		SupportedClusters:        "",
-		OSName:                   "",
+		OSNameAndVersion:         "",
 		ParentChild:              "",
 		SchemaVersion:            testconstants.SchemaVersion,
 	}
@@ -453,7 +453,7 @@ func newMsgUpdateComplianceInfoWithAllOptionalFlags(
 		Transport:                "new Transport",
 		FamilyId:                 "FAM123456",
 		SupportedClusters:        "new SupportedClusters",
-		OSName:                   "new OSName",
+		OSNameAndVersion:         "new OSNameAndVersion",
 		ParentChild:              "new ParentChild",
 		SchemaVersion:            testconstants.SchemaVersion,
 	}
@@ -483,7 +483,7 @@ func newMsgProvisionModelWithAllOptionalFlags(
 		SupportedClusters:        testconstants.SupportedClusters,
 		CompliantPlatformUsed:    testconstants.CompliantPlatformUsed,
 		CompliantPlatformVersion: testconstants.CompliantPlatformVersion,
-		OSName:                   testconstants.OSName,
+		OSNameAndVersion:         testconstants.OSNameAndVersion,
 		CertificationRoute:       testconstants.CertificationRoute,
 		ProductType:              testconstants.ProductType,
 		Transport:                testconstants.Transport,
@@ -553,7 +553,7 @@ func newMsgCertifyModelWithAllOptionalFlags(
 		SupportedClusters:        testconstants.SupportedClusters,
 		CompliantPlatformUsed:    testconstants.CompliantPlatformUsed,
 		CompliantPlatformVersion: testconstants.CompliantPlatformVersion,
-		OSName:                   testconstants.OSName,
+		OSNameAndVersion:         testconstants.OSNameAndVersion,
 		CertificationRoute:       testconstants.CertificationRoute,
 		ProductType:              testconstants.ProductType,
 		Transport:                testconstants.Transport,

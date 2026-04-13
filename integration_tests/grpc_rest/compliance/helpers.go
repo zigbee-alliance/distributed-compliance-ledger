@@ -1133,7 +1133,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 		SupportedClusters:        testconstants.SupportedClusters,
 		CompliantPlatformUsed:    testconstants.CompliantPlatformUsed,
 		CompliantPlatformVersion: testconstants.CompliantPlatformVersion,
-		OSName:                   testconstants.OSName,
+		OSNameAndVersion:         testconstants.OSNameAndVersion,
 		CertificationRoute:       testconstants.CertificationRoute,
 		ProductType:              testconstants.ProductType,
 		Transport:                testconstants.Transport,
@@ -1160,7 +1160,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.SupportedClusters, complianceInfo.SupportedClusters)
 	require.Equal(suite.T, testconstants.CompliantPlatformUsed, complianceInfo.CompliantPlatformUsed)
 	require.Equal(suite.T, testconstants.CompliantPlatformVersion, complianceInfo.CompliantPlatformVersion)
-	require.Equal(suite.T, testconstants.OSName, complianceInfo.OSName)
+	require.Equal(suite.T, testconstants.OSNameAndVersion, complianceInfo.OSNameAndVersion)
 	require.Equal(suite.T, testconstants.CertificationRoute, complianceInfo.CertificationRoute)
 	require.Equal(suite.T, testconstants.Transport, complianceInfo.Transport)
 	require.Equal(suite.T, testconstants.ParentChild1, complianceInfo.ParentChild)
@@ -1189,7 +1189,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.SupportedClusters, deviceSoftwareCompliance.ComplianceInfo[0].SupportedClusters)
 	require.Equal(suite.T, testconstants.CompliantPlatformUsed, deviceSoftwareCompliance.ComplianceInfo[0].CompliantPlatformUsed)
 	require.Equal(suite.T, testconstants.CompliantPlatformVersion, deviceSoftwareCompliance.ComplianceInfo[0].CompliantPlatformVersion)
-	require.Equal(suite.T, testconstants.OSName, deviceSoftwareCompliance.ComplianceInfo[0].OSName)
+	require.Equal(suite.T, testconstants.OSNameAndVersion, deviceSoftwareCompliance.ComplianceInfo[0].OSNameAndVersion)
 	require.Equal(suite.T, testconstants.CertificationRoute, deviceSoftwareCompliance.ComplianceInfo[0].CertificationRoute)
 	require.Equal(suite.T, testconstants.Transport, deviceSoftwareCompliance.ComplianceInfo[0].Transport)
 	require.Equal(suite.T, testconstants.ParentChild1, deviceSoftwareCompliance.ComplianceInfo[0].ParentChild)
@@ -1605,7 +1605,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 		SupportedClusters:        testconstants.SupportedClusters,
 		CompliantPlatformUsed:    testconstants.CompliantPlatformUsed,
 		CompliantPlatformVersion: testconstants.CompliantPlatformVersion,
-		OSName:                   testconstants.OSName,
+		OSNameAndVersion:         testconstants.OSNameAndVersion,
 		CertificationRoute:       testconstants.CertificationRoute,
 		ProductType:              testconstants.ProductType,
 		Transport:                testconstants.Transport,
@@ -1632,7 +1632,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.SupportedClusters, complianceInfo.SupportedClusters)
 	require.Equal(suite.T, testconstants.CompliantPlatformUsed, complianceInfo.CompliantPlatformUsed)
 	require.Equal(suite.T, testconstants.CompliantPlatformVersion, complianceInfo.CompliantPlatformVersion)
-	require.Equal(suite.T, testconstants.OSName, complianceInfo.OSName)
+	require.Equal(suite.T, testconstants.OSNameAndVersion, complianceInfo.OSNameAndVersion)
 	require.Equal(suite.T, testconstants.CertificationRoute, complianceInfo.CertificationRoute)
 	require.Equal(suite.T, testconstants.Transport, complianceInfo.Transport)
 	require.Equal(suite.T, testconstants.ParentChild1, complianceInfo.ParentChild)
@@ -1695,7 +1695,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, "sClusters", complianceInfo.SupportedClusters)
 	require.Equal(suite.T, "WIFI", complianceInfo.CompliantPlatformUsed)
 	require.Equal(suite.T, "V1", complianceInfo.CompliantPlatformVersion)
-	require.Equal(suite.T, testconstants.OSName, complianceInfo.OSName)
+	require.Equal(suite.T, testconstants.OSNameAndVersion, complianceInfo.OSNameAndVersion)
 	require.Equal(suite.T, testconstants.CertificationRoute, complianceInfo.CertificationRoute)
 	require.Equal(suite.T, testconstants.Transport, complianceInfo.Transport)
 	require.Equal(suite.T, testconstants.ParentChild1, complianceInfo.ParentChild)
@@ -1724,7 +1724,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, "sClusters", deviceSoftwareCompliance.ComplianceInfo[3].SupportedClusters)
 	require.Equal(suite.T, "WIFI", deviceSoftwareCompliance.ComplianceInfo[3].CompliantPlatformUsed)
 	require.Equal(suite.T, "V1", deviceSoftwareCompliance.ComplianceInfo[3].CompliantPlatformVersion)
-	require.Equal(suite.T, testconstants.OSName, deviceSoftwareCompliance.ComplianceInfo[3].OSName)
+	require.Equal(suite.T, testconstants.OSNameAndVersion, deviceSoftwareCompliance.ComplianceInfo[3].OSNameAndVersion)
 	require.Equal(suite.T, testconstants.CertificationRoute, deviceSoftwareCompliance.ComplianceInfo[3].CertificationRoute)
 	require.Equal(suite.T, testconstants.Transport, deviceSoftwareCompliance.ComplianceInfo[3].Transport)
 	require.Equal(suite.T, testconstants.ParentChild1, deviceSoftwareCompliance.ComplianceInfo[3].ParentChild)

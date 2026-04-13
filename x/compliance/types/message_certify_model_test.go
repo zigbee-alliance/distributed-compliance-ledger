@@ -318,7 +318,7 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "OSName > 64",
+			name: "OSNameAndVersion > 64",
 			msg: MsgCertifyModel{
 				Signer:                sample.AccAddress(),
 				Pid:                   1,
@@ -329,7 +329,7 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 				Reason:                testconstants.Reason,
 				CDCertificateId:       testconstants.CDCertificateID,
-				OSName:                tmrand.Str(65),
+				OSNameAndVersion:      tmrand.Str(65),
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
@@ -623,7 +623,7 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 			},
 		},
 		{
-			name: "OSName >= 0 && OSName <= 64",
+			name: "OSNameAndVersion >= 0 && OSNameAndVersion <= 64",
 			msg: MsgCertifyModel{
 				Signer:                sample.AccAddress(),
 				Pid:                   1,
@@ -634,7 +634,7 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 				Reason:                testconstants.Reason,
 				CDCertificateId:       testconstants.CDCertificateID,
-				OSName:                testconstants.OSName,
+				OSNameAndVersion:      testconstants.OSNameAndVersion,
 			},
 		},
 		{

@@ -19,7 +19,7 @@ export interface MsgCertifyModel {
   supportedClusters: string;
   compliantPlatformUsed: string;
   compliantPlatformVersion: string;
-  OSName: string;
+  OSNameAndVersion: string;
   certificationRoute: string;
   productType: string;
   transport: string;
@@ -63,7 +63,7 @@ export interface MsgProvisionModel {
   supportedClusters: string;
   compliantPlatformUsed: string;
   compliantPlatformVersion: string;
-  OSName: string;
+  OSNameAndVersion: string;
   certificationRoute: string;
   productType: string;
   transport: string;
@@ -94,7 +94,7 @@ export interface MsgUpdateComplianceInfo {
   transport: string;
   familyId: string;
   supportedClusters: string;
-  OSName: string;
+  OSNameAndVersion: string;
   parentChild: string;
   certificationIdOfSoftwareComponent: string;
   schemaVersion: number;
@@ -131,7 +131,7 @@ function createBaseMsgCertifyModel(): MsgCertifyModel {
     supportedClusters: "",
     compliantPlatformUsed: "",
     compliantPlatformVersion: "",
-    OSName: "",
+    OSNameAndVersion: "",
     certificationRoute: "",
     productType: "",
     transport: "",
@@ -188,8 +188,8 @@ export const MsgCertifyModel = {
     if (message.compliantPlatformVersion !== "") {
       writer.uint32(122).string(message.compliantPlatformVersion);
     }
-    if (message.OSName !== "") {
-      writer.uint32(130).string(message.OSName);
+    if (message.OSNameAndVersion !== "") {
+      writer.uint32(130).string(message.OSNameAndVersion);
     }
     if (message.certificationRoute !== "") {
       writer.uint32(138).string(message.certificationRoute);
@@ -265,7 +265,7 @@ export const MsgCertifyModel = {
           message.compliantPlatformVersion = reader.string();
           break;
         case 16:
-          message.OSName = reader.string();
+          message.OSNameAndVersion = reader.string();
           break;
         case 17:
           message.certificationRoute = reader.string();
@@ -310,7 +310,7 @@ export const MsgCertifyModel = {
       supportedClusters: isSet(object.supportedClusters) ? String(object.supportedClusters) : "",
       compliantPlatformUsed: isSet(object.compliantPlatformUsed) ? String(object.compliantPlatformUsed) : "",
       compliantPlatformVersion: isSet(object.compliantPlatformVersion) ? String(object.compliantPlatformVersion) : "",
-      OSName: isSet(object.OSName) ? String(object.OSName) : "",
+      OSNameAndVersion: isSet(object.OSNameAndVersion) ? String(object.OSNameAndVersion) : "",
       certificationRoute: isSet(object.certificationRoute) ? String(object.certificationRoute) : "",
       productType: isSet(object.productType) ? String(object.productType) : "",
       transport: isSet(object.transport) ? String(object.transport) : "",
@@ -339,7 +339,7 @@ export const MsgCertifyModel = {
     message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters);
     message.compliantPlatformUsed !== undefined && (obj.compliantPlatformUsed = message.compliantPlatformUsed);
     message.compliantPlatformVersion !== undefined && (obj.compliantPlatformVersion = message.compliantPlatformVersion);
-    message.OSName !== undefined && (obj.OSName = message.OSName);
+    message.OSNameAndVersion !== undefined && (obj.OSNameAndVersion = message.OSNameAndVersion);
     message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute);
     message.productType !== undefined && (obj.productType = message.productType);
     message.transport !== undefined && (obj.transport = message.transport);
@@ -367,7 +367,7 @@ export const MsgCertifyModel = {
     message.supportedClusters = object.supportedClusters ?? "";
     message.compliantPlatformUsed = object.compliantPlatformUsed ?? "";
     message.compliantPlatformVersion = object.compliantPlatformVersion ?? "";
-    message.OSName = object.OSName ?? "";
+    message.OSNameAndVersion = object.OSNameAndVersion ?? "";
     message.certificationRoute = object.certificationRoute ?? "";
     message.productType = object.productType ?? "";
     message.transport = object.transport ?? "";
@@ -614,7 +614,7 @@ function createBaseMsgProvisionModel(): MsgProvisionModel {
     supportedClusters: "",
     compliantPlatformUsed: "",
     compliantPlatformVersion: "",
-    OSName: "",
+    OSNameAndVersion: "",
     certificationRoute: "",
     productType: "",
     transport: "",
@@ -671,8 +671,8 @@ export const MsgProvisionModel = {
     if (message.compliantPlatformVersion !== "") {
       writer.uint32(122).string(message.compliantPlatformVersion);
     }
-    if (message.OSName !== "") {
-      writer.uint32(130).string(message.OSName);
+    if (message.OSNameAndVersion !== "") {
+      writer.uint32(130).string(message.OSNameAndVersion);
     }
     if (message.certificationRoute !== "") {
       writer.uint32(138).string(message.certificationRoute);
@@ -748,7 +748,7 @@ export const MsgProvisionModel = {
           message.compliantPlatformVersion = reader.string();
           break;
         case 16:
-          message.OSName = reader.string();
+          message.OSNameAndVersion = reader.string();
           break;
         case 17:
           message.certificationRoute = reader.string();
@@ -793,7 +793,7 @@ export const MsgProvisionModel = {
       supportedClusters: isSet(object.supportedClusters) ? String(object.supportedClusters) : "",
       compliantPlatformUsed: isSet(object.compliantPlatformUsed) ? String(object.compliantPlatformUsed) : "",
       compliantPlatformVersion: isSet(object.compliantPlatformVersion) ? String(object.compliantPlatformVersion) : "",
-      OSName: isSet(object.OSName) ? String(object.OSName) : "",
+      OSNameAndVersion: isSet(object.OSNameAndVersion) ? String(object.OSNameAndVersion) : "",
       certificationRoute: isSet(object.certificationRoute) ? String(object.certificationRoute) : "",
       productType: isSet(object.productType) ? String(object.productType) : "",
       transport: isSet(object.transport) ? String(object.transport) : "",
@@ -822,7 +822,7 @@ export const MsgProvisionModel = {
     message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters);
     message.compliantPlatformUsed !== undefined && (obj.compliantPlatformUsed = message.compliantPlatformUsed);
     message.compliantPlatformVersion !== undefined && (obj.compliantPlatformVersion = message.compliantPlatformVersion);
-    message.OSName !== undefined && (obj.OSName = message.OSName);
+    message.OSNameAndVersion !== undefined && (obj.OSNameAndVersion = message.OSNameAndVersion);
     message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute);
     message.productType !== undefined && (obj.productType = message.productType);
     message.transport !== undefined && (obj.transport = message.transport);
@@ -850,7 +850,7 @@ export const MsgProvisionModel = {
     message.supportedClusters = object.supportedClusters ?? "";
     message.compliantPlatformUsed = object.compliantPlatformUsed ?? "";
     message.compliantPlatformVersion = object.compliantPlatformVersion ?? "";
-    message.OSName = object.OSName ?? "";
+    message.OSNameAndVersion = object.OSNameAndVersion ?? "";
     message.certificationRoute = object.certificationRoute ?? "";
     message.productType = object.productType ?? "";
     message.transport = object.transport ?? "";
@@ -920,7 +920,7 @@ function createBaseMsgUpdateComplianceInfo(): MsgUpdateComplianceInfo {
     transport: "",
     familyId: "",
     supportedClusters: "",
-    OSName: "",
+    OSNameAndVersion: "",
     parentChild: "",
     certificationIdOfSoftwareComponent: "",
     schemaVersion: 0,
@@ -983,8 +983,8 @@ export const MsgUpdateComplianceInfo = {
     if (message.supportedClusters !== "") {
       writer.uint32(146).string(message.supportedClusters);
     }
-    if (message.OSName !== "") {
-      writer.uint32(154).string(message.OSName);
+    if (message.OSNameAndVersion !== "") {
+      writer.uint32(154).string(message.OSNameAndVersion);
     }
     if (message.parentChild !== "") {
       writer.uint32(162).string(message.parentChild);
@@ -1060,7 +1060,7 @@ export const MsgUpdateComplianceInfo = {
           message.supportedClusters = reader.string();
           break;
         case 19:
-          message.OSName = reader.string();
+          message.OSNameAndVersion = reader.string();
           break;
         case 20:
           message.parentChild = reader.string();
@@ -1099,7 +1099,7 @@ export const MsgUpdateComplianceInfo = {
       transport: isSet(object.transport) ? String(object.transport) : "",
       familyId: isSet(object.familyId) ? String(object.familyId) : "",
       supportedClusters: isSet(object.supportedClusters) ? String(object.supportedClusters) : "",
-      OSName: isSet(object.OSName) ? String(object.OSName) : "",
+      OSNameAndVersion: isSet(object.OSNameAndVersion) ? String(object.OSNameAndVersion) : "",
       parentChild: isSet(object.parentChild) ? String(object.parentChild) : "",
       certificationIdOfSoftwareComponent: isSet(object.certificationIdOfSoftwareComponent)
         ? String(object.certificationIdOfSoftwareComponent)
@@ -1128,7 +1128,7 @@ export const MsgUpdateComplianceInfo = {
     message.transport !== undefined && (obj.transport = message.transport);
     message.familyId !== undefined && (obj.familyId = message.familyId);
     message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters);
-    message.OSName !== undefined && (obj.OSName = message.OSName);
+    message.OSNameAndVersion !== undefined && (obj.OSNameAndVersion = message.OSNameAndVersion);
     message.parentChild !== undefined && (obj.parentChild = message.parentChild);
     message.certificationIdOfSoftwareComponent !== undefined
       && (obj.certificationIdOfSoftwareComponent = message.certificationIdOfSoftwareComponent);
@@ -1156,7 +1156,7 @@ export const MsgUpdateComplianceInfo = {
     message.transport = object.transport ?? "";
     message.familyId = object.familyId ?? "";
     message.supportedClusters = object.supportedClusters ?? "";
-    message.OSName = object.OSName ?? "";
+    message.OSNameAndVersion = object.OSNameAndVersion ?? "";
     message.parentChild = object.parentChild ?? "";
     message.certificationIdOfSoftwareComponent = object.certificationIdOfSoftwareComponent ?? "";
     message.schemaVersion = object.schemaVersion ?? 0;

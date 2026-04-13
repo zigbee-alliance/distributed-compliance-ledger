@@ -18,7 +18,7 @@ const TypeMsgUpdateComplianceInfo = "update_compliance_info"
 func NewMsgUpdateComplianceInfo(creator string, vid int32, pid int32, softwareVersion uint32, certificationType string,
 	cDVersionNumber string, date string, reason string, owner string, cDCertificateID string, certificationRoute string,
 	productType string, certificationTypeVersion string, compliantPlatformUsed string, compliantPlatformVersion string,
-	transport string, familyID string, supportedClusters string, osName string, parentChild string,
+	transport string, familyID string, supportedClusters string, oSNameAndVersion string, parentChild string,
 	schemaVersion uint32) *MsgUpdateComplianceInfo {
 	return &MsgUpdateComplianceInfo{
 		Creator:                  creator,
@@ -39,7 +39,7 @@ func NewMsgUpdateComplianceInfo(creator string, vid int32, pid int32, softwareVe
 		Transport:                transport,
 		FamilyId:                 familyID,
 		SupportedClusters:        supportedClusters,
-		OSName:                   osName,
+		OSNameAndVersion:         oSNameAndVersion,
 		ParentChild:              parentChild,
 		SchemaVersion:            schemaVersion,
 	}

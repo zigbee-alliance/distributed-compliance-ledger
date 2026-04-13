@@ -50,8 +50,8 @@ func (d *ComplianceInfo) SetOptionalFields(optionalFields *OptionalFields) {
 		d.CompliantPlatformVersion = optionalFields.CompliantPlatformVersion
 	}
 
-	if optionalFields.OSName != "" {
-		d.OSName = optionalFields.OSName
+	if optionalFields.OSNameAndVersion != "" {
+		d.OSNameAndVersion = optionalFields.OSNameAndVersion
 	}
 
 	if optionalFields.CertificationRoute != "" {
@@ -81,7 +81,7 @@ type OptionalFields struct {
 	SupportedClusters        string
 	CompliantPlatformUsed    string
 	CompliantPlatformVersion string
-	OSName                   string
+	OSNameAndVersion         string
 	CertificationRoute       string
 	ProductType              string
 	Transport                string

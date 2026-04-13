@@ -25,7 +25,7 @@ export interface ComplianceInfo {
   transport: string
   familyId: string
   supportedClusters: string
-  OSName: string
+  OSNameAndVersion: string
   parentChild: string
   schemaVersion: number
 }
@@ -50,7 +50,7 @@ const baseComplianceInfo: object = {
   transport: '',
   familyId: '',
   supportedClusters: '',
-  OSName: '',
+  OSNameAndVersion: '',
   parentChild: '',
   schemaVersion: 0
 }
@@ -117,8 +117,8 @@ export const ComplianceInfo = {
     if (message.supportedClusters !== '') {
       writer.uint32(162).string(message.supportedClusters)
     }
-    if (message.OSName !== '') {
-      writer.uint32(170).string(message.OSName)
+    if (message.OSNameAndVersion !== '') {
+      writer.uint32(170).string(message.OSNameAndVersion)
     }
     if (message.parentChild !== '') {
       writer.uint32(178).string(message.parentChild)
@@ -198,7 +198,7 @@ export const ComplianceInfo = {
           message.supportedClusters = reader.string()
           break
         case 21:
-          message.OSName = reader.string()
+          message.OSNameAndVersion = reader.string()
           break
         case 22:
           message.parentChild = reader.string()
@@ -317,10 +317,10 @@ export const ComplianceInfo = {
     } else {
       message.supportedClusters = ''
     }
-    if (object.OSName !== undefined && object.OSName !== null) {
-      message.OSName = String(object.OSName)
+    if (object.OSNameAndVersion !== undefined && object.OSNameAndVersion !== null) {
+      message.OSNameAndVersion = String(object.OSNameAndVersion)
     } else {
-      message.OSName = ''
+      message.OSNameAndVersion = ''
     }
     if (object.parentChild !== undefined && object.parentChild !== null) {
       message.parentChild = String(object.parentChild)
@@ -361,7 +361,7 @@ export const ComplianceInfo = {
     message.transport !== undefined && (obj.transport = message.transport)
     message.familyId !== undefined && (obj.familyId = message.familyId)
     message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters)
-    message.OSName !== undefined && (obj.OSName = message.OSName)
+    message.OSNameAndVersion !== undefined && (obj.OSNameAndVersion = message.OSNameAndVersion)
     message.parentChild !== undefined && (obj.parentChild = message.parentChild)
     message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
@@ -470,10 +470,10 @@ export const ComplianceInfo = {
     } else {
       message.supportedClusters = ''
     }
-    if (object.OSName !== undefined && object.OSName !== null) {
-      message.OSName = object.OSName
+    if (object.OSNameAndVersion !== undefined && object.OSNameAndVersion !== null) {
+      message.OSNameAndVersion = object.OSNameAndVersion
     } else {
-      message.OSName = ''
+      message.OSNameAndVersion = ''
     }
     if (object.parentChild !== undefined && object.parentChild !== null) {
       message.parentChild = object.parentChild

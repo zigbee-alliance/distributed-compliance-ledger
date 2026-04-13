@@ -113,7 +113,7 @@ func (k msgServer) optionalFieldsFromMsgUpdateComplianceInfo(msg *types.MsgUpdat
 		SupportedClusters:        msg.SupportedClusters,
 		CompliantPlatformUsed:    msg.CompliantPlatformUsed,
 		CompliantPlatformVersion: msg.CompliantPlatformVersion,
-		OSName:                   msg.OSName,
+		OSNameAndVersion:         msg.OSNameAndVersion,
 		CertificationRoute:       msg.CertificationRoute,
 		ProductType:              msg.ProductType,
 		Transport:                msg.Transport,

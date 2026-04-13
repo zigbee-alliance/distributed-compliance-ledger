@@ -23,7 +23,7 @@ func (setup *TestSetup) checkAllComplianceInfoFieldsUpdated(t *testing.T, origin
 	require.NotEqual(t, originalComplianceInfo.CompliantPlatformVersion, updatedComplianceInfo.CompliantPlatformVersion)
 	require.NotEqual(t, originalComplianceInfo.Date, updatedComplianceInfo.Date)
 	require.NotEqual(t, originalComplianceInfo.FamilyId, updatedComplianceInfo.FamilyId)
-	require.NotEqual(t, originalComplianceInfo.OSName, updatedComplianceInfo.OSName)
+	require.NotEqual(t, originalComplianceInfo.OSNameAndVersion, updatedComplianceInfo.OSNameAndVersion)
 	require.NotEqual(t, originalComplianceInfo.ParentChild, updatedComplianceInfo.ParentChild)
 	require.NotEqual(t, originalComplianceInfo.ProductType, updatedComplianceInfo.ProductType)
 	require.NotEqual(t, originalComplianceInfo.CertificationTypeVersion, updatedComplianceInfo.CertificationTypeVersion)
