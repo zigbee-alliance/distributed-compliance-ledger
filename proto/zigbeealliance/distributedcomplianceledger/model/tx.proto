@@ -26,10 +26,10 @@ message MsgCreateModel {
   int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
   int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
 
-  int32 deviceTypeId = 4 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
+  int32 deviceTypeId = 4 [(gogoproto.moretags) = "validate:\"required,gte=0,lte=65535\""];
   string productName = 5 [(gogoproto.moretags) = "validate:\"required,max=128\""];
-  string productLabel = 6 [(gogoproto.moretags) = "validate:\"max=256\""];
-  string partNumber = 7 [(gogoproto.moretags) = "validate:\"max=32\""];
+  string productLabel = 6 [(gogoproto.moretags) = "validate:\"required,max=256\""];
+  string partNumber = 7 [(gogoproto.moretags) = "validate:\"required,max=32\""];
   int32 commissioningCustomFlow = 8 [(gogoproto.moretags) = "validate:\"gte=0,lte=2\""];
   string commissioningCustomFlowUrl = 9 [(gogoproto.moretags) = "validate:\"required_if=CommissioningCustomFlow 2,omitempty,url,startswith=https:,max=256\""];
   uint32 commissioningModeInitialStepsHint = 10;
@@ -47,7 +47,7 @@ message MsgCreateModel {
   string enhancedSetupFlowTCDigest = 22 [(gogoproto.moretags) = "validate:\"required_if_bit_0_set=EnhancedSetupFlowOptions,omitempty,max=128\""];
   uint32 enhancedSetupFlowTCFileSize = 23 [(gogoproto.moretags) = "validate:\"required_with=EnhancedSetupFlowTCUrl\""];;
   string enhancedSetupFlowMaintenanceUrl = 24 [(gogoproto.moretags) = "validate:\"required_if_bit_0_set=EnhancedSetupFlowOptions,omitempty,url,startswith=https:,max=256\""];
-  uint32 discoveryCapabilitiesBitmask = 25 [(gogoproto.moretags) = "validate:\"gte=0,lte=30\""];
+  uint32 discoveryCapabilitiesBitmask = 25 [(gogoproto.moretags) = "validate:\"required_with=CommissioningFallbackUrl,gte=0,lte=30\""];
   string commissioningFallbackUrl = 26 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
   uint32 icdUserActiveModeTriggerHint = 27;
   string icdUserActiveModeTriggerInstruction = 28 [(gogoproto.moretags) = "validate:\"max=1024\""];

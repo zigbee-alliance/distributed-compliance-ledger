@@ -99,6 +99,15 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldLowerBoundViolated,
 		},
 		{
+			name: "DeviceTypeId = 0",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.DeviceTypeId = 0
+
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrRequiredFieldMissing,
+		},
+		{
 			name: "DeviceTypeId > 65535",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.DeviceTypeId = 65536
@@ -135,6 +144,15 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
+			name: "ProductLabel is omitted",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.ProductLabel = ""
+
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrRequiredFieldMissing,
+		},
+		{
 			name: "PartNumber length > 32",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.PartNumber = tmrand.Str(33)
@@ -142,6 +160,15 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
+		},
+		{
+			name: "PartNumber is omitted",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.PartNumber = ""
+
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrRequiredFieldMissing,
 		},
 		{
 			name: "DiscoveryCapabilitiesBitmask > 30",
@@ -621,14 +648,6 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "Pid == 65535",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.Pid = 65535
-
-				return msg
-			}(validMsgCreateModel()),
-		},
-		{
-			name: "DeviceTypeId == 0",
-			msg: func(msg *MsgCreateModel) *MsgCreateModel {
-				msg.DeviceTypeId = 0
 
 				return msg
 			}(validMsgCreateModel()),
