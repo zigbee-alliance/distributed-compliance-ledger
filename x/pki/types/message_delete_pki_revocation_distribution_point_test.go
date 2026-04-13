@@ -3,6 +3,7 @@ package types
 import (
 	"testing"
 
+	tmrand "github.com/cometbft/cometbft/libs/rand"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
@@ -97,6 +98,16 @@ func TestMsgDeletePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 				IssuerSubjectKeyID: "123",
 			},
 			err: pkitypes.ErrWrongSubjectKeyIDFormat,
+		},
+		{
+			name: "issuerSubjectKeyID > 64",
+			msg: MsgDeletePkiRevocationDistributionPoint{
+				Signer:             sample.AccAddress(),
+				Vid:                testconstants.PAACertWithNumericVidVid,
+				Label:              "label",
+				IssuerSubjectKeyID: tmrand.Str(65),
+			},
+			err: validator.ErrFieldMaxLengthExceeded,
 		},
 	}
 

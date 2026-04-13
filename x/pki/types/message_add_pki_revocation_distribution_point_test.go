@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	tmrand "github.com/cometbft/cometbft/libs/rand"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 
@@ -403,6 +404,21 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 				DataURL:              testconstants.DataURL,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 				CrlSignerDelegator:   testconstants.CertWithSizeGreater2KB,
+				RevocationType:       1,
+				SchemaVersion:        0,
+			},
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
+		{
+			name: "issuerSubjectKeyID > 64",
+			msg: MsgAddPkiRevocationDistributionPoint{
+				Signer:               sample.AccAddress(),
+				Vid:                  testconstants.PAACertWithNumericVidVid,
+				IsPAA:                true,
+				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
+				Label:                "label",
+				DataURL:              testconstants.DataURL,
+				IssuerSubjectKeyID:   tmrand.Str(65),
 				RevocationType:       1,
 				SchemaVersion:        0,
 			},
