@@ -26,7 +26,7 @@ message MsgCertifyModel {
   string softwareVersionString = 5 [(gogoproto.moretags) = "validate:\"required,max=64\""];
   uint32 cDVersionNumber = 6  [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
   string certificationDate = 7 [(gogoproto.moretags) = "validate:\"required\""];
-  string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=100\""];
+  string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=20\""];
   string reason = 9 [(gogoproto.moretags) = "validate:\"max=51200\""];
   string certificationTypeVersion = 10 [(gogoproto.moretags) = "validate:\"max=64\""];
   string cDCertificateId = 11 [(gogoproto.moretags) = "validate:\"required,max=19\""];

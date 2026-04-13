@@ -414,6 +414,21 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 			err: ErrInvalidPFCCertificationRoute,
 		},
 		{
+			name: "CertificationType > 20",
+			msg: MsgCertifyModel{
+				Signer:                sample.AccAddress(),
+				Pid:                   1,
+				Vid:                   1,
+				SoftwareVersionString: testconstants.TestDate,
+				CertificationDate:     testconstants.CertificationDate,
+				CertificationType:     tmrand.Str(20),
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				Reason:                testconstants.Reason,
+				CDCertificateId:       testconstants.CDCertificateID,
+			},
+			err: ErrInvalidCertificationType,
+		},
+		{
 			name: "schemaVersion != 0",
 			msg: MsgCertifyModel{
 				Signer:                sample.AccAddress(),
