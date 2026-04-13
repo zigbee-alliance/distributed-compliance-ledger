@@ -30,7 +30,7 @@ func CmdCertifyModel() *cobra.Command {
 		supportedClusters        string
 		compliantPlatformUsed    string
 		compliantPlatformVersion string
-		OSName                   string
+		OSNameAndVersion         string
 		certificationRoute       string
 		productType              string
 		transport                string
@@ -64,7 +64,7 @@ func CmdCertifyModel() *cobra.Command {
 				supportedClusters,
 				compliantPlatformUsed,
 				compliantPlatformVersion,
-				OSName,
+				OSNameAndVersion,
 				certificationRoute,
 				productType,
 				transport,
@@ -94,7 +94,7 @@ func CmdCertifyModel() *cobra.Command {
 	cmd.Flags().StringVar(&familyID, FlagFamilyID, "", TextFamilyID)
 	cmd.Flags().StringVar(&supportedClusters, FlagSupportedClusters, "", TextSupportedClusters)
 	cmd.Flags().StringVar(&compliantPlatformUsed, FlagCompliantPlatformUsed, "", TextCompliantPlatformUsed)
-	cmd.Flags().StringVar(&OSName, FlagOSNameAndVersion, "", TextOSNameAndVersion)
+	cmd.Flags().StringVar(&OSNameAndVersion, FlagOSNameAndVersion, "", TextOSNameAndVersion)
 	cmd.Flags().StringVar(&compliantPlatformVersion, FlagCompliantPlatformVersion, "", TextCompliantPlatformVersion)
 	cmd.Flags().StringVar(&certificationRoute, FlagCertificationRoute, "", TextCertificationRoute)
 	cmd.Flags().StringVar(&productType, FlagProductType, "", TextProductType)
