@@ -202,8 +202,6 @@ indicates a dependency in the Instruction Dependency column.`)
 	_ = cmd.MarkFlagRequired(FlagProductLabel)
 	_ = cmd.MarkFlagRequired(FlagPartNumber)
 	_ = cmd.MarkFlagRequired(FlagCommissioningCustomFlow)
-	_ = cmd.MarkFlagRequired(FlagCommissioningModeInitialStepsHint)
-	_ = cmd.MarkFlagRequired(FlagCommissioningModeSecondaryStepsHint)
 	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 
 	return cmd
