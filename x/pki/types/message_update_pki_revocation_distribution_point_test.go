@@ -63,6 +63,16 @@ func TestMsgUpdatePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			err: validator.ErrRequiredFieldMissing,
 		},
 		{
+			name: "label > 64",
+			msg: MsgUpdatePkiRevocationDistributionPoint{
+				Signer:        sample.AccAddress(),
+				Vid:           testconstants.Vid,
+				SchemaVersion: 0,
+				Label:         tmrand.Str(65),
+			},
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
+		{
 			name: "issuerSubjectKeyID empty",
 			msg: MsgUpdatePkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),

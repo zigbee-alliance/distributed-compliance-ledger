@@ -94,6 +94,17 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			err: validator.ErrRequiredFieldMissing,
 		},
 		{
+			name: "label > 64",
+			msg: MsgAddPkiRevocationDistributionPoint{
+				Signer:        sample.AccAddress(),
+				Vid:           1,
+				IsPAA:         true,
+				SchemaVersion: 0,
+				Label:         tmrand.Str(65),
+			},
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
+		{
 			name: "crl signer certificate empty",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:        sample.AccAddress(),
