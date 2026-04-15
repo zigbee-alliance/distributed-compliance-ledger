@@ -99,15 +99,6 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldLowerBoundViolated,
 		},
 		{
-			name: "DeviceTypeId = 0",
-			msg: func(msg *MsgCreateModel) *MsgCreateModel {
-				msg.DeviceTypeId = 0
-
-				return msg
-			}(validMsgCreateModel()),
-			err: validator.ErrRequiredFieldMissing,
-		},
-		{
 			name: "DeviceTypeId > 65535",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.DeviceTypeId = 65536

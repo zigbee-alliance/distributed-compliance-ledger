@@ -26,7 +26,7 @@ message MsgCreateModel {
   int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
   int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
 
-  int32 deviceTypeId = 4 [(gogoproto.moretags) = "validate:\"required,gte=0,lte=65535\""];
+  int32 deviceTypeId = 4 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
   string productName = 5 [(gogoproto.moretags) = "validate:\"required,max=128\""];
   string productLabel = 6 [(gogoproto.moretags) = "validate:\"required,max=256\""];
   string partNumber = 7 [(gogoproto.moretags) = "validate:\"required,max=32\""];
