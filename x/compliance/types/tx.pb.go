@@ -40,7 +40,7 @@ type MsgCertifyModel struct {
 	CertificationType                  string `protobuf:"bytes,8,opt,name=certificationType,proto3" json:"certificationType,omitempty" validate:"required,max=20"`
 	Reason                             string `protobuf:"bytes,9,opt,name=reason,proto3" json:"reason,omitempty" validate:"max=51200"`
 	CertificationTypeVersion           string `protobuf:"bytes,10,opt,name=certificationTypeVersion,proto3" json:"certificationTypeVersion,omitempty" validate:"max=64"`
-	CDCertificateId                    string `protobuf:"bytes,11,opt,name=cDCertificateId,proto3" json:"cDCertificateId,omitempty" validate:"required,max=19"`
+	CDCertificateId                    string `protobuf:"bytes,11,opt,name=cDCertificateId,proto3" json:"cDCertificateId,omitempty" validate:"required,max=64"`
 	FamilyId                           string `protobuf:"bytes,12,opt,name=familyId,proto3" json:"familyId,omitempty" validate:"max=64"`
 	SupportedClusters                  string `protobuf:"bytes,13,opt,name=supportedClusters,proto3" json:"supportedClusters,omitempty" validate:"max=128"`
 	CompliantPlatformUsed              string `protobuf:"bytes,14,opt,name=compliantPlatformUsed,proto3" json:"compliantPlatformUsed,omitempty" validate:"max=64"`
@@ -440,7 +440,7 @@ type MsgProvisionModel struct {
 	CertificationType                  string `protobuf:"bytes,8,opt,name=certificationType,proto3" json:"certificationType,omitempty" validate:"required,max=20"`
 	Reason                             string `protobuf:"bytes,9,opt,name=reason,proto3" json:"reason,omitempty" validate:"max=51200"`
 	CertificationTypeVersion           string `protobuf:"bytes,10,opt,name=certificationTypeVersion,proto3" json:"certificationTypeVersion,omitempty" validate:"max=64"`
-	CDCertificateId                    string `protobuf:"bytes,11,opt,name=cDCertificateId,proto3" json:"cDCertificateId,omitempty" validate:"required,max=19"`
+	CDCertificateId                    string `protobuf:"bytes,11,opt,name=cDCertificateId,proto3" json:"cDCertificateId,omitempty" validate:"required,max=64"`
 	FamilyId                           string `protobuf:"bytes,12,opt,name=familyId,proto3" json:"familyId,omitempty" validate:"max=64"`
 	SupportedClusters                  string `protobuf:"bytes,13,opt,name=supportedClusters,proto3" json:"supportedClusters,omitempty" validate:"max=128"`
 	CompliantPlatformUsed              string `protobuf:"bytes,14,opt,name=compliantPlatformUsed,proto3" json:"compliantPlatformUsed,omitempty" validate:"max=64"`
@@ -687,7 +687,7 @@ type MsgUpdateComplianceInfo struct {
 	Date                               string `protobuf:"bytes,7,opt,name=date,proto3" json:"date,omitempty"`
 	Reason                             string `protobuf:"bytes,8,opt,name=reason,proto3" json:"reason,omitempty" validate:"omitempty,max=51200"`
 	Owner                              string `protobuf:"bytes,9,opt,name=owner,proto3" json:"owner,omitempty"`
-	CDCertificateId                    string `protobuf:"bytes,10,opt,name=cDCertificateId,proto3" json:"cDCertificateId,omitempty" validate:"omitempty,max=19"`
+	CDCertificateId                    string `protobuf:"bytes,10,opt,name=cDCertificateId,proto3" json:"cDCertificateId,omitempty" validate:"omitempty,max=64"`
 	CertificationRoute                 string `protobuf:"bytes,11,opt,name=certificationRoute,proto3" json:"certificationRoute,omitempty" validate:"omitempty,max=64"`
 	ProductType                        string `protobuf:"bytes,12,opt,name=productType,proto3" json:"productType,omitempty" validate:"omitempty,max=64"`
 	CertificationTypeVersion           string `protobuf:"bytes,13,opt,name=certificationTypeVersion,proto3" json:"certificationTypeVersion,omitempty" validate:"omitempty,max=64"`
