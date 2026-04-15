@@ -239,7 +239,7 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "CDCertificateId > 19",
+			name: "CDCertificateId > 64",
 			msg: MsgCertifyModel{
 				Signer:                sample.AccAddress(),
 				Pid:                   1,
@@ -249,7 +249,7 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 				CertificationType:     testconstants.CertificationType,
 				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 				Reason:                testconstants.Reason,
-				CDCertificateId:       tmrand.Str(20),
+				CDCertificateId:       tmrand.Str(65),
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
@@ -549,7 +549,7 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 			},
 		},
 		{
-			name: "CDCertificateId >= 0 && CDCertificateId <= 19",
+			name: "CDCertificateId >= 0 && CDCertificateId <= 64",
 			msg: MsgCertifyModel{
 				Signer:                sample.AccAddress(),
 				Pid:                   1,

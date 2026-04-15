@@ -29,7 +29,7 @@ message MsgCertifyModel {
   string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=100\""];
   string reason = 9 [(gogoproto.moretags) = "validate:\"max=51200\""];
   string certificationTypeVersion = 10 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string cDCertificateId = 11 [(gogoproto.moretags) = "validate:\"required,max=19\""];
+  string cDCertificateId = 11 [(gogoproto.moretags) = "validate:\"required,max=64\""];
   string familyId = 12 [(gogoproto.moretags) = "validate:\"max=64\""];
   string supportedClusters = 13 [(gogoproto.moretags) = "validate:\"max=128\""];
   string compliantPlatformUsed = 14 [(gogoproto.moretags) = "validate:\"max=64\""];
@@ -73,7 +73,7 @@ message MsgProvisionModel {
   string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=20\""];
   string reason = 9 [(gogoproto.moretags) = "validate:\"max=51200\""];
   string certificationTypeVersion = 10 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string cDCertificateId = 11 [(gogoproto.moretags) = "validate:\"required,max=19\""];
+  string cDCertificateId = 11 [(gogoproto.moretags) = "validate:\"required,max=64\""];
   string familyId = 12 [(gogoproto.moretags) = "validate:\"max=64\""];
   string supportedClusters = 13 [(gogoproto.moretags) = "validate:\"max=128\""];
   string compliantPlatformUsed = 14 [(gogoproto.moretags) = "validate:\"max=64\""];
@@ -100,7 +100,7 @@ message MsgUpdateComplianceInfo {
   string date = 7;
   string reason = 8 [(gogoproto.moretags) = "validate:\"omitempty,max=51200\""];
   string owner = 9 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  string cDCertificateId = 10 [(gogoproto.moretags) = "validate:\"omitempty,max=19\""];
+  string cDCertificateId = 10 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string certificationRoute = 11 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string productType = 12 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string certificationTypeVersion = 13 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
