@@ -29,7 +29,7 @@ from the revocation list.
   - cdCertificateId: `string` - Connectivity Standards Alliance certification's certificate ID applied to the model certification
   - reason `optional(string)` - optional comment describing the reason of the certification
   - cDVersionNumber `optional(uint32)` - optional field describing the CD version number
-  - familyId `optional(string)` - optional field describing the product family to which the certified model belongs. The possible value should start with the prefix `FAM` and be followed by an alphanumeric character (e.g. `FAM123456`).
+  - familyId `optional(string)` - optional field describing the product family to which the certified model belongs. The possible value contain only alphanumeric characters (e.g. `FAM123456`).
   - supportedClusters `optional(string)` - optional field describing the cluster IDs supported by the application. Supported cluster IDs are `0x0003`, `0x0004`, `0x0006`, `0x0062`, `0x0008`, and `0x0406`.
   - compliantPlatformUsed `optional(string)` - optional field describing the Certification ID of the compliant platform used with the product.
   - compliantPlatformVersion `optional(string)` - optional field describing the compliant platform version
@@ -66,7 +66,7 @@ Updates a compliance info by VID, PID, Software Version and Certification Type.
   - cdCertificateId: `optional(string)` - Connectivity Standards Alliance certification's certificate ID applied to the model certification. If not provided, the existing value will be preserved.
   - reason `optional(string)` - optional comment describing the reason of the certification
   - cDVersionNumber `optional(string)` - optional field (a uint32-parsable string) describing the CD version number, must be the same with the associated model version
-  - familyId `optional(string)` - optional field describing the product family to which the certified model belongs. The possible value should start with the prefix `FAM` and be followed by an alphanumeric character (e.g. `FAM123456`).
+  - familyId `optional(string)` - optional field describing the product family to which the certified model belongs. The possible value contain only alphanumeric characters (e.g. `FAM123456`).
   - supportedClusters `optional(string)` - optional field describing the cluster IDs supported by the application. Supported cluster IDs are `0x0003`, `0x0004`, `0x0006`, `0x0062`, `0x0008`, and `0x0406`.
   - compliantPlatformUsed `optional(string)` - optional field describing the Certification ID of the compliant platform used with the product.
   - compliantPlatformVersion `optional(string)` - optional field describing the compliant platform version
@@ -153,7 +153,7 @@ Can not be set if there is already a certification record on the ledger (certifi
   - cdCertificateId: `string` - Connectivity Standards Alliance certification's certificate ID applied to the model certification
   - reason `optional(string)`  - optional comment describing the reason of revocation
   - cDVersionNumber `optional(uint32)` - optional field describing the CD version number
-  - familyId `optional(string)` - optional field describing the product family to which the certified model belongs. The possible value should start with the prefix `FAM` and be followed by an alphanumeric character (e.g. `FAM123456`).
+  - familyId `optional(string)` - optional field describing the product family to which the certified model belongs. The possible value contain only alphanumeric characters (e.g. `FAM123456`).
   - supportedClusters `optional(string)` - optional field describing the cluster IDs supported by the application. Supported cluster IDs are `0x0003`, `0x0004`, `0x0006`, `0x0062`, `0x0008`, and `0x0406`.
   - compliantPlatformUsed `optional(string)` - optional field describing the Certification ID of the compliant platform used with the product.
   - compliantPlatformVersion `optional(string)` - optional field describing the compliant platform 

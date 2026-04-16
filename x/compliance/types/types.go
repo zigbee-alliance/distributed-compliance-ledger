@@ -74,8 +74,12 @@ func IsValidCertificationRoute(certificationRoute string) bool {
 	return false
 }
 
-var familyIDRegex = regexp.MustCompile(`^FAM[a-zA-Z0-9]+$`)
+var familyIDRegex = regexp.MustCompile(`^[a-zA-Z0-9]*$`)
 
 func IsValidFamilyID(id string) bool {
+	if id == "" {
+		return false
+	}
+
 	return familyIDRegex.MatchString(id)
 }

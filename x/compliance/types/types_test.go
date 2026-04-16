@@ -14,31 +14,36 @@ func TestIsValidFamilyID(t *testing.T) {
 	}{
 		{
 			name:    "valid family id with numbers only",
-			id:      "FAM123456",
+			id:      "123456",
 			isValid: true,
 		},
 		{
 			name:    "valid family id with letters only",
-			id:      "FAMabc",
+			id:      "abc",
 			isValid: true,
 		}, {
 			name:    "valid family id with numbers and letter",
-			id:      "FAM123abc",
+			id:      "123abc",
 			isValid: true,
 		},
 		{
 			name:    "invalid family id with special characters",
-			id:      "FAM123abc!",
-			isValid: false,
-		},
-		{
-			name:    "invalid family id without 'FAM' prefix",
-			id:      "123abc",
+			id:      "123abc!",
 			isValid: false,
 		},
 		{
 			name:    "invalid family id with hyphen",
-			id:      "FAM-123",
+			id:      "123-abc",
+			isValid: false,
+		},
+		{
+			name:    "empty family id",
+			id:      "",
+			isValid: false,
+		},
+		{
+			name:    "invalid family id with only spaces",
+			id:      "  ",
 			isValid: false,
 		},
 	}
