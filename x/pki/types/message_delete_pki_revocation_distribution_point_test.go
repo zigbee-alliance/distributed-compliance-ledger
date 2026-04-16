@@ -109,6 +109,16 @@ func TestMsgDeletePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
+		{
+			name: "label > 64",
+			msg: MsgDeletePkiRevocationDistributionPoint{
+				Signer:             sample.AccAddress(),
+				Vid:                testconstants.PAACertWithNumericVidVid,
+				Label:              tmrand.Str(65),
+				IssuerSubjectKeyID: testconstants.SubjectKeyIDWithoutColons,
+			},
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
 	}
 
 	positiveTests := []struct {
