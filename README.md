@@ -233,3 +233,4 @@ the following instructions from [how-to.md](docs/how-to.md) can be used for ever
 - [Cosmos SDK](https://cosmos.network/sdk)
 - [Ledger Nano Support](docs/ledger-nano.md)
 - [Mapping DCL Entities to Matter Specification](docs/mapping_against_matter_spec.md)
+- [Upgrading OS(Ubuntu) on running nodes](docs/upgrading-ubuntu-on-running-nodes.md)
