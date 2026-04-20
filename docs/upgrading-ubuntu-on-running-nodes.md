@@ -47,23 +47,15 @@ This document outlines the procedure for upgrading active Distributed Compliance
     ```bash
     ssh -i "private-key.pem" root@{{ip or hostname}}
     ```
-    4.2 In terminal window, you should see something like this:
 
-    ```bash
-    ...
-    New release '22.04.5 LTS' available.
-    Run 'do-rlease-upgrade' to upgrade to it.
-    ...
-    ```
-
-    4.3 Execute release upgrade command
+    4.2 Execute release upgrade command
     ```bash
     do-release-upgrade 
     ```
-    4.4 During the upgrade, it will ask to open an additional ssh daemon at `1022` port. Enter `y` to continue.
+    4.3 During the upgrade, it will ask to open an additional ssh daemon at `1022` port. Enter `y` to continue.
  
-    4.5 It will also ask to open the port in the firewall. This is a firewall inside the instance. Press `Enter` button to continue
-        Let's open the port in the Lightsail firewall.
+    4.4 It will also ask to open the port in the firewall. This is a firewall inside the instance. Press `Enter` button to continue
+        Let's open the port in the AWS Lightsail firewall.
 
       * From bottom navigation bar of selected instance, select `Networking` tab.
       * Click `Add rule`
@@ -72,22 +64,22 @@ This document outlines the procedure for upgrading active Distributed Compliance
 
     *Note: It is a reserved port to connect to the instance if the default `22` port will fail during the upgrade. Don't forget to remove this open port after upgrade.
 
-    4.6 For `Installing the upgrade can take several hours` prompt, press `y` button to continue.
+    4.5 For `Installing the upgrade can take several hours` prompt, press `y` button to continue.
 
-    4.7 While the upgrade is downloading these packages, connect to `1022` SSH port as a second safe connection.
+    4.6 While the upgrade is downloading these packages, connect to `1022` SSH port as a second safe connection.
     ```bash
     ssh -p 1022 -i "private-key.pem" root@{ip or hostname}
     ```
 
-    4.6 For `There are services installed on your system which need to be restarted when certain libraries such as libpam, libc,.. Restart services during package upgrade without asking` prompt, select `yes` and press Enter.
+    4.7 For `There are services installed on your system which need to be restarted when certain libraries such as libpam, libc,.. Restart services during package upgrade without asking` prompt, select `yes` and press Enter.
 
-    4.7 For `Postix Configuration` prompt, select default `No configuration` and press Enter.
+    4.8 For `Postix Configuration` prompt, select default `No configuration` and press Enter.
 
-    4.8 For `Configuration file 'etc/monit/monitrc` prompt, press `Y`.
+    4.9 For `Configuration file 'etc/monit/monitrc` prompt, press `Y`.
 
-    4.9 For `Remove obsolete packages` prompt, enter `y`.
+    4.10 For `Remove obsolete packages` prompt, enter `y`.
 
-    4.10 For `System upgrade complete. Restart required` prompt, enter `y` to reboot the instance.
+    4.11 For `System upgrade complete. Restart required` prompt, enter `y` to reboot the instance.
 
 5.  **Verification**: After reboot, ensure the instance upgraded  to Ubuntu `22.04` and the `dcld` is running. 
 
@@ -102,4 +94,4 @@ This document outlines the procedure for upgrading active Distributed Compliance
     ```
     
 6. **Upgrade to 24.04**. To upgrade to next `24.04` release, please repeat above steps, you can skip `4.5` step.
-7. **Post upgrade**. Remove opened port in step 4.5 from your Network settings of your instance.
+7. **Post upgrade**. Remove firewall rule added in step 4.4 from your Network settings of your instance.
