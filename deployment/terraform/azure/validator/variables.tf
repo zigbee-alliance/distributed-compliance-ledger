@@ -44,9 +44,3 @@ variable "ssh_username" {
 variable "instance_size" {
   description = "Type of Azure instances"
 }
-
-variable "ubuntu_version" {
-  description = "Ubuntu version to use (20.04 or 24.04)"
-  type        = string
-  default     = "24.04"
-}

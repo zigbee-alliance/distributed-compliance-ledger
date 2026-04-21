@@ -184,8 +184,8 @@ resource "azurerm_linux_virtual_machine" "seed" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-focal"
-    sku       = "20_04-lts-gen2"
+    offer     = "0001-com-ubuntu-server-noble"
+    sku       = "24_04-lts-gen2"
     version   = "latest"
   }
 

@@ -72,8 +72,8 @@ resource "azurerm_linux_virtual_machine" "this_node" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = var.ubuntu_version == "20.04" ? "0001-com-ubuntu-server-focal" : "0001-com-ubuntu-server-noble"
-    sku       = var.ubuntu_version == "20.04" ? "20_04-lts-gen2" : "24_04-lts-gen2"
+    offer     = "0001-com-ubuntu-server-noble"
+    sku       = "24_04-lts-gen2"
     version   = "latest"
   }
 
