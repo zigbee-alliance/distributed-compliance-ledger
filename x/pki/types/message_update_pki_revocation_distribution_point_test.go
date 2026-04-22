@@ -97,7 +97,7 @@ func TestMsgUpdatePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 				SchemaVersion:        0,
 			},
-			err: pkitypes.ErrInvalidDataURLFormat,
+			err: validator.ErrFieldNotValid,
 		},
 		{
 			name: "dataURL without protocol",

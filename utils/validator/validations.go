@@ -15,6 +15,7 @@
 package validator
 
 import (
+	"net/url"
 	"reflect"
 
 	"github.com/go-playground/validator/v10"
@@ -45,4 +46,33 @@ func requiredIfBit0Set(fl validator.FieldLevel) bool {
 	}
 
 	return true
+}
+
+func isValidHttpOrHttpsUrl(fl validator.FieldLevel) bool {
+	return _validURL(fl, "http", "https")
+}
+
+func isValidHttpsUrl(fl validator.FieldLevel) bool {
+	return _validURL(fl, "https")
+}
+
+func _validURL(fl validator.FieldLevel, allowedSchemas ...string) bool {
+	raw := fl.Field().String()
+	// Field is empty or omitempty is set, skip checks
+	if raw == "" {
+		return true
+	}
+
+	u, _ := url.Parse(raw)
+	if u.Host == "" {
+		return false
+	}
+
+	for _, schema := range allowedSchemas {
+		if u.Scheme == schema {
+			return true
+		}
+	}
+
+	return false
 }
