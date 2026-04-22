@@ -178,6 +178,169 @@ func TestHandler_AddModel(t *testing.T) {
 	require.Equal(t, msgCreateModel.CommissioningFallbackUrl, receivedModel.CommissioningFallbackUrl)
 }
 
+func TestHandler_AddModelByVendorAdmin(t *testing.T) {
+	setup := Setup(t)
+	vendorAdmin := testdata.GenerateAccAddress()
+	setup.AddAccount(vendorAdmin, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 0, nil)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(vendorAdmin)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// query model
+	receivedModel, err := queryModel(setup, msgCreateModel.Vid, msgCreateModel.Pid)
+	require.NoError(t, err)
+
+	// check
+	require.Equal(t, msgCreateModel.Vid, receivedModel.Vid)
+	require.Equal(t, msgCreateModel.Pid, receivedModel.Pid)
+}
+
+func TestHandler_UpdateModelByVendorAdmin(t *testing.T) {
+	setup := Setup(t)
+	vendorAdmin := testdata.GenerateAccAddress()
+	setup.AddAccount(vendorAdmin, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 0, nil)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// update model
+	msgUpdateModel := NewMsgUpdateModel(vendorAdmin)
+	msgUpdateModel.Vid = msgCreateModel.Vid
+	msgUpdateModel.Pid = msgCreateModel.Pid
+	msgUpdateModel.ProductName = "Updated Product Name"
+	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
+	require.NoError(t, err)
+
+	// query model
+	receivedModel, err := queryModel(setup, msgCreateModel.Vid, msgCreateModel.Pid)
+	require.NoError(t, err)
+
+	// check
+	require.Equal(t, msgUpdateModel.ProductName, receivedModel.ProductName)
+}
+
+func TestHandler_DeleteModelByVendorAdmin(t *testing.T) {
+	setup := Setup(t)
+	vendorAdmin := testdata.GenerateAccAddress()
+	setup.AddAccount(vendorAdmin, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 0, nil)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// delete model
+	msgDeleteModel := NewMsgDeleteModel(vendorAdmin)
+	msgDeleteModel.Vid = msgCreateModel.Vid
+	msgDeleteModel.Pid = msgCreateModel.Pid
+	_, err = setup.Handler(setup.Ctx, msgDeleteModel)
+	require.NoError(t, err)
+
+	// query model
+	_, err = queryModel(setup, msgCreateModel.Vid, msgCreateModel.Pid)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
+}
+
+func TestHandler_AddModelVersionByVendorAdmin(t *testing.T) {
+	setup := Setup(t)
+	vendorAdmin := testdata.GenerateAccAddress()
+	setup.AddAccount(vendorAdmin, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 0, nil)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add model version
+	msgCreateModelVersion := NewMsgCreateModelVersion(vendorAdmin, 1)
+	msgCreateModelVersion.Vid = msgCreateModel.Vid
+	msgCreateModelVersion.Pid = msgCreateModel.Pid
+	// mock getting compliance record
+	setup.ComplianceKeeper.On("GetComplianceInfo", mock.Anything, msgCreateModelVersion.Vid, msgCreateModelVersion.Pid, msgCreateModelVersion.SoftwareVersion, mock.Anything).Return(false)
+
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
+	require.NoError(t, err)
+
+	// query model version
+	receivedModelVersion, err := queryModelVersion(setup, msgCreateModel.Vid, msgCreateModel.Pid, 1)
+	require.NoError(t, err)
+	require.Equal(t, uint32(1), receivedModelVersion.SoftwareVersion)
+}
+
+func TestHandler_UpdateModelVersionByVendorAdmin(t *testing.T) {
+	setup := Setup(t)
+	vendorAdmin := testdata.GenerateAccAddress()
+	setup.AddAccount(vendorAdmin, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 0, nil)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add model version
+	msgCreateModelVersion := NewMsgCreateModelVersion(setup.Vendor, 1)
+	msgCreateModelVersion.Vid = msgCreateModel.Vid
+	msgCreateModelVersion.Pid = msgCreateModel.Pid
+	// mock getting compliance record
+	setup.ComplianceKeeper.On("GetComplianceInfo", mock.Anything, msgCreateModelVersion.Vid, msgCreateModelVersion.Pid, msgCreateModelVersion.SoftwareVersion, mock.Anything).Return(false)
+
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
+	require.NoError(t, err)
+
+	// update model version
+	msgUpdateModelVersion := NewMsgUpdateModelVersion(vendorAdmin)
+	msgUpdateModelVersion.Vid = msgCreateModel.Vid
+	msgUpdateModelVersion.Pid = msgCreateModel.Pid
+	msgUpdateModelVersion.SoftwareVersion = 1
+	msgUpdateModelVersion.OtaUrl = "https://updated-ota-url.com"
+	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
+	require.NoError(t, err)
+
+	// query model version
+	receivedModelVersion, err := queryModelVersion(setup, msgCreateModel.Vid, msgCreateModel.Pid, 1)
+	require.NoError(t, err)
+	require.Equal(t, "https://updated-ota-url.com", receivedModelVersion.OtaUrl)
+}
+
+func TestHandler_DeleteModelVersionByVendorAdmin(t *testing.T) {
+	setup := Setup(t)
+	vendorAdmin := testdata.GenerateAccAddress()
+	setup.AddAccount(vendorAdmin, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 0, nil)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add model version
+	msgCreateModelVersion := NewMsgCreateModelVersion(setup.Vendor, 1)
+	msgCreateModelVersion.Vid = msgCreateModel.Vid
+	msgCreateModelVersion.Pid = msgCreateModel.Pid
+	// mock getting compliance record
+	setup.ComplianceKeeper.On("GetComplianceInfo", mock.Anything, msgCreateModelVersion.Vid, msgCreateModelVersion.Pid, msgCreateModelVersion.SoftwareVersion, mock.Anything).Return(false)
+
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
+	require.NoError(t, err)
+
+	// delete model version
+	msgDeleteModelVersion := NewMsgDeleteModelVersion(vendorAdmin)
+	msgDeleteModelVersion.Vid = msgCreateModel.Vid
+	msgDeleteModelVersion.Pid = msgCreateModel.Pid
+	msgDeleteModelVersion.SoftwareVersion = 1
+	_, err = setup.Handler(setup.Ctx, msgDeleteModelVersion)
+	require.NoError(t, err)
+
+	// query model version
+	_, err = queryModelVersion(setup, msgCreateModel.Vid, msgCreateModel.Pid, 1)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
+}
+
 func TestHandler_AddModel_CheckCommissioningModeInitialStepsHintHandling(t *testing.T) {
 	cases := []struct {
 		name                                      string

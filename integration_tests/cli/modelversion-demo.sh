@@ -179,3 +179,50 @@ echo "Query deleted Device Model Version with VID: $vid PID: $pid SV: $sv"
 result=$(dcld query model model-version --vid=$vid --pid=$pid --softwareVersion=$sv)
 echo "$result"
 check_response "$result" "Not Found"
+
+test_divider
+
+echo "VendorAdmin can add/update/delete model versions for any vendor"
+create_new_account vendor_admin_account "VendorAdmin"
+vid3=$RANDOM
+pid3=$RANDOM
+sv3=$RANDOM
+
+echo "Add Model with VID: $vid3 PID: $pid3"
+result=$(echo "test1234" | dcld tx model add-model --vid=$vid3 --pid=$pid3 --deviceTypeID=1 --productName=TestProduct --productLabel="Test Product" --partNumber=1 --commissioningCustomFlow=0 --enhancedSetupFlowOptions=0 --from=$vendor_admin_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+echo "VendorAdmin adds a model version for VID: $vid3 PID: $pid3 SV: $sv3"
+result=$(echo 'test1234' | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid3 --pid=$pid3 --softwareVersion=$sv3 --softwareVersionString=1 --from=$vendor_admin_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+echo "$result"
+
+echo "Query Device Model Version with VID: $vid3 PID: $pid3 SV: $sv3"
+result=$(dcld query model model-version --vid=$vid3 --pid=$pid3 --softwareVersion=$sv3)
+check_response "$result" "\"vid\": $vid3"
+check_response "$result" "\"softwareVersion\": $sv3"
+echo "$result"
+
+echo "VendorAdmin updates a model version for VID: $vid3 PID: $pid3 SV: $sv3"
+result=$(echo 'test1234' | dcld tx model update-model-version --vid=$vid3 --pid=$pid3 --softwareVersion=$sv3 --softwareVersionValid=false --from=$vendor_admin_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+echo "$result"
+
+echo "Query updated Device Model Version with VID: $vid3 PID: $pid3 SV: $sv3"
+result=$(dcld query model model-version --vid=$vid3 --pid=$pid3 --softwareVersion=$sv3)
+check_response "$result" "\"softwareVersionValid\": false"
+echo "$result"
+
+echo "VendorAdmin deletes a model version for VID: $vid3 PID: $pid3 SV: $sv3"
+result=$(echo 'test1234' | dcld tx model delete-model-version --vid=$vid3 --pid=$pid3 --softwareVersion=$sv3 --from=$vendor_admin_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+echo "$result"
+
+echo "Query deleted Device Model Version"
+result=$(dcld query model model-version --vid=$vid3 --pid=$pid3 --softwareVersion=$sv3)
+check_response "$result" "Not Found"
+echo "$result"
