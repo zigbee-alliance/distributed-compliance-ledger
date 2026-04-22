@@ -48,11 +48,11 @@ func requiredIfBit0Set(fl validator.FieldLevel) bool {
 	return true
 }
 
-func isValidHttpOrHttpsUrl(fl validator.FieldLevel) bool {
+func isValidHttpOrHttpsUrl(fl validator.FieldLevel) bool { //nolint:stylecheck
 	return _validURL(fl, "http", "https")
 }
 
-func isValidHttpsUrl(fl validator.FieldLevel) bool {
+func isValidHttpsUrl(fl validator.FieldLevel) bool { //nolint:stylecheck
 	return _validURL(fl, "https")
 }
 
