@@ -14,7 +14,7 @@ variable "region_config" {
 variable "os_family" {
   description = "Node base image family"
   type        = string
-  default     = "ubuntu-2404-lts"
+  default     = "ubuntu-2404-lts-amd64"
 }
 
 variable "labels" {
