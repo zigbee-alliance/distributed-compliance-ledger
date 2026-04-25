@@ -32,7 +32,7 @@ test_divider
 
 # Create a new model with minimum fields
 echo "Add Model with minimum required fields with VID: $vid_1 PID: $pid_1"
-result=$(echo "test1234" | dcld tx model add-model --vid=$vid_1 --pid=$pid_1 --deviceTypeID=1 --productName=TestProduct --productLabel="Test Product" --partNumber=1 --enhancedSetupFlowOptions=0 --from=$vendor_account_1 --yes)
+result=$(echo "test1234" | dcld tx model add-model --vid=$vid_1 --pid=$pid_1 --deviceTypeID=1 --productName=TestProduct --productLabel="Test Product" --partNumber=1 --commissioningCustomFlow=0 --enhancedSetupFlowOptions=0 --from=$vendor_account_1 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
