@@ -483,7 +483,7 @@ max_applicable_software_version_for_1_4_3=3000
 certification_type_for_1_4_3="matter"
 certification_date_for_1_4_3="2022-01-01T00:00:00Z"
 provisional_date_for_1_4_3="2012-12-12T00:00:00Z"
-cd_certificate_id_for_1_4_3="18DEXC"
+cd_certificate_id_for_1_4_3="12345678910abcdefgh"
 
 root_cert_with_vid_subject_for_1_4_3="MIGYMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgEMBEZGRjE="
 root_cert_with_vid_subject_key_id_for_1_4_3="CE:A8:92:66:EA:E0:80:BD:2B:B5:68:E4:0B:07:C4:FA:2C:34:6D:31"

@@ -298,7 +298,7 @@ max_applicable_software_version_for_1_2=2000
 certification_type_for_1_2="matter"
 certification_date_for_1_2="2021-01-01T00:00:00Z"
 provisional_date_for_1_2="2010-12-12T00:00:00Z"
-cd_certificate_id_for_1_2="15DEXC"
+cd_certificate_id_for_1_2="12345678910abcdefgh"
 
 root_cert_path_for_1_2="integration_tests/constants/google_root_cert_gsr4"
 root_cert_subject_for_1_2="MFAxJDAiBgNVBAsTG0dsb2JhbFNpZ24gRUNDIFJvb3QgQ0EgLSBSNDETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UEAxMKR2xvYmFsU2lnbg=="

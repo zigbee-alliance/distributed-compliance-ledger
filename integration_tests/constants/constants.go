@@ -118,7 +118,7 @@ var (
 	Reason                             = "Some Reason"
 	RevocationReason                   = "Some Reason"
 	CertificationType                  = "zigbee"
-	CDCertificateID                    = "15DEXF"
+	CDCertificateID                    = "12345678910abcdefgh"
 	FamilyID                           = "FAM123456abc"
 	SupportedClusters                  = "Some Supported Clusters"
 	CompliantPlatformUsed              = "Some Compliance Platform Used"

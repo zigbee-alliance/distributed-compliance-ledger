@@ -29,7 +29,7 @@ message MsgCertifyModel {
   string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=20\""];
   string reason = 9 [(gogoproto.moretags) = "validate:\"max=51200\""];
   string certificationTypeVersion = 10 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string cDCertificateId = 11 [(gogoproto.moretags) = "validate:\"required,max=19\""];
+  string cDCertificateId = 11 [(gogoproto.moretags) = "validate:\"required,min=19,max=19\""];
   string familyId = 12 [(gogoproto.moretags) = "validate:\"max=64\""];
   string supportedClusters = 13 [(gogoproto.moretags) = "validate:\"max=128\""];
   string compliantPlatformUsed = 14 [(gogoproto.moretags) = "validate:\"max=64\""];

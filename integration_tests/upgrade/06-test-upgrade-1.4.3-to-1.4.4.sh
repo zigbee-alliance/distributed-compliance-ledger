@@ -707,7 +707,7 @@ max_applicable_software_version_for_1_4_4=4000
 certification_type_for_1_4_4="matter"
 certification_date_for_1_4_4="2023-01-01T00:00:00Z"
 provisional_date_for_1_4_4="2014-12-12T00:00:00Z"
-cd_certificate_id_for_1_4_4="20DEXC"
+cd_certificate_id_for_1_4_4="12345678910abcdefgh"
 
 da_root_cert_1_path_for_1_4_4="integration_tests/constants/upgrade_1_4_4_da_root_cert"
 da_root_cert_1_subject_for_1_4_4="MEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQ="

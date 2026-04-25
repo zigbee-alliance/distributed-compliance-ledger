@@ -39,7 +39,7 @@ certification_type_zb="zigbee"
 certification_type_matter="matter"
 provision_date="2020-02-02T02:20:20Z"
 provision_reason="some reason"
-cd_certificate_id="123"
+cd_certificate_id="12345678910abcdefgh"
 schema_version_0=0
 
 test_divider

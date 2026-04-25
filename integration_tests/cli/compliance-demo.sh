@@ -42,7 +42,7 @@ svs=$RANDOM
 certification_date="2020-01-01T00:00:01Z"
 zigbee_certification_type="zigbee"
 matter_certification_type="matter"
-cd_certificate_id="123"
+cd_certificate_id="12345678910abcdefgh"
 cd_version_number=1
 schema_version_0=0
 
@@ -738,7 +738,7 @@ test_divider
 upd_cd_version_number="1"
 upd_certification_date="2022-01-01T00:00:01Z"
 upd_reason="brand_new_reason"
-upd_cd_certificate_id="brand_new_ID"
+upd_cd_certificate_id="brand_new_ID1234567"
 upd_certification_route="similarity"
 upd_program_type="brand_new_program_type"
 upd_program_type_version="brand_new_program_type_version"
