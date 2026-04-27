@@ -1,8 +1,8 @@
 # Node OS Upgrade: Upgrading DCL cloud instance from Ubuntu 20.04 to Ubuntu 24.04
 
-This document outlines the procedure for upgrading active Distributed Compliance Ledger (DCL) node to Ubuntu 24.04.
+This document outlines the procedure for upgrading the active Distributed Compliance Ledger (DCL) node to Ubuntu 24.04.
 
-1.  **Take a snapshot**: Take a snapshot from running instance. Follow-up guidelines of your cloud provider to take a snapshot.
+1.  **Take a snapshot**: Take a snapshot from a running instance. Follow-up guidelines of your cloud provider to take a snapshot.
 
     Bellow are the steps for AWS Lightsail.
 
@@ -14,7 +14,7 @@ This document outlines the procedure for upgrading active Distributed Compliance
 
     1.4 Wait until Snapshotting finishes.
 
-2. **Connect to running cloud instance**. Connect using SSH. Below are the steps for AWS Lightsail.
+2. **Connect using SSH**. Below are the steps for AWS Lightsail Browser Console. You can also use an SSH client through Terminal on Linux/macOS or PuTTY on Windows.
 
    2.1 Open `AWS Lightsail` console and select running instance.
 
@@ -62,7 +62,7 @@ This document outlines the procedure for upgrading active Distributed Compliance
       * Default rule is `Custom` and protocol is `TCP` and enter `1022` port
       * Click on `Create`
 
-    *Note: It is a reserved port to connect to the instance if the default `22` port will fail during the upgrade. Don't forget to remove this open port after upgrade.
+    *Note: It is a reserved port to connect to the instance if the default `22` port will fail during the upgrade. Remember to remove this open port after upgrade.
 
     4.5 For `Installing the upgrade can take several hours` prompt, press `y` button to continue.
 
@@ -93,5 +93,5 @@ This document outlines the procedure for upgrading active Distributed Compliance
     dcld status
     ```
     
-6. **Upgrade to 24.04**. To upgrade to next `24.04` release, please repeat above steps, you can skip `4.5` step.
-7. **Post upgrade**. Remove firewall rule added in step 4.4 from your Network settings of your instance.
+   6. **Upgrade to 24.04**. To upgrade to next `24.04` release, please repeat steps from 2 to 5, you can skip `1`(Taking snapshot) and `4.4`(Opening `1022` port on instance) steps.
+7. **Post upgrade**. Remove the firewall rule added in step 4.4 from your Network settings of your instance.

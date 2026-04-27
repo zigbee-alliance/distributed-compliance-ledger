@@ -7,7 +7,7 @@
 If you are interested in how to build and run the project locally, please look at [README-DEV](README-DEV.md)
 
 Please note, that the only officially supported platform now is Linux.
-It's recommended to develop and deploy the App on Ubuntu 20.04 or Ubuntu 24.04.
+It's recommended to develop and deploy the App on Ubuntu 24.04. It als works on other versions of Ubuntu(20.04,22.04)
 
 
 ## Overview
