@@ -178,6 +178,79 @@ func TestHandler_AddModel(t *testing.T) {
 	require.Equal(t, msgCreateModel.CommissioningFallbackUrl, receivedModel.CommissioningFallbackUrl)
 }
 
+func TestHandler_CreateModelByVendorAdminUpdateDeleteByVendor(t *testing.T) {
+	setup := Setup(t)
+	vendorAdmin := testdata.GenerateAccAddress()
+	setup.AddAccount(vendorAdmin, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 0, nil)
+
+	// add a new model by VendorAdmin
+	msgCreateModel := NewMsgCreateModel(vendorAdmin)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// update model by Vendor
+	msgUpdateModel := NewMsgUpdateModel(setup.Vendor)
+	msgUpdateModel.Vid = msgCreateModel.Vid
+	msgUpdateModel.Pid = msgCreateModel.Pid
+	msgUpdateModel.ProductName = "Updated by Vendor"
+	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
+	require.NoError(t, err)
+
+	// query model
+	receivedModel, err := queryModel(setup, msgCreateModel.Vid, msgCreateModel.Pid)
+	require.NoError(t, err)
+	require.Equal(t, msgUpdateModel.ProductName, receivedModel.ProductName)
+
+	// delete model by Vendor
+	msgDeleteModel := NewMsgDeleteModel(setup.Vendor)
+	msgDeleteModel.Vid = msgCreateModel.Vid
+	msgDeleteModel.Pid = msgCreateModel.Pid
+	_, err = setup.Handler(setup.Ctx, msgDeleteModel)
+	require.NoError(t, err)
+
+	// query model
+	_, err = queryModel(setup, msgCreateModel.Vid, msgCreateModel.Pid)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
+}
+
+func TestHandler_CreateModelByVendorUpdateDeleteByVendorAdmin(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model by Vendor
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// update model by VendorAdmin
+	vendorAdmin := testdata.GenerateAccAddress()
+	setup.AddAccount(vendorAdmin, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 0, nil)
+
+	msgUpdateModel := NewMsgUpdateModel(vendorAdmin)
+	msgUpdateModel.Vid = msgCreateModel.Vid
+	msgUpdateModel.Pid = msgCreateModel.Pid
+	msgUpdateModel.ProductName = "Updated by VendorAdmin"
+	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
+	require.NoError(t, err)
+
+	// query model
+	receivedModel, err := queryModel(setup, msgCreateModel.Vid, msgCreateModel.Pid)
+	require.NoError(t, err)
+	require.Equal(t, msgUpdateModel.ProductName, receivedModel.ProductName)
+
+	// delete model by VendorAdmin
+	msgDeleteModel := NewMsgDeleteModel(vendorAdmin)
+	msgDeleteModel.Vid = msgCreateModel.Vid
+	msgDeleteModel.Pid = msgCreateModel.Pid
+	_, err = setup.Handler(setup.Ctx, msgDeleteModel)
+	require.NoError(t, err)
+
+	// query model
+	_, err = queryModel(setup, msgCreateModel.Vid, msgCreateModel.Pid)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
+}
+
 func TestHandler_AddModelByVendorAdmin(t *testing.T) {
 	setup := Setup(t)
 	vendorAdmin := testdata.GenerateAccAddress()
@@ -328,6 +401,99 @@ func TestHandler_DeleteModelVersionByVendorAdmin(t *testing.T) {
 	require.NoError(t, err)
 
 	// delete model version
+	msgDeleteModelVersion := NewMsgDeleteModelVersion(vendorAdmin)
+	msgDeleteModelVersion.Vid = msgCreateModel.Vid
+	msgDeleteModelVersion.Pid = msgCreateModel.Pid
+	msgDeleteModelVersion.SoftwareVersion = 1
+	_, err = setup.Handler(setup.Ctx, msgDeleteModelVersion)
+	require.NoError(t, err)
+
+	// query model version
+	_, err = queryModelVersion(setup, msgCreateModel.Vid, msgCreateModel.Pid, 1)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
+}
+
+func TestHandler_CreateModelVersionByVendorAdminUpdateDeleteByVendor(t *testing.T) {
+	setup := Setup(t)
+	vendorAdmin := testdata.GenerateAccAddress()
+	setup.AddAccount(vendorAdmin, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 0, nil)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add model version by VendorAdmin
+	msgCreateModelVersion := NewMsgCreateModelVersion(vendorAdmin, 1)
+	msgCreateModelVersion.Vid = msgCreateModel.Vid
+	msgCreateModelVersion.Pid = msgCreateModel.Pid
+	setup.ComplianceKeeper.On("GetComplianceInfo", mock.Anything, msgCreateModelVersion.Vid, msgCreateModelVersion.Pid, msgCreateModelVersion.SoftwareVersion, mock.Anything).Return(false)
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
+	require.NoError(t, err)
+
+	// update model version by Vendor
+	msgUpdateModelVersion := NewMsgUpdateModelVersion(setup.Vendor)
+	msgUpdateModelVersion.Vid = msgCreateModel.Vid
+	msgUpdateModelVersion.Pid = msgCreateModel.Pid
+	msgUpdateModelVersion.SoftwareVersion = 1
+	msgUpdateModelVersion.OtaUrl = "https://vendor-updated-ota-url.com"
+	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
+	require.NoError(t, err)
+
+	// query model version
+	receivedModelVersion, err := queryModelVersion(setup, msgCreateModel.Vid, msgCreateModel.Pid, 1)
+	require.NoError(t, err)
+	require.Equal(t, "https://vendor-updated-ota-url.com", receivedModelVersion.OtaUrl)
+
+	// delete model version by Vendor
+	msgDeleteModelVersion := NewMsgDeleteModelVersion(setup.Vendor)
+	msgDeleteModelVersion.Vid = msgCreateModel.Vid
+	msgDeleteModelVersion.Pid = msgCreateModel.Pid
+	msgDeleteModelVersion.SoftwareVersion = 1
+	_, err = setup.Handler(setup.Ctx, msgDeleteModelVersion)
+	require.NoError(t, err)
+
+	// query model version
+	_, err = queryModelVersion(setup, msgCreateModel.Vid, msgCreateModel.Pid, 1)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
+}
+
+func TestHandler_CreateModelVersionByVendorUpdateDeleteByVendorAdmin(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add model version by Vendor
+	msgCreateModelVersion := NewMsgCreateModelVersion(setup.Vendor, 1)
+	msgCreateModelVersion.Vid = msgCreateModel.Vid
+	msgCreateModelVersion.Pid = msgCreateModel.Pid
+	setup.ComplianceKeeper.On("GetComplianceInfo", mock.Anything, msgCreateModelVersion.Vid, msgCreateModelVersion.Pid, msgCreateModelVersion.SoftwareVersion, mock.Anything).Return(false)
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
+	require.NoError(t, err)
+
+	// update model version by VendorAdmin
+	vendorAdmin := testdata.GenerateAccAddress()
+	setup.AddAccount(vendorAdmin, []dclauthtypes.AccountRole{dclauthtypes.VendorAdmin}, 0, nil)
+
+	msgUpdateModelVersion := NewMsgUpdateModelVersion(vendorAdmin)
+	msgUpdateModelVersion.Vid = msgCreateModel.Vid
+	msgUpdateModelVersion.Pid = msgCreateModel.Pid
+	msgUpdateModelVersion.SoftwareVersion = 1
+	msgUpdateModelVersion.OtaUrl = "https://vendoradmin-updated-ota-url.com"
+	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
+	require.NoError(t, err)
+
+	// query model version
+	receivedModelVersion, err := queryModelVersion(setup, msgCreateModel.Vid, msgCreateModel.Pid, 1)
+	require.NoError(t, err)
+	require.Equal(t, "https://vendoradmin-updated-ota-url.com", receivedModelVersion.OtaUrl)
+
+	// delete model version by VendorAdmin
 	msgDeleteModelVersion := NewMsgDeleteModelVersion(vendorAdmin)
 	msgDeleteModelVersion.Vid = msgCreateModel.Vid
 	msgDeleteModelVersion.Pid = msgCreateModel.Pid
