@@ -96,6 +96,7 @@ var (
 	DataURL                                           = "https://url.data.dclmodel"
 	DataURL2                                          = "https://url.data.dclmodel2"
 	URLWithoutProtocol                                = "url.dclmodel"
+	URLStartsWithW3                                   = "www.example.org/path/to/file.txt"
 	LsfRevision                                int32  = 1
 	EnhancedSetupFlowOptions                   int32  = 1
 	EmptyLsfRevision                           int32

@@ -196,7 +196,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 				IsPAA:                true,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
-				DataURL:              "www.example.org/path/to/file.txt",
+				DataURL:              testconstants.URLStartsWithW3,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 				RevocationType:       1,
 				SchemaVersion:        0,
