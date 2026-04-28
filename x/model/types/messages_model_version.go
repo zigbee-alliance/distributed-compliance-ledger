@@ -86,19 +86,19 @@ func (msg *MsgCreateModelVersion) ValidateBasic() error {
 		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	_, err = base64.StdEncoding.DecodeString(msg.OtaChecksum)
-	if err != nil {
-		return NewErrOtaChecksumIsNotBase64Encoded(msg.OtaChecksum)
-	}
-
-	if msg.OtaUrl != "" {
-		err = msg.validateOtaChecksumType()
-		if err != nil {
-			return err
-		}
-	}
-
 	err = validator.Validate(msg)
+	if err != nil {
+		return err
+	}
+
+	_otaFields := otaFields{
+		Url:          msg.OtaUrl,
+		FileSize:     msg.OtaFileSize,
+		Checksum:     msg.OtaChecksum,
+		ChecksumType: msg.OtaChecksumType,
+	}
+
+	err = validateOtaFields(_otaFields)
 	if err != nil {
 		return err
 	}
@@ -167,12 +167,19 @@ func (msg *MsgUpdateModelVersion) ValidateBasic() error {
 		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	_, err = base64.StdEncoding.DecodeString(msg.OtaChecksum)
+	err = validator.Validate(msg)
 	if err != nil {
-		return NewErrOtaChecksumIsNotBase64Encoded(msg.OtaChecksum)
+		return err
 	}
 
-	err = validator.Validate(msg)
+	_otaFields := otaFields{
+		Url:          msg.OtaUrl,
+		FileSize:     msg.OtaFileSize,
+		Checksum:     msg.OtaChecksum,
+		ChecksumType: msg.OtaChecksumType,
+	}
+
+	err = validateOtaFields(_otaFields)
 	if err != nil {
 		return err
 	}
@@ -228,14 +235,43 @@ func (msg *MsgDeleteModelVersion) ValidateBasic() error {
 	return nil
 }
 
+type otaFields struct {
+	Url          string
+	FileSize     uint64
+	Checksum     string
+	ChecksumType int32
+}
+
+func validateOtaFields(ota otaFields) error {
+	if ota.Url != "" {
+		err := validateOtaChecksumType(ota.ChecksumType)
+		if err != nil {
+			return err
+		}
+
+		_, err = base64.StdEncoding.DecodeString(ota.Checksum)
+		if err != nil {
+			return NewErrOtaChecksumIsNotBase64Encoded(ota.Checksum)
+		}
+
+		return nil
+	}
+
+	if ota.FileSize != 0 || ota.Checksum != "" || ota.ChecksumType != 0 {
+		return NewErrorOtaUrlNotProvidedButOtherOtaFieldsProvided()
+	}
+
+	return nil
+}
+
 var allowedOtaChecksumTypes = [6]uint32{1, 7, 8, 10, 11, 12}
 
-func (msg *MsgCreateModelVersion) validateOtaChecksumType() error {
+func validateOtaChecksumType(checksumType int32) error {
 	for _, allowedOtaChecksumType := range allowedOtaChecksumTypes {
-		if allowedOtaChecksumType == uint32(msg.OtaChecksumType) {
+		if allowedOtaChecksumType == uint32(checksumType) {
 			return nil
 		}
 	}
 
-	return NewErrUnsupportedOtaChecksumType(msg.OtaChecksumType)
+	return NewErrUnsupportedOtaChecksumType(checksumType)
 }

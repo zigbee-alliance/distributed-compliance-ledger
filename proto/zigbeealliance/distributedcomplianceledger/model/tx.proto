@@ -107,7 +107,7 @@ message MsgCreateModelVersion {
   bool softwareVersionValid = 8;
   string otaUrl = 9 [(gogoproto.moretags) = "validate:\"omitempty,url,startswith=https:,max=256\""];
   uint64 otaFileSize = 10 [(gogoproto.moretags) = "validate:\"required_with=OtaUrl\""];
-  string otaChecksum = 11 [(gogoproto.moretags) = "validate:\"required_with=OtaUrl,max=64\""];
+  string otaChecksum = 11 [(gogoproto.moretags) = "validate:\"required_with=OtaUrl,max=88\""];
   int32 otaChecksumType = 12 [(gogoproto.moretags) = "validate:\"required_with=OtaUrl,gte=0,lte=65535\""];
   uint32 minApplicableSoftwareVersion = 13;
   uint32 maxApplicableSoftwareVersion = 14 [(gogoproto.moretags) = "validate:\"gtecsfield=MinApplicableSoftwareVersion\""];
@@ -128,8 +128,9 @@ message MsgUpdateModelVersion {
   uint32 maxApplicableSoftwareVersion = 8 [(gogoproto.moretags) = "validate:\"omitempty,gtecsfield=MinApplicableSoftwareVersion\""];
   string releaseNotesUrl = 9 [(gogoproto.moretags) = "validate:\"omitempty,url,startswith=https:,max=256\""];
   uint64 otaFileSize = 10;
-  string otaChecksum = 11 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string otaChecksum = 11 [(gogoproto.moretags) = "validate:\"max=88\""];
   uint32 schemaVersion = 12 [(gogoproto.moretags) = "validate:\"eq=0\""];
+  int32 otaChecksumType = 13 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
 }
 message MsgUpdateModelVersionResponse {}
 

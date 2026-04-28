@@ -16,7 +16,7 @@ var (
 	ErrFirmwareInformationInvalid                      = errors.Register(ModuleName, 512, "firmware digests invalid")
 	ErrCDVersionNumberInvalid                          = errors.Register(ModuleName, 513, "CD version number invalid")
 	ErrOtaURLInvalid                                   = errors.Register(ModuleName, 514, "OTA URL invalid")
-	ErrOtaMissingInformation                           = errors.Register(ModuleName, 515, "OTA missing information")
+	ErrOtaFieldsMissProvided                           = errors.Register(ModuleName, 515, "OTA fields provided incorrectly")
 	ErrReleaseNotesURLInvalid                          = errors.Register(ModuleName, 516, "release notes URL invalid")
 	ErrModelVersionDoesNotExist                        = errors.Register(ModuleName, 517, "model version does not exist")
 	ErrNoModelVersionsExist                            = errors.Register(ModuleName, 518, "no model versions exist")
@@ -77,7 +77,7 @@ func NewErrOtaURLInvalid(otaURL interface{}) error {
 }
 
 func NewErrOtaMissingInformation() error {
-	return errors.Wrap(ErrOtaMissingInformation,
+	return errors.Wrap(ErrOtaFieldsMissProvided,
 		"OtaFileSize, OtaChecksum and OtaChecksumType are required if OtaUrl is provided")
 }
 
@@ -176,5 +176,12 @@ func NewErrComplianceInfoCDVersionNumberDoesNotMatch(vid interface{}, pid interf
 		"Compliance Info with vid=%v, pid=%v, softwareVersion=%v present on the ledger does not have"+
 			" matching CDVersionNumber=%v",
 		vid, pid, softwareVersion, cDVersionNumber,
+	)
+}
+
+func NewErrorOtaUrlNotProvidedButOtherOtaFieldsProvided() error {
+	return errors.Wrapf(
+		ErrOtaFieldsMissProvided,
+		"OtaUrl is not provided. OtaFileSize, OtaChecksum, and OtaChecksumType fields must not be provided",
 	)
 }
