@@ -22,7 +22,7 @@
 FROM ubuntu:20.04 AS builder
 
 ARG GO_VERSION
-ENV GO_VERSION=1.20.14
+ENV GO_VERSION=1.20
 
 RUN apt-get update --fix-missing
 RUN apt-get install -y wget git gcc
