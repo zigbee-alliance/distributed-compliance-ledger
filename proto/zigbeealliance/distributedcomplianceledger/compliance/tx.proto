@@ -100,7 +100,7 @@ message MsgUpdateComplianceInfo {
   string date = 7;
   string reason = 8 [(gogoproto.moretags) = "validate:\"omitempty,max=102400\""];
   string owner = 9 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  string cDCertificateId = 10 [(gogoproto.moretags) = "validate:\"omitempty,min=19,max=19\""];
+  string cDCertificateId = 10 [(gogoproto.moretags) = "validate:\"omitempty,max=19\""];
   string certificationRoute = 11 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string programType = 12 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string programTypeVersion = 13 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
