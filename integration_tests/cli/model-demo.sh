@@ -267,3 +267,44 @@ echo "Query model versions for deleted model"
 result=$(dcld query model model-version --vid=$vid_with_pids --pid=$pid --softwareVersion=$sv)
 check_response "$result" "Not Found"
 echo "$result"
+
+test_divider
+
+echo "VendorAdmin can add/update/delete models for any vendor"
+create_new_account vendor_admin_account "VendorAdmin"
+vid3=$RANDOM
+pid3=$RANDOM
+
+echo "VendorAdmin adds a model for VID: $vid3 PID: $pid3"
+result=$(echo "test1234" | dcld tx model add-model --vid=$vid3 --pid=$pid3 --deviceTypeID=1 --productName=TestProduct --productLabel="VendorAdmin Product" --partNumber=1 --commissioningCustomFlow=0 --enhancedSetupFlowOptions=0 --from=$vendor_admin_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+echo "$result"
+
+echo "Get Model with VID: $vid3 PID: $pid3"
+result=$(dcld query model get-model --vid=$vid3 --pid=$pid3)
+check_response "$result" "\"vid\": $vid3"
+check_response "$result" "\"productLabel\": \"VendorAdmin Product\""
+echo "$result"
+
+echo "VendorAdmin updates a model for VID: $vid3 PID: $pid3"
+result=$(echo "test1234" | dcld tx model update-model --vid=$vid3 --pid=$pid3 --productLabel="Updated by VendorAdmin" --from=$vendor_admin_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+echo "$result"
+
+echo "Get Model with VID: $vid3 PID: $pid3"
+result=$(dcld query model get-model --vid=$vid3 --pid=$pid3)
+check_response "$result" "\"productLabel\": \"Updated by VendorAdmin\""
+echo "$result"
+
+echo "VendorAdmin deletes a model for VID: $vid3 PID: $pid3"
+result=$(dcld tx model delete-model --vid=$vid3 --pid=$pid3 --from=$vendor_admin_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+echo "$result"
+
+echo "Query deleted model"
+result=$(dcld query model get-model --vid=$vid3 --pid=$pid3)
+check_response "$result" "Not Found"
+echo "$result"
