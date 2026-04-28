@@ -186,7 +186,7 @@ func TestMsgRevokeModel_ValidateBasic(t *testing.T) {
 				Vid:                   1,
 				SoftwareVersionString: testconstants.SoftwareVersionString,
 				RevocationDate:        testconstants.CertificationDate,
-				CertificationType:     "invalid certification type",
+				CertificationType:     "invalid type",
 				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 				Reason:                testconstants.Reason,
 			},

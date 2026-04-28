@@ -344,7 +344,7 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 				Reason:                testconstants.Reason,
 				CDCertificateId:       testconstants.CDCertificateID,
-				OSNameAndVersion:      tmrand.Str(65),
+				OSVersion:             tmrand.Str(65),
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
