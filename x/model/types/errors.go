@@ -22,6 +22,7 @@ var (
 	ErrNoModelVersionsExist                            = errors.Register(ModuleName, 518, "no model versions exist")
 	ErrModelVersionAlreadyExists                       = errors.Register(ModuleName, 519, "model version already exists")
 	ErrOtaURLCannotBeSet                               = errors.Register(ModuleName, 520, "OTA URL cannot be set")
+	ErrOtaFieldsCannotBeUpdated                        = errors.Register(ModuleName, 531, "OTA fields cannot be updated")
 	ErrMaxSVLessThanMinSV                              = errors.Register(ModuleName, 521, "max software version less than min software version")
 	ErrLsfRevisionIsNotValid                           = errors.Register(ModuleName, 522, "LsfRevision should monotonically increase by 1")
 	ErrLsfRevisionIsNotAllowed                         = errors.Register(ModuleName, 523, "LsfRevision is not allowed if LsfURL is not present")
@@ -179,7 +180,14 @@ func NewErrComplianceInfoCDVersionNumberDoesNotMatch(vid interface{}, pid interf
 	)
 }
 
-func NewErrorOtaUrlNotProvidedButOtherOtaFieldsProvided() error {
+func NewErrOtaFieldsCannotBeUpdated() error {
+	return errors.Wrapf(
+		ErrOtaFieldsCannotBeUpdated,
+		"OtaUrl already set. OtaFileSize, OtaChecksum, and OtaChecksumType fields cannot be updated",
+	)
+}
+
+func NewErrorOtaURLNotProvidedButOtherOtaFieldsProvided() error {
 	return errors.Wrapf(
 		ErrOtaFieldsMissProvided,
 		"OtaUrl is not provided. OtaFileSize, OtaChecksum, and OtaChecksumType fields must not be provided",

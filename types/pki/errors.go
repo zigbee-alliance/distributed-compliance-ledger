@@ -436,7 +436,7 @@ func NewErrInvalidPidFormat(e interface{}) error {
 }
 
 func NewErrInvalidDataURLSchema() error {
-	return errors.Wrapf(ErrInvalidDataURLFormat, "Data Url must start with https:// or http://")
+	return errors.Wrapf(ErrInvalidDataURLFormat, "Data URL must start with https:// or http://")
 }
 
 func NewErrCertificateVidNotEqualMsgVid(e interface{}) error {

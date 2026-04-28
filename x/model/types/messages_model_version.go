@@ -92,13 +92,13 @@ func (msg *MsgCreateModelVersion) ValidateBasic() error {
 	}
 
 	_otaFields := otaFields{
-		Url:          msg.OtaUrl,
+		URL:          msg.OtaUrl,
 		FileSize:     msg.OtaFileSize,
 		Checksum:     msg.OtaChecksum,
 		ChecksumType: msg.OtaChecksumType,
 	}
 
-	err = validateOtaFields(_otaFields)
+	err = validateOtaFields(_otaFields, false)
 	if err != nil {
 		return err
 	}
@@ -173,13 +173,13 @@ func (msg *MsgUpdateModelVersion) ValidateBasic() error {
 	}
 
 	_otaFields := otaFields{
-		Url:          msg.OtaUrl,
+		URL:          msg.OtaUrl,
 		FileSize:     msg.OtaFileSize,
 		Checksum:     msg.OtaChecksum,
 		ChecksumType: msg.OtaChecksumType,
 	}
 
-	err = validateOtaFields(_otaFields)
+	err = validateOtaFields(_otaFields, true)
 	if err != nil {
 		return err
 	}
@@ -236,14 +236,19 @@ func (msg *MsgDeleteModelVersion) ValidateBasic() error {
 }
 
 type otaFields struct {
-	Url          string
+	URL          string
 	FileSize     uint64
 	Checksum     string
 	ChecksumType int32
 }
 
-func validateOtaFields(ota otaFields) error {
-	if ota.Url != "" {
+func validateOtaFields(ota otaFields, isUpdate bool) error {
+	// Below is a case when updating only OtaUrl field or OtaUrl is not provided
+	if isUpdate && ota.FileSize == 0 && ota.Checksum == "" && ota.ChecksumType == 0 {
+		return nil
+	}
+
+	if ota.URL != "" {
 		err := validateOtaChecksumType(ota.ChecksumType)
 		if err != nil {
 			return err
@@ -258,7 +263,7 @@ func validateOtaFields(ota otaFields) error {
 	}
 
 	if ota.FileSize != 0 || ota.Checksum != "" || ota.ChecksumType != 0 {
-		return NewErrorOtaUrlNotProvidedButOtherOtaFieldsProvided()
+		return NewErrorOtaURLNotProvidedButOtherOtaFieldsProvided()
 	}
 
 	return nil
