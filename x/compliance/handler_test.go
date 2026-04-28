@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"testing"
-	"time"
 
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -291,16 +290,17 @@ func checkProvisionalModelInfo(
 	require.Equal(t, provisionalModelMsg.Reason, receivedComplianceInfo.Reason)
 	require.Equal(t, provisionalModelMsg.CertificationType, receivedComplianceInfo.CertificationType)
 	require.Equal(t, provisionalModelMsg.CDCertificateId, receivedComplianceInfo.CDCertificateId)
-	require.Equal(t, provisionalModelMsg.CertificationTypeVersion, receivedComplianceInfo.CertificationTypeVersion)
+	require.Equal(t, provisionalModelMsg.ProgramTypeVersion, receivedComplianceInfo.ProgramTypeVersion)
 	require.Equal(t, provisionalModelMsg.FamilyId, receivedComplianceInfo.FamilyId)
 	require.Equal(t, provisionalModelMsg.SupportedClusters, receivedComplianceInfo.SupportedClusters)
 	require.Equal(t, provisionalModelMsg.CompliantPlatformUsed, receivedComplianceInfo.CompliantPlatformUsed)
 	require.Equal(t, provisionalModelMsg.CompliantPlatformVersion, receivedComplianceInfo.CompliantPlatformVersion)
-	require.Equal(t, provisionalModelMsg.OSNameAndVersion, receivedComplianceInfo.OSNameAndVersion)
+	require.Equal(t, provisionalModelMsg.OSVersion, receivedComplianceInfo.OSVersion)
 	require.Equal(t, provisionalModelMsg.CertificationRoute, receivedComplianceInfo.CertificationRoute)
-	require.Equal(t, provisionalModelMsg.ProductType, receivedComplianceInfo.ProductType)
+	require.Equal(t, provisionalModelMsg.ProgramType, receivedComplianceInfo.ProgramType)
 	require.Equal(t, provisionalModelMsg.Transport, receivedComplianceInfo.Transport)
 	require.Equal(t, provisionalModelMsg.ParentChild, receivedComplianceInfo.ParentChild)
+	require.Equal(t, provisionalModelMsg.CertificationIdOfSoftwareComponent, receivedComplianceInfo.CertificationIdOfSoftwareComponent)
 }
 
 func checkCertifiedModelInfo(
@@ -316,16 +316,17 @@ func checkCertifiedModelInfo(
 	require.Equal(t, certifyModelMsg.Reason, receivedComplianceInfo.Reason)
 	require.Equal(t, certifyModelMsg.CertificationType, receivedComplianceInfo.CertificationType)
 	require.Equal(t, certifyModelMsg.CDCertificateId, receivedComplianceInfo.CDCertificateId)
-	require.Equal(t, certifyModelMsg.CertificationTypeVersion, receivedComplianceInfo.CertificationTypeVersion)
+	require.Equal(t, certifyModelMsg.ProgramTypeVersion, receivedComplianceInfo.ProgramTypeVersion)
 	require.Equal(t, certifyModelMsg.FamilyId, receivedComplianceInfo.FamilyId)
 	require.Equal(t, certifyModelMsg.SupportedClusters, receivedComplianceInfo.SupportedClusters)
 	require.Equal(t, certifyModelMsg.CompliantPlatformUsed, receivedComplianceInfo.CompliantPlatformUsed)
 	require.Equal(t, certifyModelMsg.CompliantPlatformVersion, receivedComplianceInfo.CompliantPlatformVersion)
-	require.Equal(t, certifyModelMsg.OSNameAndVersion, receivedComplianceInfo.OSNameAndVersion)
+	require.Equal(t, certifyModelMsg.OSVersion, receivedComplianceInfo.OSVersion)
 	require.Equal(t, certifyModelMsg.CertificationRoute, receivedComplianceInfo.CertificationRoute)
-	require.Equal(t, certifyModelMsg.ProductType, receivedComplianceInfo.ProductType)
+	require.Equal(t, certifyModelMsg.ProgramType, receivedComplianceInfo.ProgramType)
 	require.Equal(t, certifyModelMsg.Transport, receivedComplianceInfo.Transport)
 	require.Equal(t, certifyModelMsg.ParentChild, receivedComplianceInfo.ParentChild)
+	require.Equal(t, certifyModelMsg.CertificationIdOfSoftwareComponent, receivedComplianceInfo.CertificationIdOfSoftwareComponent)
 }
 
 func checkDeviceSoftwareCompliance(
@@ -341,16 +342,17 @@ func checkDeviceSoftwareCompliance(
 	require.Equal(t, info.Reason, receivedComplianceInfo.Reason)
 	require.Equal(t, info.CertificationType, receivedComplianceInfo.CertificationType)
 	require.Equal(t, info.CDCertificateId, receivedComplianceInfo.CDCertificateId)
-	require.Equal(t, info.CertificationTypeVersion, receivedComplianceInfo.CertificationTypeVersion)
+	require.Equal(t, info.ProgramTypeVersion, receivedComplianceInfo.ProgramTypeVersion)
 	require.Equal(t, info.FamilyId, receivedComplianceInfo.FamilyId)
 	require.Equal(t, info.SupportedClusters, receivedComplianceInfo.SupportedClusters)
 	require.Equal(t, info.CompliantPlatformUsed, receivedComplianceInfo.CompliantPlatformUsed)
 	require.Equal(t, info.CompliantPlatformVersion, receivedComplianceInfo.CompliantPlatformVersion)
-	require.Equal(t, info.OSNameAndVersion, receivedComplianceInfo.OSNameAndVersion)
+	require.Equal(t, info.OSVersion, receivedComplianceInfo.OSVersion)
 	require.Equal(t, info.CertificationRoute, receivedComplianceInfo.CertificationRoute)
-	require.Equal(t, info.ProductType, receivedComplianceInfo.ProductType)
+	require.Equal(t, info.ProgramType, receivedComplianceInfo.ProgramType)
 	require.Equal(t, info.Transport, receivedComplianceInfo.Transport)
 	require.Equal(t, info.ParentChild, receivedComplianceInfo.ParentChild)
+	require.Equal(t, info.CertificationIdOfSoftwareComponent, receivedComplianceInfo.CertificationIdOfSoftwareComponent)
 	require.Equal(t, info.SchemaVersion, receivedComplianceInfo.SchemaVersion)
 }
 
@@ -404,27 +406,28 @@ func newMsgUpdateComplianceInfo(
 	certificationType string,
 ) *types.MsgUpdateComplianceInfo {
 	return &types.MsgUpdateComplianceInfo{
-		Creator:                  creator.String(),
-		Vid:                      vid,
-		Pid:                      pid,
-		SoftwareVersion:          softwareVersion,
-		CertificationType:        certificationType,
-		CDVersionNumber:          "",
-		Date:                     "",
-		Reason:                   "",
-		Owner:                    "",
-		CDCertificateId:          "",
-		CertificationRoute:       "",
-		ProductType:              "",
-		CertificationTypeVersion: "",
-		CompliantPlatformUsed:    "",
-		CompliantPlatformVersion: "",
-		Transport:                "",
-		FamilyId:                 "",
-		SupportedClusters:        "",
-		OSNameAndVersion:         "",
-		ParentChild:              "",
-		SchemaVersion:            testconstants.SchemaVersion,
+		Creator:                            creator.String(),
+		Vid:                                vid,
+		Pid:                                pid,
+		SoftwareVersion:                    softwareVersion,
+		CertificationType:                  certificationType,
+		CDVersionNumber:                    "",
+		Date:                               "",
+		Reason:                             "",
+		Owner:                              "",
+		CDCertificateId:                    "",
+		CertificationRoute:                 "",
+		ProgramType:                        "",
+		ProgramTypeVersion:                 "",
+		CompliantPlatformUsed:              "",
+		CompliantPlatformVersion:           "",
+		Transport:                          "",
+		FamilyId:                           "",
+		SupportedClusters:                  "",
+		OSVersion:                          "",
+		ParentChild:                        "",
+		CertificationIdOfSoftwareComponent: "",
+		SchemaVersion:                      testconstants.SchemaVersion,
 	}
 }
 
@@ -436,27 +439,28 @@ func newMsgUpdateComplianceInfoWithAllOptionalFlags(
 	certificationType string,
 ) *types.MsgUpdateComplianceInfo {
 	return &types.MsgUpdateComplianceInfo{
-		Creator:                  creator.String(),
-		Vid:                      vid,
-		Pid:                      pid,
-		SoftwareVersion:          softwareVersion,
-		CertificationType:        certificationType,
-		CDVersionNumber:          fmt.Sprint(testconstants.CdVersionNumber),
-		Date:                     testconstants.ProvisionalDate,
-		CDCertificateId:          testconstants.CDCertificateID,
-		Reason:                   "new Reason",
-		CertificationRoute:       "fullTested",
-		Owner:                    "new Owner",
-		ProductType:              "new productType",
-		CertificationTypeVersion: "new CertificationTypeVersion",
-		CompliantPlatformUsed:    "new CompliantPlatformUsed",
-		CompliantPlatformVersion: "new CompliantPlatformVersion",
-		Transport:                "new Transport",
-		FamilyId:                 "FAM123456",
-		SupportedClusters:        "new SupportedClusters",
-		OSNameAndVersion:         "new OSNameAndVersion",
-		ParentChild:              "new ParentChild",
-		SchemaVersion:            testconstants.SchemaVersion,
+		Creator:                            creator.String(),
+		Vid:                                vid,
+		Pid:                                pid,
+		SoftwareVersion:                    softwareVersion,
+		CertificationType:                  certificationType,
+		CDVersionNumber:                    fmt.Sprint(testconstants.CdVersionNumber),
+		Date:                               testconstants.ProvisionalDate,
+		CDCertificateId:                    testconstants.CDCertificateID,
+		Reason:                             "new Reason",
+		CertificationRoute:                 "123",
+		Owner:                              "new Owner",
+		ProgramType:                        "new programType",
+		ProgramTypeVersion:                 "new ProgramTypeVersion",
+		CompliantPlatformUsed:              "new CompliantPlatformUsed",
+		CompliantPlatformVersion:           "new CompliantPlatformVersion",
+		Transport:                          "new Transport",
+		FamilyId:                           "new FamilyId",
+		SupportedClusters:                  "new SupportedClusters",
+		OSVersion:                          "new OSVersion",
+		ParentChild:                        "new ParentChild",
+		CertificationIdOfSoftwareComponent: "new CertificationIdOfSoftwareComponent",
+		SchemaVersion:                      testconstants.SchemaVersion,
 	}
 }
 
@@ -469,26 +473,27 @@ func newMsgProvisionModelWithAllOptionalFlags(
 	signer sdk.AccAddress,
 ) *types.MsgProvisionModel {
 	return &types.MsgProvisionModel{
-		Signer:                   signer.String(),
-		Vid:                      vid,
-		Pid:                      pid,
-		SoftwareVersion:          softwareVersion,
-		SoftwareVersionString:    softwareVersionString,
-		CDVersionNumber:          uint32(testconstants.CdVersionNumber),
-		ProvisionalDate:          testconstants.ProvisionalDate,
-		CertificationType:        certificationType,
-		Reason:                   testconstants.Reason,
-		CDCertificateId:          testconstants.CDCertificateID,
-		CertificationTypeVersion: testconstants.CertificationTypeVersion,
-		FamilyId:                 testconstants.FamilyID,
-		SupportedClusters:        testconstants.SupportedClusters,
-		CompliantPlatformUsed:    testconstants.CompliantPlatformUsed,
-		CompliantPlatformVersion: testconstants.CompliantPlatformVersion,
-		OSNameAndVersion:         testconstants.OSNameAndVersion,
-		CertificationRoute:       testconstants.CertificationRoute,
-		ProductType:              testconstants.ProductType,
-		Transport:                testconstants.Transport,
-		ParentChild:              testconstants.ParentChild1,
+		Signer:                             signer.String(),
+		Vid:                                vid,
+		Pid:                                pid,
+		SoftwareVersion:                    softwareVersion,
+		SoftwareVersionString:              softwareVersionString,
+		CDVersionNumber:                    uint32(testconstants.CdVersionNumber),
+		ProvisionalDate:                    testconstants.ProvisionalDate,
+		CertificationType:                  certificationType,
+		Reason:                             testconstants.Reason,
+		CDCertificateId:                    testconstants.CDCertificateID,
+		ProgramTypeVersion:                 testconstants.ProgramTypeVersion,
+		FamilyId:                           testconstants.FamilyID,
+		SupportedClusters:                  testconstants.SupportedClusters,
+		CompliantPlatformUsed:              testconstants.CompliantPlatformUsed,
+		CompliantPlatformVersion:           testconstants.CompliantPlatformVersion,
+		OSVersion:                          testconstants.OSVersion,
+		CertificationRoute:                 testconstants.CertificationRoute,
+		ProgramType:                        testconstants.ProgramType,
+		Transport:                          testconstants.Transport,
+		ParentChild:                        testconstants.ParentChild1,
+		CertificationIdOfSoftwareComponent: testconstants.CertificationIDOfSoftwareComponent,
 	}
 }
 
@@ -539,26 +544,27 @@ func newMsgCertifyModelWithAllOptionalFlags(
 	signer sdk.AccAddress,
 ) *types.MsgCertifyModel {
 	return &types.MsgCertifyModel{
-		Signer:                   signer.String(),
-		Vid:                      vid,
-		Pid:                      pid,
-		SoftwareVersion:          softwareVersion,
-		SoftwareVersionString:    softwareVersionString,
-		CDVersionNumber:          uint32(testconstants.CdVersionNumber),
-		CertificationDate:        testconstants.CertificationDate,
-		CertificationType:        certificationType,
-		Reason:                   testconstants.Reason,
-		CDCertificateId:          testconstants.CDCertificateID,
-		CertificationTypeVersion: testconstants.CertificationTypeVersion,
-		FamilyId:                 testconstants.FamilyID,
-		SupportedClusters:        testconstants.SupportedClusters,
-		CompliantPlatformUsed:    testconstants.CompliantPlatformUsed,
-		CompliantPlatformVersion: testconstants.CompliantPlatformVersion,
-		OSNameAndVersion:         testconstants.OSNameAndVersion,
-		CertificationRoute:       testconstants.CertificationRoute,
-		ProductType:              testconstants.ProductType,
-		Transport:                testconstants.Transport,
-		ParentChild:              testconstants.ParentChild1,
+		Signer:                             signer.String(),
+		Vid:                                vid,
+		Pid:                                pid,
+		SoftwareVersion:                    softwareVersion,
+		SoftwareVersionString:              softwareVersionString,
+		CDVersionNumber:                    uint32(testconstants.CdVersionNumber),
+		CertificationDate:                  testconstants.CertificationDate,
+		CertificationType:                  certificationType,
+		Reason:                             testconstants.Reason,
+		CDCertificateId:                    testconstants.CDCertificateID,
+		ProgramTypeVersion:                 testconstants.ProgramTypeVersion,
+		FamilyId:                           testconstants.FamilyID,
+		SupportedClusters:                  testconstants.SupportedClusters,
+		CompliantPlatformUsed:              testconstants.CompliantPlatformUsed,
+		CompliantPlatformVersion:           testconstants.CompliantPlatformVersion,
+		OSVersion:                          testconstants.OSVersion,
+		CertificationRoute:                 testconstants.CertificationRoute,
+		ProgramType:                        testconstants.ProgramType,
+		Transport:                          testconstants.Transport,
+		ParentChild:                        testconstants.ParentChild1,
+		CertificationIdOfSoftwareComponent: testconstants.CertificationIDOfSoftwareComponent,
 	}
 }
 
@@ -612,37 +618,4 @@ func generateAccAddress() sdk.AccAddress {
 	_, _, accAddress := testdata.KeyTestPubAddr()
 
 	return accAddress
-}
-
-func TestComplianceHistoryCountLimit(t *testing.T) {
-	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := setupCertifyModel(t)
-	reasonCount := 1
-
-	for i := 0; i < types.MaxComplianceHistoryItem/2+1; i++ {
-		certifyModelMsg := newMsgCertifyModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
-		certifyModelMsg.Reason = fmt.Sprintf("%d", reasonCount)
-		certifyModelMsg.CertificationDate = time.Now().Add(time.Duration(i) * time.Hour).Format(time.RFC3339)
-
-		_, certifyModelErr := setup.Handler(setup.Ctx, certifyModelMsg)
-		require.NoError(t, certifyModelErr)
-
-		revokeModelMsg := newMsgRevokeModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
-		revokeModelMsg.Reason = fmt.Sprintf("%d", reasonCount+1)
-		revokeModelMsg.RevocationDate = time.Now().Add(time.Duration(i) * time.Hour).Format(time.RFC3339)
-
-		_, revokeModelErr := setup.Handler(setup.Ctx, revokeModelMsg)
-		require.NoError(t, revokeModelErr)
-
-		reasonCount += 2
-	}
-
-	// query compliance info
-	complianceInfo := queryExistingComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
-	require.Equal(t, types.MaxComplianceHistoryItem, len(complianceInfo.History))
-
-	// check history items. reason value of first item should be 2 and the last one should be 21
-	for i := 0; i < types.MaxComplianceHistoryItem; i++ {
-		historyItem := complianceInfo.History[i]
-		require.Equal(t, fmt.Sprintf("%d", i+2), historyItem.Reason)
-	}
 }

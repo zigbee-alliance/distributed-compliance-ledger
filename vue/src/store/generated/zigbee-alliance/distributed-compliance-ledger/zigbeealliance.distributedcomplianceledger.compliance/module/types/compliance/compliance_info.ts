@@ -18,15 +18,16 @@ export interface ComplianceInfo {
   history: ComplianceHistoryItem[]
   cDCertificateId: string
   certificationRoute: string
-  productType: string
-  certificationTypeVersion: string
+  programType: string
+  programTypeVersion: string
   compliantPlatformUsed: string
   compliantPlatformVersion: string
   transport: string
   familyId: string
   supportedClusters: string
-  OSNameAndVersion: string
+  OSVersion: string
   parentChild: string
+  certificationIdOfSoftwareComponent: string
   schemaVersion: number
 }
 
@@ -43,15 +44,16 @@ const baseComplianceInfo: object = {
   owner: '',
   cDCertificateId: '',
   certificationRoute: '',
-  productType: '',
-  certificationTypeVersion: '',
+  programType: '',
+  programTypeVersion: '',
   compliantPlatformUsed: '',
   compliantPlatformVersion: '',
   transport: '',
   familyId: '',
   supportedClusters: '',
-  OSNameAndVersion: '',
+  OSVersion: '',
   parentChild: '',
+  certificationIdOfSoftwareComponent: '',
   schemaVersion: 0
 }
 
@@ -96,11 +98,11 @@ export const ComplianceInfo = {
     if (message.certificationRoute !== '') {
       writer.uint32(106).string(message.certificationRoute)
     }
-    if (message.productType !== '') {
-      writer.uint32(114).string(message.productType)
+    if (message.programType !== '') {
+      writer.uint32(114).string(message.programType)
     }
-    if (message.certificationTypeVersion !== '') {
-      writer.uint32(122).string(message.certificationTypeVersion)
+    if (message.programTypeVersion !== '') {
+      writer.uint32(122).string(message.programTypeVersion)
     }
     if (message.compliantPlatformUsed !== '') {
       writer.uint32(130).string(message.compliantPlatformUsed)
@@ -117,11 +119,14 @@ export const ComplianceInfo = {
     if (message.supportedClusters !== '') {
       writer.uint32(162).string(message.supportedClusters)
     }
-    if (message.OSNameAndVersion !== '') {
-      writer.uint32(170).string(message.OSNameAndVersion)
+    if (message.OSVersion !== '') {
+      writer.uint32(170).string(message.OSVersion)
     }
     if (message.parentChild !== '') {
       writer.uint32(178).string(message.parentChild)
+    }
+    if (message.certificationIdOfSoftwareComponent !== '') {
+      writer.uint32(186).string(message.certificationIdOfSoftwareComponent)
     }
     if (message.schemaVersion !== 0) {
       writer.uint32(192).uint32(message.schemaVersion)
@@ -177,10 +182,10 @@ export const ComplianceInfo = {
           message.certificationRoute = reader.string()
           break
         case 14:
-          message.productType = reader.string()
+          message.programType = reader.string()
           break
         case 15:
-          message.certificationTypeVersion = reader.string()
+          message.programTypeVersion = reader.string()
           break
         case 16:
           message.compliantPlatformUsed = reader.string()
@@ -198,10 +203,13 @@ export const ComplianceInfo = {
           message.supportedClusters = reader.string()
           break
         case 21:
-          message.OSNameAndVersion = reader.string()
+          message.OSVersion = reader.string()
           break
         case 22:
           message.parentChild = reader.string()
+          break
+        case 23:
+          message.certificationIdOfSoftwareComponent = reader.string()
           break
         case 24:
           message.schemaVersion = reader.uint32()
@@ -282,15 +290,15 @@ export const ComplianceInfo = {
     } else {
       message.certificationRoute = ''
     }
-    if (object.productType !== undefined && object.productType !== null) {
-      message.productType = String(object.productType)
+    if (object.programType !== undefined && object.programType !== null) {
+      message.programType = String(object.programType)
     } else {
-      message.productType = ''
+      message.programType = ''
     }
-    if (object.certificationTypeVersion !== undefined && object.certificationTypeVersion !== null) {
-      message.certificationTypeVersion = String(object.certificationTypeVersion)
+    if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
+      message.programTypeVersion = String(object.programTypeVersion)
     } else {
-      message.certificationTypeVersion = ''
+      message.programTypeVersion = ''
     }
     if (object.compliantPlatformUsed !== undefined && object.compliantPlatformUsed !== null) {
       message.compliantPlatformUsed = String(object.compliantPlatformUsed)
@@ -317,15 +325,20 @@ export const ComplianceInfo = {
     } else {
       message.supportedClusters = ''
     }
-    if (object.OSNameAndVersion !== undefined && object.OSNameAndVersion !== null) {
-      message.OSNameAndVersion = String(object.OSNameAndVersion)
+    if (object.OSVersion !== undefined && object.OSVersion !== null) {
+      message.OSVersion = String(object.OSVersion)
     } else {
-      message.OSNameAndVersion = ''
+      message.OSVersion = ''
     }
     if (object.parentChild !== undefined && object.parentChild !== null) {
       message.parentChild = String(object.parentChild)
     } else {
       message.parentChild = ''
+    }
+    if (object.certificationIdOfSoftwareComponent !== undefined && object.certificationIdOfSoftwareComponent !== null) {
+      message.certificationIdOfSoftwareComponent = String(object.certificationIdOfSoftwareComponent)
+    } else {
+      message.certificationIdOfSoftwareComponent = ''
     }
     if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
       message.schemaVersion = Number(object.schemaVersion)
@@ -354,15 +367,16 @@ export const ComplianceInfo = {
     }
     message.cDCertificateId !== undefined && (obj.cDCertificateId = message.cDCertificateId)
     message.certificationRoute !== undefined && (obj.certificationRoute = message.certificationRoute)
-    message.productType !== undefined && (obj.productType = message.productType)
-    message.certificationTypeVersion !== undefined && (obj.certificationTypeVersion = message.certificationTypeVersion)
+    message.programType !== undefined && (obj.programType = message.programType)
+    message.programTypeVersion !== undefined && (obj.programTypeVersion = message.programTypeVersion)
     message.compliantPlatformUsed !== undefined && (obj.compliantPlatformUsed = message.compliantPlatformUsed)
     message.compliantPlatformVersion !== undefined && (obj.compliantPlatformVersion = message.compliantPlatformVersion)
     message.transport !== undefined && (obj.transport = message.transport)
     message.familyId !== undefined && (obj.familyId = message.familyId)
     message.supportedClusters !== undefined && (obj.supportedClusters = message.supportedClusters)
-    message.OSNameAndVersion !== undefined && (obj.OSNameAndVersion = message.OSNameAndVersion)
+    message.OSVersion !== undefined && (obj.OSVersion = message.OSVersion)
     message.parentChild !== undefined && (obj.parentChild = message.parentChild)
+    message.certificationIdOfSoftwareComponent !== undefined && (obj.certificationIdOfSoftwareComponent = message.certificationIdOfSoftwareComponent)
     message.schemaVersion !== undefined && (obj.schemaVersion = message.schemaVersion)
     return obj
   },
@@ -435,15 +449,15 @@ export const ComplianceInfo = {
     } else {
       message.certificationRoute = ''
     }
-    if (object.productType !== undefined && object.productType !== null) {
-      message.productType = object.productType
+    if (object.programType !== undefined && object.programType !== null) {
+      message.programType = object.programType
     } else {
-      message.productType = ''
+      message.programType = ''
     }
-    if (object.certificationTypeVersion !== undefined && object.certificationTypeVersion !== null) {
-      message.certificationTypeVersion = object.certificationTypeVersion
+    if (object.programTypeVersion !== undefined && object.programTypeVersion !== null) {
+      message.programTypeVersion = object.programTypeVersion
     } else {
-      message.certificationTypeVersion = ''
+      message.programTypeVersion = ''
     }
     if (object.compliantPlatformUsed !== undefined && object.compliantPlatformUsed !== null) {
       message.compliantPlatformUsed = object.compliantPlatformUsed
@@ -470,15 +484,20 @@ export const ComplianceInfo = {
     } else {
       message.supportedClusters = ''
     }
-    if (object.OSNameAndVersion !== undefined && object.OSNameAndVersion !== null) {
-      message.OSNameAndVersion = object.OSNameAndVersion
+    if (object.OSVersion !== undefined && object.OSVersion !== null) {
+      message.OSVersion = object.OSVersion
     } else {
-      message.OSNameAndVersion = ''
+      message.OSVersion = ''
     }
     if (object.parentChild !== undefined && object.parentChild !== null) {
       message.parentChild = object.parentChild
     } else {
       message.parentChild = ''
+    }
+    if (object.certificationIdOfSoftwareComponent !== undefined && object.certificationIdOfSoftwareComponent !== null) {
+      message.certificationIdOfSoftwareComponent = object.certificationIdOfSoftwareComponent
+    } else {
+      message.certificationIdOfSoftwareComponent = ''
     }
     if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
       message.schemaVersion = object.schemaVersion

@@ -297,24 +297,6 @@ echo "Verify that new data is not corrupted"
 
 test_divider
 
-
-# COMPLIANCE
-
-echo "Certify model vid=$vid_for_1_5_2 pid=$pid_1_for_1_5_2"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance certify-model --vid=$vid_for_1_5_2 --pid=$pid_1_for_1_5_2 --softwareVersion=$software_version_for_1_5_2 --softwareVersionString=$software_version_string_for_1_5_2  --certificationType=$certification_type_for_1_5_2 --certificationDate=$certification_date_for_1_5_2 --cdCertificateId=$cd_certificate_id_for_1_5_2 --cdVersionNumber=$cd_version_number_for_1_5_2 --from=$certification_center_account --yes)
-result=$(get_txn_result "$result")
-check_response "$result" "\"code\": 0"
-
-echo "Get compliance-info model with VID: $vid_for_1_5_2 PID: $pid_1_for_1_5_2"
-result=$($DCLD_BIN_NEW query compliance compliance-info --vid=$vid_for_1_5_2 --pid=$pid_1_for_1_5_2 --softwareVersion=$software_version_for_1_5_2 --certificationType=$certification_type_for_1_5_2)
-check_response "$result" "\"vid\": $vid_for_1_5_2"
-check_response "$result" "\"pid\": $pid_1_for_1_5_2"
-check_response "$result" "\"softwareVersion\": $software_version_for_1_5_2"
-check_response "$result" "\"certificationType\": \"$certification_type_for_1_5_2\""
-check_response "$result" "\"certificationIdOfSoftwareComponent\": \"\""
-
-test_divider
-
 # MODEL
 
 echo "Get Model with VID: $vid_for_1_5_2 PID: $pid_1_for_1_5_2"

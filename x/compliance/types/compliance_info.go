@@ -1,7 +1,5 @@
 package types
 
-const MaxComplianceHistoryItem = 20
-
 func (d *ComplianceInfo) SetCertifiedStatus(date string, reason string, cdCertificateID string) {
 	svCertificationStatus := CodeCertified
 	historyItem := ComplianceHistoryItem{
@@ -10,7 +8,7 @@ func (d *ComplianceInfo) SetCertifiedStatus(date string, reason string, cdCertif
 		Reason:                             d.Reason,
 		CDVersionNumber:                    d.CDVersionNumber,
 	}
-	d.updateHistory(&historyItem)
+	d.History = append(d.History, &historyItem)
 	d.SoftwareVersionCertificationStatus = svCertificationStatus
 	d.Date = date
 	d.Reason = reason
@@ -25,24 +23,15 @@ func (d *ComplianceInfo) SetRevokedStatus(date string, reason string) {
 		Reason:                             d.Reason,
 		CDVersionNumber:                    d.CDVersionNumber,
 	}
-	d.updateHistory(&historyItem)
+	d.History = append(d.History, &historyItem)
 	d.SoftwareVersionCertificationStatus = svCertificationStatus
 	d.Date = date
 	d.Reason = reason
 }
 
-func (d *ComplianceInfo) updateHistory(item *ComplianceHistoryItem) {
-	d.History = append(d.History, item)
-
-	if len(d.History) > MaxComplianceHistoryItem {
-		// TODO Can be changed to another better logic/way to update history
-		d.History = d.History[len(d.History)-MaxComplianceHistoryItem:]
-	}
-}
-
 func (d *ComplianceInfo) SetOptionalFields(optionalFields *OptionalFields) {
-	if optionalFields.CertificationTypeVersion != "" {
-		d.CertificationTypeVersion = optionalFields.CertificationTypeVersion
+	if optionalFields.ProgramTypeVersion != "" {
+		d.ProgramTypeVersion = optionalFields.ProgramTypeVersion
 	}
 
 	if optionalFields.FamilyID != "" {
@@ -61,16 +50,16 @@ func (d *ComplianceInfo) SetOptionalFields(optionalFields *OptionalFields) {
 		d.CompliantPlatformVersion = optionalFields.CompliantPlatformVersion
 	}
 
-	if optionalFields.OSNameAndVersion != "" {
-		d.OSNameAndVersion = optionalFields.OSNameAndVersion
+	if optionalFields.OSVersion != "" {
+		d.OSVersion = optionalFields.OSVersion
 	}
 
 	if optionalFields.CertificationRoute != "" {
 		d.CertificationRoute = optionalFields.CertificationRoute
 	}
 
-	if optionalFields.ProductType != "" {
-		d.ProductType = optionalFields.ProductType
+	if optionalFields.ProgramType != "" {
+		d.ProgramType = optionalFields.ProgramType
 	}
 
 	if optionalFields.Transport != "" {
@@ -81,21 +70,21 @@ func (d *ComplianceInfo) SetOptionalFields(optionalFields *OptionalFields) {
 		d.ParentChild = optionalFields.ParentChild
 	}
 
-	if optionalFields.Reason != "" {
-		d.Reason = optionalFields.Reason
+	if optionalFields.CertificationIDOfSoftwareComponent != "" {
+		d.CertificationIdOfSoftwareComponent = optionalFields.CertificationIDOfSoftwareComponent
 	}
 }
 
 type OptionalFields struct {
-	CertificationTypeVersion string
-	FamilyID                 string
-	SupportedClusters        string
-	CompliantPlatformUsed    string
-	CompliantPlatformVersion string
-	OSNameAndVersion         string
-	CertificationRoute       string
-	ProductType              string
-	Transport                string
-	ParentChild              string
-	Reason                   string
+	ProgramTypeVersion                 string
+	FamilyID                           string
+	SupportedClusters                  string
+	CompliantPlatformUsed              string
+	CompliantPlatformVersion           string
+	OSVersion                          string
+	CertificationRoute                 string
+	ProgramType                        string
+	Transport                          string
+	ParentChild                        string
+	CertificationIDOfSoftwareComponent string
 }

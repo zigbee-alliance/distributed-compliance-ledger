@@ -279,9 +279,9 @@ paths:
                       type: string
                     certificationRoute:
                       type: string
-                    productType:
+                    programType:
                       type: string
-                    certificationTypeVersion:
+                    programTypeVersion:
                       type: string
                     compliantPlatformUsed:
                       type: string
@@ -293,9 +293,11 @@ paths:
                       type: string
                     supportedClusters:
                       type: string
-                    OSNameAndVersion:
+                    OSVersion:
                       type: string
                     parentChild:
+                      type: string
+                    certificationIdOfSoftwareComponent:
                       type: string
                     schemaVersion:
                       type: integer
@@ -465,9 +467,9 @@ paths:
                     type: string
                   certificationRoute:
                     type: string
-                  productType:
+                  programType:
                     type: string
-                  certificationTypeVersion:
+                  programTypeVersion:
                     type: string
                   compliantPlatformUsed:
                     type: string
@@ -479,9 +481,11 @@ paths:
                     type: string
                   supportedClusters:
                     type: string
-                  OSNameAndVersion:
+                  OSVersion:
                     type: string
                   parentChild:
+                    type: string
+                  certificationIdOfSoftwareComponent:
                     type: string
                   schemaVersion:
                     type: integer
@@ -595,9 +599,9 @@ paths:
                             type: string
                           certificationRoute:
                             type: string
-                          productType:
+                          programType:
                             type: string
-                          certificationTypeVersion:
+                          programTypeVersion:
                             type: string
                           compliantPlatformUsed:
                             type: string
@@ -609,9 +613,11 @@ paths:
                             type: string
                           supportedClusters:
                             type: string
-                          OSNameAndVersion:
+                          OSVersion:
                             type: string
                           parentChild:
+                            type: string
+                          certificationIdOfSoftwareComponent:
                             type: string
                           schemaVersion:
                             type: integer
@@ -791,9 +797,9 @@ paths:
                           type: string
                         certificationRoute:
                           type: string
-                        productType:
+                        programType:
                           type: string
-                        certificationTypeVersion:
+                        programTypeVersion:
                           type: string
                         compliantPlatformUsed:
                           type: string
@@ -805,9 +811,11 @@ paths:
                           type: string
                         supportedClusters:
                           type: string
-                        OSNameAndVersion:
+                        OSVersion:
                           type: string
                         parentChild:
+                          type: string
+                        certificationIdOfSoftwareComponent:
                           type: string
                         schemaVersion:
                           type: integer
@@ -17356,9 +17364,9 @@ definitions:
         type: string
       certificationRoute:
         type: string
-      productType:
+      programType:
         type: string
-      certificationTypeVersion:
+      programTypeVersion:
         type: string
       compliantPlatformUsed:
         type: string
@@ -17370,9 +17378,11 @@ definitions:
         type: string
       supportedClusters:
         type: string
-      OSNameAndVersion:
+      OSVersion:
         type: string
       parentChild:
+        type: string
+      certificationIdOfSoftwareComponent:
         type: string
       schemaVersion:
         type: integer
@@ -17434,9 +17444,9 @@ definitions:
               type: string
             certificationRoute:
               type: string
-            productType:
+            programType:
               type: string
-            certificationTypeVersion:
+            programTypeVersion:
               type: string
             compliantPlatformUsed:
               type: string
@@ -17448,9 +17458,11 @@ definitions:
               type: string
             supportedClusters:
               type: string
-            OSNameAndVersion:
+            OSVersion:
               type: string
             parentChild:
+              type: string
+            certificationIdOfSoftwareComponent:
               type: string
             schemaVersion:
               type: integer
@@ -17582,9 +17594,9 @@ definitions:
               type: string
             certificationRoute:
               type: string
-            productType:
+            programType:
               type: string
-            certificationTypeVersion:
+            programTypeVersion:
               type: string
             compliantPlatformUsed:
               type: string
@@ -17596,9 +17608,11 @@ definitions:
               type: string
             supportedClusters:
               type: string
-            OSNameAndVersion:
+            OSVersion:
               type: string
             parentChild:
+              type: string
+            certificationIdOfSoftwareComponent:
               type: string
             schemaVersion:
               type: integer
@@ -17691,9 +17705,9 @@ definitions:
                     type: string
                   certificationRoute:
                     type: string
-                  productType:
+                  programType:
                     type: string
-                  certificationTypeVersion:
+                  programTypeVersion:
                     type: string
                   compliantPlatformUsed:
                     type: string
@@ -17705,9 +17719,11 @@ definitions:
                     type: string
                   supportedClusters:
                     type: string
-                  OSNameAndVersion:
+                  OSVersion:
                     type: string
                   parentChild:
+                    type: string
+                  certificationIdOfSoftwareComponent:
                     type: string
                   schemaVersion:
                     type: integer
@@ -17916,9 +17932,9 @@ definitions:
             type: string
           certificationRoute:
             type: string
-          productType:
+          programType:
             type: string
-          certificationTypeVersion:
+          programTypeVersion:
             type: string
           compliantPlatformUsed:
             type: string
@@ -17930,9 +17946,11 @@ definitions:
             type: string
           supportedClusters:
             type: string
-          OSNameAndVersion:
+          OSVersion:
             type: string
           parentChild:
+            type: string
+          certificationIdOfSoftwareComponent:
             type: string
           schemaVersion:
             type: integer
@@ -17997,9 +18015,9 @@ definitions:
                   type: string
                 certificationRoute:
                   type: string
-                productType:
+                programType:
                   type: string
-                certificationTypeVersion:
+                programTypeVersion:
                   type: string
                 compliantPlatformUsed:
                   type: string
@@ -18011,9 +18029,11 @@ definitions:
                   type: string
                 supportedClusters:
                   type: string
-                OSNameAndVersion:
+                OSVersion:
                   type: string
                 parentChild:
+                  type: string
+                certificationIdOfSoftwareComponent:
                   type: string
                 schemaVersion:
                   type: integer

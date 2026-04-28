@@ -119,21 +119,22 @@ var (
 	RevocationReason                   = "Some Reason"
 	CertificationType                  = "zigbee"
 	CDCertificateID                    = "12345678910abcdefgh"
-	FamilyID                           = "FAM123456abc"
+	FamilyID                           = "Some Family ID"
 	SupportedClusters                  = "Some Supported Clusters"
 	CompliantPlatformUsed              = "Some Compliance Platform Used"
 	CompliantPlatformVersion           = "Some Compliance Platform Version"
-	OSNameAndVersion                   = "Some OS Version"
-	CertificationRoute                 = "fullTested"
-	ProductType                        = "Some Product Type"
-	CertificationTypeVersion           = "Some Program Type Version"
+	OSVersion                          = "Some OS Version"
+	CertificationRoute                 = "Some Certification Route"
+	ProgramType                        = "Some Program Type"
+	ProgramTypeVersion                 = "Some Program Type Version"
 	Transport                          = "Some Transport"
 	SoftwareVersionCertificationStatus = uint32(
 		3,
 	)
-	ParentChild1 = "parent"
-	ParentChild2 = "child"
-	FirstJanuary = "2020-01-01T00:00:01Z"
+	ParentChild1                       = "parent"
+	ParentChild2                       = "child"
+	CertificationIDOfSoftwareComponent = "some certification ID of software component"
+	FirstJanuary                       = "2020-01-01T00:00:01Z"
 
 	// Testing Result.
 	TestResult = "http://test.result.com"

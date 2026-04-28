@@ -55,15 +55,16 @@ export interface ComplianceComplianceInfo {
   history?: ComplianceComplianceHistoryItem[];
   cDCertificateId?: string;
   certificationRoute?: string;
-	productType?: string;
-  certificationTypeVersion?: string;
+  programType?: string;
+  programTypeVersion?: string;
   compliantPlatformUsed?: string;
   compliantPlatformVersion?: string;
   transport?: string;
   familyId?: string;
   supportedClusters?: string;
-  OSNameAndVersion?: string;
+  OSVersion?: string;
   parentChild?: string;
+  certificationIdOfSoftwareComponent?: string;
 
     /** @format int64 */
     schemaVersion?: number;

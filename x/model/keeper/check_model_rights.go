@@ -8,7 +8,11 @@ import (
 )
 
 func checkModelRights(ctx sdk.Context, k Keeper, signer sdk.AccAddress, vid int32, pid int32, message string) error {
-	// sender must have Vendor role to add new model
+	// sender with VendorAdmin role can add or modify any model
+	if k.dclauthKeeper.HasRole(ctx, signer, dclauthtypes.VendorAdmin) {
+		return nil
+	}
+	// sender must have Vendor role to add or modify a model
 	if !k.dclauthKeeper.HasRole(ctx, signer, dclauthtypes.Vendor) {
 		return errors.Wrapf(sdkerrors.ErrUnauthorized, "%s transaction should be "+
 			"signed by an account with the %s role", message, dclauthtypes.Vendor)

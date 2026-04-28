@@ -17,31 +17,32 @@ const TypeMsgUpdateComplianceInfo = "update_compliance_info"
 
 func NewMsgUpdateComplianceInfo(creator string, vid int32, pid int32, softwareVersion uint32, certificationType string,
 	cDVersionNumber string, date string, reason string, owner string, cDCertificateID string, certificationRoute string,
-	productType string, certificationTypeVersion string, compliantPlatformUsed string, compliantPlatformVersion string,
-	transport string, familyID string, supportedClusters string, oSNameAndVersion string, parentChild string,
-	schemaVersion uint32) *MsgUpdateComplianceInfo {
+	programType string, programTypeVersion string, compliantPlatformUsed string, compliantPlatformVersion string,
+	transport string, familyID string, supportedClusters string, oSVersion string, parentChild string,
+	certificationIDOfSoftwareComponent string, schemaVersion uint32) *MsgUpdateComplianceInfo {
 	return &MsgUpdateComplianceInfo{
-		Creator:                  creator,
-		Vid:                      vid,
-		Pid:                      pid,
-		SoftwareVersion:          softwareVersion,
-		CertificationType:        certificationType,
-		CDVersionNumber:          cDVersionNumber,
-		Date:                     date,
-		Reason:                   reason,
-		Owner:                    owner,
-		CDCertificateId:          cDCertificateID,
-		CertificationRoute:       certificationRoute,
-		ProductType:              productType,
-		CertificationTypeVersion: certificationTypeVersion,
-		CompliantPlatformUsed:    compliantPlatformUsed,
-		CompliantPlatformVersion: compliantPlatformVersion,
-		Transport:                transport,
-		FamilyId:                 familyID,
-		SupportedClusters:        supportedClusters,
-		OSNameAndVersion:         oSNameAndVersion,
-		ParentChild:              parentChild,
-		SchemaVersion:            schemaVersion,
+		Creator:                            creator,
+		Vid:                                vid,
+		Pid:                                pid,
+		SoftwareVersion:                    softwareVersion,
+		CertificationType:                  certificationType,
+		CDVersionNumber:                    cDVersionNumber,
+		Date:                               date,
+		Reason:                             reason,
+		Owner:                              owner,
+		CDCertificateId:                    cDCertificateID,
+		CertificationRoute:                 certificationRoute,
+		ProgramType:                        programType,
+		ProgramTypeVersion:                 programTypeVersion,
+		CompliantPlatformUsed:              compliantPlatformUsed,
+		CompliantPlatformVersion:           compliantPlatformVersion,
+		Transport:                          transport,
+		FamilyId:                           familyID,
+		SupportedClusters:                  supportedClusters,
+		OSVersion:                          oSVersion,
+		ParentChild:                        parentChild,
+		CertificationIdOfSoftwareComponent: certificationIDOfSoftwareComponent,
+		SchemaVersion:                      schemaVersion,
 	}
 }
 
@@ -107,14 +108,6 @@ func (msg *MsgUpdateComplianceInfo) ValidateBasic() error {
 
 	if !IsValidPFCCertificationRoute(msg.ParentChild) {
 		return NewErrInvalidPFCCertificationRoute(msg.ParentChild, PFCCertificationRouteList)
-	}
-
-	if msg.CertificationRoute != "" && !IsValidCertificationRoute(msg.CertificationRoute) {
-		return NewErrInvalidCertificationRoute(msg.CertificationRoute, CertificationRoutesList)
-	}
-
-	if msg.FamilyId != "" && !IsValidFamilyID(msg.FamilyId) {
-		return NewErrInvalidFamilyID(msg.FamilyId)
 	}
 
 	return nil

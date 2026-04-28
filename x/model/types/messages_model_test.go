@@ -644,6 +644,14 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			}(validMsgCreateModel()),
 		},
 		{
+			name: "DeviceTypeId == 0",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.DeviceTypeId = 0
+
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
 			name: "DeviceTypeId == 65535",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.DeviceTypeId = 65535

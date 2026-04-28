@@ -1035,7 +1035,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 		CDCertificateId:   testconstants.CDCertificateID,
 		CDVersionNumber:   "312",
 		CertificationType: compliancetypes.ZigbeeCertificationType,
-		ProductType:       "new program type",
+		ProgramType:       "new program type",
 		Reason:            "new reason",
 		ParentChild:       "child",
 	}
@@ -1045,13 +1045,14 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	updatedComplianceInfo, _ := GetComplianceInfo(suite, vid, pid, sv, compliancetypes.ZigbeeCertificationType)
 
 	// updated fields
-	require.Equal(suite.T, updatedComplianceInfo.ProductType, updateComplianceInfoMsg.ProductType)
+	require.Equal(suite.T, updatedComplianceInfo.ProgramType, updateComplianceInfoMsg.ProgramType)
 	require.Equal(suite.T, updatedComplianceInfo.Reason, updateComplianceInfoMsg.Reason)
 	require.Equal(suite.T, updatedComplianceInfo.ParentChild, updateComplianceInfoMsg.ParentChild)
 
 	// not updated fields
 	require.Equal(suite.T, updatedComplianceInfo.CDCertificateId, oldComplianceInfo.CDCertificateId)
 	require.Equal(suite.T, updatedComplianceInfo.CDVersionNumber, oldComplianceInfo.CDVersionNumber)
+	require.Equal(suite.T, updatedComplianceInfo.CertificationIdOfSoftwareComponent, oldComplianceInfo.CertificationIdOfSoftwareComponent)
 	require.Equal(suite.T, updatedComplianceInfo.Date, oldComplianceInfo.Date)
 	require.Equal(suite.T, updatedComplianceInfo.SoftwareVersionCertificationStatus, oldComplianceInfo.SoftwareVersionCertificationStatus)
 
@@ -1120,26 +1121,27 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	// Certify model with all optional fields
 	certReason = "some reason 3"
 	certifyModelMsg = compliancetypes.MsgCertifyModel{
-		Vid:                      vid,
-		Pid:                      pid,
-		SoftwareVersion:          sv,
-		SoftwareVersionString:    svs,
-		CertificationDate:        certDate,
-		CertificationType:        "zigbee",
-		Reason:                   certReason,
-		CDCertificateId:          testconstants.CDCertificateID,
-		CertificationTypeVersion: testconstants.CertificationTypeVersion,
-		FamilyId:                 testconstants.FamilyID,
-		SupportedClusters:        testconstants.SupportedClusters,
-		CompliantPlatformUsed:    testconstants.CompliantPlatformUsed,
-		CompliantPlatformVersion: testconstants.CompliantPlatformVersion,
-		OSNameAndVersion:         testconstants.OSNameAndVersion,
-		CertificationRoute:       testconstants.CertificationRoute,
-		ProductType:              testconstants.ProductType,
-		Transport:                testconstants.Transport,
-		ParentChild:              testconstants.ParentChild1,
-		CDVersionNumber:          uint32(testconstants.CdVersionNumber),
-		Signer:                   certCenterAccount.Address,
+		Vid:                                vid,
+		Pid:                                pid,
+		SoftwareVersion:                    sv,
+		SoftwareVersionString:              svs,
+		CertificationDate:                  certDate,
+		CertificationType:                  "zigbee",
+		Reason:                             certReason,
+		CDCertificateId:                    testconstants.CDCertificateID,
+		ProgramTypeVersion:                 testconstants.ProgramTypeVersion,
+		FamilyId:                           testconstants.FamilyID,
+		SupportedClusters:                  testconstants.SupportedClusters,
+		CompliantPlatformUsed:              testconstants.CompliantPlatformUsed,
+		CompliantPlatformVersion:           testconstants.CompliantPlatformVersion,
+		OSVersion:                          testconstants.OSVersion,
+		CertificationRoute:                 testconstants.CertificationRoute,
+		ProgramType:                        testconstants.ProgramType,
+		Transport:                          testconstants.Transport,
+		ParentChild:                        testconstants.ParentChild1,
+		CertificationIdOfSoftwareComponent: testconstants.CertificationIDOfSoftwareComponent,
+		CDVersionNumber:                    uint32(testconstants.CdVersionNumber),
+		Signer:                             certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -1155,15 +1157,16 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.CDCertificateID, complianceInfo.CDCertificateId)
 	require.Equal(suite.T, certReason, complianceInfo.Reason)
 	require.Equal(suite.T, certDate, complianceInfo.Date)
-	require.Equal(suite.T, testconstants.CertificationTypeVersion, complianceInfo.CertificationTypeVersion)
+	require.Equal(suite.T, testconstants.ProgramTypeVersion, complianceInfo.ProgramTypeVersion)
 	require.Equal(suite.T, testconstants.FamilyID, complianceInfo.FamilyId)
 	require.Equal(suite.T, testconstants.SupportedClusters, complianceInfo.SupportedClusters)
 	require.Equal(suite.T, testconstants.CompliantPlatformUsed, complianceInfo.CompliantPlatformUsed)
 	require.Equal(suite.T, testconstants.CompliantPlatformVersion, complianceInfo.CompliantPlatformVersion)
-	require.Equal(suite.T, testconstants.OSNameAndVersion, complianceInfo.OSNameAndVersion)
+	require.Equal(suite.T, testconstants.OSVersion, complianceInfo.OSVersion)
 	require.Equal(suite.T, testconstants.CertificationRoute, complianceInfo.CertificationRoute)
 	require.Equal(suite.T, testconstants.Transport, complianceInfo.Transport)
 	require.Equal(suite.T, testconstants.ParentChild1, complianceInfo.ParentChild)
+	require.Equal(suite.T, testconstants.CertificationIDOfSoftwareComponent, complianceInfo.CertificationIdOfSoftwareComponent)
 
 	modelIsCertified, _ = GetCertifiedModel(suite, vid, pid, sv, compliancetypes.ZigbeeCertificationType)
 	require.True(suite.T, modelIsCertified.Value)
@@ -1184,15 +1187,16 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.CDCertificateID, deviceSoftwareCompliance.ComplianceInfo[0].CDCertificateId)
 	require.Equal(suite.T, certReason, deviceSoftwareCompliance.ComplianceInfo[0].Reason)
 	require.Equal(suite.T, certDate, deviceSoftwareCompliance.ComplianceInfo[0].Date)
-	require.Equal(suite.T, testconstants.CertificationTypeVersion, deviceSoftwareCompliance.ComplianceInfo[0].CertificationTypeVersion)
+	require.Equal(suite.T, testconstants.ProgramTypeVersion, deviceSoftwareCompliance.ComplianceInfo[0].ProgramTypeVersion)
 	require.Equal(suite.T, testconstants.FamilyID, deviceSoftwareCompliance.ComplianceInfo[0].FamilyId)
 	require.Equal(suite.T, testconstants.SupportedClusters, deviceSoftwareCompliance.ComplianceInfo[0].SupportedClusters)
 	require.Equal(suite.T, testconstants.CompliantPlatformUsed, deviceSoftwareCompliance.ComplianceInfo[0].CompliantPlatformUsed)
 	require.Equal(suite.T, testconstants.CompliantPlatformVersion, deviceSoftwareCompliance.ComplianceInfo[0].CompliantPlatformVersion)
-	require.Equal(suite.T, testconstants.OSNameAndVersion, deviceSoftwareCompliance.ComplianceInfo[0].OSNameAndVersion)
+	require.Equal(suite.T, testconstants.OSVersion, deviceSoftwareCompliance.ComplianceInfo[0].OSVersion)
 	require.Equal(suite.T, testconstants.CertificationRoute, deviceSoftwareCompliance.ComplianceInfo[0].CertificationRoute)
 	require.Equal(suite.T, testconstants.Transport, deviceSoftwareCompliance.ComplianceInfo[0].Transport)
 	require.Equal(suite.T, testconstants.ParentChild1, deviceSoftwareCompliance.ComplianceInfo[0].ParentChild)
+	require.Equal(suite.T, testconstants.CertificationIDOfSoftwareComponent, deviceSoftwareCompliance.ComplianceInfo[0].CertificationIdOfSoftwareComponent)
 
 	// Get all models
 	complianceInfos, _ = GetAllComplianceInfo(suite)
@@ -1592,26 +1596,27 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	// Provision non-existent model with all optional fields
 	provReason = "some reason 8"
 	provModelMsg = compliancetypes.MsgProvisionModel{
-		Vid:                      vid,
-		Pid:                      pid,
-		SoftwareVersion:          sv,
-		SoftwareVersionString:    svs,
-		ProvisionalDate:          provDate,
-		CertificationType:        "matter",
-		Reason:                   provReason,
-		CDCertificateId:          testconstants.CDCertificateID,
-		CertificationTypeVersion: testconstants.CertificationTypeVersion,
-		FamilyId:                 testconstants.FamilyID,
-		SupportedClusters:        testconstants.SupportedClusters,
-		CompliantPlatformUsed:    testconstants.CompliantPlatformUsed,
-		CompliantPlatformVersion: testconstants.CompliantPlatformVersion,
-		OSNameAndVersion:         testconstants.OSNameAndVersion,
-		CertificationRoute:       testconstants.CertificationRoute,
-		ProductType:              testconstants.ProductType,
-		Transport:                testconstants.Transport,
-		ParentChild:              testconstants.ParentChild1,
-		CDVersionNumber:          uint32(testconstants.CdVersionNumber),
-		Signer:                   certCenterAccount.Address,
+		Vid:                                vid,
+		Pid:                                pid,
+		SoftwareVersion:                    sv,
+		SoftwareVersionString:              svs,
+		ProvisionalDate:                    provDate,
+		CertificationType:                  "matter",
+		Reason:                             provReason,
+		CDCertificateId:                    testconstants.CDCertificateID,
+		ProgramTypeVersion:                 testconstants.ProgramTypeVersion,
+		FamilyId:                           testconstants.FamilyID,
+		SupportedClusters:                  testconstants.SupportedClusters,
+		CompliantPlatformUsed:              testconstants.CompliantPlatformUsed,
+		CompliantPlatformVersion:           testconstants.CompliantPlatformVersion,
+		OSVersion:                          testconstants.OSVersion,
+		CertificationRoute:                 testconstants.CertificationRoute,
+		ProgramType:                        testconstants.ProgramType,
+		Transport:                          testconstants.Transport,
+		ParentChild:                        testconstants.ParentChild1,
+		CertificationIdOfSoftwareComponent: testconstants.CertificationIDOfSoftwareComponent,
+		CDVersionNumber:                    uint32(testconstants.CdVersionNumber),
+		Signer:                             certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&provModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -1627,15 +1632,16 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, provReason, complianceInfo.Reason)
 	require.Equal(suite.T, testconstants.CDCertificateID, complianceInfo.CDCertificateId)
 	require.Equal(suite.T, provDate, complianceInfo.Date)
-	require.Equal(suite.T, testconstants.CertificationTypeVersion, complianceInfo.CertificationTypeVersion)
+	require.Equal(suite.T, testconstants.ProgramTypeVersion, complianceInfo.ProgramTypeVersion)
 	require.Equal(suite.T, testconstants.FamilyID, complianceInfo.FamilyId)
 	require.Equal(suite.T, testconstants.SupportedClusters, complianceInfo.SupportedClusters)
 	require.Equal(suite.T, testconstants.CompliantPlatformUsed, complianceInfo.CompliantPlatformUsed)
 	require.Equal(suite.T, testconstants.CompliantPlatformVersion, complianceInfo.CompliantPlatformVersion)
-	require.Equal(suite.T, testconstants.OSNameAndVersion, complianceInfo.OSNameAndVersion)
+	require.Equal(suite.T, testconstants.OSVersion, complianceInfo.OSVersion)
 	require.Equal(suite.T, testconstants.CertificationRoute, complianceInfo.CertificationRoute)
 	require.Equal(suite.T, testconstants.Transport, complianceInfo.Transport)
 	require.Equal(suite.T, testconstants.ParentChild1, complianceInfo.ParentChild)
+	require.Equal(suite.T, testconstants.CertificationIDOfSoftwareComponent, complianceInfo.CertificationIdOfSoftwareComponent)
 
 	_, err = GetCertifiedModel(suite, vid, pid, sv, compliancetypes.MatterCertificationType)
 	suite.AssertNotFound(err)
@@ -1659,21 +1665,22 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	// Certify model with some optional fields
 	certReason = "some reason 9"
 	certifyModelMsg = compliancetypes.MsgCertifyModel{
-		Vid:                      vid,
-		Pid:                      pid,
-		SoftwareVersion:          sv,
-		SoftwareVersionString:    svs,
-		CertificationDate:        certDate,
-		CertificationType:        "matter",
-		Reason:                   certReason,
-		CDCertificateId:          testconstants.CDCertificateID,
-		CertificationTypeVersion: "pTypeVersion",
-		FamilyId:                 "FAM12345abc",
-		SupportedClusters:        "sClusters",
-		CompliantPlatformUsed:    "WIFI",
-		CompliantPlatformVersion: "V1",
-		CDVersionNumber:          uint32(testconstants.CdVersionNumber),
-		Signer:                   certCenterAccount.Address,
+		Vid:                                vid,
+		Pid:                                pid,
+		SoftwareVersion:                    sv,
+		SoftwareVersionString:              svs,
+		CertificationDate:                  certDate,
+		CertificationType:                  "matter",
+		Reason:                             certReason,
+		CDCertificateId:                    testconstants.CDCertificateID,
+		ProgramTypeVersion:                 "pTypeVersion",
+		FamilyId:                           "familyID",
+		SupportedClusters:                  "sClusters",
+		CompliantPlatformUsed:              "WIFI",
+		CompliantPlatformVersion:           "V1",
+		CertificationIdOfSoftwareComponent: "x5732",
+		CDVersionNumber:                    uint32(testconstants.CdVersionNumber),
+		Signer:                             certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -1690,12 +1697,13 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.CDCertificateID, complianceInfo.CDCertificateId)
 	require.Equal(suite.T, certReason, complianceInfo.Reason)
 	require.Equal(suite.T, certDate, complianceInfo.Date)
-	require.Equal(suite.T, "pTypeVersion", complianceInfo.CertificationTypeVersion)
-	require.Equal(suite.T, "FAM12345abc", complianceInfo.FamilyId)
+	require.Equal(suite.T, "pTypeVersion", complianceInfo.ProgramTypeVersion)
+	require.Equal(suite.T, "familyID", complianceInfo.FamilyId)
 	require.Equal(suite.T, "sClusters", complianceInfo.SupportedClusters)
 	require.Equal(suite.T, "WIFI", complianceInfo.CompliantPlatformUsed)
 	require.Equal(suite.T, "V1", complianceInfo.CompliantPlatformVersion)
-	require.Equal(suite.T, testconstants.OSNameAndVersion, complianceInfo.OSNameAndVersion)
+	require.Equal(suite.T, "x5732", complianceInfo.CertificationIdOfSoftwareComponent)
+	require.Equal(suite.T, testconstants.OSVersion, complianceInfo.OSVersion)
 	require.Equal(suite.T, testconstants.CertificationRoute, complianceInfo.CertificationRoute)
 	require.Equal(suite.T, testconstants.Transport, complianceInfo.Transport)
 	require.Equal(suite.T, testconstants.ParentChild1, complianceInfo.ParentChild)
@@ -1719,12 +1727,13 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.CDCertificateID, deviceSoftwareCompliance.ComplianceInfo[3].CDCertificateId)
 	require.Equal(suite.T, certReason, deviceSoftwareCompliance.ComplianceInfo[3].Reason)
 	require.Equal(suite.T, certDate, deviceSoftwareCompliance.ComplianceInfo[3].Date)
-	require.Equal(suite.T, "pTypeVersion", deviceSoftwareCompliance.ComplianceInfo[3].CertificationTypeVersion)
-	require.Equal(suite.T, "FAM12345abc", deviceSoftwareCompliance.ComplianceInfo[3].FamilyId)
+	require.Equal(suite.T, "pTypeVersion", deviceSoftwareCompliance.ComplianceInfo[3].ProgramTypeVersion)
+	require.Equal(suite.T, "familyID", deviceSoftwareCompliance.ComplianceInfo[3].FamilyId)
 	require.Equal(suite.T, "sClusters", deviceSoftwareCompliance.ComplianceInfo[3].SupportedClusters)
 	require.Equal(suite.T, "WIFI", deviceSoftwareCompliance.ComplianceInfo[3].CompliantPlatformUsed)
 	require.Equal(suite.T, "V1", deviceSoftwareCompliance.ComplianceInfo[3].CompliantPlatformVersion)
-	require.Equal(suite.T, testconstants.OSNameAndVersion, deviceSoftwareCompliance.ComplianceInfo[3].OSNameAndVersion)
+	require.Equal(suite.T, "x5732", deviceSoftwareCompliance.ComplianceInfo[3].CertificationIdOfSoftwareComponent)
+	require.Equal(suite.T, testconstants.OSVersion, deviceSoftwareCompliance.ComplianceInfo[3].OSVersion)
 	require.Equal(suite.T, testconstants.CertificationRoute, deviceSoftwareCompliance.ComplianceInfo[3].CertificationRoute)
 	require.Equal(suite.T, testconstants.Transport, deviceSoftwareCompliance.ComplianceInfo[3].Transport)
 	require.Equal(suite.T, testconstants.ParentChild1, deviceSoftwareCompliance.ComplianceInfo[3].ParentChild)
