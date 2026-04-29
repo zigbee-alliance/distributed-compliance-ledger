@@ -491,7 +491,7 @@ test_divider
 echo "Try to update other OTA fields when OTA fields already set during Create VID: $vid_1 PID: $pid_1 SV: $sv_1"
 result=$(echo 'test1234' | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 \
 --otaFileSize=12345 --from=$vendor_account_1 --yes 2>&1) || true
-check_response_and_report "$result" "OtaUrl already set. OtaFileSize, OtaChecksum, and OtaChecksumType fields cannot be updated" raw
+check_response_and_report "$result" "OtaUrl is not provided. OtaFileSize, OtaChecksum, and OtaChecksumType fields must not be provided" raw
 
 test_divider
 
