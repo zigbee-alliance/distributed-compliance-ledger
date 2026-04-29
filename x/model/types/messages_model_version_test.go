@@ -438,7 +438,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			}(validMsgCreateModelVersion()),
 		},
 		{
-			name: " when OtaUrl is omitted then OtaFileSize, OtaChecksum, and  OtaChecksum must be omitted too",
+			name: " when OtaUrl is omitted then OtaFileSize, OtaChecksumType, and  OtaChecksum must be omitted too",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaUrl = ""
 				msg.OtaFileSize = 0

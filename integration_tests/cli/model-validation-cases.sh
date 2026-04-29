@@ -334,7 +334,7 @@ test_divider
 # Update the model version with few mutable fields and make sure all other fields are still the same
 echo "Update Device Model Version with few mutable fields and make sure all other fields are still the same for VID: $vid_1 PID: $pid_1 SV: $sv_1"
 result=$(echo "test1234" | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 --softwareVersionValid=true \
---releaseNotesURL="https://release.url.info" --otaURL="https://ota.url.com" --otaFileSize=123 --otaChecksum="SGVsbG8gbmV3IHdvcmxkIQ==" --minApplicableSoftwareVersion=2 --maxApplicableSoftwareVersion=20 --from=$vendor_account_1 --yes)
+--releaseNotesURL="https://release.url.info" --otaURL="https://ota.url.com" --otaFileSize=123 --otaChecksum="SGVsbG8gbmV3IHdvcmxkIQ==" --otaChecksumType=1 --minApplicableSoftwareVersion=2 --maxApplicableSoftwareVersion=20 --from=$vendor_account_1 --yes)
 result=$(get_txn_result "$result")
 check_response_and_report "$result" "\"code\": 0"
 
@@ -353,6 +353,7 @@ check_response_and_report "$result" "\"softwareVersionValid\": true"
 check_response_and_report "$result" "\"otaUrl\": \"https://ota.url.com\""
 check_response_and_report "$result" "\"otaFileSize\": \"123\""
 check_response_and_report "$result" "\"otaChecksum\": \"SGVsbG8gbmV3IHdvcmxkIQ==\""
+check_response_and_report "$result" "\"otaChecksumType\": 1"
 check_response_and_report "$result" "\"minApplicableSoftwareVersion\": 2"
 check_response_and_report "$result" "\"maxApplicableSoftwareVersion\": 20"
 check_response_and_report "$result" "\"releaseNotesUrl\": \"https://release.url.info\""
@@ -486,6 +487,14 @@ check_response_and_report "$result" "\"minApplicableSoftwareVersion\": 15"
 
 test_divider
 
+# Try to update other OTA fields when OTA fields already set during Create
+echo "Try to update other OTA fields when OTA fields already set during Create VID: $vid_1 PID: $pid_1 SV: $sv_1"
+result=$(echo 'test1234' | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 \
+--otaFileSize=12345 --from=$vendor_account_1 --yes 2>&1) || true
+check_response_and_report "$result" "OtaUrl already set. OtaFileSize, OtaChecksum, and OtaChecksumType fields cannot be updated" raw
+
+test_divider
+
 sv_1=$RANDOM
 specification_version=6
 
@@ -537,6 +546,22 @@ test_divider
 echo "Update the model version with minApplicableSoftwareVersion greater then maxApplicableSoftwareVersion and make sure we get error back VID: $vid_1 PID: $pid_1 SV: $sv_1"
 result=$(echo "test1234" | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 --maxApplicableSoftwareVersion=32 --minApplicableSoftwareVersion=33 --from=$vendor_account_1 --yes 2>&1) || true
 check_response_and_report "$result" "MaxApplicableSoftwareVersion must not be less than MinApplicableSoftwareVersion" raw
+
+test_divider
+
+# Update the model version with missing other OTA fields when otaURL is present (OTA fields were not set during Create)
+echo "Update the model version with missing other OTA fields when otaURL is present (OTA fields were not set during Create) VID: $vid_1 PID: $pid_1 SV: $sv_1"
+sv_no_ota=$RANDOM
+echo "Create a Device Model Version WITHOUT OTA fields for VID: $vid_1 PID: $pid_1 SV: $sv_no_ota"
+result=$(echo 'test1234' | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=20 --minApplicableSoftwareVersion=10 --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_no_ota --softwareVersionString=1 --from=$vendor_account_1 --yes)
+result=$(get_txn_result "$result")
+check_response_and_report "$result" "\"code\": 0"
+
+test_divider
+
+echo "Try to update OtaUrl without providing other OTA fields VID: $vid_1 PID: $pid_1 SV: $sv_no_ota"
+result=$(echo "test1234" | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_no_ota --otaURL="https://ota.url.com" --from=$vendor_account_1 --yes 2>&1) || true
+check_response_and_report "$result" "OtaFileSize, OtaChecksum and OtaChecksumType are required if OtaUrl is provided" raw
 
 test_divider
 
