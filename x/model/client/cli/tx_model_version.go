@@ -134,6 +134,7 @@ func CmdUpdateModelVersion() *cobra.Command {
 		otaURL                       string
 		OtaFileSize                  uint64
 		OtaChecksum                  string
+		OtaChecksumType              int32
 		minApplicableSoftwareVersion uint32
 		maxApplicableSoftwareVersion uint32
 		releaseNotesURL              string
@@ -158,6 +159,7 @@ func CmdUpdateModelVersion() *cobra.Command {
 				otaURL,
 				OtaFileSize,
 				OtaChecksum,
+				OtaChecksumType,
 				minApplicableSoftwareVersion,
 				maxApplicableSoftwareVersion,
 				releaseNotesURL,
@@ -191,6 +193,11 @@ func CmdUpdateModelVersion() *cobra.Command {
 	Software Update Image under the OtaUrl attribute, 
 	encoded in base64 string representation. The digest SHALL have been computed using 
 	the algorithm specified in OtaChecksumType`)
+	cmd.Flags().Int32Var(&OtaChecksumType, FlagOtaChecksumType, 0,
+		`Numberic identifier as defined in 
+IANA Named Information Hash Algorithm Registry for the type of otaChecksum.
+For example, a value of 1 would match the sha-256 identifier, 
+which maps to the SHA-256 digest algorithm`)
 	cmd.Flags().Uint32Var(&minApplicableSoftwareVersion, FlagMinApplicableSoftwareVersion, 0,
 		`MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied`)
 	cmd.Flags().Uint32Var(&maxApplicableSoftwareVersion, FlagMaxApplicableSoftwareVersion, 0,
