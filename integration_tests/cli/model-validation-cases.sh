@@ -560,7 +560,8 @@ check_response_and_report "$result" "\"code\": 0"
 test_divider
 
 echo "Try to update OtaUrl without providing other OTA fields VID: $vid_1 PID: $pid_1 SV: $sv_no_ota"
-result=$(echo "test1234" | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_no_ota --otaURL="https://ota.url.com" --from=$vendor_account_1 --yes 2>&1) || true
+result=$(echo "test1234" | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_no_ota --otaURL="https://ota.url.com" --from=$vendor_account_1 --yes)
+result=$(get_txn_result "$result")
 check_response_and_report "$result" "OtaFileSize, OtaChecksum and OtaChecksumType are required if OtaUrl is provided" raw
 
 test_divider
