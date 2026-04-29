@@ -155,8 +155,8 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 func updateOtaFields(modelVersion *types.ModelVersion, msg *types.MsgUpdateModelVersion) error {
 	isNewOtaURL := modelVersion.OtaUrl == ""
 	if isNewOtaURL {
-		hasAllOtaMetadata := msg.OtaChecksum != "" && msg.OtaChecksumType != 0 && msg.OtaFileSize != 0
-		if !hasAllOtaMetadata {
+		isAnyOtaMetadataMissed := msg.OtaChecksum == "" || msg.OtaChecksumType == 0 || msg.OtaFileSize == 0
+		if isAnyOtaMetadataMissed {
 			return types.NewErrOtaMissingInformation()
 		}
 
