@@ -474,7 +474,7 @@ max_applicable_software_version_for_1_2_r2=2000
 certification_type_for_1_2_r2="matter"
 certification_date_for_1_2_r2="2021-01-03T00:00:00Z"
 provisional_date_for_1_2_r2="2010-12-11T00:00:00Z"
-cd_certificate_id_for_1_2_r2="15DEXZ"
+cd_certificate_id_for_1_2_r2="12345678910abcdefgh"
 
 test_data_url="https://url.data.dclmodel"
 issuer_subject_key_id="5A880E6C3653D07FB08971A3F473790930E62BDB"

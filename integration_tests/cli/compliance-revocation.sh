@@ -38,7 +38,7 @@ certification_type_matter="matter"
 pid=$RANDOM
 sv=$RANDOM
 svs=$RANDOM
-cd_certificate_id="123"
+cd_certificate_id="12345678910abcdefgh"
 
 echo "Add Model and a New Model Version with VID: $vid PID: $pid SV: $sv"
 create_model_and_version $vid $pid $sv $svs $vendor_account

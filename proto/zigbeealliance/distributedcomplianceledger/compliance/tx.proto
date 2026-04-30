@@ -26,10 +26,10 @@ message MsgCertifyModel {
   string softwareVersionString = 5 [(gogoproto.moretags) = "validate:\"required,max=64\""];
   uint32 cDVersionNumber = 6  [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
   string certificationDate = 7 [(gogoproto.moretags) = "validate:\"required\""];
-  string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=100\""];
+  string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=20\""];
   string reason = 9 [(gogoproto.moretags) = "validate:\"max=102400\""];
   string programTypeVersion = 10 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string cDCertificateId = 11 [(gogoproto.moretags) = "validate:\"required,max=64\""];
+  string cDCertificateId = 11 [(gogoproto.moretags) = "validate:\"required,min=19,max=19\""];
   string familyId = 12 [(gogoproto.moretags) = "validate:\"max=64\""];
   string supportedClusters = 13 [(gogoproto.moretags) = "validate:\"max=64\""];
   string compliantPlatformUsed = 14 [(gogoproto.moretags) = "validate:\"max=64\""];
@@ -54,7 +54,7 @@ message MsgRevokeModel {
   string softwareVersionString = 5 [(gogoproto.moretags) = "validate:\"required,max=64\""];
   uint32 cDVersionNumber = 6  [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];  
   string revocationDate = 7 [(gogoproto.moretags) = "validate:\"required\""];
-  string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=100\""];
+  string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=20\""];
   string reason = 9 [(gogoproto.moretags) = "validate:\"max=102400\""];
   uint32 schemaVersion = 10 [(gogoproto.moretags) = "validate:\"eq=0\""];
 }
@@ -70,10 +70,10 @@ message MsgProvisionModel {
   string softwareVersionString = 5 [(gogoproto.moretags) = "validate:\"required,max=64\""];
   uint32 cDVersionNumber = 6 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
   string provisionalDate = 7 [(gogoproto.moretags) = "validate:\"required\""];
-  string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=100\""];
+  string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=20\""];
   string reason = 9 [(gogoproto.moretags) = "validate:\"max=102400\""];
   string programTypeVersion = 10 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string cDCertificateId = 11 [(gogoproto.moretags) = "validate:\"required,max=64\""];
+  string cDCertificateId = 11 [(gogoproto.moretags) = "validate:\"required,min=19,max=19\""];
   string familyId = 12 [(gogoproto.moretags) = "validate:\"max=64\""];
   string supportedClusters = 13 [(gogoproto.moretags) = "validate:\"max=64\""];
   string compliantPlatformUsed = 14 [(gogoproto.moretags) = "validate:\"max=64\""];
@@ -92,15 +92,15 @@ message MsgProvisionModelResponse {
 
 message MsgUpdateComplianceInfo {
   string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
-  int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""]; 
+  int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
   int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
   uint32 softwareVersion = 4;
-  string certificationType = 5 [(gogoproto.moretags) = "validate:\"required,max=64\""];
-  string cDVersionNumber = 6 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""]; 
-  string date = 7; 
-  string reason = 8 [(gogoproto.moretags) = "validate:\"omitempty,max=102400\""]; 
+  string certificationType = 5 [(gogoproto.moretags) = "validate:\"required,max=20\""];
+  string cDVersionNumber = 6 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
+  string date = 7;
+  string reason = 8 [(gogoproto.moretags) = "validate:\"omitempty,max=102400\""];
   string owner = 9 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  string cDCertificateId = 10 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
+  string cDCertificateId = 10 [(gogoproto.moretags) = "validate:\"omitempty,max=19\""];
   string certificationRoute = 11 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string programType = 12 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string programTypeVersion = 13 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
@@ -123,7 +123,7 @@ message MsgDeleteComplianceInfo {
   int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
   int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
   uint32 softwareVersion = 4;
-  string certificationType = 5 [(gogoproto.moretags) = "validate:\"required,max=100\""];
+  string certificationType = 5 [(gogoproto.moretags) = "validate:\"required,max=20\""];
 }
 
 message MsgDeleteComplianceInfoResponse {
