@@ -135,7 +135,7 @@ max_applicable_software_version=1000
 certification_type="zigbee"
 certification_date="2020-01-01T00:00:00Z"
 provisional_date="2019-12-12T00:00:00Z"
-cd_certificate_id="15DEXF"
+cd_certificate_id="12345678910abcdefgh"
 
 root_cert_path="integration_tests/constants/root_cert"
 root_cert_subject="MDQxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRAwDgYDVQQKDAdyb290LWNh"

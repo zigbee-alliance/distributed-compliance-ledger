@@ -14,7 +14,7 @@ vid=$RANDOM
 pid=$RANDOM
 sv=$RANDOM
 svs=$RANDOM
-cd_certificate_id="123"
+cd_certificate_id="12345678910abcdefgh"
 
 echo "Query non existent complianceinfo"
 result=$(execute_with_retry "dcld query compliance compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="zigbee"")

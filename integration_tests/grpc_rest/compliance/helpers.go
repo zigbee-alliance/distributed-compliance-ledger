@@ -17,6 +17,7 @@ package compliance
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	tmrand "github.com/cometbft/cometbft/libs/rand"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -606,7 +607,7 @@ func CDCertificateIDUpdateChangesOnlyOneComplianceInfo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Update compliance info of first model version
-	cdCertificateIDNew := testconstants.CDCertificateID + "new"
+	cdCertificateIDNew := strings.Replace(testconstants.CDCertificateID, "1", "2", 1)
 	updateComplianceInfoMsg := compliancetypes.MsgUpdateComplianceInfo{
 		Creator:           certCenterAccount.Address,
 		Vid:               vid,
@@ -891,7 +892,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 
 	// Certify a device when Model Version does not exist yet
 	certReason := testconstants.Reason + "0"
-	cdCertificateID := testconstants.CDCertificateID + "1"
+	cdCertificateID := strings.Replace(testconstants.CDCertificateID, "1", "2", 1)
 	certDate := testconstants.FirstJanuary
 	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,

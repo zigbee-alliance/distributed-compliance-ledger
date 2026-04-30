@@ -4,6 +4,7 @@ import (
 	fmt "fmt"
 	"testing"
 
+	tmrand "github.com/cometbft/cometbft/libs/rand"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
@@ -60,6 +61,16 @@ func TestMsgUpdatePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 				SchemaVersion: 0,
 			},
 			err: validator.ErrRequiredFieldMissing,
+		},
+		{
+			name: "label > 64",
+			msg: MsgUpdatePkiRevocationDistributionPoint{
+				Signer:        sample.AccAddress(),
+				Vid:           testconstants.Vid,
+				SchemaVersion: 0,
+				Label:         tmrand.Str(65),
+			},
+			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
 			name: "issuerSubjectKeyID empty",
@@ -259,6 +270,19 @@ func TestMsgUpdatePkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 				DataURL:              testconstants.DataURL,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 				CrlSignerDelegator:   testconstants.CertWithSizeGreater2KB,
+				SchemaVersion:        0,
+			},
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
+		{
+			name: "issuerSubjectKeyID > 64",
+			msg: MsgUpdatePkiRevocationDistributionPoint{
+				Signer:               sample.AccAddress(),
+				Vid:                  testconstants.PAACertWithNumericVidVid,
+				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
+				Label:                "label",
+				DataURL:              testconstants.DataURL,
+				IssuerSubjectKeyID:   tmrand.Str(65),
 				SchemaVersion:        0,
 			},
 			err: validator.ErrFieldMaxLengthExceeded,

@@ -42,7 +42,7 @@ type Certificate struct {
 const (
 	Mvid             = "Mvid"
 	Mpid             = "Mpid"
-	MaxCertSize      = 100 * 1024 // 100 KB
+	MaxCertSize      = 20 * 1024 // 20 KB
 	MaxSANCount      = 100
 	MaxSubjectFields = 50
 )
@@ -214,7 +214,7 @@ func (c Certificate) IsSelfSigned() bool {
 
 // ParseAndValidateCertificate validates and parses a PEM-encoded X.509 certificate.
 // It performs the following validations:
-// 1. Checks that the certificate size does not exceed MaxCertSize (100 KB)
+// 1. Checks that the certificate size does not exceed MaxCertSize (20 KB)
 // 2. Checks that the number of Subject Alternative Names (SANs) does not exceed MaxSANCount (100)
 // 3. Checks that the number of subject fields does not exceed MaxSubjectFields (50)
 //

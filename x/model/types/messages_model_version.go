@@ -86,9 +86,9 @@ func (msg *MsgCreateModelVersion) ValidateBasic() error {
 		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	_, err = base64.StdEncoding.DecodeString(msg.OtaChecksum)
+	err = validator.Validate(msg)
 	if err != nil {
-		return NewErrOtaChecksumIsNotBase64Encoded(msg.OtaChecksum)
+		return err
 	}
 
 	if msg.OtaUrl != "" {
@@ -96,11 +96,11 @@ func (msg *MsgCreateModelVersion) ValidateBasic() error {
 		if err != nil {
 			return err
 		}
-	}
 
-	err = validator.Validate(msg)
-	if err != nil {
-		return err
+		_, err = base64.StdEncoding.DecodeString(msg.OtaChecksum)
+		if err != nil {
+			return NewErrOtaChecksumIsNotBase64Encoded(msg.OtaChecksum)
+		}
 	}
 
 	return nil

@@ -208,7 +208,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 
 				return msg
 			}(validMsgCreateModelVersion()),
-			err: ErrUnsupportedOtaChecksumType,
+			err: validator.ErrRequiredFieldMissing,
 		},
 		{
 			name: "OtaChecksumType < 0",
@@ -217,7 +217,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 
 				return msg
 			}(validMsgCreateModelVersion()),
-			err: ErrUnsupportedOtaChecksumType,
+			err: validator.ErrFieldLowerBoundViolated,
 		},
 		{
 			name: "OtaChecksumType is unsupported, OtaChecksumType = 13",
