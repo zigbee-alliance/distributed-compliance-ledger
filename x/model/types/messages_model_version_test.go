@@ -814,7 +814,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaChecksum is base64 encoded",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.OtaUrl = "https://sampleflowurl.dclmodel"
-				msg.OtaChecksum = "SGVsbG8gd29ybGQh"
+				msg.OtaChecksum = "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU"
 				msg.OtaFileSize = 1
 				msg.OtaChecksumType = 1
 

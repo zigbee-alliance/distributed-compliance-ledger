@@ -256,6 +256,10 @@ func validateOtaFields(ota otaFields, isUpdate bool) error {
 			return err
 		}
 
+		if len(ota.Checksum) < 43 {
+			return errors.Wrapf(validator.ErrFieldMinLengthNotReached, "min length for OtaChecksum(base64 encoded) is 43, got %v", len(ota.Checksum))
+		}
+
 		_, err = base64.StdEncoding.DecodeString(ota.Checksum)
 		if err != nil {
 			return NewErrOtaChecksumIsNotBase64Encoded(ota.Checksum)
