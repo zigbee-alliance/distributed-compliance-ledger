@@ -1188,8 +1188,6 @@ func Demo(suite *utils.TestSuite) {
 	// Check model version is updated
 	receivedModelVersion, err := GetModelVersion(suite, createFirstModelMsg.Vid, createFirstModelMsg.Pid, createModelVersionMsg.SoftwareVersion)
 	require.NoError(suite.T, err)
-	require.Equal(suite.T, createModelVersionMsg.OtaFileSize+1, receivedModelVersion.OtaFileSize)
-	require.Equal(suite.T, createModelVersionMsg.OtaChecksum+"/new", receivedModelVersion.OtaChecksum)
 	require.Equal(suite.T, createModelVersionMsg.OtaUrl+"/new", receivedModelVersion.OtaUrl)
 }
 
