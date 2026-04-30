@@ -118,7 +118,7 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 		// Should no longer be in proposed list (threshold reached)
 		out, err = QueryAllProposedDisableNodes()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), fmt.Sprintf(`"address": "%s"`, validatorAddress))
+		require.NotContains(t, string(out), fmt.Sprintf(`"address":"%s"`, validatorAddress))
 
 		// Should be in disabled list
 		out, err = QueryDisabledNode(validatorAddress)
@@ -233,7 +233,7 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 		// Should NOT be jailed
 		out, err = QueryNode(validatorAddress)
 		require.NoError(t, err)
-		require.NotContains(t, string(out), `"jailed": true`)
+		require.NotContains(t, string(out), `"jailed":true`)
 	})
 
 	t.Run("RePropose_AfterRejected_StartsFresh", func(t *testing.T) {

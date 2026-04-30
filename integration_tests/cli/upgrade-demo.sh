@@ -233,7 +233,7 @@ check_response "$approved_dclupgrade_query" "Not Found"
 ###########################################################################################################################################
 get_height current_height
 echo "Current height is $current_height"
-plan_height=$(expr $current_height + 3)
+plan_height=$(expr $current_height + 30)
 echo "$plan_height"
 
 echo "propose upgrade's plan height bigger than block height"
@@ -260,7 +260,7 @@ check_response_and_report "$approve" "upgrade cannot be scheduled in the past" r
 
 get_height current_height
 echo "Current height is $current_height"
-plan_height=$(expr $current_height + 3)
+plan_height=$(expr $current_height + 30)
 
 echo "re-propose upgrade's plan height bigger than block height"
 propose=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_plan_name_v1_2_2 --upgrade-height=$plan_height --upgrade-info=$upgrade_plan_info_v1_2_2 --from jack --yes)
@@ -281,7 +281,7 @@ test_divider
 ###########################################################################################################################################
 get_height current_height
 echo "Current height is $current_height"
-plan_height=$(expr $current_height + 3)
+plan_height=$(expr $current_height + 30)
 
 echo "propose upgrade's plan height bigger than block height"
 propose=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_plan_name_v1_4_0 --upgrade-height=$plan_height --upgrade-info=$upgrade_plan_info_v1_4_0 --from jack --yes)
@@ -315,7 +315,7 @@ check_response_and_report "$propose" "upgrade cannot be scheduled in the past" r
 test_divider
 get_height current_height
 echo "Current height is $current_height"
-plan_height=$(expr $current_height + 3)
+plan_height=$(expr $current_height + 30)
 
 # 18. TEST PROPOSE AND REJECT UPGRADE
 echo "18. TEST PROPOSE AND REJECT UPGRADE"

@@ -46,15 +46,15 @@ func TestModelUpdate(t *testing.T) {
 	t.Run("QueryDefaultValues", func(t *testing.T) {
 		out, err := QueryModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid": %d`, pid))
-		require.Contains(t, string(out), fmt.Sprintf(`"productLabel": "%s"`, productLabel))
-		require.Contains(t, string(out), `"schemaVersion": 0`)
-		require.Contains(t, string(out), `"commissioningModeInitialStepsHint": 1`)
-		require.Contains(t, string(out), `"commissioningModeSecondaryStepsHint": 4`)
-		require.Contains(t, string(out), `"icdUserActiveModeTriggerHint": 1`)
-		require.Contains(t, string(out), `"factoryResetStepsHint": 1`)
-		require.Contains(t, string(out), `"enhancedSetupFlowOptions": 0`)
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
+		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
+		require.Contains(t, string(out), fmt.Sprintf(`"productLabel":"%s"`, productLabel))
+		require.Contains(t, string(out), `"schemaVersion":0`)
+		require.Contains(t, string(out), `"commissioningModeInitialStepsHint":1`)
+		require.Contains(t, string(out), `"commissioningModeSecondaryStepsHint":4`)
+		require.Contains(t, string(out), `"icdUserActiveModeTriggerHint":1`)
+		require.Contains(t, string(out), `"factoryResetStepsHint":1`)
+		require.Contains(t, string(out), `"enhancedSetupFlowOptions":0`)
 	})
 
 	t.Run("UpdateModelFields", func(t *testing.T) {
@@ -78,12 +78,12 @@ func TestModelUpdate(t *testing.T) {
 
 		out, err := QueryModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"productLabel": "%s"`, newDesc))
-		require.Contains(t, string(out), `"commissioningModeInitialStepsHint": 8`)
-		require.Contains(t, string(out), `"commissioningModeSecondaryStepsHint": 9`)
-		require.Contains(t, string(out), `"icdUserActiveModeTriggerHint": 7`)
-		require.Contains(t, string(out), `"factoryResetStepsHint": 6`)
-		require.Contains(t, string(out), `"enhancedSetupFlowOptions": 2`)
+		require.Contains(t, string(out), fmt.Sprintf(`"productLabel":"%s"`, newDesc))
+		require.Contains(t, string(out), `"commissioningModeInitialStepsHint":8`)
+		require.Contains(t, string(out), `"commissioningModeSecondaryStepsHint":9`)
+		require.Contains(t, string(out), `"icdUserActiveModeTriggerHint":7`)
+		require.Contains(t, string(out), `"factoryResetStepsHint":6`)
+		require.Contains(t, string(out), `"enhancedSetupFlowOptions":2`)
 	})
 
 	t.Run("UpdateModelSupportURL", func(t *testing.T) {
@@ -102,7 +102,7 @@ func TestModelUpdate(t *testing.T) {
 
 		out, err := QueryModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"supportUrl": "%s"`, supportURL))
+		require.Contains(t, string(out), fmt.Sprintf(`"supportUrl":"%s"`, supportURL))
 	})
 
 	t.Run("UpdateImmutableFields_Fails", func(t *testing.T) {
@@ -111,7 +111,7 @@ func TestModelUpdate(t *testing.T) {
 		// We verify that productName cannot be set to empty via update by checking the model is intact.
 		out, err := QueryModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid": %d`, pid))
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
+		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
 	})
 }

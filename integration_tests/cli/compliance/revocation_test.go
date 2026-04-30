@@ -25,7 +25,7 @@ func TestComplianceRevocation(t *testing.T) {
 	pid := rand.Intn(65534) + 1
 	sv := rand.Intn(65534) + 1
 	svs := fmt.Sprintf("%d", rand.Intn(65534)+1)
-	cdCertID := "123"
+	cdCertID := fmt.Sprintf("cert-%d", rand.Intn(1<<30))
 
 	t.Run("CreateModelAndVersion", func(t *testing.T) {
 		cliputils.CreateModelAndVersion(t, vid, pid, sv, svs, vendorAccount)
@@ -86,32 +86,33 @@ func TestComplianceRevocation(t *testing.T) {
 
 		out, err = QueryRevokedModel(vid, pid, sv, certType)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"value": true`)
-		require.Contains(t, string(out), fmt.Sprintf(`"pid": %d`, pid))
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, vid))
+		require.Contains(t, string(out), `"value":true`)
+		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 
 		out, err = QueryRevokedModel(vid, pid, sv, certTypeMatter)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"value": true`)
+		require.Contains(t, string(out), `"value":true`)
 
+		// Never provisioned — record doesn't exist, so "Not Found"
 		out, err = QueryProvisionalModel(vid, pid, sv, certType)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"value": false`)
+		require.Contains(t, string(out), "Not Found")
 
 		out, err = QueryComplianceInfo(vid, pid, sv, certType)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"softwareVersionCertificationStatus": 3`)
-		require.Contains(t, string(out), fmt.Sprintf(`"date": "%s"`, revocationDate))
-		require.Contains(t, string(out), fmt.Sprintf(`"reason": "%s"`, revocationReason))
+		require.Contains(t, string(out), `"softwareVersionCertificationStatus":3`)
+		require.Contains(t, string(out), fmt.Sprintf(`"date":"%s"`, revocationDate))
+		require.Contains(t, string(out), fmt.Sprintf(`"reason":"%s"`, revocationReason))
 
 		out, err = QueryAllRevokedModels()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid": %d`, pid))
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
+		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
 
 		out, err = QueryAllCertifiedModels()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), fmt.Sprintf(`"vid": %d`, vid))
+		require.NotContains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 	})
 
 	t.Run("CertifyAfterRevoke_Success", func(t *testing.T) {
@@ -126,10 +127,10 @@ func TestComplianceRevocation(t *testing.T) {
 
 		out, err := QueryCertifiedModel(vid, pid, sv, certType)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"value": true`)
+		require.Contains(t, string(out), `"value":true`)
 
 		out, err = QueryRevokedModel(vid, pid, sv, certType)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"value": false`)
+		require.Contains(t, string(out), `"value":false`)
 	})
 }

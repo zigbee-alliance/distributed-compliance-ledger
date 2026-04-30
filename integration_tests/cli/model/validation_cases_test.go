@@ -38,11 +38,11 @@ func TestModelValidationCases(t *testing.T) {
 
 		out, err := QueryModel(vid1, pid1)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, vid1))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid": %d`, pid1))
-		require.Contains(t, string(out), `"productName": "TestProduct"`)
-		require.Contains(t, string(out), `"partNumber": "1"`)
-		require.Contains(t, string(out), `"commissioningCustomFlow": 0`)
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid1))
+		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid1))
+		require.Contains(t, string(out), `"productName":"TestProduct"`)
+		require.Contains(t, string(out), `"partNumber":"1"`)
+		require.Contains(t, string(out), `"commissioningCustomFlow":0`)
 	})
 
 	t.Run("AddModel_AllFields", func(t *testing.T) {
@@ -77,13 +77,14 @@ func TestModelValidationCases(t *testing.T) {
 
 		out, err := QueryModel(vid1, pid2)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, vid1))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid": %d`, pid2))
-		require.Contains(t, string(out), `"productName": "Test Product with All Fields"`)
-		require.Contains(t, string(out), `"deviceTypeId": 2`)
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid1))
+		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid2))
+		require.Contains(t, string(out), `"productName":"Test Product with All Fields"`)
+		require.Contains(t, string(out), `"deviceTypeId":2`)
 	})
 
 	t.Run("AddModel_WithSchemaVersion", func(t *testing.T) {
+		// schemaVersion must be 0 for add-model (the only valid value)
 		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
 			"--vid", fmt.Sprintf("%d", vid1),
 			"--pid", fmt.Sprintf("%d", pid3),
@@ -92,7 +93,7 @@ func TestModelValidationCases(t *testing.T) {
 			"--productLabel", "Test Product",
 			"--partNumber", "1",
 			"--enhancedSetupFlowOptions", "0",
-			"--schemaVersion", "1",
+			"--schemaVersion", "0",
 			"--from", vendorAccount1,
 		)
 		require.NoError(t, err)
@@ -102,6 +103,6 @@ func TestModelValidationCases(t *testing.T) {
 
 		out, err := QueryModel(vid1, pid3)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"schemaVersion": 1`)
+		require.Contains(t, string(out), `"schemaVersion":0`)
 	})
 }

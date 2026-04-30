@@ -65,14 +65,14 @@ func TestModelVersionDemoHex(t *testing.T) {
 			"-o", "json",
 		)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid": %d`, pid))
-		require.Contains(t, string(out), fmt.Sprintf(`"softwareVersion": %d`, sv))
-		require.Contains(t, string(out), `"softwareVersionString": "1"`)
-		require.Contains(t, string(out), `"cdVersionNumber": 1`)
-		require.Contains(t, string(out), `"softwareVersionValid": true`)
-		require.Contains(t, string(out), `"minApplicableSoftwareVersion": 1`)
-		require.Contains(t, string(out), `"maxApplicableSoftwareVersion": 10`)
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
+		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
+		require.Contains(t, string(out), fmt.Sprintf(`"softwareVersion":%d`, sv))
+		require.Contains(t, string(out), `"softwareVersionString":"1"`)
+		require.Contains(t, string(out), `"cdVersionNumber":1`)
+		require.Contains(t, string(out), `"softwareVersionValid":true`)
+		require.Contains(t, string(out), `"minApplicableSoftwareVersion":1`)
+		require.Contains(t, string(out), `"maxApplicableSoftwareVersion":10`)
 	})
 
 	t.Run("QueryAllModelVersions_WithHexVID", func(t *testing.T) {
@@ -82,8 +82,8 @@ func TestModelVersionDemoHex(t *testing.T) {
 			"-o", "json",
 		)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid": %d`, pid))
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
+		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
 		require.Contains(t, string(out), "softwareVersions")
 		require.Contains(t, string(out), fmt.Sprintf("%d", sv))
 	})

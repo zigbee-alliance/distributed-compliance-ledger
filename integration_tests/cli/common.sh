@@ -31,6 +31,10 @@ GREEN=""
 RED=""
 RESET=""
 
+log() {
+  echo "${LOG_PREFIX:-}$1"
+}
+
 check_env() {
     jq --version || (echo "jq tool is not found" && exit 1)
 }
@@ -223,10 +227,10 @@ wait_for_height() {
     if [[ "$mode" == "outage-safe" ]]; then
       current_height="$(dcld status $node 2>/dev/null | jq | grep latest_block_height | awk -F'"' '{print $4}')" || true
     else
-      current_height="$(dcld status $node | jq | grep latest_block_height | awk -F'"' '{print $4}')"
+      current_height="$(dcld status $node 2>/dev/null | jq | grep latest_block_height | awk -F'"' '{print $4}')" || true
 
-      if [[ -z "$current_height" ]]; then
-        echo "No height found in status"
+      if [[ -z "$current_height" ]] && ((waited > wait_time)); then
+        echo "No height found in status after $wait_time seconds"
         exit 1
       fi
     fi

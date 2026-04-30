@@ -62,9 +62,9 @@ func TestVendorInfoDemoHex(t *testing.T) {
 		out, err := QueryVendor(hexVid)
 		require.NoError(t, err)
 		// The ledger stores the integer value, not the hex string
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorID": %d`, hexVidDecimal))
-		require.Contains(t, string(out), fmt.Sprintf(`"companyLegalName": "%s"`, companyLegalName))
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorName": "%s"`, vendorName))
+		require.Contains(t, string(out), fmt.Sprintf(`"vendorID":%d`, hexVidDecimal))
+		require.Contains(t, string(out), fmt.Sprintf(`"companyLegalName":"%s"`, companyLegalName))
+		require.Contains(t, string(out), fmt.Sprintf(`"vendorName":"%s"`, vendorName))
 	})
 
 	updatedCompanyName := "ABC Subsidiary Corporation"
@@ -84,10 +84,10 @@ func TestVendorInfoDemoHex(t *testing.T) {
 
 		out, err := QueryVendor(hexVid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorID": %d`, hexVidDecimal))
-		require.Contains(t, string(out), fmt.Sprintf(`"companyLegalName": "%s"`, updatedCompanyName))
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorName": "%s"`, vendorName))
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorLandingPageURL": "%s"`, vendorLandingPageURL))
+		require.Contains(t, string(out), fmt.Sprintf(`"vendorID":%d`, hexVidDecimal))
+		require.Contains(t, string(out), fmt.Sprintf(`"companyLegalName":"%s"`, updatedCompanyName))
+		require.Contains(t, string(out), fmt.Sprintf(`"vendorName":"%s"`, vendorName))
+		require.Contains(t, string(out), fmt.Sprintf(`"vendorLandingPageURL":"%s"`, vendorLandingPageURL))
 	})
 
 	t.Run("AddVendorForWrongHexVID_Fails", func(t *testing.T) {

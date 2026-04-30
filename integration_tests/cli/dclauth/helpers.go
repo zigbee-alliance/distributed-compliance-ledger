@@ -166,8 +166,9 @@ func QueryAccountRaw(address string) ([]byte, error) {
 }
 
 // QueryAllAccountsRaw retrieves all accounts as raw bytes.
+// Uses a high limit to avoid the default 100-entry pagination cap.
 func QueryAllAccountsRaw() ([]byte, error) {
-	return utils.ExecuteCLI("query", "auth", "all-accounts", "-o", "json")
+	return utils.ExecuteCLI("query", "auth", "all-accounts", "-o", "json", "--limit", "10000")
 }
 
 // GetAddress returns the address string for a keyring key name.
@@ -197,8 +198,10 @@ func GetPubkey(name string) (string, error) {
 }
 
 // AddKey generates a new key in the test keyring with the given name.
+// Any pre-existing key with the same name is deleted first.
 func AddKey(name string) error {
-	_, err := utils.ExecuteCLI("keys", "add", name, "--keyring-backend", "test")
+	utils.ExecuteCLI("keys", "delete", name, "--keyring-backend", "test", "-y")
+	_, err := utils.ExecuteCLI("keys", "add", name, "--keyring-backend", "test", "--no-backup")
 	return err
 }
 

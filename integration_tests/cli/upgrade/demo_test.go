@@ -59,8 +59,8 @@ func TestUpgradeDemo(t *testing.T) {
 		// Verify proposed upgrade
 		out, err := QueryProposedUpgrade(upgradeNameV120)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"name": "%s"`, upgradeNameV120))
-		require.Contains(t, string(out), fmt.Sprintf(`"height": "%s"`, farFutureHeight))
+		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV120))
+		require.Contains(t, string(out), fmt.Sprintf(`"height":"%s"`, farFutureHeight))
 
 		// alice approves
 		txResult, err = ApproveUpgrade(upgradeNameV120, alice)
@@ -91,7 +91,7 @@ func TestUpgradeDemo(t *testing.T) {
 		// Still in proposed
 		out, err = QueryProposedUpgrade(upgradeNameV120)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"name": "%s"`, upgradeNameV120))
+		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV120))
 
 		// bob approves — threshold now reached
 		txResult, err = ApproveUpgrade(upgradeNameV120, bob)
@@ -103,13 +103,13 @@ func TestUpgradeDemo(t *testing.T) {
 		// Upgrade plan should now be scheduled
 		out, err = QueryUpgradePlan()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"name": "%s"`, upgradeNameV120))
-		require.Contains(t, string(out), fmt.Sprintf(`"height": "%s"`, farFutureHeight))
+		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV120))
+		require.Contains(t, string(out), fmt.Sprintf(`"height":"%s"`, farFutureHeight))
 
 		// Should be in approved store
 		out, err = QueryApprovedUpgrade(upgradeNameV120)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"name": "%s"`, upgradeNameV120))
+		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV120))
 
 		// Should no longer be in proposed store
 		out, err = QueryProposedUpgrade(upgradeNameV120)
@@ -193,7 +193,7 @@ func TestUpgradeDemo(t *testing.T) {
 		// Still in proposed
 		out, err := QueryProposedUpgrade(upgradeNameV121)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"name": "%s"`, upgradeNameV121))
+		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV121))
 
 		// trusteeAccount rejects (revotes)
 		txResult, err = RejectUpgrade(upgradeNameV121, trusteeAccount)
@@ -219,7 +219,7 @@ func TestUpgradeDemo(t *testing.T) {
 		// Still in proposed (not enough rejections)
 		out, err = QueryProposedUpgrade(upgradeNameV121)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"name": "%s"`, upgradeNameV121))
+		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV121))
 
 		// Not yet rejected or approved
 		out, err = QueryRejectedUpgrade(upgradeNameV121)
@@ -240,7 +240,7 @@ func TestUpgradeDemo(t *testing.T) {
 		// Now in rejected store
 		out, err = QueryRejectedUpgrade(upgradeNameV121)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"name": "%s"`, upgradeNameV121))
+		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV121))
 
 		// No longer in proposed
 		out, err = QueryProposedUpgrade(upgradeNameV121)

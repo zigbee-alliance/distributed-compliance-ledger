@@ -72,18 +72,18 @@ func TestVendorInfoDemo(t *testing.T) {
 	t.Run("QueryVendorInfo", func(t *testing.T) {
 		out, err := QueryVendor(fmt.Sprintf("%d", vid))
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorID": %d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"companyLegalName": "%s"`, companyLegalName))
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorName": "%s"`, vendorName))
-		require.Contains(t, string(out), fmt.Sprintf(`"schemaVersion": %s`, schemaVersion0))
+		require.Contains(t, string(out), fmt.Sprintf(`"vendorID":%d`, vid))
+		require.Contains(t, string(out), fmt.Sprintf(`"companyLegalName":"%s"`, companyLegalName))
+		require.Contains(t, string(out), fmt.Sprintf(`"vendorName":"%s"`, vendorName))
+		require.Contains(t, string(out), fmt.Sprintf(`"schemaVersion":%s`, schemaVersion0))
 	})
 
 	t.Run("QueryAllVendors", func(t *testing.T) {
 		out, err := QueryAllVendors()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorID": %d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"companyLegalName": "%s"`, companyLegalName))
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorName": "%s"`, vendorName))
+		require.Contains(t, string(out), fmt.Sprintf(`"vendorID":%d`, vid))
+		require.Contains(t, string(out), fmt.Sprintf(`"companyLegalName":"%s"`, companyLegalName))
+		require.Contains(t, string(out), fmt.Sprintf(`"vendorName":"%s"`, vendorName))
 	})
 
 	t.Run("UpdateVendorInfoRequiredFieldsOnly", func(t *testing.T) {
@@ -98,9 +98,9 @@ func TestVendorInfoDemo(t *testing.T) {
 		// Omitted optional fields should keep their previous values
 		out, err := QueryVendor(fmt.Sprintf("%d", vid))
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorID": %d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"companyLegalName": "%s"`, companyLegalName))
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorName": "%s"`, vendorName))
+		require.Contains(t, string(out), fmt.Sprintf(`"vendorID":%d`, vid))
+		require.Contains(t, string(out), fmt.Sprintf(`"companyLegalName":"%s"`, companyLegalName))
+		require.Contains(t, string(out), fmt.Sprintf(`"vendorName":"%s"`, vendorName))
 	})
 
 	updatedCompanyLegalName := "ABC Subsidiary Corporation"
@@ -121,10 +121,10 @@ func TestVendorInfoDemo(t *testing.T) {
 
 		out, err := QueryVendor(fmt.Sprintf("%d", vid))
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorID": %d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"companyLegalName": "%s"`, updatedCompanyLegalName))
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorName": "%s"`, vendorName))
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorLandingPageURL": "%s"`, vendorLandingPageURL))
+		require.Contains(t, string(out), fmt.Sprintf(`"vendorID":%d`, vid))
+		require.Contains(t, string(out), fmt.Sprintf(`"companyLegalName":"%s"`, updatedCompanyLegalName))
+		require.Contains(t, string(out), fmt.Sprintf(`"vendorName":"%s"`, vendorName))
+		require.Contains(t, string(out), fmt.Sprintf(`"vendorLandingPageURL":"%s"`, vendorLandingPageURL))
 	})
 
 	t.Run("AddVendorForWrongVID_Fails", func(t *testing.T) {

@@ -11,46 +11,48 @@ import (
 )
 
 const (
-	paaCertWithNumericVidPath      = "integration_tests/constants/paa_cert_numeric_vid"
+	paaCertWithNumericVidPath      = "../../constants/paa_cert_numeric_vid"
 	paaCertWithNumericVidSubject   = "MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBEZGRjE="
 	paaCertWithNumericVidSubjectKeyID = "6A:FD:22:77:1F:51:1F:EC:BF:16:41:97:67:10:DC:DC:31:A1:71:7E"
 
-	paaCertNoVidPath      = "integration_tests/constants/paa_cert_no_vid"
+	paaCertNoVidPath      = "../../constants/paa_cert_no_vid"
 	paaCertNoVidSubject   = "MBoxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQQ=="
 	paaCertNoVidSubjectKeyID = "78:5C:E7:05:B8:6B:8F:4E:6F:C7:93:AA:60:CB:43:EA:69:68:82:D5"
 
-	paaCertNoVidMainnetPath         = "integration_tests/constants/paa_cert_no_vid_mainnet"
+	paaCertNoVidMainnetPath         = "../../constants/paa_cert_no_vid_mainnet"
 	paaCertNoVidMainnetSubject      = "MEsxCzAJBgNVBAYTAlVTMQ8wDQYDVQQKDAZHb29nbGUxFTATBgNVBAMMDE1hdHRlciBQQUEgMjEUMBIGCisGAQQBgqJ8AgEMBDYwMDY="
 	paaCertNoVidMainnetSubjectKeyID = "7A:B9:ED:A7:6F:E9:CB:64:62:75:32:6D:D1:45:08:B8:00:F8:E1:C8"
 
-	paaCertWithNumericVid1Path         = "integration_tests/constants/paa_cert_numeric_vid_1"
+	paaCertWithNumericVid1Path         = "../../constants/paa_cert_numeric_vid_1"
 	paaCertWithNumericVid1SubjectKeyID = "7F:1D:AA:F2:44:98:B9:86:68:0E:A0:8F:C1:89:21:E8:48:48:9D:17"
 
-	paiCertVidPath            = "integration_tests/constants/pai_cert_vid"
-	paiCertWithNumericVidPath = "integration_tests/constants/pai_cert_numeric_vid"
-	paiCertWithNumericVidPidPath = "integration_tests/constants/pai_cert_numeric_vid_pid"
+	paiCertVidPath            = "../../constants/pai_cert_vid"
+	paiCertWithNumericVidPath = "../../constants/pai_cert_numeric_vid"
+	paiCertWithNumericVidPidPath = "../../constants/pai_cert_numeric_vid_pid"
 
-	delegatedCRLSignerCertPath        = "integration_tests/constants/delegated_CRL_signer_certificate"
-	paiCertCertificateDelegatorPath   = "integration_tests/constants/pai_cert_certificate_delegator"
+	delegatedCRLSignerCertPath        = "../../constants/delegated_CRL_signer_certificate"
+	paiCertCertificateDelegatorPath   = "../../constants/pai_cert_certificate_delegator"
 	delegatedCRLSignerCertSubjectKeyID = "E981D0E419765AB12F6D03A734CF003307870F0A"
 
-	delegatorCertWithVid65521Path     = "integration_tests/constants/intermediate_cert_with_vid_1"
-	delegatorCertWithVid65521CopyPath = "integration_tests/constants/intermediate_cert_with_vid_1_copy"
+	delegatorCertWithVid65521Path     = "../../constants/intermediate_cert_with_vid_1"
+	delegatorCertWithVid65521CopyPath = "../../constants/intermediate_cert_with_vid_1_copy"
 	delegatorCertSubjectKeyID         = "0E8CE8C8B8AA50BC258556B9B19CC2C7D9C52F17"
 
-	crlSignerDelegatedByPAI1Path = "integration_tests/constants/leaf_cert_with_vid_65521"
-	crlSignerDelegatedByPAI2Path = "integration_tests/constants/leaf_cert_with_vid_65522"
-	crlSignerDelegatedByPAAPath  = "integration_tests/constants/leaf_cert_without_vid"
+	crlSignerDelegatedByPAI1Path = "../../constants/leaf_cert_with_vid_65521"
+	crlSignerDelegatedByPAI2Path = "../../constants/leaf_cert_with_vid_65522"
+	crlSignerDelegatedByPAAPath  = "../../constants/leaf_cert_without_vid"
 
-	revPointsTestRootCertPath         = "integration_tests/constants/root_cert"
-	revPointsTestRootCertSubject      = "MDQxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRAwDgYDVQQKDAdyb290LWNh"
-	revPointsTestRootCertSubjectKeyID = "5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB"
+	// Use google_root_cert_r1 instead of root_cert to avoid conflict: TestPKIDemo revokes root_cert
+	// and the unique-cert store retains the entry, permanently blocking re-addition.
+	revPointsTestRootCertPath         = "../../constants/google_root_cert_r1"
+	revPointsTestRootCertSubject      = "MEcxCzAJBgNVBAYTAlVTMSIwIAYDVQQKExlHb29nbGUgVHJ1c3QgU2VydmljZXMgTExDMRQwEgYDVQQDEwtHVFMgUm9vdCBSMQ=="
+	revPointsTestRootCertSubjectKeyID = "E4:AF:2B:26:71:1A:2B:48:27:85:2F:52:66:2C:EF:F0:89:13:71:3E"
 
-	testRootCertPath         = "integration_tests/constants/test_root_cert"
+	testRootCertPath         = "../../constants/test_root_cert"
 	testRootCertSubject      = "MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBDEyNUQ="
 	testRootCertSubjectKeyID = "E2:90:8D:36:9C:3C:A3:C1:13:BB:09:E2:4D:C1:CC:C5:A6:66:91:D4"
 
-	rootCertWithVidRevPath         = "integration_tests/constants/root_cert_with_vid"
+	rootCertWithVidRevPath         = "../../constants/root_cert_with_vid"
 	rootCertWithVidRevSubject      = "MIGYMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgEMBEZGRjE="
 	rootCertWithVidRevSubjectKeyID = "CE:A8:92:66:EA:E0:80:BD:2B:B5:68:E4:0B:07:C4:FA:2C:34:6D:31"
 
@@ -108,7 +110,7 @@ func TestPKIRevocationPoints(t *testing.T) {
 		// Not by vendor
 		txResult, err := AddRevocationPoint(jack,
 			"--vid", fmt.Sprintf("%d", revPointVid),
-			"--is-paa", "true",
+			"--is-paa=true",
 			"--certificate", paaCertWithNumericVidPath,
 			"--label", revPointLabel,
 			"--data-url", revPointDataURL,
@@ -121,7 +123,7 @@ func TestPKIRevocationPoints(t *testing.T) {
 		// Sender VID not equal to field VID
 		txResult, err = AddRevocationPoint(vendorAccount65522,
 			"--vid", fmt.Sprintf("%d", revPointVid),
-			"--is-paa", "true",
+			"--is-paa=true",
 			"--certificate", paaCertWithNumericVidPath,
 			"--label", revPointLabel,
 			"--data-url", revPointDataURL,
@@ -134,7 +136,7 @@ func TestPKIRevocationPoints(t *testing.T) {
 		// Certificate does not exist on ledger
 		txResult, err = AddRevocationPoint(vendorAccount,
 			"--vid", fmt.Sprintf("%d", revPointVid),
-			"--is-paa", "true",
+			"--is-paa=true",
 			"--certificate", paaCertWithNumericVidPath,
 			"--label", revPointLabel,
 			"--data-url", revPointDataURL,
@@ -226,7 +228,7 @@ func TestPKIRevocationPoints(t *testing.T) {
 		// CRL signer cert PEM value not equal to stored — should fail
 		txResult, err := AddRevocationPoint(vendorAccount65522,
 			"--vid", fmt.Sprintf("%d", revPointVid65522),
-			"--is-paa", "true",
+			"--is-paa=true",
 			"--certificate", paaCertWithNumericVid1Path,
 			"--label", revPointLabel,
 			"--data-url", revPointDataURL,
@@ -239,7 +241,7 @@ func TestPKIRevocationPoints(t *testing.T) {
 		// Add for VID-scoped PAA
 		txResult, err = AddRevocationPoint(vendorAccount,
 			"--vid", fmt.Sprintf("%d", revPointVid),
-			"--is-paa", "true",
+			"--is-paa=true",
 			"--certificate", paaCertWithNumericVidPath,
 			"--label", revPointLabel,
 			"--data-url", revPointDataURL,
@@ -254,13 +256,13 @@ func TestPKIRevocationPoints(t *testing.T) {
 
 		out, err := QueryAllPkiRevocationDistributionPoints()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, revPointVid))
-		require.Contains(t, string(out), fmt.Sprintf(`"label": "%s"`, revPointLabel))
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, revPointVid))
+		require.Contains(t, string(out), fmt.Sprintf(`"label":"%s"`, revPointLabel))
 
 		// Cannot add same point twice (same vid, issuer, label)
 		txResult, err = AddRevocationPoint(vendorAccount,
 			"--vid", fmt.Sprintf("%d", revPointVid),
-			"--is-paa", "true",
+			"--is-paa=true",
 			"--certificate", paaCertWithNumericVidPath,
 			"--label", revPointLabel,
 			"--data-url", revPointDataURL+"-new",
@@ -274,7 +276,7 @@ func TestPKIRevocationPoints(t *testing.T) {
 	t.Run("AddRevocationPointForNonVidScopedPAA", func(t *testing.T) {
 		txResult, err := AddRevocationPoint(vendorAccountNonScoped,
 			"--vid", fmt.Sprintf("%d", revPointVidNonScoped),
-			"--is-paa", "true",
+			"--is-paa=true",
 			"--certificate", paaCertNoVidPath,
 			"--label", revPointLabelNonScoped,
 			"--data-url", revPointDataURLNonScoped,
@@ -288,14 +290,14 @@ func TestPKIRevocationPoints(t *testing.T) {
 
 		out, err := QueryAllPkiRevocationDistributionPoints()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, revPointVid))
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, revPointVidNonScoped))
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, revPointVid))
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, revPointVidNonScoped))
 	})
 
 	t.Run("AddRevocationPointForPAI", func(t *testing.T) {
 		txResult, err := AddRevocationPoint(vendorAccount65522,
 			"--vid", fmt.Sprintf("%d", revPointVid65522),
-			"--is-paa", "false",
+			"--is-paa=false",
 			"--certificate", paiCertWithNumericVidPath,
 			"--label", revPointLabelPAI,
 			"--data-url", revPointDataURL,
@@ -309,8 +311,8 @@ func TestPKIRevocationPoints(t *testing.T) {
 
 		out, err := QueryPkiRevocationDistributionPoint(revPointVid65522, revPointLabelPAI, revPointIssuerSKID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, revPointVid65522))
-		require.Contains(t, string(out), fmt.Sprintf(`"label": "%s"`, revPointLabelPAI))
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, revPointVid65522))
+		require.Contains(t, string(out), fmt.Sprintf(`"label":"%s"`, revPointLabelPAI))
 	})
 
 	t.Run("AddRevocationPointWithDelegator", func(t *testing.T) {
@@ -324,7 +326,7 @@ func TestPKIRevocationPoints(t *testing.T) {
 		// Add revocation point with delegator
 		txResult, err = AddRevocationPoint(vendorAccount,
 			"--vid", fmt.Sprintf("%d", revPointVid),
-			"--is-paa", "false",
+			"--is-paa=false",
 			"--certificate", crlSignerDelegatedByPAI1Path,
 			"--label", revPointLabelLeafDel,
 			"--data-url", revPointDataURL,
@@ -339,14 +341,14 @@ func TestPKIRevocationPoints(t *testing.T) {
 
 		out, err := QueryPkiRevocationDistributionPoint(revPointVid, revPointLabelLeafDel, delegatorCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, revPointVid))
-		require.Contains(t, string(out), fmt.Sprintf(`"label": "%s"`, revPointLabelLeafDel))
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, revPointVid))
+		require.Contains(t, string(out), fmt.Sprintf(`"label":"%s"`, revPointLabelLeafDel))
 	})
 
 	t.Run("AddRevocationPointForNonVidScopedPAI", func(t *testing.T) {
 		txResult, err := AddRevocationPoint(vendorAccount,
 			"--vid", fmt.Sprintf("%d", revPointVid),
-			"--is-paa", "false",
+			"--is-paa=false",
 			"--certificate", intermediateCertPath,
 			"--label", revPointLabelIntermediate,
 			"--data-url", revPointDataURLNonScoped,
@@ -378,7 +380,7 @@ func TestPKIRevocationPoints(t *testing.T) {
 
 		out, err := QueryPkiRevocationDistributionPoint(revPointVid, revPointLabelLeafDel, delegatorCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"dataURL": "%s"`, dataURLNew))
+		require.Contains(t, string(out), fmt.Sprintf(`"dataURL":"%s"`, dataURLNew))
 
 		// Update non-VID-scoped PAI
 		dataURLNonScopedNew := revPointDataURLNonScoped + "_new"
@@ -396,12 +398,12 @@ func TestPKIRevocationPoints(t *testing.T) {
 
 		out, err = QueryPkiRevocationDistributionPoint(revPointVid, revPointLabelIntermediate, revPointIssuerSKID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"dataURL": "%s"`, dataURLNonScopedNew))
+		require.Contains(t, string(out), fmt.Sprintf(`"dataURL":"%s"`, dataURLNonScopedNew))
 
-		// Update VID-scoped PAA
+		// Update VID-scoped PAA (use revPointsTestRootCertPath which is on-ledger and not revoked)
 		txResult, err = UpdateRevocationPoint(vendorAccount,
 			"--vid", fmt.Sprintf("%d", revPointVid),
-			"--certificate", rootCertPath,
+			"--certificate", revPointsTestRootCertPath,
 			"--label", revPointLabel,
 			"--data-url", revPointDataURL,
 			"--issuer-subject-key-id", revPointIssuerSKID,

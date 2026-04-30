@@ -52,76 +52,30 @@ const (
 )
 
 // TestPKIRevocationWithSerialNumber translates pki-revocation-with-serial-number.sh.
+// Root certs are already on-chain from TestPKICombineCerts.
+// Intermediate/leaf certs are re-added by TestPKIRevocationWithRevokingChild.ReAddCertsAfterRevocation.
+// This test also covers RevokeRootCertWithChildFlag (moved here from revocation_child_test.go
+// to avoid permanently revoking root certs before this test runs).
 func TestPKIRevocationWithSerialNumber(t *testing.T) {
 	jack := testconstants.JackAccount
 	alice := testconstants.AliceAccount
 
-	// Use a distinct account name to avoid collision with revocation_child_test.go
-	vendorAccount := fmt.Sprintf("vendor_serial_%d", revSerialRootCertVid)
+	// Use same vendor account as revocation_child_test.go (same VID).
+	vendorAccount := fmt.Sprintf("vendor_account_%d", revSerialRootCertVid)
 	cliputils.CreateVendorAccount(t, vendorAccount, revSerialRootCertVid)
 
-	t.Run("SetupCerts", func(t *testing.T) {
-		// Propose and approve root certificate 1
-		txResult, err := ProposeAddX509RootCert(revSerialRootCert1Path, jack,
-			"--vid", itoa(revSerialRootCertVid),
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
-
-		txResult, err = ApproveAddX509RootCert(revSerialRootCertSubject, revSerialRootCertSubjectKeyID, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
-
-		// Propose and approve root certificate 2
-		txResult, err = ProposeAddX509RootCert(revSerialRootCert2Path, jack,
-			"--vid", itoa(revSerialRootCertVid),
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
-
-		txResult, err = ApproveAddX509RootCert(revSerialRootCertSubject, revSerialRootCertSubjectKeyID, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
-
-		// Add intermediate cert 1
-		txResult, err = AddX509Cert(revSerialIntermCert1Path, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
-
-		// Add intermediate cert 2
-		txResult, err = AddX509Cert(revSerialIntermCert2Path, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
-
-		// Add leaf cert
-		txResult, err = AddX509Cert(revSerialLeafCertPath, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
-
-		// Verify all certs present
+	t.Run("VerifyCertsOnChain", func(t *testing.T) {
+		// Root certs 1 and 2 are already approved (from TestPKICombineCerts).
+		// Intermediate and leaf certs are already on-chain (re-added by TestPKIRevocationWithRevokingChild).
 		out, err := QueryAllX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, revSerialRootCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, revSerialIntermCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialRootCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialIntermCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialRootCert2SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialIntermCert2SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialLeafCertSerialNumber))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revSerialRootCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revSerialIntermCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialRootCert1SerialNumber))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialIntermCert1SerialNumber))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialRootCert2SerialNumber))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialIntermCert2SerialNumber))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialLeafCertSerialNumber))
 	})
 
 	t.Run("RevokeIntermWithInvalidSerialNumber", func(t *testing.T) {
@@ -145,33 +99,33 @@ func TestPKIRevocationWithSerialNumber(t *testing.T) {
 		// Revoked list should contain only intermediate cert with serial 3
 		out, err := QueryAllRevokedX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, revSerialIntermCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId": "%s"`, revSerialIntermCertSubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialIntermCert1SerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialIntermCert2SerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialLeafCertSerialNumber))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revSerialIntermCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, revSerialIntermCertSubjectKeyID))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialIntermCert1SerialNumber))
+		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialIntermCert2SerialNumber))
+		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialLeafCertSerialNumber))
 
 		// Approved intermediate certs should contain only cert with serial 4
 		out, err = QueryX509Cert(revSerialIntermCertSubject, revSerialIntermCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, revSerialIntermCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId": "%s"`, revSerialIntermCertSubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialIntermCert2SerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialIntermCert1SerialNumber))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revSerialIntermCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, revSerialIntermCertSubjectKeyID))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialIntermCert2SerialNumber))
+		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialIntermCert1SerialNumber))
 
 		// Leaf cert should still be present
 		out, err = QueryX509Cert(revSerialLeafCertSubject, revSerialLeafCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, revSerialLeafCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId": "%s"`, revSerialLeafCertSubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialLeafCertSerialNumber))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revSerialLeafCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, revSerialLeafCertSubjectKeyID))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialLeafCertSerialNumber))
 	})
 
 	t.Run("RevokeIntermWithSerial4AndChildFlag", func(t *testing.T) {
 		// Revoke intermediate with serial 4 and its children
 		txResult, err := RevokeX509Cert(revSerialIntermCertSubject, revSerialIntermCertSubjectKeyID, vendorAccount,
 			"--serial-number", revSerialIntermCert2SerialNumber,
-			"--revoke-child", "true",
+			"--revoke-child=true",
 		)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
@@ -181,21 +135,21 @@ func TestPKIRevocationWithSerialNumber(t *testing.T) {
 		// Revoked list should contain two intermediate and leaf
 		out, err := QueryAllRevokedX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, revSerialIntermCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId": "%s"`, revSerialIntermCertSubjectKeyID))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revSerialIntermCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, revSerialIntermCertSubjectKeyID))
 		require.Contains(t, string(out), revSerialLeafCertSubjectKeyID)
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialIntermCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialIntermCert2SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialLeafCertSerialNumber))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialIntermCert1SerialNumber))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialIntermCert2SerialNumber))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialLeafCertSerialNumber))
 
 		// Approved certs should contain only two root certs
 		out, err = QueryAllX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, revSerialRootCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId": "%s"`, revSerialRootCertSubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialRootCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialRootCert2SerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject": "%s"`, revSerialIntermCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revSerialRootCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, revSerialRootCertSubjectKeyID))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialRootCert1SerialNumber))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialRootCert2SerialNumber))
+		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revSerialIntermCertSubject))
 		require.NotContains(t, string(out), revSerialIntermCert1SerialNumber)
 		require.NotContains(t, string(out), revSerialIntermCert2SerialNumber)
 		require.NotContains(t, string(out), revSerialLeafCertSerialNumber)
@@ -237,11 +191,11 @@ func TestPKIRevocationWithSerialNumber(t *testing.T) {
 		// Verify all certs present
 		out, err := QueryAllX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, revSerialRootCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, revSerialIntermCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId": "%s"`, revSerialRootCertSubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId": "%s"`, revSerialIntermCertSubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId": "%s"`, revSerialLeafCertSubjectKeyID))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revSerialRootCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revSerialIntermCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, revSerialRootCertSubjectKeyID))
+		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, revSerialIntermCertSubjectKeyID))
+		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, revSerialLeafCertSubjectKeyID))
 	})
 
 	t.Run("ProposeRevokeRootWithInvalidSerialNumber", func(t *testing.T) {
@@ -273,10 +227,10 @@ func TestPKIRevocationWithSerialNumber(t *testing.T) {
 		// Revoked list should contain one root with serial 1
 		out, err := QueryAllRevokedX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, revSerialRootCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId": "%s"`, revSerialRootCertSubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialRootCert1SerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialRootCert2SerialNumber))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revSerialRootCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, revSerialRootCertSubjectKeyID))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialRootCert1SerialNumber))
+		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialRootCert2SerialNumber))
 		require.NotContains(t, string(out), revSerialIntermCert1SerialNumber)
 		require.NotContains(t, string(out), revSerialIntermCert2SerialNumber)
 		require.NotContains(t, string(out), revSerialLeafCertSerialNumber)
@@ -284,23 +238,23 @@ func TestPKIRevocationWithSerialNumber(t *testing.T) {
 		// Approved certs should still contain root 2, intermediates and leaf
 		out, err = QueryAllX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, revSerialRootCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, revSerialIntermCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revSerialRootCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revSerialIntermCertSubject))
 		require.Contains(t, string(out), revSerialRootCertSubjectKeyID)
 		require.Contains(t, string(out), revSerialIntermCertSubjectKeyID)
 		require.Contains(t, string(out), revSerialLeafCertSubjectKeyID)
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialRootCert2SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialIntermCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialIntermCert2SerialNumber))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialRootCert2SerialNumber))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialIntermCert1SerialNumber))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialIntermCert2SerialNumber))
 		require.Contains(t, string(out), revSerialLeafCertSerialNumber)
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialRootCert1SerialNumber))
+		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialRootCert1SerialNumber))
 	})
 
 	t.Run("ProposeAndApproveRevokeRootSerial2WithChild", func(t *testing.T) {
 		// Propose revoke root with serial 2 and its children
 		txResult, err := ProposeRevokeX509RootCert(revSerialRootCertSubject, revSerialRootCertSubjectKeyID, jack,
 			"--serial-number", revSerialRootCert2SerialNumber,
-			"--revoke-child", "true",
+			"--revoke-child=true",
 		)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
@@ -318,27 +272,27 @@ func TestPKIRevocationWithSerialNumber(t *testing.T) {
 		// Revoked list should contain two root, two intermediate and leaf
 		out, err := QueryAllRevokedX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, revSerialRootCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, revSerialIntermCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId": "%s"`, revSerialRootCertSubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId": "%s"`, revSerialIntermCertSubjectKeyID))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revSerialRootCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revSerialIntermCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, revSerialRootCertSubjectKeyID))
+		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, revSerialIntermCertSubjectKeyID))
 		require.Contains(t, string(out), revSerialLeafCertSubjectKeyID)
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialRootCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialIntermCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialRootCert2SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialIntermCert2SerialNumber))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialRootCert1SerialNumber))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialIntermCert1SerialNumber))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialRootCert2SerialNumber))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialIntermCert2SerialNumber))
 		require.Contains(t, string(out), revSerialLeafCertSerialNumber)
 
 		// Approved root certs should be empty
 		out, err = QueryAllX509RootCerts()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject": "%s"`, revSerialRootCertSubject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject": "%s"`, revSerialIntermCertSubject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId": "%s"`, revSerialRootCertSubjectKeyID))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId": "%s"`, revSerialIntermCertSubjectKeyID))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialRootCert1SerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialIntermCert1SerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialRootCert2SerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, revSerialIntermCert2SerialNumber))
+		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revSerialRootCertSubject))
+		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revSerialIntermCertSubject))
+		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, revSerialRootCertSubjectKeyID))
+		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, revSerialIntermCertSubjectKeyID))
+		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialRootCert1SerialNumber))
+		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialIntermCert1SerialNumber))
+		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialRootCert2SerialNumber))
+		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialIntermCert2SerialNumber))
 	})
 }

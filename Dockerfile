@@ -21,16 +21,17 @@
 ############################
 FROM ubuntu:20.04 AS builder
 
+ARG TARGETARCH=amd64
 ARG GO_VERSION
 ENV GO_VERSION=1.20
 
 RUN apt-get update --fix-missing
 RUN apt-get install -y wget git gcc
 
-RUN wget -P /tmp "https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz"
+RUN wget -P /tmp "https://dl.google.com/go/go${GO_VERSION}.linux-${TARGETARCH}.tar.gz"
 
-RUN tar -C /usr/local -xzf "/tmp/go${GO_VERSION}.linux-amd64.tar.gz"
-RUN rm "/tmp/go${GO_VERSION}.linux-amd64.tar.gz"
+RUN tar -C /usr/local -xzf "/tmp/go${GO_VERSION}.linux-${TARGETARCH}.tar.gz"
+RUN rm "/tmp/go${GO_VERSION}.linux-${TARGETARCH}.tar.gz"
 
 ENV GOPATH=/go
 ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH

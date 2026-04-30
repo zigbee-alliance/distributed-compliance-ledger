@@ -26,7 +26,7 @@ func TestComplianceProvisioning(t *testing.T) {
 	certTypeMatter := "matter"
 	provisionDate := "2020-02-02T02:20:20Z"
 	provisionReason := "some reason"
-	cdCertID := "123"
+	cdCertID := fmt.Sprintf("cert-%d", rand.Intn(1<<30))
 
 	t.Run("ProvisionUnknownModel_Succeeds", func(t *testing.T) {
 		txResult, err := ProvisionModel(vid, pid, sv, svs, certTypeZb, provisionDate, cdCertID, zbAccount,
@@ -39,13 +39,13 @@ func TestComplianceProvisioning(t *testing.T) {
 
 		out, err := QueryComplianceInfo(vid, pid, sv, certTypeZb)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid": %d`, pid))
-		require.Contains(t, string(out), fmt.Sprintf(`"softwareVersion": %d`, sv))
-		require.Contains(t, string(out), fmt.Sprintf(`"softwareVersionString": "%s"`, svs))
-		require.Contains(t, string(out), fmt.Sprintf(`"certificationType": "%s"`, certTypeZb))
-		require.Contains(t, string(out), fmt.Sprintf(`"date": "%s"`, provisionDate))
-		require.Contains(t, string(out), fmt.Sprintf(`"cDCertificateId": "%s"`, cdCertID))
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
+		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
+		require.Contains(t, string(out), fmt.Sprintf(`"softwareVersion":%d`, sv))
+		require.Contains(t, string(out), fmt.Sprintf(`"softwareVersionString":"%s"`, svs))
+		require.Contains(t, string(out), fmt.Sprintf(`"certificationType":"%s"`, certTypeZb))
+		require.Contains(t, string(out), fmt.Sprintf(`"date":"%s"`, provisionDate))
+		require.Contains(t, string(out), fmt.Sprintf(`"cDCertificateId":"%s"`, cdCertID))
 
 		// Delete compliance info before creating model
 		txResult, err = DeleteComplianceInfo(vid, pid, sv, certTypeZb, zbAccount)
@@ -94,19 +94,20 @@ func TestComplianceProvisioning(t *testing.T) {
 	t.Run("QueryProvisional", func(t *testing.T) {
 		out, err := QueryProvisionalModel(vid, pid, sv, certTypeZb)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"value": true`)
+		require.Contains(t, string(out), `"value":true`)
 
 		out, err = QueryProvisionalModel(vid, pid, sv, certTypeMatter)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"value": true`)
+		require.Contains(t, string(out), `"value":true`)
 
+		// Never certified or revoked — records don't exist yet, so "Not Found"
 		out, err = QueryCertifiedModel(vid, pid, sv, certTypeZb)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"value": false`)
+		require.Contains(t, string(out), "Not Found")
 
 		out, err = QueryRevokedModel(vid, pid, sv, certTypeZb)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"value": false`)
+		require.Contains(t, string(out), "Not Found")
 	})
 
 	t.Run("CertifyAfterProvisioning_Success", func(t *testing.T) {
@@ -121,11 +122,11 @@ func TestComplianceProvisioning(t *testing.T) {
 
 		out, err := QueryCertifiedModel(vid, pid, sv, certTypeZb)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"value": true`)
+		require.Contains(t, string(out), `"value":true`)
 
 		out, err = QueryProvisionalModel(vid, pid, sv, certTypeZb)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"value": false`)
+		require.Contains(t, string(out), `"value":false`)
 	})
 
 	_ = secondZbAccount

@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"math/rand"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -11,12 +12,12 @@ import (
 
 // TestModelDemoHex translates model-demo-hex.sh.
 func TestModelDemoHex(t *testing.T) {
-	vidHex := "0xA13"
-	pidHex := "0xA11"
-	vid := 2579
-	pid := 2577
+	vid := rand.Intn(65534) + 1
+	pid := rand.Intn(65534) + 1
+	vidHex := fmt.Sprintf("0x%X", vid)
+	pidHex := fmt.Sprintf("0x%X", pid)
 
-	vendorAccount := fmt.Sprintf("vendor_account_%s", vidHex)
+	vendorAccount := fmt.Sprintf("vendor_account_%d", vid)
 	cliputils.CreateVendorAccount(t, vendorAccount, vid)
 
 	t.Run("QueryNonExistent", func(t *testing.T) {
@@ -32,7 +33,7 @@ func TestModelDemoHex(t *testing.T) {
 
 		out, err = QueryAllModels()
 		require.NoError(t, err)
-		require.Contains(t, string(out), "[]")
+		require.NotContains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 	})
 
 	productLabel := "Device #1"
@@ -58,20 +59,20 @@ func TestModelDemoHex(t *testing.T) {
 	t.Run("QueryModel", func(t *testing.T) {
 		out, err := QueryModelHex(vidHex, pidHex)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid": %d`, pid))
-		require.Contains(t, string(out), fmt.Sprintf(`"productLabel": "%s"`, productLabel))
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
+		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
+		require.Contains(t, string(out), fmt.Sprintf(`"productLabel":"%s"`, productLabel))
 
 		out, err = QueryAllModels()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid": %d`, pid))
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
+		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
 
 		out, err = utils.ExecuteCLI("query", "model", "vendor-models",
 			"--vid", vidHex, "-o", "json",
 		)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"pid": %d`, pid))
+		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
 	})
 
 	description := "New Device Description"
@@ -91,9 +92,9 @@ func TestModelDemoHex(t *testing.T) {
 
 		out, err := QueryModelHex(vidHex, pidHex)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid": %d`, pid))
-		require.Contains(t, string(out), fmt.Sprintf(`"productLabel": "%s"`, description))
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
+		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
+		require.Contains(t, string(out), fmt.Sprintf(`"productLabel":"%s"`, description))
 	})
 
 	supportURL := "https://newsupporturl.test"
@@ -113,7 +114,7 @@ func TestModelDemoHex(t *testing.T) {
 
 		out, err := QueryModelHex(vidHex, pidHex)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"supportUrl": "%s"`, supportURL))
+		require.Contains(t, string(out), fmt.Sprintf(`"supportUrl":"%s"`, supportURL))
 	})
 
 	t.Run("DeleteModel", func(t *testing.T) {

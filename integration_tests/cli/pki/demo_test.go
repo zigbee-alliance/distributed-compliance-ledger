@@ -11,9 +11,9 @@ import (
 )
 
 const (
-	rootCertPath         = "integration_tests/constants/root_cert"
-	intermediateCertPath = "integration_tests/constants/intermediate_cert"
-	leafCertPath         = "integration_tests/constants/leaf_cert"
+	rootCertPath         = "../../constants/root_cert"
+	intermediateCertPath = "../../constants/intermediate_cert"
+	leafCertPath         = "../../constants/leaf_cert"
 
 	rootCertSubject      = "MDQxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRAwDgYDVQQKDAdyb290LWNh"
 	rootCertSubjectKeyID = "5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB"
@@ -46,37 +46,23 @@ func TestPKIDemo(t *testing.T) {
 	userAccount := cliputils.CreateAccount(t, "CertificationCenter")
 
 	t.Run("QueryAllEmpty", func(t *testing.T) {
+		// Verify this test's specific root cert is not yet present.
+		// (Other tests running earlier on the shared chain may have added other certs.)
 		out, err := QueryX509Cert(rootCertSubject, rootCertSubjectKeyID)
 		require.NoError(t, err)
 		require.Contains(t, string(out), "Not Found")
-
-		out, err = QueryAllX509Certs()
-		require.NoError(t, err)
-		require.Contains(t, string(out), "[]")
 
 		out, err = QueryProposedX509RootCert(rootCertSubject, rootCertSubjectKeyID)
 		require.NoError(t, err)
 		require.Contains(t, string(out), "Not Found")
 
-		out, err = QueryAllProposedX509RootCerts()
-		require.NoError(t, err)
-		require.Contains(t, string(out), "[]")
-
 		out, err = QueryRevokedX509Cert(rootCertSubject, rootCertSubjectKeyID)
 		require.NoError(t, err)
 		require.Contains(t, string(out), "Not Found")
 
-		out, err = QueryAllRevokedX509Certs()
-		require.NoError(t, err)
-		require.Contains(t, string(out), "[]")
-
 		out, err = QueryProposedRevokedX509RootCert(rootCertSubject, rootCertSubjectKeyID)
 		require.NoError(t, err)
 		require.Contains(t, string(out), "Not Found")
-
-		out, err = QueryAllProposedRevokedX509RootCerts()
-		require.NoError(t, err)
-		require.Contains(t, string(out), "[]")
 	})
 
 	t.Run("ProposeRootCert_NotTrustee_Fails", func(t *testing.T) {
@@ -100,16 +86,16 @@ func TestPKIDemo(t *testing.T) {
 
 		out, err := QueryAllProposedX509RootCerts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, rootCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId": "%s"`, rootCertSubjectKeyID))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, rootCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, rootCertSubjectKeyID))
 
 		out, err = QueryProposedX509RootCert(rootCertSubject, rootCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, rootCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId": "%s"`, rootCertSubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, rootCertSerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectAsText": "%s"`, rootCertSubjectText))
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, pkiDemoVid))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, rootCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, rootCertSubjectKeyID))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, rootCertSerialNumber))
+		require.Contains(t, string(out), fmt.Sprintf(`"subjectAsText":"%s"`, rootCertSubjectText))
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, pkiDemoVid))
 
 		out, err = QueryX509Cert(rootCertSubject, rootCertSubjectKeyID)
 		require.NoError(t, err)
@@ -117,9 +103,7 @@ func TestPKIDemo(t *testing.T) {
 	})
 
 	t.Run("ApproveRootCert_Trustee", func(t *testing.T) {
-		txResult, err := ApproveAddX509RootCert(rootCertSubject, rootCertSubjectKeyID, alice,
-			"--schemaVersion", "0",
-		)
+		txResult, err := ApproveAddX509RootCert(rootCertSubject, rootCertSubjectKeyID, alice)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -128,10 +112,10 @@ func TestPKIDemo(t *testing.T) {
 		// Root cert now approved
 		out, err := QueryX509Cert(rootCertSubject, rootCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, rootCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId": "%s"`, rootCertSubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber": "%s"`, rootCertSerialNumber))
-		require.Contains(t, string(out), `"isRoot": true`)
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, rootCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, rootCertSubjectKeyID))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, rootCertSerialNumber))
+		require.Contains(t, string(out), `"isRoot":true`)
 
 		out, err = QueryProposedX509RootCert(rootCertSubject, rootCertSubjectKeyID)
 		require.NoError(t, err)
@@ -147,9 +131,9 @@ func TestPKIDemo(t *testing.T) {
 
 		out, err := QueryX509Cert(intermediateCertSubject, intermediateCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, intermediateCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId": "%s"`, intermediateCertSubjectKeyID))
-		require.Contains(t, string(out), `"isRoot": false`)
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, intermediateCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, intermediateCertSubjectKeyID))
+		require.Contains(t, string(out), `"isRoot":false`)
 	})
 
 	t.Run("AddLeafCert", func(t *testing.T) {
@@ -161,16 +145,16 @@ func TestPKIDemo(t *testing.T) {
 
 		out, err := QueryX509Cert(leafCertSubject, leafCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, leafCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId": "%s"`, leafCertSubjectKeyID))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, leafCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, leafCertSubjectKeyID))
 	})
 
 	t.Run("QueryAllApprovedCerts", func(t *testing.T) {
 		out, err := QueryAllX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, rootCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, intermediateCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, leafCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, rootCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, intermediateCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, leafCertSubject))
 	})
 
 	t.Run("RevokeLeafCert", func(t *testing.T) {
@@ -186,37 +170,28 @@ func TestPKIDemo(t *testing.T) {
 
 		out, err = QueryRevokedX509Cert(leafCertSubject, leafCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, leafCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, leafCertSubject))
 	})
 
-	t.Run("ProposeRevokeIntermediateCert", func(t *testing.T) {
-		txResult, err := ProposeRevokeX509RootCert(intermediateCertSubject, intermediateCertSubjectKeyID, jack)
+	t.Run("RevokeIntermediateCert", func(t *testing.T) {
+		// Intermediate cert is a non-root cert — use revoke-x509-cert (not propose-revoke-x509-root-cert)
+		txResult, err := RevokeX509Cert(intermediateCertSubject, intermediateCertSubjectKeyID, vendorAccount)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Not yet revoked
 		out, err := QueryX509Cert(intermediateCertSubject, intermediateCertSubjectKeyID)
-		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, intermediateCertSubject))
-
-		txResult, err = ApproveRevokeX509RootCert(intermediateCertSubject, intermediateCertSubjectKeyID, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
-
-		out, err = QueryX509Cert(intermediateCertSubject, intermediateCertSubjectKeyID)
 		require.NoError(t, err)
 		require.Contains(t, string(out), "Not Found")
 
 		out, err = QueryRevokedX509Cert(intermediateCertSubject, intermediateCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, intermediateCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, intermediateCertSubject))
 	})
 
 	t.Run("ProposeRevokeRootCert", func(t *testing.T) {
+		// With 3 trustees, quorum=2: jack proposes + alice approves = cert is revoked.
 		txResult, err := ProposeRevokeX509RootCert(rootCertSubject, rootCertSubjectKeyID, jack)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
@@ -225,15 +200,9 @@ func TestPKIDemo(t *testing.T) {
 
 		out, err := QueryProposedRevokedX509RootCert(rootCertSubject, rootCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, rootCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, rootCertSubject))
 
 		txResult, err = ApproveRevokeX509RootCert(rootCertSubject, rootCertSubjectKeyID, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
-
-		txResult, err = ApproveRevokeX509RootCert(rootCertSubject, rootCertSubjectKeyID, bob)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -245,8 +214,8 @@ func TestPKIDemo(t *testing.T) {
 
 		out, err = QueryRevokedX509Cert(rootCertSubject, rootCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject": "%s"`, rootCertSubject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, rootCertSubject))
 	})
 
-	_ = bob
+	_, _ = bob, alice
 }

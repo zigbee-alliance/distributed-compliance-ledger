@@ -11,12 +11,15 @@ import (
 )
 
 const (
-	rootCertWithVidPath         = "integration_tests/constants/root_cert_with_vid"
-	paaNoVidPath                = "integration_tests/constants/paa_cert_no_vid"
-	rootCertWithVidSubject      = "MDQxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRAwDgYDVQQKDAdyb290LWNh"
-	rootCertWithVidSubjectKeyID = "5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB"
+	rootCertWithVidPath         = "../../constants/root_cert_with_vid"
+	paaNoVidPath                = "../../constants/paa_cert_no_vid"
 	rootCertWithVid             = 65521
 	paaNoVidVid                 = 65521
+
+	// Use google_root_cert_r2 (no embedded Matter VID) to avoid conflicting with root_cert used by TestPKIDemo.
+	assignVidTestRootCertPath         = "../../constants/google_root_cert_r2"
+	assignVidTestRootCertSubject      = "MEcxCzAJBgNVBAYTAlVTMSIwIAYDVQQKExlHb29nbGUgVHJ1c3QgU2VydmljZXMgTExDMRQwEgYDVQQDEwtHVFMgUm9vdCBSMg=="
+	assignVidTestRootCertSubjectKeyID = "BB:FF:CA:8E:23:9F:4F:99:CA:DB:E2:68:A6:A5:15:27:17:1E:D9:0E"
 )
 
 // TestPKIAssignVid translates pki-assign-vid.sh.
@@ -27,8 +30,10 @@ func TestPKIAssignVid(t *testing.T) {
 	vendorAdminAccount := cliputils.CreateAccount(t, "VendorAdmin")
 
 	t.Run("AssignVidToRootCertThatAlreadyHasVid_Fails", func(t *testing.T) {
-		// Propose and approve root cert that has a vid
-		txResult, err := ProposeAddX509RootCert(rootCertPath, jack,
+		// Propose and approve a root cert with an assigned VID.
+		// Use google_root_cert_r2 (no embedded Matter VID) to avoid conflicting with root_cert
+		// used by TestPKIDemo.
+		txResult, err := ProposeAddX509RootCert(assignVidTestRootCertPath, jack,
 			"--vid", fmt.Sprintf("%d", rootCertWithVid),
 		)
 		require.NoError(t, err)
@@ -36,14 +41,14 @@ func TestPKIAssignVid(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		txResult, err = ApproveAddX509RootCert(rootCertSubject, rootCertSubjectKeyID, alice)
+		txResult, err = ApproveAddX509RootCert(assignVidTestRootCertSubject, assignVidTestRootCertSubjectKeyID, alice)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Assign VID to a cert that already has vid — should fail
-		txResult, err = AssignVid(rootCertSubject, rootCertSubjectKeyID, rootCertWithVid, vendorAdminAccount)
+		// Assign VID to a cert that already has a VID — should fail.
+		txResult, err = AssignVid(assignVidTestRootCertSubject, assignVidTestRootCertSubjectKeyID, rootCertWithVid, vendorAdminAccount)
 		// expect error or non-zero code
 		if err != nil {
 			require.Contains(t, err.Error(), "vid is not empty")

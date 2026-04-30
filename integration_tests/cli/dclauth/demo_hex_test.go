@@ -1,6 +1,8 @@
 package dclauth
 
 import (
+	"fmt"
+	"math/rand"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -14,11 +16,11 @@ import (
 func TestAuthDemoHex(t *testing.T) {
 	jack := testconstants.JackAccount
 
-	vidHex := "0xA13"
-	pidHex := "0xA11"
-	// Decimal equivalents
-	vid := 2579
-	pid := 2577
+	// Use random VID/PID expressed as hex to avoid collisions across test runs.
+	vid := rand.Intn(65534) + 1
+	pid := rand.Intn(65534) + 1
+	vidHex := fmt.Sprintf("0x%X", vid)
+	pidHex := fmt.Sprintf("0x%X", pid)
 
 	// Generate and add key
 	name := "hexvendor" + utils.RandString()
@@ -88,7 +90,6 @@ func TestAuthDemoHex(t *testing.T) {
 
 	t.Run("AddModelWithWrongVID_Fails", func(t *testing.T) {
 		vidPlusOneHex := "0xA14"
-		vidPlusOne := 2580
 		productName := "Device #1"
 
 		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
@@ -102,16 +103,15 @@ func TestAuthDemoHex(t *testing.T) {
 			"--enhancedSetupFlowOptions", "0",
 			"--from", userAddr,
 		)
-		// Expect error: VID mismatch
-		combined := ""
+		// With broadcast-mode sync, rejection might come at CLI level or on-chain.
 		if err != nil {
-			combined = err.Error()
+			require.Contains(t, err.Error(), "vendorID")
+			return
 		}
-		if txResult != nil {
-			combined += txResult.RawLog
-		}
-		require.Contains(t, combined, "vendorID")
-		_ = vidPlusOne
+		// Await on-chain result to drain tx from mempool before next subtest.
+		txData, awaitErr := utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, awaitErr)
+		require.Contains(t, string(txData), "vendorID")
 	})
 
 	t.Run("UpdateModel", func(t *testing.T) {
@@ -138,8 +138,8 @@ func TestAuthDemoHex(t *testing.T) {
 			"-o", "json",
 		)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"vid": `+formatInt(vid))
-		require.Contains(t, string(out), `"pid": `+formatInt(pid))
+		require.Contains(t, string(out), `"vid":`+formatInt(vid))
+		require.Contains(t, string(out), `"pid":`+formatInt(pid))
 		require.Contains(t, string(out), "Device #1")
 	})
 }

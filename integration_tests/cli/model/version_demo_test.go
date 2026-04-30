@@ -79,22 +79,22 @@ func TestModelVersionDemo(t *testing.T) {
 	t.Run("QueryModelVersion", func(t *testing.T) {
 		out, err := QueryModelVersion(vid, pid, sv)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid": %d`, pid))
-		require.Contains(t, string(out), fmt.Sprintf(`"softwareVersion": %d`, sv))
-		require.Contains(t, string(out), `"softwareVersionString": "1"`)
-		require.Contains(t, string(out), `"cdVersionNumber": 1`)
-		require.Contains(t, string(out), `"softwareVersionValid": true`)
-		require.Contains(t, string(out), `"minApplicableSoftwareVersion": 1`)
-		require.Contains(t, string(out), `"maxApplicableSoftwareVersion": 10`)
-		require.Contains(t, string(out), `"schemaVersion": 0`)
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
+		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
+		require.Contains(t, string(out), fmt.Sprintf(`"softwareVersion":%d`, sv))
+		require.Contains(t, string(out), `"softwareVersionString":"1"`)
+		require.Contains(t, string(out), `"cdVersionNumber":1`)
+		require.Contains(t, string(out), `"softwareVersionValid":true`)
+		require.Contains(t, string(out), `"minApplicableSoftwareVersion":1`)
+		require.Contains(t, string(out), `"maxApplicableSoftwareVersion":10`)
+		require.Contains(t, string(out), `"schemaVersion":0`)
 	})
 
 	t.Run("QueryAllModelVersions", func(t *testing.T) {
 		out, err := QueryAllModelVersions(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid": %d`, pid))
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
+		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
 		require.Contains(t, string(out), "softwareVersions")
 		require.Contains(t, string(out), fmt.Sprintf("%d", sv))
 	})
@@ -118,7 +118,7 @@ func TestModelVersionDemo(t *testing.T) {
 			"--softwareVersion", fmt.Sprintf("%d", sv),
 			"--minApplicableSoftwareVersion", "2",
 			"--maxApplicableSoftwareVersion", "10",
-			"--softwareVersionValid", "false",
+			"--softwareVersionValid=false",
 			"--schemaVersion", "0",
 			"--from", vendorAccount,
 		)
@@ -129,9 +129,9 @@ func TestModelVersionDemo(t *testing.T) {
 
 		out, err := QueryModelVersion(vid, pid, sv)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"softwareVersionValid": false`)
-		require.Contains(t, string(out), `"minApplicableSoftwareVersion": 2`)
-		require.Contains(t, string(out), `"maxApplicableSoftwareVersion": 10`)
+		require.Contains(t, string(out), `"softwareVersionValid":false`)
+		require.Contains(t, string(out), `"minApplicableSoftwareVersion":2`)
+		require.Contains(t, string(out), `"maxApplicableSoftwareVersion":10`)
 	})
 
 	sv2 := rand.Intn(65534) + 1
@@ -186,7 +186,7 @@ func TestModelVersionDemo(t *testing.T) {
 			"--vid", fmt.Sprintf("%d", vid),
 			"--pid", fmt.Sprintf("%d", pid),
 			"--softwareVersion", fmt.Sprintf("%d", sv),
-			"--softwareVersionValid", "false",
+			"--softwareVersionValid=false",
 			"--from", differentVendor,
 		)
 		require.NoError(t, err)

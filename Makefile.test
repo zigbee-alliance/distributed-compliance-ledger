@@ -25,9 +25,12 @@ TEST_DEPLOY_GVN = "test_deploy_gvn"
 TEST_DEPLOY_VN = "test_deploy_vn"
 TEST_DEPLOY_ON = "test_deploy_on"
 
+HOST_ARCH := $(shell uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
+
 image:
-	docker build -t ${IMAGE_NAME} --build-arg TEST_UID=${UID} \
-		--build-arg DCL_VERSION=${DCL_VERSION} --build-arg DCL_COMMIT=${DCL_COMMIT} .
+	docker build --platform "linux/${HOST_ARCH}" -t ${IMAGE_NAME} --build-arg TEST_UID=${UID} \
+		--build-arg DCL_VERSION=${DCL_VERSION} --build-arg DCL_COMMIT=${DCL_COMMIT} \
+		--build-arg TARGETARCH=${HOST_ARCH} .
 
 localnet_init:
 	/bin/bash ./genlocalnetconfig.sh
@@ -45,7 +48,7 @@ localnet_start:
 	fi
 
 localnet_stop:
-	docker compose down || ($(call clean_network) && docker compose down)
+	docker compose down -v || ($(call clean_network) && docker compose down -v)
 
 localnet_export: localnet_stop
 	docker compose run node0 dcld export --for-zero-height  >genesis.export.node0.json

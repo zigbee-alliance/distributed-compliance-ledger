@@ -13,6 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+SED_EXT=
+if [ "$(uname)" == "Darwin" ]; then
+    SED_EXT="''"
+fi
+
   # patch configs properly by having all values >= 1 sec, otherwise headers may start having time from the future and light client verification will fail
   # if we patch config to have new blocks created in less than 1 sec, the min time in a time header is still 1 sec.
   # So, new blocks started to be from the future.
@@ -31,6 +36,7 @@ init_pool() {
   local _patch_config="${1:-yes}";
   local _localnet_init_target=${2:-localnet_init}
   local _binary_version=${3:-""}
+  DETAILED_OUTPUT_TARGET="${DETAILED_OUTPUT_TARGET:-/dev/stdout}"
 
   log "Setting up pool"
 
@@ -56,6 +62,7 @@ init_pool() {
 }
 
 cleanup_pool() {
+  DETAILED_OUTPUT_TARGET="${DETAILED_OUTPUT_TARGET:-/dev/stdout}"
   log "Cleaning up pool"
   log "-> Stopping pool & Removing configurations" >${DETAILED_OUTPUT_TARGET}
   make localnet_clean

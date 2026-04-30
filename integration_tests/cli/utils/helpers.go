@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -12,14 +13,28 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
-// CreateAccount generates a new key, proposes and approves the account via jack/alice,
+// isAccountActive checks whether an account address is active on-chain.
+func isAccountActive(addr string) bool {
+	out, err := utils.ExecuteCLI("query", "auth", "account", "--address", addr, "-o", "json")
+	if err != nil {
+		return false
+	}
+	return !strings.Contains(string(out), "Not Found")
+}
+
+// CreateAccount generates a new key, proposes and approves the account via jack/alice/bob,
 // and returns the account name. roles is a comma-separated string e.g. "NodeAdmin" or "Vendor".
+// It is robust against varying trustee counts: it tries up to three approvals (jack, alice, bob)
+// and verifies the account is active before returning.
 func CreateAccount(t *testing.T, roles string) string {
 	t.Helper()
 
 	name := utils.RandString()
 
-	_, err := utils.ExecuteCLI("keys", "add", name, "--keyring-backend", "test")
+	// Delete existing key if present (keys accumulate across test runs against a shared keyring).
+	utils.ExecuteCLI("keys", "delete", name, "--keyring-backend", "test", "-y") //nolint:errcheck
+
+	_, err := utils.ExecuteCLI("keys", "add", name, "--keyring-backend", "test", "--no-backup")
 	require.NoError(t, err)
 
 	addrOut, err := utils.ExecuteCLI("keys", "show", name, "-a", "--keyring-backend", "test")
@@ -37,30 +52,50 @@ func CreateAccount(t *testing.T, roles string) string {
 		"--from", testconstants.JackAccount,
 	)
 	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
+	require.Equal(t, uint32(0), txResult.Code, "propose-add-account failed: %s", txResult.RawLog)
 
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	if isAccountActive(addr) {
+		return name
+	}
 
+	// Alice approves (required for >= 3 trustees with AccountApprovalsPercent=2/3).
 	txResult, err = utils.ExecuteTx("tx", "auth", "approve-add-account",
 		"--address", addr,
 		"--from", testconstants.AliceAccount,
 	)
 	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
+	require.Equal(t, uint32(0), txResult.Code, "approve-add-account (alice) failed: %s", txResult.RawLog)
 
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+	if isAccountActive(addr) {
+		return name
+	}
+
+	// Bob approves (required for >= 4 trustees where ceil(2/3*4)=3 approvals are needed).
+	txResult, err = utils.ExecuteTx("tx", "auth", "approve-add-account",
+		"--address", addr,
+		"--from", testconstants.BobAccount,
+	)
 	require.NoError(t, err)
+	require.Equal(t, uint32(0), txResult.Code, "approve-add-account (bob) failed: %s", txResult.RawLog)
+
+	require.True(t, isAccountActive(addr),
+		"account %s (%s) is still not active after jack+alice+bob approvals; "+
+			"too many trustees on chain for automatic activation", name, addr)
 
 	return name
 }
 
 // CreateVendorAccount creates a vendor account with the given name and vid.
 // An optional single pid_ranges argument may be passed.
+// It is robust against varying trustee counts: it tries up to three approvals (jack, alice, bob)
+// and verifies the account is active before returning.
 func CreateVendorAccount(t *testing.T, name string, vid int, pidRanges ...string) string {
 	t.Helper()
 
-	_, err := utils.ExecuteCLI("keys", "add", name, "--keyring-backend", "test")
+	// Delete existing key if present (keys accumulate across test runs against a shared keyring).
+	utils.ExecuteCLI("keys", "delete", name, "--keyring-backend", "test", "-y") //nolint:errcheck
+
+	_, err := utils.ExecuteCLI("keys", "add", name, "--keyring-backend", "test", "--no-backup")
 	require.NoError(t, err)
 
 	addrOut, err := utils.ExecuteCLI("keys", "show", name, "-a", "--keyring-backend", "test")
@@ -85,20 +120,37 @@ func CreateVendorAccount(t *testing.T, name string, vid int, pidRanges ...string
 
 	txResult, err := utils.ExecuteTx(args...)
 	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
+	require.Equal(t, uint32(0), txResult.Code, "propose-add-account (vendor) failed: %s", txResult.RawLog)
 
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	// With 3 trustees, VendorAccountApprovalsPercent=1/3 → ceil(1)=1 → Jack's proposal activates
+	// directly. With 4+ trustees, ceil(1/3*N) > 1 → need additional approvals.
+	if isAccountActive(addr) {
+		return name
+	}
 
+	// Alice approves (needed when 4-6 trustees, ceil(1/3*N) = 2).
 	txResult, err = utils.ExecuteTx("tx", "auth", "approve-add-account",
 		"--address", addr,
 		"--from", testconstants.AliceAccount,
 	)
 	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
+	require.Equal(t, uint32(0), txResult.Code, "approve-add-account (vendor, alice) failed: %s", txResult.RawLog)
 
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+	if isAccountActive(addr) {
+		return name
+	}
+
+	// Bob approves (needed when 7+ trustees, ceil(1/3*N) = 3).
+	txResult, err = utils.ExecuteTx("tx", "auth", "approve-add-account",
+		"--address", addr,
+		"--from", testconstants.BobAccount,
+	)
 	require.NoError(t, err)
+	require.Equal(t, uint32(0), txResult.Code, "approve-add-account (vendor, bob) failed: %s", txResult.RawLog)
+
+	require.True(t, isAccountActive(addr),
+		"vendor account %s (vid=%d, addr=%s) is still not active after jack+alice+bob approvals; "+
+			"too many trustees on chain for automatic activation", name, vid, addr)
 
 	return name
 }
@@ -120,7 +172,7 @@ func CreateModelAndVersion(t *testing.T, vid, pid, sv int, svs, userAddr string)
 		"--from", userAddr,
 	)
 	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
+	require.Equal(t, uint32(0), txResult.Code, "add-model failed: %s", txResult.RawLog)
 
 	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 	require.NoError(t, err)
@@ -136,7 +188,7 @@ func CreateModelAndVersion(t *testing.T, vid, pid, sv int, svs, userAddr string)
 		"--from", userAddr,
 	)
 	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
+	require.Equal(t, uint32(0), txResult.Code, "add-model-version failed: %s", txResult.RawLog)
 
 	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 	require.NoError(t, err)

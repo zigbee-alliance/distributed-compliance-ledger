@@ -33,7 +33,7 @@ func TestModelDemo(t *testing.T) {
 
 		out, err = QueryAllModels()
 		require.NoError(t, err)
-		require.Contains(t, string(out), "[]")
+		require.NotContains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 	})
 
 	productLabel := "Device #1"
@@ -94,11 +94,11 @@ func TestModelDemo(t *testing.T) {
 	t.Run("QueryModel", func(t *testing.T) {
 		out, err := QueryModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid": %d`, pid))
-		require.Contains(t, string(out), fmt.Sprintf(`"productLabel": "%s"`, productLabel))
-		require.Contains(t, string(out), `"schemaVersion": 0`)
-		require.Contains(t, string(out), `"enhancedSetupFlowOptions": 0`)
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
+		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
+		require.Contains(t, string(out), fmt.Sprintf(`"productLabel":"%s"`, productLabel))
+		require.Contains(t, string(out), `"schemaVersion":0`)
+		require.Contains(t, string(out), `"enhancedSetupFlowOptions":0`)
 	})
 
 	t.Run("AddModelVersions", func(t *testing.T) {
@@ -136,12 +136,12 @@ func TestModelDemo(t *testing.T) {
 	t.Run("QueryAllModelsAndVendorModels", func(t *testing.T) {
 		out, err := QueryAllModels()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid": %d`, pid))
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
+		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
 
 		out, err = QueryVendorModels(vid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"pid": %d`, pid))
+		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
 	})
 
 	description := "New Device Description"
@@ -172,15 +172,15 @@ func TestModelDemo(t *testing.T) {
 	t.Run("QueryUpdatedModel", func(t *testing.T) {
 		out, err := QueryModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid": %d`, pid))
-		require.Contains(t, string(out), fmt.Sprintf(`"productLabel": "%s"`, description))
-		require.Contains(t, string(out), `"schemaVersion": 0`)
-		require.Contains(t, string(out), fmt.Sprintf(`"commissioningModeInitialStepsHint": %d`, newCommissioningModeInitialStepsHint))
-		require.Contains(t, string(out), fmt.Sprintf(`"commissioningModeSecondaryStepsHint": %d`, newCommissioningModeSecondaryStepsHint))
-		require.Contains(t, string(out), fmt.Sprintf(`"icdUserActiveModeTriggerHint": %d`, newIcdUserActiveModeTriggerHint))
-		require.Contains(t, string(out), fmt.Sprintf(`"factoryResetStepsHint": %d`, newFactoryResetStepsHint))
-		require.Contains(t, string(out), `"enhancedSetupFlowOptions": 2`)
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
+		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
+		require.Contains(t, string(out), fmt.Sprintf(`"productLabel":"%s"`, description))
+		require.Contains(t, string(out), `"schemaVersion":0`)
+		require.Contains(t, string(out), fmt.Sprintf(`"commissioningModeInitialStepsHint":%d`, newCommissioningModeInitialStepsHint))
+		require.Contains(t, string(out), fmt.Sprintf(`"commissioningModeSecondaryStepsHint":%d`, newCommissioningModeSecondaryStepsHint))
+		require.Contains(t, string(out), fmt.Sprintf(`"icdUserActiveModeTriggerHint":%d`, newIcdUserActiveModeTriggerHint))
+		require.Contains(t, string(out), fmt.Sprintf(`"factoryResetStepsHint":%d`, newFactoryResetStepsHint))
+		require.Contains(t, string(out), `"enhancedSetupFlowOptions":2`)
 	})
 
 	supportURL := "https://newsupporturl.test"
@@ -200,7 +200,7 @@ func TestModelDemo(t *testing.T) {
 
 		out, err := QueryModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"supportUrl": "%s"`, supportURL))
+		require.Contains(t, string(out), fmt.Sprintf(`"supportUrl":"%s"`, supportURL))
 	})
 
 	t.Run("DeleteModels", func(t *testing.T) {

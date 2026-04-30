@@ -12,12 +12,13 @@ import (
 
 // TestComplianceDemoHex translates compliance-demo-hex.sh.
 func TestComplianceDemoHex(t *testing.T) {
-	vidHex := "0xA13"
-	vid := 2579
-	pidHex := "0xA11"
-	pid := 2577
+	// Use random VID/PID expressed as hex to avoid collisions across test runs.
+	vid := rand.Intn(65534) + 1
+	pid := rand.Intn(65534) + 1
+	vidHex := fmt.Sprintf("0x%X", vid)
+	pidHex := fmt.Sprintf("0x%X", pid)
 
-	vendorAccount := fmt.Sprintf("vendor_account_%s", vidHex)
+	vendorAccount := fmt.Sprintf("vendor_account_%d", vid)
 	cliputils.CreateVendorAccount(t, vendorAccount, vid)
 
 	zbAccount := cliputils.CreateAccount(t, "CertificationCenter")
@@ -28,7 +29,7 @@ func TestComplianceDemoHex(t *testing.T) {
 	certificationDate := "2020-01-01T00:00:01Z"
 	zigbeeCertType := "zigbee"
 	matterCertType := "matter"
-	cdCertID := "some ID"
+	cdCertID := fmt.Sprintf("cert-%d", rand.Intn(1<<30))
 
 	t.Run("AddModelAndVersion", func(t *testing.T) {
 		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
@@ -71,7 +72,7 @@ func TestComplianceDemoHex(t *testing.T) {
 		)
 		require.NoError(t, err)
 		require.Contains(t, string(out), "Not Found")
-		require.NotContains(t, string(out), fmt.Sprintf(`"pid": %d`, pid))
+		require.NotContains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
 
 		out, err = QueryDeviceSoftwareCompliance(cdCertID)
 		require.NoError(t, err)
@@ -175,9 +176,9 @@ func TestComplianceDemoHex(t *testing.T) {
 			"--certificationType", matterCertType, "-o", "json",
 		)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"value": true`)
-		require.Contains(t, string(out), fmt.Sprintf(`"pid": %d`, pid))
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, vid))
+		require.Contains(t, string(out), `"value":true`)
+		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 
 		out, err = utils.ExecuteCLI("query", "compliance", "compliance-info",
 			"--vid", vidHex, "--pid", pidHex,
@@ -185,16 +186,16 @@ func TestComplianceDemoHex(t *testing.T) {
 			"--certificationType", zigbeeCertType, "-o", "json",
 		)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"softwareVersionCertificationStatus": 2`)
-		require.Contains(t, string(out), fmt.Sprintf(`"date": "%s"`, certificationDate))
+		require.Contains(t, string(out), `"softwareVersionCertificationStatus":2`)
+		require.Contains(t, string(out), fmt.Sprintf(`"date":"%s"`, certificationDate))
 
 		out, err = QueryDeviceSoftwareCompliance(cdCertID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid": %d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid": %d`, pid))
-		require.Contains(t, string(out), `"softwareVersionCertificationStatus": 2`)
-		require.Contains(t, string(out), fmt.Sprintf(`"certificationType": "%s"`, matterCertType))
-		require.Contains(t, string(out), fmt.Sprintf(`"certificationType": "%s"`, zigbeeCertType))
+		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
+		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
+		require.Contains(t, string(out), `"softwareVersionCertificationStatus":2`)
+		require.Contains(t, string(out), fmt.Sprintf(`"certificationType":"%s"`, matterCertType))
+		require.Contains(t, string(out), fmt.Sprintf(`"certificationType":"%s"`, zigbeeCertType))
 	})
 
 	revocationDate := "2020-02-02T02:20:20Z"
@@ -241,16 +242,16 @@ func TestComplianceDemoHex(t *testing.T) {
 			"--certificationType", zigbeeCertType, "-o", "json",
 		)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"softwareVersionCertificationStatus": 3`)
-		require.Contains(t, string(out), fmt.Sprintf(`"date": "%s"`, revocationDate))
-		require.Contains(t, string(out), fmt.Sprintf(`"reason": "%s"`, revocationReason))
+		require.Contains(t, string(out), `"softwareVersionCertificationStatus":3`)
+		require.Contains(t, string(out), fmt.Sprintf(`"date":"%s"`, revocationDate))
+		require.Contains(t, string(out), fmt.Sprintf(`"reason":"%s"`, revocationReason))
 		require.Contains(t, string(out), "history")
 
 		out, err = QueryDeviceSoftwareCompliance(cdCertID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"softwareVersionCertificationStatus": 2`)
-		require.Contains(t, string(out), fmt.Sprintf(`"certificationType": "%s"`, matterCertType))
-		require.NotContains(t, string(out), fmt.Sprintf(`"certificationType": "%s"`, zigbeeCertType))
+		require.Contains(t, string(out), `"softwareVersionCertificationStatus":2`)
+		require.Contains(t, string(out), fmt.Sprintf(`"certificationType":"%s"`, matterCertType))
+		require.NotContains(t, string(out), fmt.Sprintf(`"certificationType":"%s"`, zigbeeCertType))
 
 		out, err = utils.ExecuteCLI("query", "compliance", "revoked-model",
 			"--vid", vidHex, "--pid", pidHex,
@@ -258,7 +259,7 @@ func TestComplianceDemoHex(t *testing.T) {
 			"--certificationType", zigbeeCertType, "-o", "json",
 		)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"value": true`)
+		require.Contains(t, string(out), `"value":true`)
 	})
 
 	t.Run("ReCertifyAfterRevoke_Success", func(t *testing.T) {
@@ -284,8 +285,8 @@ func TestComplianceDemoHex(t *testing.T) {
 			"--certificationType", zigbeeCertType, "-o", "json",
 		)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"softwareVersionCertificationStatus": 2`)
-		require.Contains(t, string(out), fmt.Sprintf(`"date": "%s"`, newCertDate))
+		require.Contains(t, string(out), `"softwareVersionCertificationStatus":2`)
+		require.Contains(t, string(out), fmt.Sprintf(`"date":"%s"`, newCertDate))
 
 		out, err = utils.ExecuteCLI("query", "compliance", "certified-model",
 			"--vid", vidHex, "--pid", pidHex,
@@ -293,6 +294,6 @@ func TestComplianceDemoHex(t *testing.T) {
 			"--certificationType", zigbeeCertType, "-o", "json",
 		)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"value": true`)
+		require.Contains(t, string(out), `"value":true`)
 	})
 }

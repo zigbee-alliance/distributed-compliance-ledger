@@ -215,4 +215,4 @@ if [[ -n "$DCL_LIGHT_CLIENT_PROXY" ]]; then
     init_light_client_proxy lightclient0
 fi
 
-chmod 777 -R $DCL_DIR
+chmod -R 777 $DCL_DIR

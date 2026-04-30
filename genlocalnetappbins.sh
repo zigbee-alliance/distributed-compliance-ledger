@@ -6,10 +6,19 @@ VERSION_DIR="${3:-genesis}"
 MAINNET_STABLE_VERSION="${4:-""}"
 LOCALNET_DIR=".localnet"
 
+# Detect host architecture and map to Docker/Go naming
+HOST_ARCH=$(uname -m)
+case "${HOST_ARCH}" in
+    x86_64) TARGETARCH="amd64" ;;
+    arm64|aarch64) TARGETARCH="arm64" ;;
+    *) TARGETARCH="${HOST_ARCH}" ;;
+esac
+
+echo "Building with TARGETARCH=${TARGETARCH}"
 if env | grep GOCOVER=1; then
-    docker build --build-arg "GOCOVER=1" -f ${DOCKERFILE} -t ${IMAGE_TAG} .
+    docker build --platform "linux/${TARGETARCH}" --build-arg "GOCOVER=1" --build-arg "TARGETARCH=${TARGETARCH}" -f ${DOCKERFILE} -t ${IMAGE_TAG} .
 else
-    docker build --build-arg "GOCOVER=" -f ${DOCKERFILE} -t ${IMAGE_TAG} .
+    docker build --platform "linux/${TARGETARCH}" --build-arg "GOCOVER=" --build-arg "TARGETARCH=${TARGETARCH}" -f ${DOCKERFILE} -t ${IMAGE_TAG} .
 fi
 
 docker container create --name ${IMAGE_TAG}-inst ${IMAGE_TAG}
