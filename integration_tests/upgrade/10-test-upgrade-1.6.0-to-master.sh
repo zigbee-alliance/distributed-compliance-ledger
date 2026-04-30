@@ -577,7 +577,7 @@ test_divider
 # MODEL and MODEL_VERSION
 
 echo "Add model vid=$vid_for_master pid=$pid_1_for_master"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_master --pid=$pid_1_for_master --deviceTypeID=$device_type_id_for_master --productName=$product_name_for_master --productLabel=$product_label_for_master --partNumber=$part_number_for_master --from=$vendor_account_for_master --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_master --pid=$pid_1_for_master --deviceTypeID=$device_type_id_for_master --productName=$product_name_for_master --productLabel=$product_label_for_master --partNumber=$part_number_for_master --commissioningCustomFlow=0 --from=$vendor_account_for_master --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -591,7 +591,7 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 echo "Add model vid=$vid_for_master pid=$pid_2_for_master"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_master --pid=$pid_2_for_master --deviceTypeID=$device_type_id_for_master --productName=$product_name_for_master --productLabel=$product_label_for_master --partNumber=$part_number_for_master --from=$vendor_account_for_master --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_master --pid=$pid_2_for_master --deviceTypeID=$device_type_id_for_master --productName=$product_name_for_master --productLabel=$product_label_for_master --partNumber=$part_number_for_master --commissioningCustomFlow=0 --from=$vendor_account_for_master --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -605,7 +605,7 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 echo "Add model vid=$vid_for_master pid=$pid_3_for_master"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_master --pid=$pid_3_for_master --deviceTypeID=$device_type_id_for_master --productName=$product_name_for_master --productLabel=$product_label_for_master --partNumber=$part_number_for_master --from=$vendor_account_for_master --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_master --pid=$pid_3_for_master --deviceTypeID=$device_type_id_for_master --productName=$product_name_for_master --productLabel=$product_label_for_master --partNumber=$part_number_for_master --commissioningCustomFlow=0 --from=$vendor_account_for_master --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
