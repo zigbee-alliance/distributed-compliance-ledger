@@ -33,7 +33,7 @@ service Msg {
 
 message MsgProposeAddX509RootCert {
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
-  string cert = 2 [(gogoproto.moretags) = "validate:\"required,max=10485760\""];
+  string cert = 2 [(gogoproto.moretags) = "validate:\"required,max=20480\""];
   string info = 3 [(gogoproto.moretags) = "validate:\"max=4096\""];
   int64 time = 4;
   int32 vid = 5 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535,required\""];
@@ -56,7 +56,7 @@ message MsgApproveAddX509RootCertResponse {
 
 message MsgAddX509Cert {
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
-  string cert = 2 [(gogoproto.moretags) = "validate:\"required,max=10485760\""];
+  string cert = 2 [(gogoproto.moretags) = "validate:\"required,max=20480\""];
   string info = 3 [(gogoproto.moretags) = "validate:\"max=4096\""];
   int64 time = 4;
   uint32 certSchemaVersion = 5 [(gogoproto.moretags) = "validate:\"eq=0\""];
@@ -119,9 +119,9 @@ message MsgAddPkiRevocationDistributionPoint {
   int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535,required\""];
   int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
   bool isPAA = 4;
-  string label = 5 [(gogoproto.moretags) = "validate:\"required\""];
+  string label = 5 [(gogoproto.moretags) = "validate:\"required,max=64\""];
   string crlSignerCertificate = 6 [(gogoproto.moretags) = "validate:\"required,max=2048\""];
-  string issuerSubjectKeyID = 7 [(gogoproto.moretags) = "validate:\"required\""];
+  string issuerSubjectKeyID = 7 [(gogoproto.moretags) = "validate:\"required,max=64\""];
   string dataURL = 8 [(gogoproto.moretags) = "validate:\"required,url,max=256\""];
   uint64 dataFileSize = 9;
   string dataDigest = 10 [(gogoproto.moretags) = "validate:\"max=128\""];
@@ -137,9 +137,9 @@ message MsgAddPkiRevocationDistributionPointResponse {
 message MsgUpdatePkiRevocationDistributionPoint {
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
   int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535,required\""];
-  string label = 3 [(gogoproto.moretags) = "validate:\"required\""];
+  string label = 3 [(gogoproto.moretags) = "validate:\"required,max=64\""];
   string crlSignerCertificate = 4 [(gogoproto.moretags) = "validate:\"max=2048\""];;
-  string issuerSubjectKeyID = 5 [(gogoproto.moretags) = "validate:\"required\""];
+  string issuerSubjectKeyID = 5 [(gogoproto.moretags) = "validate:\"required,max=64\""];
   string dataURL = 6 [(gogoproto.moretags) = "validate:\"omitempty,url,max=256\""];
   uint64 dataFileSize = 7;
   string dataDigest = 8 [(gogoproto.moretags) = "validate:\"max=128\""];
@@ -154,8 +154,8 @@ message MsgUpdatePkiRevocationDistributionPointResponse {
 message MsgDeletePkiRevocationDistributionPoint {
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
   int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535,required\""];
-  string label = 3 [(gogoproto.moretags) = "validate:\"required\""];
-  string issuerSubjectKeyID = 4 [(gogoproto.moretags) = "validate:\"required\""];
+  string label = 3 [(gogoproto.moretags) = "validate:\"required,max=64\""];
+  string issuerSubjectKeyID = 4 [(gogoproto.moretags) = "validate:\"required,max=64\""];
 }
 
 message MsgDeletePkiRevocationDistributionPointResponse {
@@ -173,7 +173,7 @@ message MsgAssignVidResponse {
 
 message MsgAddNocX509RootCert {
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
-  string cert = 2 [(gogoproto.moretags) = "validate:\"required,max=10485760\""];
+  string cert = 2 [(gogoproto.moretags) = "validate:\"required,max=20480\""];
   uint32 certSchemaVersion = 4 [(gogoproto.moretags) = "validate:\"eq=0\""];
   bool isVidVerificationSigner = 5;
 }
@@ -193,7 +193,7 @@ message MsgRemoveX509CertResponse {
 
 message MsgAddNocX509IcaCert {
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
-  string cert = 2 [(gogoproto.moretags) = "validate:\"required,max=10485760\""];
+  string cert = 2 [(gogoproto.moretags) = "validate:\"required,max=20480\""];
   uint32 certSchemaVersion = 3 [(gogoproto.moretags) = "validate:\"eq=0\""];
   bool isVidVerificationSigner = 4;
 }
