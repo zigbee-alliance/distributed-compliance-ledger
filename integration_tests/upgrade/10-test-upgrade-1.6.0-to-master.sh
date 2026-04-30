@@ -508,7 +508,7 @@ max_applicable_software_version_for_master=4000
 certification_type_for_master="matter"
 certification_date_for_master="2024-02-01T00:00:00Z"
 provisional_date_for_master="2016-10-12T00:00:00Z"
-cd_certificate_id_for_master="10DEXZ"
+cd_certificate_id_for_master="12345678910masterAB"
 
 test_data_url_for_master="https://url.data.dclmodel-master"
 
