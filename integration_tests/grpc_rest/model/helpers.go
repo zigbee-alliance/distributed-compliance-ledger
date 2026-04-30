@@ -151,8 +151,8 @@ func NewMsgUpdateModelVersion(
 		Pid:             pid,
 		SoftwareVersion: softwareVersion,
 		OtaUrl:          testconstants.OtaURL + "/new",
-		OtaFileSize:     testconstants.OtaFileSize + 1,
-		OtaChecksum:     testconstants.OtaChecksum + "/new",
+		OtaFileSize:     0,
+		OtaChecksum:     "",
 		ReleaseNotesUrl: testconstants.ReleaseNotesURL + "/new",
 	}
 }
