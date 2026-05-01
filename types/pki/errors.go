@@ -45,7 +45,6 @@ var (
 	ErrUnsupportedOperation                              = errors.Register(ModuleName, 432, "unsupported operation")
 	ErrInvalidVidFormat                                  = errors.Register(ModuleName, 433, "invalid vid format")
 	ErrInvalidPidFormat                                  = errors.Register(ModuleName, 434, "invalid pid format")
-	ErrInvalidDataURLFormat                              = errors.Register(ModuleName, 435, "invalid data url format")
 	ErrCertificateVidNotEqualMsgVid                      = errors.Register(ModuleName, 436, "certificate's vid is not equal to the message vid")
 	ErrMessageVidNotEqualRootCertVid                     = errors.Register(ModuleName, 437, "Message vid is not equal to ledger's root certificate vid")
 	ErrCertNotChainedBack                                = errors.Register(ModuleName, 438, "Certificate is not chained back to a root certificate on DCL")
@@ -433,10 +432,6 @@ func NewErrInvalidVidFormat(e interface{}) error {
 
 func NewErrInvalidPidFormat(e interface{}) error {
 	return errors.Wrapf(ErrInvalidPidFormat, "Could not parse pid: %v", e)
-}
-
-func NewErrInvalidDataURLSchema() error {
-	return errors.Wrapf(ErrInvalidDataURLFormat, "Data URL must start with https:// or http://")
 }
 
 func NewErrCertificateVidNotEqualMsgVid(e interface{}) error {

@@ -1,8 +1,6 @@
 package types
 
 import (
-	"strings"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
@@ -74,10 +72,6 @@ func (msg *MsgUpdatePkiRevocationDistributionPoint) ValidateBasic() error {
 				break
 			}
 		}
-	}
-
-	if msg.DataURL != "" && !strings.HasPrefix(msg.DataURL, "https://") && !strings.HasPrefix(msg.DataURL, "http://") {
-		return pkitypes.NewErrInvalidDataURLSchema()
 	}
 
 	if !isDataDigestInTypes {
