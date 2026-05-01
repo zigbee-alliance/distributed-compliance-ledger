@@ -194,11 +194,21 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaChecksum is not base64 encoded",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaUrl = "https://sampleflowurl.dclmodel"
-				msg.OtaChecksum = "not_base64_encoded"
+				msg.OtaChecksum = tmrand.Str(41) + "==="
 
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: ErrFieldIsNotBase64Encoded,
+		},
+		{
+			name: "OtaChecksum length < 44",
+			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
+				msg.OtaUrl = "https://sampleflowurl.dclmodel"
+				msg.OtaChecksum = tmrand.Str(43)
+
+				return msg
+			}(validMsgCreateModelVersion()),
+			err: validator.ErrFieldMinLengthNotReached,
 		},
 		{
 			name: "OtaChecksumType == 0 when OtaUrl is set",
@@ -461,7 +471,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaChecksum is set when OtaUrl is set",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaUrl = "https://sampleflowurl.dclmodel"
-				msg.OtaChecksum = "SGVsbG8gd29ybGQh"
+				msg.OtaChecksum = "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk="
 
 				return msg
 			}(validMsgCreateModelVersion()),
@@ -680,13 +690,25 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaChecksum is not base64 encoded",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.OtaUrl = "https://sampleflowurl.dclmodel"
-				msg.OtaChecksum = "not_base64_encoded"
+				msg.OtaChecksum = tmrand.Str(41) + "==="
 				msg.OtaFileSize = 1
 				msg.OtaChecksumType = 1
 
 				return msg
 			}(validMsgUpdateModelVersion()),
 			err: ErrFieldIsNotBase64Encoded,
+		},
+		{
+			name: "OtaChecksum length < 44",
+			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
+				msg.OtaUrl = "https://sampleflowurl.dclmodel"
+				msg.OtaChecksum = tmrand.Str(43)
+				msg.OtaFileSize = 1
+				msg.OtaChecksumType = 1
+
+				return msg
+			}(validMsgUpdateModelVersion()),
+			err: validator.ErrFieldMinLengthNotReached,
 		},
 		{
 			name: "MinApplicableSoftwareVersion and MaxApplicableSoftwareVersion are set " +
@@ -814,7 +836,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaChecksum is base64 encoded",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.OtaUrl = "https://sampleflowurl.dclmodel"
-				msg.OtaChecksum = "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU"
+				msg.OtaChecksum = "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk="
 				msg.OtaFileSize = 1
 				msg.OtaChecksumType = 1
 

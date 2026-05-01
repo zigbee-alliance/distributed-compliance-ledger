@@ -334,7 +334,7 @@ test_divider
 # Update the model version with few mutable fields and make sure all other fields are still the same
 echo "Update Device Model Version with few mutable fields and make sure all other fields are still the same for VID: $vid_1 PID: $pid_1 SV: $sv_1"
 result=$(echo "test1234" | dcld tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 --softwareVersionValid=true \
---releaseNotesURL="https://release.url.info" --otaURL="https://ota.url.com" --otaFileSize=123 --otaChecksum="SGVsbG8gbmV3IHdvcmxkIQ==" --otaChecksumType=1 --minApplicableSoftwareVersion=2 --maxApplicableSoftwareVersion=20 --from=$vendor_account_1 --yes)
+--releaseNotesURL="https://release.url.info" --otaURL="https://ota.url.com" --otaFileSize=123 --otaChecksum="MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk1Mzg4MjA3ZmFhNmM2NTg2YTBmNDU0MDk3YTU0ZWIzMw==" --otaChecksumType=1 --minApplicableSoftwareVersion=2 --maxApplicableSoftwareVersion=20 --from=$vendor_account_1 --yes)
 result=$(get_txn_result "$result")
 check_response_and_report "$result" "\"code\": 0"
 
@@ -352,7 +352,7 @@ check_response_and_report "$result" "\"cdVersionNumber\": 1"
 check_response_and_report "$result" "\"softwareVersionValid\": true"
 check_response_and_report "$result" "\"otaUrl\": \"https://ota.url.com\""
 check_response_and_report "$result" "\"otaFileSize\": \"123\""
-check_response_and_report "$result" "\"otaChecksum\": \"SGVsbG8gbmV3IHdvcmxkIQ==\""
+check_response_and_report "$result" "\"otaChecksum\": \"MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk1Mzg4MjA3ZmFhNmM2NTg2YTBmNDU0MDk3YTU0ZWIzMw==\""
 check_response_and_report "$result" "\"otaChecksumType\": 1"
 check_response_and_report "$result" "\"minApplicableSoftwareVersion\": 2"
 check_response_and_report "$result" "\"maxApplicableSoftwareVersion\": 20"
@@ -368,7 +368,7 @@ result=$(echo 'test1234' | dcld tx model add-model-version --vid=$vid_1 --pid=$p
 --softwareVersionString="1.0" --cdVersionNumber=21334 \
 --firmwareInformation="123456789012345678901234567890123456789012345678901234567890123" \
 --softwareVersionValid=true --otaURL="https://ota.url.info" --otaFileSize=123456789 \
---specificationVersion=$specification_version --otaChecksum="SGVsbG8gd29ybGQh" --releaseNotesURL="https://release.notes.url.info" \
+--specificationVersion=$specification_version --otaChecksum="MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=" --releaseNotesURL="https://release.notes.url.info" \
 --otaChecksumType=1 --maxApplicableSoftwareVersion=32 --minApplicableSoftwareVersion=5   --from=$vendor_account_1 --yes)
 result=$(get_txn_result "$result")
 echo "$result"
@@ -389,7 +389,7 @@ check_response_and_report "$result" "\"firmwareInformation\": \"1234567890123456
 check_response_and_report "$result" "\"softwareVersionValid\": true"
 check_response_and_report "$result" "\"otaUrl\": \"https://ota.url.info\""
 check_response_and_report "$result" "\"otaFileSize\": \"123456789\""
-check_response_and_report "$result" "\"otaChecksum\": \"SGVsbG8gd29ybGQh\""
+check_response_and_report "$result" "\"otaChecksum\": \"MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=\""
 check_response_and_report "$result" "\"otaChecksumType\": 1"
 check_response_and_report "$result" "\"releaseNotesUrl\": \"https://release.notes.url.info\""
 check_response_and_report "$result" "\"maxApplicableSoftwareVersion\": 32"
@@ -419,7 +419,7 @@ check_response_and_report "$result" "\"firmwareInformation\": \"1234567890123456
 check_response_and_report "$result" "\"softwareVersionValid\": true"
 check_response_and_report "$result" "\"otaUrl\": \"https://ota.url.info\""
 check_response_and_report "$result" "\"otaFileSize\": \"123456789\""
-check_response_and_report "$result" "\"otaChecksum\": \"SGVsbG8gd29ybGQh\""
+check_response_and_report "$result" "\"otaChecksum\": \"MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=\""
 check_response_and_report "$result" "\"otaChecksumType\": 1"
 check_response_and_report "$result" "\"releaseNotesUrl\": \"https://release.notes.url.info\""
 check_response_and_report "$result" "\"maxApplicableSoftwareVersion\": 32"
@@ -448,7 +448,7 @@ check_response_and_report "$result" "\"firmwareInformation\": \"1234567890123456
 check_response_and_report "$result" "\"softwareVersionValid\": false"
 check_response_and_report "$result" "\"otaUrl\": \"https://ota.url.info\""
 check_response_and_report "$result" "\"otaFileSize\": \"123456789\""
-check_response_and_report "$result" "\"otaChecksum\": \"SGVsbG8gd29ybGQh\""
+check_response_and_report "$result" "\"otaChecksum\": \"MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=\""
 check_response_and_report "$result" "\"otaChecksumType\": 1"
 check_response_and_report "$result" "\"releaseNotesUrl\": \"https://release.notes.url.info\""
 check_response_and_report "$result" "\"maxApplicableSoftwareVersion\": 32"
@@ -479,7 +479,7 @@ check_response_and_report "$result" "\"firmwareInformation\": \"1234567890123456
 check_response_and_report "$result" "\"softwareVersionValid\": true"
 check_response_and_report "$result" "\"otaUrl\": \"https://updated.ota.url.info\""
 check_response_and_report "$result" "\"otaFileSize\": \"123456789\""
-check_response_and_report "$result" "\"otaChecksum\": \"SGVsbG8gd29ybGQh\""
+check_response_and_report "$result" "\"otaChecksum\": \"MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=\""
 check_response_and_report "$result" "\"otaChecksumType\": 1"
 check_response_and_report "$result" "\"releaseNotesUrl\": \"https://updated.release.notes.url.info\""
 check_response_and_report "$result" "\"maxApplicableSoftwareVersion\": 25"
@@ -503,7 +503,7 @@ result=$(echo 'test1234' | dcld tx model add-model-version --vid=$vid_1 --pid=$p
 --softwareVersionString="1.0" --cdVersionNumber=21334 \
 --firmwareInformation="123456789012345678901234567890123456789012345678901234567890123" \
 --softwareVersionValid=true --otaURL="https://ota.url.info" --otaFileSize=123456789 \
---specificationVersion=$specification_version --otaChecksum="SGVsbG8gd29ybGQh" \
+--specificationVersion=$specification_version --otaChecksum="MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=" \
 --otaChecksumType=1 --maxApplicableSoftwareVersion=32 --minApplicableSoftwareVersion=5   --from=$vendor_account_1 --yes)
 result=$(get_txn_result "$result")
 echo "$result"
@@ -525,7 +525,7 @@ check_response_and_report "$result" "\"firmwareInformation\": \"1234567890123456
 check_response_and_report "$result" "\"softwareVersionValid\": true"
 check_response_and_report "$result" "\"otaUrl\": \"https://ota.url.info\""
 check_response_and_report "$result" "\"otaFileSize\": \"123456789\""
-check_response_and_report "$result" "\"otaChecksum\": \"SGVsbG8gd29ybGQh\""
+check_response_and_report "$result" "\"otaChecksum\": \"MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=\""
 check_response_and_report "$result" "\"otaChecksumType\": 1"
 check_response_and_report "$result" "\"maxApplicableSoftwareVersion\": 32"
 check_response_and_report "$result" "\"minApplicableSoftwareVersion\": 5"
@@ -575,7 +575,7 @@ result=$(echo 'test1234' | dcld tx model add-model-version --vid=$vid_1 --pid=$p
 --softwareVersionString="1.0" --cdVersionNumber=21334 \
 --firmwareInformation="123456789012345678901234567890123456789012345678901234567890123" \
 --softwareVersionValid=true --otaURL="https://ota.url.info" --otaFileSize=123456789 \
---otaChecksum="SGVsbG8gd29ybGQh" --releaseNotesURL="https://release.notes.url.info" \
+--otaChecksum="MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=" --releaseNotesURL="https://release.notes.url.info" \
 --otaChecksumType=1 --maxApplicableSoftwareVersion=32 --minApplicableSoftwareVersion=5   --from=$vendor_account_1 --yes)
 result=$(get_txn_result "$result")
 echo "$result"
@@ -596,7 +596,7 @@ check_response_and_report "$result" "\"firmwareInformation\": \"1234567890123456
 check_response_and_report "$result" "\"softwareVersionValid\": true"
 check_response_and_report "$result" "\"otaUrl\": \"https://ota.url.info\""
 check_response_and_report "$result" "\"otaFileSize\": \"123456789\""
-check_response_and_report "$result" "\"otaChecksum\": \"SGVsbG8gd29ybGQh\""
+check_response_and_report "$result" "\"otaChecksum\": \"MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=\""
 check_response_and_report "$result" "\"otaChecksumType\": 1"
 check_response_and_report "$result" "\"releaseNotesUrl\": \"https://release.notes.url.info\""
 check_response_and_report "$result" "\"maxApplicableSoftwareVersion\": 32"
@@ -613,7 +613,7 @@ result=$(echo 'test1234' | dcld tx model add-model-version --vid=$vid_1 --pid=$p
 --softwareVersionString="1.0" --cdVersionNumber=21334 \
 --firmwareInformation="123456789012345678901234567890123456789012345678901234567890123" \
 --softwareVersionValid=true --otaURL="https://ota.url.info" --otaFileSize=123456789 \
---specificationVersion=$specification_version --otaChecksum="SGVsbG8gd29ybGQh" --releaseNotesURL="https://release.notes.url.info" \
+--specificationVersion=$specification_version --otaChecksum="MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=" --releaseNotesURL="https://release.notes.url.info" \
 --otaChecksumType=1 --maxApplicableSoftwareVersion=32 --minApplicableSoftwareVersion=5   --from=$vendor_account_1 --yes)
 result=$(get_txn_result "$result")
 echo "$result"
@@ -642,7 +642,7 @@ check_response_and_report "$result" "\"firmwareInformation\": \"1234567890123456
 check_response_and_report "$result" "\"softwareVersionValid\": true"
 check_response_and_report "$result" "\"otaUrl\": \"https://ota.url.info\""
 check_response_and_report "$result" "\"otaFileSize\": \"123456789\""
-check_response_and_report "$result" "\"otaChecksum\": \"SGVsbG8gd29ybGQh\""
+check_response_and_report "$result" "\"otaChecksum\": \"MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=\""
 check_response_and_report "$result" "\"otaChecksumType\": 1"
 check_response_and_report "$result" "\"releaseNotesUrl\": \"https://release.notes.url.info\""
 check_response_and_report "$result" "\"maxApplicableSoftwareVersion\": 32"

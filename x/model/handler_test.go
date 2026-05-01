@@ -1909,7 +1909,7 @@ func TestHandler_UpdateOTAFieldsInitiallyNotSet(t *testing.T) {
 	msgUpdateModelVersion := NewMsgUpdateModelVersion(setup.Vendor)
 	msgUpdateModelVersion.OtaUrl = "https://123.com"
 	msgUpdateModelVersion.OtaFileSize = 4
-	msgUpdateModelVersion.OtaChecksum = "SGVsbG8gd29ybGQh"
+	msgUpdateModelVersion.OtaChecksum = "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk="
 	msgUpdateModelVersion.OtaChecksumType = 1
 
 	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
