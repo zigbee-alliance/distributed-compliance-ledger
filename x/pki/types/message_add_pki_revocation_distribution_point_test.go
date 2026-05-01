@@ -186,7 +186,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			err: pkitypes.ErrInvalidRevocationType,
 		},
 		{
-			name: "dataURL starts not with http or https",
+			name: "dataURL with invalid protocol (ftp)",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
 				Vid:                  testconstants.PAACertWithNumericVidVid,
@@ -198,17 +198,17 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 				RevocationType:       1,
 				SchemaVersion:        0,
 			},
-			err: pkitypes.ErrInvalidDataURLFormat,
+			err: validator.ErrFieldNotValid,
 		},
 		{
-			name: "dataURL without protocol",
+			name: "dataURL without http or https protocol",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
 				Vid:                  testconstants.PAACertWithNumericVidVid,
 				IsPAA:                true,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
-				DataURL:              testconstants.URLWithoutProtocol,
+				DataURL:              testconstants.URLStartsWithW3,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 				RevocationType:       1,
 				SchemaVersion:        0,

@@ -1,8 +1,6 @@
 package types
 
 import (
-	"strings"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
@@ -85,10 +83,6 @@ func (msg *MsgAddPkiRevocationDistributionPoint) verifyFields() error {
 
 	if !isRevocationInTypes {
 		return pkitypes.NewErrInvalidRevocationType(msg.RevocationType, allowedRevocationTypes[:])
-	}
-
-	if !strings.HasPrefix(msg.DataURL, "https://") && !strings.HasPrefix(msg.DataURL, "http://") {
-		return pkitypes.NewErrInvalidDataURLSchema()
 	}
 
 	if msg.DataFileSize == 0 && msg.DataDigest != "" {
