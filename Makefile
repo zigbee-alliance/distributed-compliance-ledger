@@ -11,7 +11,7 @@ endif
 NAME ?= dcl
 APPNAME ?= $(NAME)d
 LEDGER_ENABLED ?= true
-
+URL_LIVENESS_CHECK_ENABLED ?= true
 OUTPUT_DIR ?= build
 
 ### Process ld flags
@@ -54,6 +54,10 @@ endif
 
 ifeq (cleveldb,$(findstring cleveldb,$(COSMOS_BUILD_OPTIONS)))
   build_tags += gcc
+endif
+
+ifeq ($(URL_LIVENESS_CHECK_ENABLED),false)
+  build_tags += dev
 endif
 
 whitespace :=
@@ -110,7 +114,7 @@ go.sum: go.mod
 	GO111MODULE=on go mod verify
 
 test:
-	go test -v $(PACKAGES)
+	URL_LIVENESS_CHECK_ENABLED=false go test -tags=dev -v $(PACKAGES)
 
 lint:
 	golangci-lint run ./... --timeout 5m0s

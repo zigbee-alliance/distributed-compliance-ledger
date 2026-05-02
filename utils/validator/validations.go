@@ -15,10 +15,13 @@
 package validator
 
 import (
+	"net/http"
 	"net/url"
 	"reflect"
+	"time"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/internal/config"
 )
 
 func requiredIfBit0Set(fl validator.FieldLevel) bool {
@@ -56,20 +59,58 @@ func isValidHttpsUrl(fl validator.FieldLevel) bool { //nolint:stylecheck
 	return _validURL(fl, "https")
 }
 
+var allowed4XXStatusCodes = []int{
+	http.StatusUnauthorized,
+	http.StatusForbidden,
+	http.StatusUnavailableForLegalReasons,
+}
+var httpClient = &http.Client{Timeout: 10 * time.Second}
+
 func _validURL(fl validator.FieldLevel, allowedSchemas ...string) bool {
 	raw := fl.Field().String()
-	// Field is empty or omitempty is set, skip checks
+	// Field is empty, or omitempty is set, skip checks
 	if raw == "" {
 		return true
 	}
 
-	u, _ := url.Parse(raw)
-	if u.Host == "" {
+	u, err := url.ParseRequestURI(raw)
+	if err != nil || u.Host == "" {
 		return false
 	}
 
+	isSchemaAllowed := false
 	for _, schema := range allowedSchemas {
 		if u.Scheme == schema {
+			isSchemaAllowed = true
+			break
+		}
+	}
+
+	if _isLiveURL(u) || !isSchemaAllowed {
+		return isSchemaAllowed
+	}
+
+	return false
+}
+
+func _isLiveURL(u *url.URL) bool {
+	if config.DisableURLLivenessCheck {
+		return true
+	}
+
+	// HEAD request only retrieves headers, not the body
+	resp, err := httpClient.Head(u.String())
+	if err != nil {
+		return false
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 400 {
+		return true
+	}
+
+	for _, code := range allowed4XXStatusCodes {
+		if code == resp.StatusCode {
 			return true
 		}
 	}

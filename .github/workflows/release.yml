@@ -24,6 +24,7 @@ on:
 env:
   BIN_NAME: dcld
   COSMOVISOR_VERSION: 1.5.0
+  URL_LIVENESS_CHECK_ENABLED: true
 
 jobs:
 
