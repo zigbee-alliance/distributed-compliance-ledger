@@ -48,5 +48,4 @@ func TestURLLivenessCheck(t *testing.T) {
 
 		require.True(t, _isLiveURL(u))
 	}
-
 }

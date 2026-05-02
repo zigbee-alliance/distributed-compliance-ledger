@@ -15,6 +15,7 @@
 package validator
 
 import (
+	"context"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -82,6 +83,7 @@ func _validURL(fl validator.FieldLevel, allowedSchemas ...string) bool {
 	for _, schema := range allowedSchemas {
 		if u.Scheme == schema {
 			isSchemaAllowed = true
+
 			break
 		}
 	}
@@ -97,9 +99,13 @@ func _isLiveURL(u *url.URL) bool {
 	if config.DisableURLLivenessCheck {
 		return true
 	}
-
 	// HEAD request only retrieves headers, not the body
-	resp, err := httpClient.Head(u.String())
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodHead, u.String(), nil)
+	if err != nil {
+		return false
+	}
+
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		return false
 	}

@@ -115,6 +115,7 @@ go.sum: go.mod
 
 test:
 	URL_LIVENESS_CHECK_ENABLED=false go test -tags=dev -v $(PACKAGES)
+	go test -v utils/validator/url_liveness_test.go
 
 lint:
 	golangci-lint run ./... --timeout 5m0s
