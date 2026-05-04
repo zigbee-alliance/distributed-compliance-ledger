@@ -53,11 +53,11 @@ func requiredIfBit0Set(fl validator.FieldLevel) bool {
 }
 
 func isValidHttpOrHttpsUrl(fl validator.FieldLevel) bool { //nolint:stylecheck
-	return _validURL(fl, "http", "https")
+	return validURL(fl, "http", "https")
 }
 
 func isValidHttpsUrl(fl validator.FieldLevel) bool { //nolint:stylecheck
-	return _validURL(fl, "https")
+	return validURL(fl, "https")
 }
 
 var allowed4XXStatusCodes = []int{
@@ -65,11 +65,15 @@ var allowed4XXStatusCodes = []int{
 	http.StatusForbidden,
 	http.StatusUnavailableForLegalReasons,
 }
-var httpClient = &http.Client{Timeout: 10 * time.Second}
 
-func _validURL(fl validator.FieldLevel, allowedSchemas ...string) bool {
+const (
+	livenessCheckTimeout = 10 * time.Second
+)
+
+var httpClient = &http.Client{Timeout: livenessCheckTimeout}
+
+func validURL(fl validator.FieldLevel, allowedSchemes ...string) bool {
 	raw := fl.Field().String()
-	// Field is empty, or omitempty is set, skip checks
 	if raw == "" {
 		return true
 	}
@@ -79,28 +83,32 @@ func _validURL(fl validator.FieldLevel, allowedSchemas ...string) bool {
 		return false
 	}
 
-	isSchemaAllowed := false
-	for _, schema := range allowedSchemas {
-		if u.Scheme == schema {
-			isSchemaAllowed = true
-
-			break
-		}
+	if !isSchemeAllowed(u.Scheme, allowedSchemes) {
+		return false
 	}
 
-	if _isLiveURL(u) || !isSchemaAllowed {
-		return isSchemaAllowed
+	return isLiveURL(u)
+}
+
+func isSchemeAllowed(scheme string, allowed []string) bool {
+	for _, s := range allowed {
+		if scheme == s {
+			return true
+		}
 	}
 
 	return false
 }
 
-func _isLiveURL(u *url.URL) bool {
+func isLiveURL(u *url.URL) bool {
 	if config.DisableURLLivenessCheck {
 		return true
 	}
-	// HEAD request only retrieves headers, not the body
-	req, err := http.NewRequestWithContext(context.Background(), http.MethodHead, u.String(), nil)
+
+	ctx, cancel := context.WithTimeout(context.Background(), livenessCheckTimeout)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodHead, u.String(), nil)
 	if err != nil {
 		return false
 	}
@@ -111,7 +119,7 @@ func _isLiveURL(u *url.URL) bool {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode >= 200 && resp.StatusCode < 400 {
+	if resp.StatusCode >= http.StatusOK && resp.StatusCode < http.StatusBadRequest {
 		return true
 	}
 

@@ -17,35 +17,49 @@
 package validator
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"net/url"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
 
-func TestURLLivenessCheck(t *testing.T) {
-	negativeTests := []string{
-		"https://dcl-test.org",
-		"https://httpbin.org/status/404",
-		"https://httpbin.org/status/500",
-	}
-	positiveTests := []string{
-		"http://github.com/",             // Redirects to https://github.com/
-		"https://httpbin.org/status/401", // Private repo
-		"https://httpbin.org/status/403", // Unavailable for some reason
-	}
-
-	for _, testUrl := range negativeTests {
-		u, err := url.ParseRequestURI(testUrl)
-		require.NoError(t, err)
-
-		require.False(t, _isLiveURL(u))
+func TestIsLiveURL(t *testing.T) {
+	tests := []struct {
+		name       string
+		statusCode int
+		want       bool
+	}{
+		{"200 OK", http.StatusOK, true},
+		{"301 redirect", http.StatusMovedPermanently, true},
+		{"401 unauthorized", http.StatusUnauthorized, true},
+		{"403 forbidden", http.StatusForbidden, true},
+		{"451 unavailable for legal reasons", http.StatusUnavailableForLegalReasons, true},
+		{"404 not found", http.StatusNotFound, false},
+		{"500 internal server error", http.StatusInternalServerError, false},
+		{"502 bad gateway", http.StatusBadGateway, false},
 	}
 
-	for _, testUrl := range positiveTests {
-		u, err := url.ParseRequestURI(testUrl)
-		require.NoError(t, err)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				require.Equal(t, http.MethodHead, r.Method)
+				w.WriteHeader(tt.statusCode)
+			}))
+			defer srv.Close()
 
-		require.True(t, _isLiveURL(u))
+			u, err := url.ParseRequestURI(srv.URL)
+			require.NoError(t, err)
+
+			require.Equal(t, tt.want, isLiveURL(u))
+		})
 	}
+}
+
+func TestIsLiveURLUnreachable(t *testing.T) {
+	u, err := url.ParseRequestURI("http://192.0.2.1:1")
+	require.NoError(t, err)
+
+	require.False(t, isLiveURL(u))
 }
