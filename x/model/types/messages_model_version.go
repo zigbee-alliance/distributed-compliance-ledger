@@ -2,7 +2,6 @@ package types
 
 import (
 	"encoding/base64"
-	"regexp"
 
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -245,8 +244,6 @@ type otaFields struct {
 	ChecksumType int32
 }
 
-var base64Regex = regexp.MustCompile(`^[A-Za-z0-9+/]*={0,2}$`)
-
 func validateOtaFields(ota otaFields, isUpdate bool) error {
 	// Below is a case when updating only OtaUrl field or OtaUrl is not provided
 	if isUpdate && ota.FileSize == 0 && ota.Checksum == "" && ota.ChecksumType == 0 {
@@ -261,10 +258,6 @@ func validateOtaFields(ota otaFields, isUpdate bool) error {
 
 		if len(ota.Checksum) < 44 {
 			return errors.Wrapf(validator.ErrFieldMinLengthNotReached, "min length for OtaChecksum(base64 encoded) is 44, got %v", len(ota.Checksum))
-		}
-
-		if !base64Regex.MatchString(ota.Checksum) {
-			return NewErrOtaChecksumIsNotBase64Encoded(ota.Checksum)
 		}
 
 		_, err = base64.StdEncoding.DecodeString(ota.Checksum)
