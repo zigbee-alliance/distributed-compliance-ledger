@@ -141,7 +141,8 @@ jobs:
         run: integration_tests/run-all.sh all cover
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          GOCOVER_MODE: set  # Ensure integration tests use the same mode as unit tests
+          GOCOVER_MODE: set  # Ensure integration tests use the same mode as unit tests\
+          URL_LIVENESS_CHECK_ENABLED: false # Disable network calls to check URLs for integration tests
       - name: Generate test coverage
         shell: bash
         run: go tool covdata textfmt -i=integration_tests/gocover -o cover.out
