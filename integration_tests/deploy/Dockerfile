@@ -15,7 +15,7 @@
 ################################################################################
 # Image of a clean machine to deploy the new node onto.
 ################################################################################
-FROM jrei/systemd-ubuntu:20.04
+FROM jrei/systemd-ubuntu:22.04
 
 RUN apt-get update && apt-get install -y \
         sudo \
