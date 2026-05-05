@@ -57,7 +57,7 @@ const (
 	TextProvisionalReason                  = "Optional comment describing the reason of provisioning"
 	TextCertificationReason                = "Optional comment describing the reason of certification"
 	TextRevocationReason                   = "Optional comment describing the reason of revocation"
-	TextCDCertificateID                    = "Connectivity Standards Alliance certification’s certificate ID for the Certification that applies to this record. The value of this field is used in the Certification Declaration's certificate_id field (see [ref_CertificationElements]) for products using the VendorID, ProductID and SoftwareVersion in this schema entry."
+	TextCDCertificateID                    = "Connectivity Standards Alliance certification’s certificate ID for the Certification that applies to this record. The value of this field is used in the Certification Declaration's certificate_id field for products using the VendorID, ProductID and SoftwareVersion in this schema entry."
 	TextFamilyID                           = "Product family to which the certified model belongs. Typical family IDs have the prefix FAM followed by a sequence of alphanumeric characters (e.g. FAM123456)."
 	TextSupportedClusters                  = "Application cluster IDs supported by the device, as hexadecimal numbers in a comma-separated list. For example, for an Extended Color Light (implementing Matter 1.5) this field would contain (at least) 0x0003,0x0004,0x0006,0x0008,0x0062,0x0300."
 	TextCompliantPlatformUsed              = "Certification ID of the compliant platform used with the product."
