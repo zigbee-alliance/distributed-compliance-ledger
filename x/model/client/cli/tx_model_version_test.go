@@ -57,7 +57,7 @@ func TestCreateModelVersion(t *testing.T) {
 		fmt.Sprintf("--%s=%v", cli.FlagMinApplicableSoftwareVersion, testconstants.MinApplicableSoftwareVersion),
 		fmt.Sprintf("--%s=%v", cli.FlagMaxApplicableSoftwareVersion, testconstants.MaxApplicableSoftwareVersion),
 		fmt.Sprintf("--%s=%v", cli.FlagReleaseNotesURL, testconstants.ReleaseNotesURL),
-		fmt.Sprintf("--%s=%v", cli.FlagSpecificationVersion, testconstants.SpecificationVersion),
+		fmt.Sprintf("--%s=%v", cli.FlagSpecificationVersion, testconstants.SpecificationVersionDeprecated),
 	}
 	common := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),

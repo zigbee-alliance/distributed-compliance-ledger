@@ -510,6 +510,7 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 				SoftwareVersionString: testconstants.TestDate,
 				CertificationDate:     testconstants.CertificationDate,
 				CertificationType:     tmrand.Str(20),
+				SpecificationVersion:  testconstants.SpecificationVersion,
 				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 				Reason:                testconstants.Reason,
 				CDCertificateId:       testconstants.CDCertificateID,

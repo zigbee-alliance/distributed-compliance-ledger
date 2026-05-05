@@ -135,7 +135,7 @@ func NewMsgCreateModelVersion(
 		MaxApplicableSoftwareVersion: testconstants.MaxApplicableSoftwareVersion,
 		ReleaseNotesUrl:              testconstants.ReleaseNotesURL,
 		SchemaVersion:                testconstants.SchemaVersion,
-		SpecificationVersion:         testconstants.SpecificationVersion,
+		SpecificationVersion:         testconstants.SpecificationVersionDeprecated,
 	}
 }
 
