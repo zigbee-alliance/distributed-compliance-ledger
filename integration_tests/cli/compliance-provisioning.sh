@@ -259,7 +259,7 @@ test_divider
 echo "Certify Model with VID: $vid PID: $pid2 for Matter"
 certification_date="2021-02-02T02:20:19Z"
 certification_reason="some reason 2"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid2 --softwareVersion=$sv2 --softwareVersionString=$svs2 --certificationType="$certification_type_matter" --certificationDate="$certification_date" --reason "$certification_reason" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid2 --softwareVersion=$sv2 --softwareVersionString=$svs2 --certificationType="$certification_type_matter" --specificationVersion="$specification_version" --certificationDate="$certification_date" --reason "$certification_reason" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --from $zb_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
@@ -321,7 +321,7 @@ test_divider
 echo "Certify provisioned Model with VID: $vid PID: $pid"
 certification_date="2021-02-02T02:20:19Z"
 certification_reason="some reason 2"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --certificationDate="$certification_date" --reason "$certification_reason" --cdCertificateId="$cd_certificate_id"  --cdVersionNumber=1 --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --specificationVersion="$specification_version" --certificationDate="$certification_date" --reason "$certification_reason" --cdCertificateId="$cd_certificate_id"  --cdVersionNumber=1 --from $zb_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
