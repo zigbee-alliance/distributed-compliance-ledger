@@ -302,7 +302,7 @@ max_applicable_software_version_for_rollback=2000
 certification_type_for_rollback="matter"
 certification_date_for_rollback="2021-02-01T00:00:00Z"
 provisional_date_for_rollback="2010-11-12T00:00:00Z"
-cd_certificate_id_for_rollback="15DEXCD"
+cd_certificate_id_for_rollback="12345678910abcdefgh"
 
 root_cert_path_for_rollback="integration_tests/constants/google_root_cert_gsr4"
 root_cert_subject_for_rollback="MFAxJDAiBgNVBAsTG0dsb2JhbFNpZ24gRUNDIFJvb3QgQ0EgLSBSNDETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UEAxMKR2xvYmFsU2lnbg=="

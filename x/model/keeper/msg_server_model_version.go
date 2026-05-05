@@ -123,15 +123,10 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 	// update existing model version value only if corresponding value in MsgUpdate is not empty
 
 	if msg.OtaUrl != "" {
-		modelVersion.OtaUrl = msg.OtaUrl
-	}
-
-	if msg.OtaFileSize != 0 {
-		modelVersion.OtaFileSize = msg.OtaFileSize
-	}
-
-	if msg.OtaChecksum != "" {
-		modelVersion.OtaChecksum = msg.OtaChecksum
+		err = updateOtaFields(&modelVersion, msg)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// SoftwareVersionValid flag is updated in any case. So pass the existing value to keep it unchanged.
@@ -155,6 +150,29 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 	k.SetModelVersion(ctx, modelVersion)
 
 	return &types.MsgUpdateModelVersionResponse{}, nil
+}
+
+func updateOtaFields(modelVersion *types.ModelVersion, msg *types.MsgUpdateModelVersion) error {
+	isNewOtaURL := modelVersion.OtaUrl == ""
+	if isNewOtaURL {
+		isAnyOtaMetadataMissed := msg.OtaChecksum == "" || msg.OtaChecksumType == 0 || msg.OtaFileSize == 0
+		if isAnyOtaMetadataMissed {
+			return types.NewErrOtaMissingInformation()
+		}
+
+		modelVersion.OtaChecksum = msg.OtaChecksum
+		modelVersion.OtaChecksumType = msg.OtaChecksumType
+		modelVersion.OtaFileSize = msg.OtaFileSize
+	} else {
+		hasAnyOtaMetadata := msg.OtaChecksum != "" || msg.OtaChecksumType != 0 || msg.OtaFileSize != 0
+		if hasAnyOtaMetadata {
+			return types.NewErrOtaFieldsCannotBeUpdated()
+		}
+	}
+
+	modelVersion.OtaUrl = msg.OtaUrl
+
+	return nil
 }
 
 func (k msgServer) DeleteModelVersion(goCtx context.Context, msg *types.MsgDeleteModelVersion) (*types.MsgDeleteModelVersionResponse, error) {

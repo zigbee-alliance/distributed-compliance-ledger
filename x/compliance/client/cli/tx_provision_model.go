@@ -16,26 +16,28 @@ var _ = strconv.Itoa(0)
 
 func CmdProvisionModel() *cobra.Command {
 	var (
-		vid                      int32
-		pid                      int32
-		softwareVersion          uint32
-		softwareVersionString    string
-		provisionalDate          string
-		certificationType        string
-		reason                   string
-		cdVersionNumber          uint32
-		certificationTypeVersion string
-		CDCertificateID          string
-		familyID                 string
-		supportedClusters        string
-		compliantPlatformUsed    string
-		compliantPlatformVersion string
-		OSNameAndVersion         string
-		certificationRoute       string
-		productType              string
-		transport                string
-		parentChild              string
-		schemaVersion            uint32
+		vid                                int32
+		pid                                int32
+		softwareVersion                    uint32
+		softwareVersionString              string
+		provisionalDate                    string
+		certificationType                  string
+		reason                             string
+		cdVersionNumber                    uint32
+		programTypeVersion                 string
+		CDCertificateID                    string
+		familyID                           string
+		supportedClusters                  string
+		compliantPlatformUsed              string
+		compliantPlatformVersion           string
+		OSVersion                          string
+		certificationRoute                 string
+		programType                        string
+		transport                          string
+		parentChild                        string
+		certificationIDOfSoftwareComponent string
+		specificationVersion               string
+		schemaVersion                      uint32
 	)
 
 	cmd := &cobra.Command{
@@ -58,17 +60,19 @@ func CmdProvisionModel() *cobra.Command {
 				provisionalDate,
 				certificationType,
 				reason,
-				certificationTypeVersion,
+				programTypeVersion,
 				CDCertificateID,
 				familyID,
 				supportedClusters,
 				compliantPlatformUsed,
 				compliantPlatformVersion,
-				OSNameAndVersion,
+				OSVersion,
 				certificationRoute,
-				productType,
+				programType,
 				transport,
 				parentChild,
+				certificationIDOfSoftwareComponent,
+				specificationVersion,
 				schemaVersion,
 			)
 
@@ -90,15 +94,15 @@ func CmdProvisionModel() *cobra.Command {
 	cmd.Flags().StringVarP(&certificationType, FlagCertificationType, FlagCertificationTypeShortcut, "", TextCertificationType)
 	cmd.Flags().StringVarP(&provisionalDate, FlagProvisionalDate, FlagDateShortcut, "", TextProvisionalDate)
 	cmd.Flags().StringVar(&reason, FlagReason, "", TextProvisionalReason)
-	cmd.Flags().StringVar(&certificationTypeVersion, FlagCertificationTypeVersion, "", TextCertificationTypeVersion)
+	cmd.Flags().StringVar(&programTypeVersion, FlagProgramTypeVersion, "", TextProgramTypeVersion)
 	cmd.Flags().StringVar(&CDCertificateID, FlagCDCertificateID, "", TextCDCertificateID)
 	cmd.Flags().StringVar(&familyID, FlagFamilyID, "", TextFamilyID)
 	cmd.Flags().StringVar(&supportedClusters, FlagSupportedClusters, "", TextSupportedClusters)
 	cmd.Flags().StringVar(&compliantPlatformUsed, FlagCompliantPlatformUsed, "", TextCompliantPlatformUsed)
 	cmd.Flags().StringVar(&compliantPlatformVersion, FlagCompliantPlatformVersion, "", TextCompliantPlatformVersion)
-	cmd.Flags().StringVar(&OSNameAndVersion, FlagOSNameAndVersion, "", TextOSNameAndVersion)
+	cmd.Flags().StringVar(&OSVersion, FlagOSVersion, "", TextOSVersion)
 	cmd.Flags().StringVar(&certificationRoute, FlagCertificationRoute, "", TextCertificationRoute)
-	cmd.Flags().StringVar(&productType, FlagProductType, "", TextProductType)
+	cmd.Flags().StringVar(&programType, FlagProgramType, "", TextProgramType)
 	cmd.Flags().StringVar(&transport, FlagTransport, "", TextTransport)
 	cmd.Flags().StringVar(&parentChild, FlagParentChild, "", TextParentChild)
 	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, TextSchemaVersion)
@@ -108,6 +112,7 @@ func CmdProvisionModel() *cobra.Command {
 	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
 	_ = cmd.MarkFlagRequired(FlagSoftwareVersionString)
 	_ = cmd.MarkFlagRequired(FlagCertificationType)
+	_ = cmd.MarkFlagRequired(FlagSpecificationVersion)
 	_ = cmd.MarkFlagRequired(FlagProvisionalDate)
 	_ = cmd.MarkFlagRequired(FlagCDCertificateID)
 	_ = cmd.MarkFlagRequired(flags.FlagFrom)

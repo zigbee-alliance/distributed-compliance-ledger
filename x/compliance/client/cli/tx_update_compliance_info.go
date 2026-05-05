@@ -17,26 +17,28 @@ var _ = strconv.Itoa(0)
 
 func CmdUpdateComplianceInfo() *cobra.Command {
 	var (
-		vid                      int32
-		pid                      int32
-		softwareVersion          uint32
-		certificationType        string
-		cdVersionNumber          string
-		certificationDate        string
-		reason                   string
-		owner                    string
-		CDCertificateID          string
-		certificationRoute       string
-		productType              string
-		certificationTypeVersion string
-		compliantPlatformUsed    string
-		compliantPlatformVersion string
-		transport                string
-		familyID                 string
-		supportedClusters        string
-		OSNameAndVersion         string
-		parentChild              string
-		schemaVersion            uint32
+		vid                                int32
+		pid                                int32
+		softwareVersion                    uint32
+		certificationType                  string
+		cdVersionNumber                    string
+		certificationDate                  string
+		reason                             string
+		owner                              string
+		CDCertificateID                    string
+		certificationRoute                 string
+		programType                        string
+		programTypeVersion                 string
+		compliantPlatformUsed              string
+		compliantPlatformVersion           string
+		transport                          string
+		familyID                           string
+		supportedClusters                  string
+		OSVersion                          string
+		parentChild                        string
+		certificationIDOfSoftwareComponent string
+		specificationVersion               string
+		schemaVersion                      uint32
 	)
 
 	cmd := &cobra.Command{
@@ -61,15 +63,17 @@ func CmdUpdateComplianceInfo() *cobra.Command {
 				owner,
 				CDCertificateID,
 				certificationRoute,
-				productType,
-				certificationTypeVersion,
+				programType,
+				programTypeVersion,
 				compliantPlatformUsed,
 				compliantPlatformVersion,
 				transport,
 				familyID,
 				supportedClusters,
-				OSNameAndVersion,
+				OSVersion,
 				parentChild,
+				certificationIDOfSoftwareComponent,
+				specificationVersion,
 				schemaVersion,
 			)
 
@@ -89,15 +93,15 @@ func CmdUpdateComplianceInfo() *cobra.Command {
 	cmd.Flags().StringVarP(&certificationDate, FlagCertificationDate, FlagDateShortcut, "", TextCertificationDate)
 	cmd.Flags().StringVar(&reason, FlagReason, "", TextCertificationReason)
 	cmd.Flags().StringVar(&owner, FlagOwner, "", TextOwner)
-	cmd.Flags().StringVar(&certificationTypeVersion, FlagCertificationTypeVersion, "", TextCertificationTypeVersion)
+	cmd.Flags().StringVar(&programTypeVersion, FlagProgramTypeVersion, "", TextProgramTypeVersion)
 	cmd.Flags().StringVar(&CDCertificateID, FlagCDCertificateID, "", TextCDCertificateID)
 	cmd.Flags().StringVar(&familyID, FlagFamilyID, "", TextFamilyID)
 	cmd.Flags().StringVar(&supportedClusters, FlagSupportedClusters, "", TextSupportedClusters)
 	cmd.Flags().StringVar(&compliantPlatformUsed, FlagCompliantPlatformUsed, "", TextCompliantPlatformUsed)
 	cmd.Flags().StringVar(&compliantPlatformVersion, FlagCompliantPlatformVersion, "", TextCompliantPlatformVersion)
-	cmd.Flags().StringVar(&OSNameAndVersion, FlagOSNameAndVersion, "", TextOSNameAndVersion)
+	cmd.Flags().StringVar(&OSVersion, FlagOSVersion, "", TextOSVersion)
 	cmd.Flags().StringVar(&certificationRoute, FlagCertificationRoute, "", TextCertificationRoute)
-	cmd.Flags().StringVar(&productType, FlagProductType, "", TextProductType)
+	cmd.Flags().StringVar(&programType, FlagProgramType, "", TextProgramType)
 	cmd.Flags().StringVar(&transport, FlagTransport, "", TextTransport)
 	cmd.Flags().StringVar(&parentChild, FlagParentChild, "", TextParentChild)
 	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, TextSchemaVersion)

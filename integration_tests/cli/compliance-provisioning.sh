@@ -36,10 +36,11 @@ pid=$RANDOM
 sv=$RANDOM
 svs=$RANDOM
 certification_type_zb="zigbee"
+specification_version="1.5"
 certification_type_matter="matter"
 provision_date="2020-02-02T02:20:20Z"
 provision_reason="some reason"
-cd_certificate_id="123"
+cd_certificate_id="12345678910abcdefgh"
 schema_version_0=0
 
 test_divider
@@ -496,7 +497,7 @@ create_model_and_version $vid $pid $sv $svs $vendor_account
 
 # ADD PROVISION MODEL WITH ALL OPTIONAL FIELDS
 echo "Provision Model with VID: $vid PID: $pid  SV: ${sv} with zigbee certification"
-result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificateId="$cd_certificate_id" --certificationTypeVersion="1.0" --familyId="FAM123456abc" --supportedClusters="someClusters" --compliantPlatformUsed="WIFI" --compliantPlatformVersion="V1" --OSNameAndVersion="someV" --certificationRoute="fullTested" --productType="pType" --transport="someTransport" --parentChild="parent" --cdVersionNumber=1 --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --specificationVersion="$specification_version" --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificateId="$cd_certificate_id" --programTypeVersion="1.0" --familyId="FAM123456abc" --supportedClusters="someClusters" --compliantPlatformUsed="WIFI" --compliantPlatformVersion="V1" --OSVersion="someV" --certificationRoute="fullTested" --programType="pType" --transport="someTransport" --parentChild="parent" --certificationIDOfSoftwareComponent="someIDOfSoftwareComponent1" --cdVersionNumber=1 --from $zb_account --yes)
 result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "\"code\": 0"
@@ -518,17 +519,19 @@ check_response "$result" "\"softwareVersionCertificationStatus\": 1"
 check_response "$result" "\"reason\": \"$provision_reason\""
 check_response "$result" "\"date\": \"$provision_date\""
 check_response "$result" "\"certificationType\": \"$certification_type_zb\""
-check_response "$result" "\"certificationTypeVersion\": \"1.0\""
+check_response "$result" "\"specificationVersion\": \"$specification_version\""
+check_response "$result" "\"programTypeVersion\": \"1.0\""
 check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id\""
 check_response "$result" "\"familyId\": \"FAM123456abc\""
 check_response "$result" "\"supportedClusters\": \"someClusters\""
 check_response "$result" "\"compliantPlatformUsed\": \"WIFI\""
 check_response "$result" "\"compliantPlatformVersion\": \"V1\""
-check_response "$result" "\"OSNameAndVersion\": \"someV\""
+check_response "$result" "\"OSVersion\": \"someV\""
 check_response "$result" "\"certificationRoute\": \"fullTested\""
-check_response "$result" "\"productType\": \"pType\""
+check_response "$result" "\"programType\": \"pType\""
 check_response "$result" "\"transport\": \"someTransport\""
 check_response "$result" "\"parentChild\": \"parent\""
+check_response "$result" "\"certificationIdOfSoftwareComponent\": \"someIDOfSoftwareComponent1\""
 echo "$result"
 ###########################################################################################################################################
 
@@ -537,7 +540,7 @@ test_divider
 ###########################################################################################################################################
 # ADD CERTIFY MODEL WITH SOME OPTIONAL FIELDS
 echo "Certify Model with VID: $vid PID: $pid SV: ${sv} with zigbee certification"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --cdVersionNumber=1 --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --certificationTypeVersion="2.0" --familyId="FAM54321cba" --supportedClusters="someClusters2" --compliantPlatformUsed="ETHERNET" --compliantPlatformVersion="V2" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --specificationVersion="$specification_version" --cdVersionNumber=1 --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --programTypeVersion="2.0" --familyId="FAM54321cba" --supportedClusters="someClusters2" --compliantPlatformUsed="ETHERNET" --compliantPlatformVersion="V2" --certificationIDOfSoftwareComponent="someIDOfSoftwareComponent2" --from $zb_account --yes)
 result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "\"code\": 0"
@@ -558,17 +561,19 @@ check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"softwareVersionCertificationStatus\": 1"
 check_response "$result" "\"date\": \"$certification_date\""
 check_response "$result" "\"certificationType\": \"$certification_type_zb\""
-check_response "$result" "\"certificationTypeVersion\": \"2.0\""
+check_response "$result" "\"specificationVersion\": \"$specification_version\""
+check_response "$result" "\"programTypeVersion\": \"2.0\""
 check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id\""
 check_response "$result" "\"familyId\": \"FAM54321cba"
 check_response "$result" "\"supportedClusters\": \"someClusters2\""
 check_response "$result" "\"compliantPlatformUsed\": \"ETHERNET\""
 check_response "$result" "\"compliantPlatformVersion\": \"V2\""
-check_response "$result" "\"OSNameAndVersion\": \"someV\""
+check_response "$result" "\"OSVersion\": \"someV\""
 check_response "$result" "\"certificationRoute\": \"fullTested\""
-check_response "$result" "\"productType\": \"pType\""
+check_response "$result" "\"programType\": \"pType\""
 check_response "$result" "\"transport\": \"someTransport\""
 check_response "$result" "\"parentChild\": \"parent\""
+check_response "$result" "\"certificationIdOfSoftwareComponent\": \"someIDOfSoftwareComponent2\""
 echo "$result"
 
 # GET DEVICE SOFTWARE COMPLIANCE
@@ -579,18 +584,19 @@ check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"softwareVersionCertificationStatus\": 1"
 check_response "$result" "\"date\": \"$certification_date\""
 check_response "$result" "\"certificationType\": \"$certification_type_zb\""
-check_response "$result" "\"certificationType\": \"$certification_type_matter\""
-check_response "$result" "\"certificationTypeVersion\": \"2.0\""
+check_response "$result" "\"specificationVersion\": \"$specification_version\""
+check_response "$result" "\"programTypeVersion\": \"2.0\""
 check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id\""
 check_response "$result" "\"familyId\": \"FAM54321cba\""
 check_response "$result" "\"supportedClusters\": \"someClusters2\""
 check_response "$result" "\"compliantPlatformUsed\": \"ETHERNET\""
 check_response "$result" "\"compliantPlatformVersion\": \"V2\""
-check_response "$result" "\"OSNameAndVersion\": \"someV\""
+check_response "$result" "\"OSVersion\": \"someV\""
 check_response "$result" "\"certificationRoute\": \"fullTested\""
-check_response "$result" "\"productType\": \"pType\""
+check_response "$result" "\"programType\": \"pType\""
 check_response "$result" "\"transport\": \"someTransport\""
 check_response "$result" "\"parentChild\": \"parent\""
+check_response "$result" "\"certificationIdOfSoftwareComponent\": \"someIDOfSoftwareComponent2\""
 echo "$result"
 ###########################################################################################################################################
 

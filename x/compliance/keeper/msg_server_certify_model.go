@@ -84,7 +84,9 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 			SoftwareVersion:                    msg.SoftwareVersion,
 			SoftwareVersionString:              msg.SoftwareVersionString,
 			CertificationType:                  msg.CertificationType,
+			SpecificationVersion:               msg.SpecificationVersion,
 			Date:                               msg.CertificationDate,
+			Reason:                             msg.Reason,
 			Owner:                              msg.Signer,
 			SoftwareVersionCertificationStatus: types.CodeCertified,
 			History:                            []*types.ComplianceHistoryItem{},
@@ -94,10 +96,23 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 		}
 	}
 
-	optionalFields := k.optionalFieldsFromMsgCertify(msg)
+	optionalFields := &types.OptionalFields{
+		ProgramTypeVersion:                 msg.ProgramTypeVersion,
+		FamilyID:                           msg.FamilyId,
+		SupportedClusters:                  msg.SupportedClusters,
+		CompliantPlatformUsed:              msg.CompliantPlatformUsed,
+		CompliantPlatformVersion:           msg.CompliantPlatformVersion,
+		OSVersion:                          msg.OSVersion,
+		CertificationRoute:                 msg.CertificationRoute,
+		ProgramType:                        msg.ProgramType,
+		Transport:                          msg.Transport,
+		ParentChild:                        msg.ParentChild,
+		CertificationIDOfSoftwareComponent: msg.CertificationIdOfSoftwareComponent,
+	}
+
 	complianceInfo.SetOptionalFields(optionalFields)
 
-	// store compliance info.
+	// store compliance info
 	k.SetComplianceInfo(ctx, complianceInfo)
 
 	deviceSoftwareCompliance, found := k.GetDeviceSoftwareCompliance(ctx, msg.CDCertificateId)
@@ -136,21 +151,4 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 	k.SetProvisionalModel(ctx, provisionalModel)
 
 	return &types.MsgCertifyModelResponse{}, nil
-}
-
-// Helper function to set optional fields
-func (k msgServer) optionalFieldsFromMsgCertify(msg *types.MsgCertifyModel) *types.OptionalFields {
-	return &types.OptionalFields{
-		CertificationTypeVersion: msg.CertificationTypeVersion,
-		FamilyID:                 msg.FamilyId,
-		SupportedClusters:        msg.SupportedClusters,
-		CompliantPlatformUsed:    msg.CompliantPlatformUsed,
-		CompliantPlatformVersion: msg.CompliantPlatformVersion,
-		OSNameAndVersion:         msg.OSNameAndVersion,
-		CertificationRoute:       msg.CertificationRoute,
-		ProductType:              msg.ProductType,
-		Transport:                msg.Transport,
-		ParentChild:              msg.ParentChild,
-		Reason:                   msg.Reason,
-	}
 }

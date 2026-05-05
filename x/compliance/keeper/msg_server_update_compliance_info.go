@@ -53,11 +53,60 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		complianceInfo.CDVersionNumber = uint32(cdVersionNumber)
 	}
 
-	optionalFields := k.optionalFieldsFromMsgUpdateComplianceInfo(msg)
-	complianceInfo.SetOptionalFields(optionalFields)
+	if msg.CertificationIdOfSoftwareComponent != "" {
+		complianceInfo.CertificationIdOfSoftwareComponent = msg.CertificationIdOfSoftwareComponent
+	}
+
+	if msg.CertificationRoute != "" {
+		complianceInfo.CertificationRoute = msg.CertificationRoute
+	}
+
+	if msg.CompliantPlatformUsed != "" {
+		complianceInfo.CompliantPlatformUsed = msg.CompliantPlatformUsed
+	}
+
+	if msg.CompliantPlatformVersion != "" {
+		complianceInfo.CompliantPlatformVersion = msg.CompliantPlatformVersion
+	}
 
 	if msg.Date != "" {
 		complianceInfo.Date = msg.Date
+	}
+
+	if msg.FamilyId != "" {
+		complianceInfo.FamilyId = msg.FamilyId
+	}
+
+	if msg.OSVersion != "" {
+		complianceInfo.OSVersion = msg.OSVersion
+	}
+
+	if msg.ParentChild != "" {
+		complianceInfo.ParentChild = msg.ParentChild
+	}
+
+	if msg.ProgramType != "" {
+		complianceInfo.ProgramType = msg.ProgramType
+	}
+
+	if msg.ProgramTypeVersion != "" {
+		complianceInfo.ProgramTypeVersion = msg.ProgramTypeVersion
+	}
+
+	if msg.Reason != "" {
+		complianceInfo.Reason = msg.Reason
+	}
+
+	if msg.SupportedClusters != "" {
+		complianceInfo.SupportedClusters = msg.SupportedClusters
+	}
+
+	if msg.Transport != "" {
+		complianceInfo.Transport = msg.Transport
+	}
+
+	if msg.SpecificationVersion != "" {
+		complianceInfo.SpecificationVersion = msg.SpecificationVersion
 	}
 
 	complianceInfo.SchemaVersion = msg.SchemaVersion
@@ -103,21 +152,4 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 	k.SetComplianceInfo(ctx, complianceInfo)
 
 	return &types.MsgUpdateComplianceInfoResponse{}, nil
-}
-
-// Helper function to set optional fields
-func (k msgServer) optionalFieldsFromMsgUpdateComplianceInfo(msg *types.MsgUpdateComplianceInfo) *types.OptionalFields {
-	return &types.OptionalFields{
-		CertificationTypeVersion: msg.CertificationTypeVersion,
-		FamilyID:                 msg.FamilyId,
-		SupportedClusters:        msg.SupportedClusters,
-		CompliantPlatformUsed:    msg.CompliantPlatformUsed,
-		CompliantPlatformVersion: msg.CompliantPlatformVersion,
-		OSNameAndVersion:         msg.OSNameAndVersion,
-		CertificationRoute:       msg.CertificationRoute,
-		ProductType:              msg.ProductType,
-		Transport:                msg.Transport,
-		ParentChild:              msg.ParentChild,
-		Reason:                   msg.Reason,
-	}
 }

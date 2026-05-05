@@ -5,12 +5,13 @@ import "regexp"
 const (
 	ZigbeeCertificationType string = "zigbee"
 	MatterCertificationType string = "matter"
+	AliroCertificationType  string = "aliro"
 )
 
 // List of Certification Types.
 type CertificationTypes []string
 
-var CertificationTypesList = CertificationTypes{ZigbeeCertificationType, MatterCertificationType}
+var CertificationTypesList = CertificationTypes{ZigbeeCertificationType, MatterCertificationType, AliroCertificationType}
 
 func IsValidCertificationType(certificationType string) bool {
 	for _, i := range CertificationTypesList {

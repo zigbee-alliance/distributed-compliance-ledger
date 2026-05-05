@@ -41,8 +41,8 @@ func (d *ComplianceInfo) updateHistory(item *ComplianceHistoryItem) {
 }
 
 func (d *ComplianceInfo) SetOptionalFields(optionalFields *OptionalFields) {
-	if optionalFields.CertificationTypeVersion != "" {
-		d.CertificationTypeVersion = optionalFields.CertificationTypeVersion
+	if optionalFields.ProgramTypeVersion != "" {
+		d.ProgramTypeVersion = optionalFields.ProgramTypeVersion
 	}
 
 	if optionalFields.FamilyID != "" {
@@ -61,16 +61,16 @@ func (d *ComplianceInfo) SetOptionalFields(optionalFields *OptionalFields) {
 		d.CompliantPlatformVersion = optionalFields.CompliantPlatformVersion
 	}
 
-	if optionalFields.OSNameAndVersion != "" {
-		d.OSNameAndVersion = optionalFields.OSNameAndVersion
+	if optionalFields.OSVersion != "" {
+		d.OSVersion = optionalFields.OSVersion
 	}
 
 	if optionalFields.CertificationRoute != "" {
 		d.CertificationRoute = optionalFields.CertificationRoute
 	}
 
-	if optionalFields.ProductType != "" {
-		d.ProductType = optionalFields.ProductType
+	if optionalFields.ProgramType != "" {
+		d.ProgramType = optionalFields.ProgramType
 	}
 
 	if optionalFields.Transport != "" {
@@ -81,21 +81,26 @@ func (d *ComplianceInfo) SetOptionalFields(optionalFields *OptionalFields) {
 		d.ParentChild = optionalFields.ParentChild
 	}
 
+	if optionalFields.CertificationIDOfSoftwareComponent != "" {
+		d.CertificationIdOfSoftwareComponent = optionalFields.CertificationIDOfSoftwareComponent
+	}
+
 	if optionalFields.Reason != "" {
 		d.Reason = optionalFields.Reason
 	}
 }
 
 type OptionalFields struct {
-	CertificationTypeVersion string
-	FamilyID                 string
-	SupportedClusters        string
-	CompliantPlatformUsed    string
-	CompliantPlatformVersion string
-	OSNameAndVersion         string
-	CertificationRoute       string
-	ProductType              string
-	Transport                string
-	ParentChild              string
-	Reason                   string
+	FamilyID                           string
+	SupportedClusters                  string
+	CompliantPlatformUsed              string
+	CompliantPlatformVersion           string
+	CertificationIDOfSoftwareComponent string
+	OSVersion                          string
+	CertificationRoute                 string
+	ProgramType                        string
+	ProgramTypeVersion                 string
+	Transport                          string
+	ParentChild                        string
+	Reason                             string
 }

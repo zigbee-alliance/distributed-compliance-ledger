@@ -279,9 +279,9 @@ paths:
                       type: string
                     certificationRoute:
                       type: string
-                    productType:
+                    programType:
                       type: string
-                    certificationTypeVersion:
+                    programTypeVersion:
                       type: string
                     compliantPlatformUsed:
                       type: string
@@ -293,13 +293,17 @@ paths:
                       type: string
                     supportedClusters:
                       type: string
-                    OSNameAndVersion:
+                    OSVersion:
                       type: string
                     parentChild:
+                      type: string
+                    certificationIdOfSoftwareComponent:
                       type: string
                     schemaVersion:
                       type: integer
                       format: int64
+                    specificationVersion:
+                      type: string
               pagination:
                 type: object
                 properties:
@@ -465,9 +469,9 @@ paths:
                     type: string
                   certificationRoute:
                     type: string
-                  productType:
+                  programType:
                     type: string
-                  certificationTypeVersion:
+                  programTypeVersion:
                     type: string
                   compliantPlatformUsed:
                     type: string
@@ -479,13 +483,17 @@ paths:
                     type: string
                   supportedClusters:
                     type: string
-                  OSNameAndVersion:
+                  OSVersion:
                     type: string
                   parentChild:
+                    type: string
+                  certificationIdOfSoftwareComponent:
                     type: string
                   schemaVersion:
                     type: integer
                     format: int64
+                  specificationVersion:
+                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -595,9 +603,9 @@ paths:
                             type: string
                           certificationRoute:
                             type: string
-                          productType:
+                          programType:
                             type: string
-                          certificationTypeVersion:
+                          programTypeVersion:
                             type: string
                           compliantPlatformUsed:
                             type: string
@@ -609,13 +617,17 @@ paths:
                             type: string
                           supportedClusters:
                             type: string
-                          OSNameAndVersion:
+                          OSVersion:
                             type: string
                           parentChild:
+                            type: string
+                          certificationIdOfSoftwareComponent:
                             type: string
                           schemaVersion:
                             type: integer
                             format: int64
+                          specificationVersion:
+                            type: string
                     schemaVersion:
                       type: integer
                       format: int64
@@ -791,9 +803,9 @@ paths:
                           type: string
                         certificationRoute:
                           type: string
-                        productType:
+                        programType:
                           type: string
-                        certificationTypeVersion:
+                        programTypeVersion:
                           type: string
                         compliantPlatformUsed:
                           type: string
@@ -805,13 +817,17 @@ paths:
                           type: string
                         supportedClusters:
                           type: string
-                        OSNameAndVersion:
+                        OSVersion:
                           type: string
                         parentChild:
+                          type: string
+                        certificationIdOfSoftwareComponent:
                           type: string
                         schemaVersion:
                           type: integer
                           format: int64
+                        specificationVersion:
+                          type: string
                   schemaVersion:
                     type: integer
                     format: int64
@@ -17356,9 +17372,9 @@ definitions:
         type: string
       certificationRoute:
         type: string
-      productType:
+      programType:
         type: string
-      certificationTypeVersion:
+      programTypeVersion:
         type: string
       compliantPlatformUsed:
         type: string
@@ -17370,13 +17386,17 @@ definitions:
         type: string
       supportedClusters:
         type: string
-      OSNameAndVersion:
+      OSVersion:
         type: string
       parentChild:
+        type: string
+      certificationIdOfSoftwareComponent:
         type: string
       schemaVersion:
         type: integer
         format: int64
+      specificationVersion:
+        type: string
   zigbeealliance.distributedcomplianceledger.compliance.DeviceSoftwareCompliance:
     type: object
     properties:
@@ -17434,9 +17454,9 @@ definitions:
               type: string
             certificationRoute:
               type: string
-            productType:
+            programType:
               type: string
-            certificationTypeVersion:
+            programTypeVersion:
               type: string
             compliantPlatformUsed:
               type: string
@@ -17448,13 +17468,17 @@ definitions:
               type: string
             supportedClusters:
               type: string
-            OSNameAndVersion:
+            OSVersion:
               type: string
             parentChild:
+              type: string
+            certificationIdOfSoftwareComponent:
               type: string
             schemaVersion:
               type: integer
               format: int64
+            specificationVersion:
+              type: string
       schemaVersion:
         type: integer
         format: int64
@@ -17582,9 +17606,9 @@ definitions:
               type: string
             certificationRoute:
               type: string
-            productType:
+            programType:
               type: string
-            certificationTypeVersion:
+            programTypeVersion:
               type: string
             compliantPlatformUsed:
               type: string
@@ -17596,13 +17620,17 @@ definitions:
               type: string
             supportedClusters:
               type: string
-            OSNameAndVersion:
+            OSVersion:
               type: string
             parentChild:
+              type: string
+            certificationIdOfSoftwareComponent:
               type: string
             schemaVersion:
               type: integer
               format: int64
+            specificationVersion:
+              type: string
       pagination:
         type: object
         properties:
@@ -17691,9 +17719,9 @@ definitions:
                     type: string
                   certificationRoute:
                     type: string
-                  productType:
+                  programType:
                     type: string
-                  certificationTypeVersion:
+                  programTypeVersion:
                     type: string
                   compliantPlatformUsed:
                     type: string
@@ -17705,13 +17733,17 @@ definitions:
                     type: string
                   supportedClusters:
                     type: string
-                  OSNameAndVersion:
+                  OSVersion:
                     type: string
                   parentChild:
+                    type: string
+                  certificationIdOfSoftwareComponent:
                     type: string
                   schemaVersion:
                     type: integer
                     format: int64
+                  specificationVersion:
+                    type: string
             schemaVersion:
               type: integer
               format: int64
@@ -17916,9 +17948,9 @@ definitions:
             type: string
           certificationRoute:
             type: string
-          productType:
+          programType:
             type: string
-          certificationTypeVersion:
+          programTypeVersion:
             type: string
           compliantPlatformUsed:
             type: string
@@ -17930,13 +17962,17 @@ definitions:
             type: string
           supportedClusters:
             type: string
-          OSNameAndVersion:
+          OSVersion:
             type: string
           parentChild:
+            type: string
+          certificationIdOfSoftwareComponent:
             type: string
           schemaVersion:
             type: integer
             format: int64
+          specificationVersion:
+            type: string
   zigbeealliance.distributedcomplianceledger.compliance.QueryGetDeviceSoftwareComplianceResponse:
     type: object
     properties:
@@ -17997,9 +18033,9 @@ definitions:
                   type: string
                 certificationRoute:
                   type: string
-                productType:
+                programType:
                   type: string
-                certificationTypeVersion:
+                programTypeVersion:
                   type: string
                 compliantPlatformUsed:
                   type: string
@@ -18011,13 +18047,17 @@ definitions:
                   type: string
                 supportedClusters:
                   type: string
-                OSNameAndVersion:
+                OSVersion:
                   type: string
                 parentChild:
+                  type: string
+                certificationIdOfSoftwareComponent:
                   type: string
                 schemaVersion:
                   type: integer
                   format: int64
+                specificationVersion:
+                  type: string
           schemaVersion:
             type: integer
             format: int64

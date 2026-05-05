@@ -44,7 +44,7 @@ svs=$RANDOM
 certification_date="2020-01-01T00:00:01Z"
 zigbee_certification_type="zigbee"
 matter_certification_type="matter"
-cd_certificate_id="some ID"
+cd_certificate_id="12345678910abcdefgh"
 
 echo "Add Model with VID: $vid_in_hex_format PID: $pid_in_hex_format"
 result=$(echo "$passphrase" | dcld tx model add-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --enhancedSetupFlowOptions=0  --from $vendor_account --yes)

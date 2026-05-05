@@ -18,8 +18,8 @@ source integration_tests/cli/common.sh
 
 # Upgrade constants
 
-# TODO it must be v1.5 before actual 1.5 release
-DCLD_BIN_OLD="/tmp/dcld_bins/dcld_v1.5.2"
+# TODO it must be v1.6 before actual 1.6 release
+DCLD_BIN_OLD="/tmp/dcld_bins/dcld_v1.6.0-0.dev.2"
 DCLD_BIN_NEW="/tmp/dcld_bins/dcld_master"
 DCL_DIR="/var/lib/dcl/.dcl"
 
@@ -121,37 +121,30 @@ test_divider
 
 # MODEL
 
-echo "Get Model with VID: $vid_for_1_5_2 PID: $pid_1_for_1_5_2"
-result=$($DCLD_BIN_NEW query model get-model --vid=$vid_for_1_5_2 --pid=$pid_1_for_1_5_2)
-check_response "$result" "\"vid\": $vid_for_1_5_2"
-check_response "$result" "\"pid\": $pid_1_for_1_5_2"
-check_response "$result" "\"productLabel\": \"$product_label_for_1_5_2\""
+echo "Get Model with VID: $vid_for_1_6_0 PID: $pid_1_for_1_6_0"
+result=$($DCLD_BIN_NEW query model get-model --vid=$vid_for_1_6_0 --pid=$pid_1_for_1_6_0)
+check_response "$result" "\"vid\": $vid_for_1_6_0"
+check_response "$result" "\"pid\": $pid_1_for_1_6_0"
+check_response "$result" "\"productLabel\": \"$product_label_for_1_6_0\""
 
-echo "Get Model with VID: $vid_for_1_5_2 PID: $pid_2_for_1_5_2"
+echo "Get Model with VID: $vid_for_1_6_0 PID: $pid_2_for_1_6_0"
+result=$($DCLD_BIN_NEW query model get-model --vid=$vid_for_1_6_0 --pid=$pid_2_for_1_6_0)
+check_response "$result" "\"vid\": $vid_for_1_6_0"
+check_response "$result" "\"pid\": $pid_2_for_1_6_0"
+check_response "$result" "\"productLabel\": \"$product_label_for_1_6_0\""
+
+echo "Check Model with VID: $vid_for_1_5_2 PID: $pid_2_for_1_5_2 updated"
 result=$($DCLD_BIN_NEW query model get-model --vid=$vid_for_1_5_2 --pid=$pid_2_for_1_5_2)
 check_response "$result" "\"vid\": $vid_for_1_5_2"
 check_response "$result" "\"pid\": $pid_2_for_1_5_2"
-check_response "$result" "\"productLabel\": \"$product_label_for_1_5_2\""
-
-echo "Check Model with VID: $vid_for_1_5_2 PID: $pid_2_for_1_5_2 updated"
-result=$($DCLD_BIN_NEW query model get-model --vid=$vid --pid=$pid_2)
-check_response "$result" "\"vid\": $vid"
-check_response "$result" "\"pid\": $pid_2"
-check_response "$result" "\"productLabel\": \"$product_label_for_1_5_2\""
-check_response "$result" "\"partNumber\": \"$part_number_for_1_5_2\""
-
-echo "Check Model version with VID: $vid_for_1_5_2 PID: $pid_2_for_1_5_2 updated"
-result=$($DCLD_BIN_NEW query model model-version --vid=$vid --pid=$pid_2  --softwareVersion=$software_version)
-check_response "$result" "\"vid\": $vid"
-check_response "$result" "\"pid\": $pid_2"
-check_response "$result" "\"minApplicableSoftwareVersion\": $min_applicable_software_version_for_1_5_2"
-check_response "$result" "\"maxApplicableSoftwareVersion\": $max_applicable_software_version_for_1_5_2"
+check_response "$result" "\"productLabel\": \"$product_label_for_1_6_0\""
+check_response "$result" "\"partNumber\": \"$part_number_for_1_6_0\""
 
 echo "Get all models"
 result=$($DCLD_BIN_NEW query model all-models)
-check_response "$result" "\"vid\": $vid_for_1_5_2"
-check_response "$result" "\"pid\": $pid_1_for_1_5_2"
-check_response "$result" "\"pid\": $pid_2_for_1_5_2"
+check_response "$result" "\"vid\": $vid_for_1_6_0"
+check_response "$result" "\"pid\": $pid_1_for_1_6_0"
+check_response "$result" "\"pid\": $pid_2_for_1_6_0"
 
 echo "Get all model versions"
 result=$($DCLD_BIN_NEW query model all-model-versions --vid=$vid_for_1_5_2 --pid=$pid_1_for_1_5_2)
@@ -211,12 +204,12 @@ check_response "$result" "\"pid\": $pid_1_for_1_5_1"
 check_response "$result" "\"softwareVersion\": $software_version_for_1_5_1"
 check_response "$result" "\"certificationType\": \"$certification_type_for_1_5_1\""
 
-echo "Get compliance-info model with VID: $vid_for_1_5_2 PID: $pid_1_for_1_5_2"
-result=$($DCLD_BIN_NEW query compliance compliance-info --vid=$vid_for_1_5_2 --pid=$pid_1_for_1_5_2 --softwareVersion=$software_version_for_1_5_2 --certificationType=$certification_type_for_1_5_2)
-check_response "$result" "\"vid\": $vid_for_1_5_2"
-check_response "$result" "\"pid\": $pid_1_for_1_5_2"
-check_response "$result" "\"softwareVersion\": $software_version_for_1_5_2"
-#response_does_not_contain "$result" "certificationIdOfSoftwareComponent" #TODO: Uncomment after merging into main branch
+echo "Get compliance-info model with VID: $vid_for_1_5_1 PID: $pid_2_for_1_5_1"
+result=$($DCLD_BIN_NEW query compliance compliance-info --vid=$vid_for_1_5_1 --pid=$pid_2_for_1_5_1 --softwareVersion=$software_version_for_1_5_1 --certificationType=$certification_type_for_1_5_1)
+check_response "$result" "\"vid\": $vid_for_1_5_1"
+check_response "$result" "\"pid\": $pid_2_for_1_5_1"
+check_response "$result" "\"softwareVersion\": $software_version_for_1_5_1"
+check_response "$result" "\"certificationType\": \"$certification_type_for_1_5_1\""
 
 echo "Get device software compliance cDCertificateId=$cd_certificate_id_for_1_5_1"
 result=$($DCLD_BIN_NEW query compliance device-software-compliance --cdCertificateId=$cd_certificate_id_for_1_5_1)
@@ -515,7 +508,7 @@ max_applicable_software_version_for_master=4000
 certification_type_for_master="matter"
 certification_date_for_master="2024-02-01T00:00:00Z"
 provisional_date_for_master="2016-10-12T00:00:00Z"
-cd_certificate_id_for_master="10DEXZ"
+cd_certificate_id_for_master="12345678910masterAB"
 
 test_data_url_for_master="https://url.data.dclmodel-master"
 
@@ -584,7 +577,7 @@ test_divider
 # MODEL and MODEL_VERSION
 
 echo "Add model vid=$vid_for_master pid=$pid_1_for_master"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_master --pid=$pid_1_for_master --deviceTypeID=$device_type_id_for_master --productName=$product_name_for_master --productLabel=$product_label_for_master --partNumber=$part_number_for_master --from=$vendor_account_for_master --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_master --pid=$pid_1_for_master --deviceTypeID=$device_type_id_for_master --productName=$product_name_for_master --productLabel=$product_label_for_master --partNumber=$part_number_for_master --commissioningCustomFlow=0 --from=$vendor_account_for_master --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -598,7 +591,7 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 echo "Add model vid=$vid_for_master pid=$pid_2_for_master"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_master --pid=$pid_2_for_master --deviceTypeID=$device_type_id_for_master --productName=$product_name_for_master --productLabel=$product_label_for_master --partNumber=$part_number_for_master --from=$vendor_account_for_master --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_master --pid=$pid_2_for_master --deviceTypeID=$device_type_id_for_master --productName=$product_name_for_master --productLabel=$product_label_for_master --partNumber=$part_number_for_master --commissioningCustomFlow=0 --from=$vendor_account_for_master --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -612,7 +605,7 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 echo "Add model vid=$vid_for_master pid=$pid_3_for_master"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_master --pid=$pid_3_for_master --deviceTypeID=$device_type_id_for_master --productName=$product_name_for_master --productLabel=$product_label_for_master --partNumber=$part_number_for_master --from=$vendor_account_for_master --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_master --pid=$pid_3_for_master --deviceTypeID=$device_type_id_for_master --productName=$product_name_for_master --productLabel=$product_label_for_master --partNumber=$part_number_for_master --commissioningCustomFlow=0 --from=$vendor_account_for_master --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -993,4 +986,4 @@ check_response "$result" "\"owner\": \"$validator_address\""
 
 test_divider
 
-echo "Upgrade from 1.5 to master PASSED"
+echo "Upgrade from 1.6 to master PASSED"

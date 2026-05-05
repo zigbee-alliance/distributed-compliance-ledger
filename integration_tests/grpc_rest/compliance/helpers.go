@@ -17,6 +17,7 @@ package compliance
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	tmrand "github.com/cometbft/cometbft/libs/rand"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -606,7 +607,7 @@ func CDCertificateIDUpdateChangesOnlyOneComplianceInfo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Update compliance info of first model version
-	cdCertificateIDNew := testconstants.CDCertificateID + "new"
+	cdCertificateIDNew := strings.Replace(testconstants.CDCertificateID, "1", "2", 1)
 	updateComplianceInfoMsg := compliancetypes.MsgUpdateComplianceInfo{
 		Creator:           certCenterAccount.Address,
 		Vid:               vid,
@@ -891,7 +892,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 
 	// Certify a device when Model Version does not exist yet
 	certReason := testconstants.Reason + "0"
-	cdCertificateID := testconstants.CDCertificateID + "1"
+	cdCertificateID := strings.Replace(testconstants.CDCertificateID, "1", "2", 1)
 	certDate := testconstants.FirstJanuary
 	certifyModelMsg := compliancetypes.MsgCertifyModel{
 		Vid:                   vid,
@@ -1035,7 +1036,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 		CDCertificateId:   testconstants.CDCertificateID,
 		CDVersionNumber:   "312",
 		CertificationType: compliancetypes.ZigbeeCertificationType,
-		ProductType:       "new program type",
+		ProgramType:       "new program type",
 		Reason:            "new reason",
 		ParentChild:       "child",
 	}
@@ -1045,13 +1046,14 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	updatedComplianceInfo, _ := GetComplianceInfo(suite, vid, pid, sv, compliancetypes.ZigbeeCertificationType)
 
 	// updated fields
-	require.Equal(suite.T, updatedComplianceInfo.ProductType, updateComplianceInfoMsg.ProductType)
+	require.Equal(suite.T, updatedComplianceInfo.ProgramType, updateComplianceInfoMsg.ProgramType)
 	require.Equal(suite.T, updatedComplianceInfo.Reason, updateComplianceInfoMsg.Reason)
 	require.Equal(suite.T, updatedComplianceInfo.ParentChild, updateComplianceInfoMsg.ParentChild)
 
 	// not updated fields
 	require.Equal(suite.T, updatedComplianceInfo.CDCertificateId, oldComplianceInfo.CDCertificateId)
 	require.Equal(suite.T, updatedComplianceInfo.CDVersionNumber, oldComplianceInfo.CDVersionNumber)
+	require.Equal(suite.T, updatedComplianceInfo.CertificationIdOfSoftwareComponent, oldComplianceInfo.CertificationIdOfSoftwareComponent)
 	require.Equal(suite.T, updatedComplianceInfo.Date, oldComplianceInfo.Date)
 	require.Equal(suite.T, updatedComplianceInfo.SoftwareVersionCertificationStatus, oldComplianceInfo.SoftwareVersionCertificationStatus)
 
@@ -1120,26 +1122,28 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	// Certify model with all optional fields
 	certReason = "some reason 3"
 	certifyModelMsg = compliancetypes.MsgCertifyModel{
-		Vid:                      vid,
-		Pid:                      pid,
-		SoftwareVersion:          sv,
-		SoftwareVersionString:    svs,
-		CertificationDate:        certDate,
-		CertificationType:        "zigbee",
-		Reason:                   certReason,
-		CDCertificateId:          testconstants.CDCertificateID,
-		CertificationTypeVersion: testconstants.CertificationTypeVersion,
-		FamilyId:                 testconstants.FamilyID,
-		SupportedClusters:        testconstants.SupportedClusters,
-		CompliantPlatformUsed:    testconstants.CompliantPlatformUsed,
-		CompliantPlatformVersion: testconstants.CompliantPlatformVersion,
-		OSNameAndVersion:         testconstants.OSNameAndVersion,
-		CertificationRoute:       testconstants.CertificationRoute,
-		ProductType:              testconstants.ProductType,
-		Transport:                testconstants.Transport,
-		ParentChild:              testconstants.ParentChild1,
-		CDVersionNumber:          uint32(testconstants.CdVersionNumber),
-		Signer:                   certCenterAccount.Address,
+		Vid:                                vid,
+		Pid:                                pid,
+		SoftwareVersion:                    sv,
+		SoftwareVersionString:              svs,
+		CertificationDate:                  certDate,
+		CertificationType:                  "zigbee",
+		Reason:                             certReason,
+		CDCertificateId:                    testconstants.CDCertificateID,
+		ProgramTypeVersion:                 testconstants.ProgramTypeVersion,
+		FamilyId:                           testconstants.FamilyID,
+		SupportedClusters:                  testconstants.SupportedClusters,
+		CompliantPlatformUsed:              testconstants.CompliantPlatformUsed,
+		CompliantPlatformVersion:           testconstants.CompliantPlatformVersion,
+		OSVersion:                          testconstants.OSVersion,
+		CertificationRoute:                 testconstants.CertificationRoute,
+		ProgramType:                        testconstants.ProgramType,
+		Transport:                          testconstants.Transport,
+		ParentChild:                        testconstants.ParentChild1,
+		CertificationIdOfSoftwareComponent: testconstants.CertificationIDOfSoftwareComponent,
+		SpecificationVersion:               testconstants.SpecificationVersion,
+		CDVersionNumber:                    uint32(testconstants.CdVersionNumber),
+		Signer:                             certCenterAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)

@@ -68,7 +68,7 @@ var (
 	SoftwareVersionValid                              = true
 	OtaURL                                            = "https://ota.firmware.com"
 	OtaFileSize                                uint64 = 12345678
-	OtaChecksum                                       = "2fd4e1c67a2d28fced849ee1bb76e7391b93eb12" //nolint:lll
+	OtaChecksum                                       = "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk1Mzg4MjA3ZmFhNmM2NTg2YTBmNDU0MDk3YTU0ZWIzMw==" //nolint:lll
 	OtaChecksumType                            int32  = 1
 	OtaBlob                                           = "OTABlob Text"
 	CommissioningCustomFlow                    int32  = 1
@@ -96,6 +96,7 @@ var (
 	DataURL                                           = "https://url.data.dclmodel"
 	DataURL2                                          = "https://url.data.dclmodel2"
 	URLWithoutProtocol                                = "url.dclmodel"
+	URLStartsWithW3                                   = "www.example.org/path/to/file.txt"
 	LsfRevision                                int32  = 1
 	EnhancedSetupFlowOptions                   int32  = 1
 	EmptyLsfRevision                           int32
@@ -118,22 +119,23 @@ var (
 	Reason                             = "Some Reason"
 	RevocationReason                   = "Some Reason"
 	CertificationType                  = "zigbee"
-	CDCertificateID                    = "15DEXF"
+	CDCertificateID                    = "12345678910abcdefgh"
 	FamilyID                           = "FAM123456abc"
 	SupportedClusters                  = "Some Supported Clusters"
 	CompliantPlatformUsed              = "Some Compliance Platform Used"
 	CompliantPlatformVersion           = "Some Compliance Platform Version"
-	OSNameAndVersion                   = "Some OS Version"
+	OSVersion                          = "Some OS Version"
 	CertificationRoute                 = "fullTested"
-	ProductType                        = "Some Product Type"
-	CertificationTypeVersion           = "Some Program Type Version"
+	ProgramType                        = "Some Program Type"
+	ProgramTypeVersion                 = "Some Program Type Version"
 	Transport                          = "Some Transport"
 	SoftwareVersionCertificationStatus = uint32(
 		3,
 	)
-	ParentChild1 = "parent"
-	ParentChild2 = "child"
-	FirstJanuary = "2020-01-01T00:00:01Z"
+	ParentChild1                       = "parent"
+	ParentChild2                       = "child"
+	CertificationIDOfSoftwareComponent = "some certification ID of software component"
+	FirstJanuary                       = "2020-01-01T00:00:01Z"
 
 	// Testing Result.
 	TestResult = "http://test.result.com"
@@ -207,7 +209,7 @@ var (
 
 	// SchemaVersion initial default value.
 	SchemaVersion        uint32
-	SpecificationVersion uint32
+	SpecificationVersion = "1.0"
 )
 
 /*
