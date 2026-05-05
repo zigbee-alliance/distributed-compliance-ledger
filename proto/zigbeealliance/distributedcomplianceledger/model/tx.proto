@@ -113,7 +113,8 @@ message MsgCreateModelVersion {
   uint32 maxApplicableSoftwareVersion = 14 [(gogoproto.moretags) = "validate:\"gtecsfield=MinApplicableSoftwareVersion\""];
   string releaseNotesUrl = 15 [(gogoproto.moretags) = "validate:\"omitempty,https_url,max=256\""];
   uint32 schemaVersion = 16 [(gogoproto.moretags) = "validate:\"eq=0\""];
-  uint32 specificationVersion = 17;
+  // Deprecated: usage is moved to provisioning/certifying ModelVersion (Compliance Module);
+  uint32 specificationVersion = 17 [deprecated = true];
 }
 message MsgCreateModelVersionResponse {}
 
