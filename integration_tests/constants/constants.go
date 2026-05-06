@@ -121,7 +121,7 @@ var (
 	CertificationType                  = "zigbee"
 	CDCertificateID                    = "12345678910abcdefgh"
 	FamilyID                           = "FAM123456abc"
-	SupportedClusters                  = "Some Supported Clusters"
+	SupportedClusters                  = "0x0003,0x0004,0x0006,0x0008,0x0062,0x0300"
 	CompliantPlatformUsed              = "Some Compliance Platform Used"
 	CompliantPlatformVersion           = "Some Compliance Platform Version"
 	OSVersion                          = "Some OS Version"

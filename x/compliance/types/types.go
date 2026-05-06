@@ -127,3 +127,28 @@ func isSupportedTransport(transport string) bool {
 
 	return false
 }
+
+var supportedClusterRegex = regexp.MustCompile(`^0x[0-9a-fA-F]{1,4}$`)
+
+// IsValidSupportedClusters reports whether supportedClusters is a comma-separated
+// list of hexadecimal cluster IDs (e.g. "0x0003,0x0004,0x0006"). Each entry must
+// be 0x followed by 1–4 hex digits.
+func IsValidSupportedClusters(supportedClusters string) bool {
+	if supportedClusters == "" {
+		return true
+	}
+
+	seen := make(map[string]struct{})
+	for _, item := range strings.Split(supportedClusters, ",") {
+		if !supportedClusterRegex.MatchString(item) {
+			return false
+		}
+		key := strings.ToLower(item)
+		if _, ok := seen[key]; ok {
+			return false
+		}
+		seen[key] = struct{}{}
+	}
+
+	return true
+}

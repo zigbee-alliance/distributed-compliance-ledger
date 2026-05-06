@@ -127,5 +127,9 @@ func (msg *MsgUpdateComplianceInfo) ValidateBasic() error {
 		return NewErrInvalidTransport(msg.Transport, TransportsList)
 	}
 
+	if !IsValidSupportedClusters(msg.SupportedClusters) {
+		return NewErrInvalidSupportedClusters(msg.SupportedClusters)
+	}
+
 	return nil
 }

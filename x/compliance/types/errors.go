@@ -22,6 +22,7 @@ var (
 	ErrInvalidCertificationRoute       = errors.Register(ModuleName, 312, "invalid certification route")
 	ErrInvalidFamilyID                 = errors.Register(ModuleName, 313, "invalid familyID")
 	ErrInvalidTransport                = errors.Register(ModuleName, 314, "invalid transport")
+	ErrInvalidSupportedClusters        = errors.Register(ModuleName, 315, "invalid supportedClusters")
 )
 
 func NewErrInconsistentDates(err interface{}) error {
@@ -144,5 +145,15 @@ func NewErrInvalidTransport(transport interface{}, transportList interface{}) er
 		"Invalid Transport: \"%v\". Supported transports: [%s]. When multiple transports are supported, "+
 			"they must be comma-separated without spaces or duplicates (e.g. \"wi-fi,ethernet,bluetooth\")",
 		transport, transportList,
+	)
+}
+
+func NewErrInvalidSupportedClusters(supportedClusters interface{}) error {
+	return errors.Wrapf(
+		ErrInvalidSupportedClusters,
+		"Invalid SupportedClusters: \"%v\". It must be a comma-separated list of hexadecimal cluster IDs, "+
+			"each formatted as 0x followed by 1-4 hex digits, without spaces or duplicates "+
+			"(e.g. \"0x0003,0x0004,0x0006,0x0008,0x0062,0x0300\")",
+		supportedClusters,
 	)
 }
