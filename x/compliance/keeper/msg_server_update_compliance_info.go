@@ -61,12 +61,12 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		complianceInfo.CertificationRoute = msg.CertificationRoute
 	}
 
-	if msg.CompliantPlatformUsed != "" { //nolint:staticcheck // ignore SA1019: use of deprecated field
-		complianceInfo.CompliantPlatformUsed = msg.CompliantPlatformUsed
+	if msg.CompliantPlatformUsed != "" {
+		complianceInfo.CompliantPlatformUsed = msg.CompliantPlatformUsed //nolint:staticcheck // SA1019: deprecated field, retained for backward compatibility
 	}
 
-	if msg.CompliantPlatformVersion != "" { //nolint:staticcheck // ignore SA1019: use of deprecated field
-		complianceInfo.CompliantPlatformVersion = msg.CompliantPlatformVersion
+	if msg.CompliantPlatformVersion != "" {
+		complianceInfo.CompliantPlatformVersion = msg.CompliantPlatformVersion //nolint:staticcheck // SA1019: deprecated field, retained for backward compatibility
 	}
 
 	if msg.Date != "" {
@@ -77,8 +77,8 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		complianceInfo.FamilyId = msg.FamilyId
 	}
 
-	if msg.OSVersion != "" { //nolint:staticcheck // ignore SA1019: use of deprecated field
-		complianceInfo.OSVersion = msg.OSVersion
+	if msg.OSVersion != "" {
+		complianceInfo.OSVersion = msg.OSVersion //nolint:staticcheck // SA1019: deprecated field, retained for backward compatibility
 	}
 
 	if msg.ParentChild != "" {
@@ -89,8 +89,8 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		complianceInfo.ProgramType = msg.ProgramType
 	}
 
-	if msg.ProgramTypeVersion != "" { //nolint:staticcheck // ignore SA1019: use of deprecated field
-		complianceInfo.ProgramTypeVersion = msg.ProgramTypeVersion
+	if msg.ProgramTypeVersion != "" {
+		complianceInfo.ProgramTypeVersion = msg.ProgramTypeVersion //nolint:staticcheck // SA1019: superseded by SpecificationVersion, retained for backward compatibility
 	}
 
 	if msg.Reason != "" {
