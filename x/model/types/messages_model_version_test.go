@@ -949,7 +949,7 @@ func validMsgCreateModelVersion() *MsgCreateModelVersion {
 		MinApplicableSoftwareVersion: testconstants.MinApplicableSoftwareVersion,
 		MaxApplicableSoftwareVersion: testconstants.MaxApplicableSoftwareVersion,
 		ReleaseNotesUrl:              testconstants.ReleaseNotesURL,
-		SpecificationVersion:         testconstants.SpecificationVersionDeprecated,
+		SpecificationVersion:         testconstants.SpecificationVersion,
 	}
 }
 

@@ -41,7 +41,7 @@ message MsgCertifyModel {
   string parentChild = 20 [(gogoproto.moretags) = "validate:\"max=64\""];
   string certificationIdOfSoftwareComponent = 21 [(gogoproto.moretags) = "validate:\"max=64\""];
   uint32 schemaVersion = 22 [(gogoproto.moretags) = "validate:\"eq=0\""];
-  string specificationVersion = 23 [(gogoproto.moretags) = "validate:\"required,max=5\""];
+  uint32 specificationVersion = 23 [(gogoproto.moretags) = "validate:\"required\""];
 }
 
 message MsgCertifyModelResponse {
@@ -86,7 +86,7 @@ message MsgProvisionModel {
   string parentChild = 20 [(gogoproto.moretags) = "validate:\"max=64\""];
   string certificationIdOfSoftwareComponent = 21 [(gogoproto.moretags) = "validate:\"max=64\""];
   uint32 schemaVersion = 22 [(gogoproto.moretags) = "validate:\"eq=0\""];
-  string specificationVersion = 23 [(gogoproto.moretags) = "validate:\"required,max=5\""];
+  uint32 specificationVersion = 23 [(gogoproto.moretags) = "validate:\"required\""];
 }
 
 message MsgProvisionModelResponse {
@@ -115,7 +115,7 @@ message MsgUpdateComplianceInfo {
   string parentChild = 20 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string certificationIdOfSoftwareComponent = 21 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   uint32 schemaVersion = 22 [(gogoproto.moretags) = "validate:\"eq=0\""];
-  string specificationVersion = 23 [(gogoproto.moretags) = "validate:\"max=5\""];
+  uint32 specificationVersion = 23;
 }
 
 message MsgUpdateComplianceInfoResponse {

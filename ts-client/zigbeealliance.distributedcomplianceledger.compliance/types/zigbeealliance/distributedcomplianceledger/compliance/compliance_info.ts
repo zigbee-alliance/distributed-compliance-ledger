@@ -28,7 +28,7 @@ export interface ComplianceInfo {
   OSVersion: string;
   parentChild: string;
   certificationIdOfSoftwareComponent: string;
-  specificationVersion: string;
+  specificationVersion: number;
   schemaVersion: number;
 }
 
@@ -57,7 +57,7 @@ function createBaseComplianceInfo(): ComplianceInfo {
     OSVersion: "",
     parentChild: "",
     certificationIdOfSoftwareComponent: "",
-    specificationVersion: "",
+    specificationVersion: 0,
     schemaVersion: 0,
   };
 }
@@ -133,8 +133,8 @@ export const ComplianceInfo = {
     if (message.certificationIdOfSoftwareComponent !== "") {
       writer.uint32(186).string(message.certificationIdOfSoftwareComponent);
     }
-    if (message.specificationVersion !== "") {
-      writer.uint32(186).string(message.specificationVersion);
+    if (message.specificationVersion !== 0) {
+      writer.uint32(200).uint32(message.specificationVersion);
     }
     if (message.schemaVersion !== 0) {
       writer.uint32(192).uint32(message.schemaVersion);
@@ -222,7 +222,7 @@ export const ComplianceInfo = {
           message.schemaVersion = reader.uint32();
           break;
         case 25:
-          message.specificationVersion = reader.string();
+          message.specificationVersion = reader.uint32();
           break;
         default:
           reader.skipType(tag & 7);
@@ -261,7 +261,7 @@ export const ComplianceInfo = {
       certificationIdOfSoftwareComponent: isSet(object.certificationIdOfSoftwareComponent)
         ? String(object.certificationIdOfSoftwareComponent)
         : "",
-      specificationVersion: isSet(object.specificationVersion) ? String(object.specificationVersion) : "",
+      specificationVersion: isSet(object.specificationVersion) ? Number(object.specificationVersion) : 0,
       schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
     };
   },
@@ -327,7 +327,7 @@ export const ComplianceInfo = {
     message.OSVersion = object.OSVersion ?? "";
     message.parentChild = object.parentChild ?? "";
     message.certificationIdOfSoftwareComponent = object.certificationIdOfSoftwareComponent ?? "";
-    message.specificationVersion = object.specificationVersion ?? "";
+    message.specificationVersion = object.specificationVersion ?? 0;
     message.schemaVersion = object.schemaVersion ?? 0;
     return message;
   },

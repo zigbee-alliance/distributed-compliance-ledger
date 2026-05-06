@@ -234,19 +234,6 @@ func TestMsgUpdateComplianceInfo_ValidateBasic(t *testing.T) {
 			err: ErrInvalidUint32ForCdVersionNumber,
 		},
 		{
-			name: "SpecificationVersion > 5",
-			msg: MsgUpdateComplianceInfo{
-				Creator:              sample.AccAddress(),
-				Vid:                  1,
-				Pid:                  1,
-				CertificationType:    tmrand.Str(20),
-				SpecificationVersion: "1.5.2",
-				SoftwareVersion:      testconstants.SoftwareVersion,
-				Reason:               testconstants.Reason,
-			},
-			err: ErrInvalidCertificationType,
-		},
-		{
 			name: "schemaVersion != 0",
 			msg: MsgUpdateComplianceInfo{
 				Creator:              sample.AccAddress(),

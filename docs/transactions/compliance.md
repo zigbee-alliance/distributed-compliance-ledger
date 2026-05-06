@@ -25,7 +25,7 @@ from the revocation list.
   - softwareVersion: `uint32` - Software Version of model
   - softwareVersionString: `string` - Software Version String of model
   - certificationType: `string` - Certification program applied to the model. Supported values are `zigbee`, `matter` or `aliro`.
-  - specificationVersion: `string` - Version of certificationType (see `certificationType` for supported types). For example, for `Matter 1.5` this field would contain `1.5`.
+  - specificationVersion: `uint32` - Version of certificationType (see `certificationType` for supported types). For example, for `Matter 1.5` this field would contain `1`.
   - certificationDate: `string` - The date of model certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
   - cdCertificateId: `string` - Connectivity Standards Alliance certification's certificate ID for the Certification that applies to this record. The value of this field is used in the Certification Declaration's `certificate_id` field for products using the VendorID, ProductID and SoftwareVersion in this schema entry.
   - reason: `optional(string)` - Optional comment describing the reason of certification
@@ -48,9 +48,9 @@ from the revocation list.
 - Who can send:
   - CertificationCenter
 - CLI command:
-  - `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --certificationType=<zigbee|matter|aliro> --specificationVersion=<string> --certificationDate=<rfc3339 encoded date> --cdCertificateId=<string> --from=<account>`
+  - `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --certificationType=<zigbee|matter|aliro> --specificationVersion=<uint32> --certificationDate=<rfc3339 encoded date> --cdCertificateId=<string> --from=<account>`
 - CLI command full:
-  - `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --certificationType=<zigbee|matter|aliro> --specificationVersion=<string> --certificationDate=<rfc3339 encoded date> --cdCertificateId=<string> --reason=<string> --cDVersionNumber=<uint32> --familyId=<string> --supportedClusters=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --OSVersion=<string> --certificationRoute=<string> --programType=<endProduct|softwareComponent|compliantPlatform> --programTypeVersion=<string> --transport=<string> --parentChild=<parent|child> --certificationIDOfSoftwareComponent=<string> --schemaVersion=<uint16> --from=<account>`
+  - `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --certificationType=<zigbee|matter|aliro> --specificationVersion=<uint32> --certificationDate=<rfc3339 encoded date> --cdCertificateId=<string> --reason=<string> --cDVersionNumber=<uint32> --familyId=<string> --supportedClusters=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --OSVersion=<string> --certificationRoute=<string> --programType=<endProduct|softwareComponent|compliantPlatform> --programTypeVersion=<string> --transport=<string> --parentChild=<parent|child> --certificationIDOfSoftwareComponent=<string> --schemaVersion=<uint16> --from=<account>`
 
 ### UPDATE_COMPLIANCE_INFO
 
@@ -64,7 +64,7 @@ Updates a compliance info by VID, PID, Software Version and Certification Type.
   - pid: `uint16` - Model product ID (positive non-zero)
   - softwareVersion: `uint32` - Software Version of model
   - certificationType: `string` - Certification program applied to the model. Supported values are `zigbee`, `matter` or `aliro`.
-  - specificationVersion: `optional(string)` - Version of certificationType (see `certificationType` for supported types). For example, for `Matter 1.5` this field would contain `1.5`.
+  - specificationVersion: `optional(uint32)` - Version of certificationType (see `certificationType` for supported types). For example, for `Matter 1.5` this field would contain `1`.
   - certificationDate: `optional(string)` - The date of model certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
   - cdCertificateId: `optional(string)` - Connectivity Standards Alliance certification's certificate ID for the Certification that applies to this record. The value of this field is used in the Certification Declaration's `certificate_id` field for products using the VendorID, ProductID and SoftwareVersion in this schema entry.
   - reason: `optional(string)` - Optional comment describing the reason of certification
@@ -87,7 +87,7 @@ Updates a compliance info by VID, PID, Software Version and Certification Type.
 - CLI command:
   - `dcld tx compliance update-compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter|aliro> --from=<account>`
 - CLI command full:
-  - `dcld tx compliance update-compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter|aliro> --specificationVersion=<string> --softwareVersionString=<string> --cdVersionNumber=<string> --certificationDate=<rfc3339 encoded date> --reason=<string> --cdCertificateId=<string> --owner=<string> --certificationRoute=<string> --programType=<endProduct|softwareComponent|compliantPlatform> --programTypeVersion=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --transport=<string> --familyId=<string> --supportedClusters=<string> --OSVersion=<string> --parentChild=<parent|child> --certificationIDOfSoftwareComponent=<string> --schemaVersion=<uint16> --from=<account>`
+  - `dcld tx compliance update-compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter|aliro> --specificationVersion=<uint32> --softwareVersionString=<string> --cdVersionNumber=<string> --certificationDate=<rfc3339 encoded date> --reason=<string> --cdCertificateId=<string> --owner=<string> --certificationRoute=<string> --programType=<endProduct|softwareComponent|compliantPlatform> --programTypeVersion=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --transport=<string> --familyId=<string> --supportedClusters=<string> --OSVersion=<string> --parentChild=<parent|child> --certificationIDOfSoftwareComponent=<string> --schemaVersion=<uint16> --from=<account>`
 - REST API:
   - `/dcl/compliance/update-compliance-info`
 
@@ -157,7 +157,7 @@ Can not be set if there is already a certification record on the ledger (certifi
   - softwareVersion: `uint32` - Software Version of model
   - softwareVersionString: `string` - Software Version String of model
   - certificationType: `string` - Certification program applied to the model. Supported values are `zigbee`, `matter` or `aliro`.
-  - specificationVersion: `string` - Version of certificationType (see `certificationType` for supported types). For example, for `Matter 1.5` this field would contain `1.5`.
+  - specificationVersion: `uint32` - Version of certificationType (see `certificationType` for supported types). For example, for `Matter 1.5` this field would contain `1`.
   - provisionalDate: `string` - The date of model provisional certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
   - cdCertificateId: `string` - Connectivity Standards Alliance certification's certificate ID for the Certification that applies to this record. The value of this field is used in the Certification Declaration's `certificate_id` field for products using the VendorID, ProductID and SoftwareVersion in this schema entry.
   - reason: `optional(string)` - Optional comment describing the reason of provisioning
@@ -180,9 +180,9 @@ Can not be set if there is already a certification record on the ledger (certifi
 - Who can send:
   - CertificationCenter
 - CLI command:
-  - `dcld tx compliance provision-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --certificationType=<zigbee|matter|aliro> --specificationVersion=<string> --provisionalDate=<rfc3339 encoded date> --cdCertificateId=<string> --from=<account>`
+  - `dcld tx compliance provision-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --certificationType=<zigbee|matter|aliro> --specificationVersion=<uint32> --provisionalDate=<rfc3339 encoded date> --cdCertificateId=<string> --from=<account>`
 - CLI command full:
-  - `dcld tx compliance provision-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --certificationType=<zigbee|matter|aliro> --specificationVersion=<string> --provisionalDate=<rfc3339 encoded date> --cdCertificateId=<string> --reason=<string> --cDVersionNumber=<uint32> --familyId=<string> --supportedClusters=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --OSVersion=<string> --certificationRoute=<string> --programType=<endProduct|softwareComponent|compliantPlatform> --programTypeVersion=<string> --transport=<string> --parentChild=<parent|child> --certificationIDOfSoftwareComponent=<string> --schemaVersion=<uint16> --from=<account>`
+  - `dcld tx compliance provision-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --certificationType=<zigbee|matter|aliro> --specificationVersion=<uint32> --provisionalDate=<rfc3339 encoded date> --cdCertificateId=<string> --reason=<string> --cDVersionNumber=<uint32> --familyId=<string> --supportedClusters=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --OSVersion=<string> --certificationRoute=<string> --programType=<endProduct|softwareComponent|compliantPlatform> --programTypeVersion=<string> --transport=<string> --parentChild=<parent|child> --certificationIDOfSoftwareComponent=<string> --schemaVersion=<uint16> --from=<account>`
 
 ### GET_CERTIFIED_MODEL
 

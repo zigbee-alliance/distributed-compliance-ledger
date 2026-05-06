@@ -105,7 +105,7 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		complianceInfo.Transport = msg.Transport
 	}
 
-	if msg.SpecificationVersion != "" {
+	if msg.SpecificationVersion != 0 {
 		complianceInfo.SpecificationVersion = msg.SpecificationVersion
 	}
 

@@ -19,7 +19,7 @@ func NewMsgUpdateComplianceInfo(creator string, vid int32, pid int32, softwareVe
 	cDVersionNumber string, date string, reason string, owner string, cDCertificateID string, certificationRoute string,
 	programType string, programTypeVersion string, compliantPlatformUsed string, compliantPlatformVersion string,
 	transport string, familyID string, supportedClusters string, oSVersion string, parentChild string,
-	certificationIDOfSoftwareComponent string, specificationVersion string, schemaVersion uint32) *MsgUpdateComplianceInfo {
+	certificationIDOfSoftwareComponent string, specificationVersion uint32, schemaVersion uint32) *MsgUpdateComplianceInfo {
 	return &MsgUpdateComplianceInfo{
 		Creator:                            creator,
 		Vid:                                vid,

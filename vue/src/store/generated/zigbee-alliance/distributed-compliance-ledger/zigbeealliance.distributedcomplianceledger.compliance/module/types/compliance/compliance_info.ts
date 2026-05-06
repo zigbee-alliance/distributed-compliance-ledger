@@ -28,7 +28,7 @@ export interface ComplianceInfo {
   OSVersion: string
   parentChild: string
   certificationIdOfSoftwareComponent: string
-	specificationVersion: string
+	specificationVersion: number
   schemaVersion: number
 }
 
@@ -55,7 +55,7 @@ const baseComplianceInfo: object = {
   OSVersion: '',
   parentChild: '',
   certificationIdOfSoftwareComponent: '',
-	specificationVersion: '',
+	specificationVersion: 0,
   schemaVersion: 0
 }
 
@@ -130,8 +130,8 @@ export const ComplianceInfo = {
     if (message.certificationIdOfSoftwareComponent !== '') {
       writer.uint32(186).string(message.certificationIdOfSoftwareComponent)
     }
-    if (message.specificationVersion !== '') {
-      writer.uint32(186).string(message.specificationVersion)
+    if (message.specificationVersion !== 0) {
+      writer.uint32(200).uint32(message.specificationVersion)
     }
     if (message.schemaVersion !== 0) {
       writer.uint32(192).uint32(message.schemaVersion)
@@ -349,9 +349,9 @@ export const ComplianceInfo = {
       message.certificationIdOfSoftwareComponent = ''
     }
     if (object.specificationVersion !== undefined && object.specificationVersion !== null) {
-      message.specificationVersion = String(object.specificationVersion)
+      message.specificationVersion = Number(object.specificationVersion)
     } else {
-      message.specificationVersion = ''
+      message.specificationVersion = 0
     }
     if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
       message.schemaVersion = Number(object.schemaVersion)
@@ -516,7 +516,7 @@ export const ComplianceInfo = {
     if (object.specificationVersion !== undefined && object.specificationVersion !== null) {
       message.specificationVersion = object.specificationVersion
     } else {
-      message.specificationVersion = ''
+      message.specificationVersion = 0
     }
     if (object.schemaVersion !== undefined && object.schemaVersion !== null) {
       message.schemaVersion = object.schemaVersion

@@ -31,6 +31,6 @@ message ComplianceInfo {
   string parentChild = 22;
   string certificationIdOfSoftwareComponent = 23;
   uint32 schemaVersion = 24;
-  string specificationVersion = 25;
+  uint32 specificationVersion = 25;
 }
 

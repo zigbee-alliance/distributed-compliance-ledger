@@ -36,7 +36,7 @@ pid=$RANDOM
 sv=$RANDOM
 svs=$RANDOM
 certification_type_zb="zigbee"
-specification_version="1.5"
+specification_version=1
 certification_type_matter="matter"
 provision_date="2020-02-02T02:20:20Z"
 provision_reason="some reason"
@@ -259,7 +259,7 @@ test_divider
 echo "Certify Model with VID: $vid PID: $pid2 for Matter"
 certification_date="2021-02-02T02:20:19Z"
 certification_reason="some reason 2"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid2 --softwareVersion=$sv2 --softwareVersionString=$svs2 --certificationType="$certification_type_matter" --specificationVersion="$specification_version" --certificationDate="$certification_date" --reason "$certification_reason" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid2 --softwareVersion=$sv2 --softwareVersionString=$svs2 --certificationType="$certification_type_matter" --specificationVersion=$specification_version --certificationDate="$certification_date" --reason "$certification_reason" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --from $zb_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
@@ -321,7 +321,7 @@ test_divider
 echo "Certify provisioned Model with VID: $vid PID: $pid"
 certification_date="2021-02-02T02:20:19Z"
 certification_reason="some reason 2"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --specificationVersion="$specification_version" --certificationDate="$certification_date" --reason "$certification_reason" --cdCertificateId="$cd_certificate_id"  --cdVersionNumber=1 --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --specificationVersion=$specification_version --certificationDate="$certification_date" --reason "$certification_reason" --cdCertificateId="$cd_certificate_id"  --cdVersionNumber=1 --from $zb_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
@@ -497,7 +497,7 @@ create_model_and_version $vid $pid $sv $svs $vendor_account
 
 # ADD PROVISION MODEL WITH ALL OPTIONAL FIELDS
 echo "Provision Model with VID: $vid PID: $pid  SV: ${sv} with zigbee certification"
-result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --specificationVersion="$specification_version" --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificateId="$cd_certificate_id" --programTypeVersion="1.0" --familyId="FAM123456abc" --supportedClusters="someClusters" --compliantPlatformUsed="WIFI" --compliantPlatformVersion="V1" --OSVersion="someV" --certificationRoute="fullTested" --programType="pType" --transport="someTransport" --parentChild="parent" --certificationIDOfSoftwareComponent="someIDOfSoftwareComponent1" --cdVersionNumber=1 --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --specificationVersion=$specification_version --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificateId="$cd_certificate_id" --programTypeVersion="1.0" --familyId="FAM123456abc" --supportedClusters="someClusters" --compliantPlatformUsed="WIFI" --compliantPlatformVersion="V1" --OSVersion="someV" --certificationRoute="fullTested" --programType="pType" --transport="someTransport" --parentChild="parent" --certificationIDOfSoftwareComponent="someIDOfSoftwareComponent1" --cdVersionNumber=1 --from $zb_account --yes)
 result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "\"code\": 0"
@@ -519,7 +519,7 @@ check_response "$result" "\"softwareVersionCertificationStatus\": 1"
 check_response "$result" "\"reason\": \"$provision_reason\""
 check_response "$result" "\"date\": \"$provision_date\""
 check_response "$result" "\"certificationType\": \"$certification_type_zb\""
-check_response "$result" "\"specificationVersion\": \"$specification_version\""
+check_response "$result" "\"specificationVersion\": $specification_version"
 check_response "$result" "\"programTypeVersion\": \"1.0\""
 check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id\""
 check_response "$result" "\"familyId\": \"FAM123456abc\""
@@ -540,7 +540,7 @@ test_divider
 ###########################################################################################################################################
 # ADD CERTIFY MODEL WITH SOME OPTIONAL FIELDS
 echo "Certify Model with VID: $vid PID: $pid SV: ${sv} with zigbee certification"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --specificationVersion="$specification_version" --cdVersionNumber=1 --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --programTypeVersion="2.0" --familyId="FAM54321cba" --supportedClusters="someClusters2" --compliantPlatformUsed="ETHERNET" --compliantPlatformVersion="V2" --certificationIDOfSoftwareComponent="someIDOfSoftwareComponent2" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --specificationVersion=$specification_version --cdVersionNumber=1 --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --programTypeVersion="2.0" --familyId="FAM54321cba" --supportedClusters="someClusters2" --compliantPlatformUsed="ETHERNET" --compliantPlatformVersion="V2" --certificationIDOfSoftwareComponent="someIDOfSoftwareComponent2" --from $zb_account --yes)
 result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "\"code\": 0"
@@ -561,7 +561,7 @@ check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"softwareVersionCertificationStatus\": 1"
 check_response "$result" "\"date\": \"$certification_date\""
 check_response "$result" "\"certificationType\": \"$certification_type_zb\""
-check_response "$result" "\"specificationVersion\": \"$specification_version\""
+check_response "$result" "\"specificationVersion\": $specification_version"
 check_response "$result" "\"programTypeVersion\": \"2.0\""
 check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id\""
 check_response "$result" "\"familyId\": \"FAM54321cba"
@@ -584,7 +584,7 @@ check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"softwareVersionCertificationStatus\": 1"
 check_response "$result" "\"date\": \"$certification_date\""
 check_response "$result" "\"certificationType\": \"$certification_type_zb\""
-check_response "$result" "\"specificationVersion\": \"$specification_version\""
+check_response "$result" "\"specificationVersion\": $specification_version"
 check_response "$result" "\"programTypeVersion\": \"2.0\""
 check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id\""
 check_response "$result" "\"familyId\": \"FAM54321cba\""

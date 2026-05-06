@@ -36,7 +36,7 @@ func CmdProvisionModel() *cobra.Command {
 		transport                          string
 		parentChild                        string
 		certificationIDOfSoftwareComponent string
-		specificationVersion               string
+		specificationVersion               uint32
 		schemaVersion                      uint32
 	)
 
@@ -92,6 +92,7 @@ func CmdProvisionModel() *cobra.Command {
 	cmd.Flags().StringVar(&softwareVersionString, FlagSoftwareVersionString, "", TextSoftwareVersionString)
 	cmd.Flags().Uint32Var(&cdVersionNumber, FlagCDVersionNumber, 0, TextCDVersionNumber)
 	cmd.Flags().StringVarP(&certificationType, FlagCertificationType, FlagCertificationTypeShortcut, "", TextCertificationType)
+	cmd.Flags().Uint32Var(&specificationVersion, FlagSpecificationVersion, 0, TextSpecificationVersion)
 	cmd.Flags().StringVarP(&provisionalDate, FlagProvisionalDate, FlagDateShortcut, "", TextProvisionalDate)
 	cmd.Flags().StringVar(&reason, FlagReason, "", TextProvisionalReason)
 	cmd.Flags().StringVar(&programTypeVersion, FlagProgramTypeVersion, "", TextProgramTypeVersion)

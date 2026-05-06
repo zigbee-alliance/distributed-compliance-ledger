@@ -208,9 +208,8 @@ var (
 	CertSchemaVersion uint32
 
 	// SchemaVersion initial default value.
-	SchemaVersion                  uint32
-	SpecificationVersion                  = "1.0"
-	SpecificationVersionDeprecated uint32 = 1
+	SchemaVersion        uint32
+	SpecificationVersion uint32 = 0x01040200
 )
 
 /*

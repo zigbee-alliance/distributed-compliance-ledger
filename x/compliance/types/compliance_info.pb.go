@@ -48,7 +48,7 @@ type ComplianceInfo struct {
 	ParentChild                        string                   `protobuf:"bytes,22,opt,name=parentChild,proto3" json:"parentChild,omitempty"`
 	CertificationIdOfSoftwareComponent string                   `protobuf:"bytes,23,opt,name=certificationIdOfSoftwareComponent,proto3" json:"certificationIdOfSoftwareComponent,omitempty"`
 	SchemaVersion                      uint32                   `protobuf:"varint,24,opt,name=schemaVersion,proto3" json:"schemaVersion,omitempty"`
-	SpecificationVersion               string                   `protobuf:"bytes,25,opt,name=specificationVersion,proto3" json:"specificationVersion,omitempty"`
+	SpecificationVersion               uint32                   `protobuf:"varint,25,opt,name=specificationVersion,proto3" json:"specificationVersion,omitempty"`
 }
 
 func (m *ComplianceInfo) Reset()         { *m = ComplianceInfo{} }
@@ -252,11 +252,11 @@ func (m *ComplianceInfo) GetSchemaVersion() uint32 {
 	return 0
 }
 
-func (m *ComplianceInfo) GetSpecificationVersion() string {
+func (m *ComplianceInfo) GetSpecificationVersion() uint32 {
 	if m != nil {
 		return m.SpecificationVersion
 	}
-	return ""
+	return 0
 }
 
 func init() {
@@ -303,12 +303,12 @@ var fileDescriptor_b59222752039640e = []byte{
 	0x80, 0xbd, 0x49, 0x2a, 0x21, 0xd5, 0xed, 0x01, 0x8f, 0x19, 0x39, 0x28, 0x6e, 0xb2, 0x82, 0x4c,
 	0xb2, 0x27, 0x26, 0xd0, 0x61, 0x17, 0x51, 0xb7, 0x08, 0xb0, 0x09, 0x80, 0x48, 0x21, 0xd5, 0xe4,
 	0xbe, 0x6d, 0xbc, 0x43, 0x25, 0x7e, 0x88, 0x36, 0x55, 0x38, 0x80, 0x84, 0x96, 0x9e, 0x88, 0xfd,
-	0x29, 0x26, 0x41, 0x7c, 0x82, 0xf6, 0x54, 0x06, 0xe1, 0x48, 0xab, 0x2c, 0x3e, 0xb4, 0xfb, 0xcc,
-	0xe5, 0x4e, 0xe1, 0xeb, 0x4d, 0xcd, 0xbb, 0xbe, 0xa9, 0x79, 0x3f, 0x6e, 0x6a, 0xde, 0xe7, 0xdb,
-	0xda, 0xc2, 0xf5, 0x6d, 0x6d, 0xe1, 0xfb, 0x6d, 0x6d, 0xe1, 0xfd, 0x59, 0x9f, 0xeb, 0x41, 0xde,
-	0x33, 0xd9, 0x6d, 0xb9, 0xa8, 0x37, 0xe7, 0x3d, 0x84, 0xcd, 0x2a, 0xdb, 0xcd, 0xe2, 0x29, 0xfc,
-	0x38, 0xfe, 0x18, 0xea, 0x61, 0x06, 0xaa, 0xb7, 0x62, 0x1f, 0xb8, 0xc7, 0xbf, 0x02, 0x00, 0x00,
-	0xff, 0xff, 0xd1, 0x03, 0x86, 0xb6, 0xd6, 0x05, 0x00, 0x00,
+	0x29, 0x26, 0x41, 0x7c, 0x82, 0xf6, 0x54, 0x06, 0xe1, 0x48, 0xab, 0x2c, 0x3e, 0xb4, 0xc5, 0x73,
+	0xb9, 0x53, 0xf8, 0x7a, 0x53, 0xf3, 0xae, 0x6f, 0x6a, 0xde, 0x8f, 0x9b, 0x9a, 0xf7, 0xf9, 0xb6,
+	0xb6, 0x70, 0x7d, 0x5b, 0x5b, 0xf8, 0x7e, 0x5b, 0x5b, 0x78, 0x7f, 0xd6, 0xe7, 0x7a, 0x90, 0xf7,
+	0x4c, 0x76, 0x5b, 0x2e, 0xea, 0xcd, 0x79, 0x0f, 0x61, 0xb3, 0xca, 0x76, 0xb3, 0x78, 0x0a, 0x3f,
+	0x8e, 0x3f, 0x86, 0x7a, 0x98, 0x81, 0xea, 0xad, 0xd8, 0x07, 0xee, 0xf1, 0xaf, 0x00, 0x00, 0x00,
+	0xff, 0xff, 0x0b, 0xd3, 0x2f, 0xe8, 0xd6, 0x05, 0x00, 0x00,
 }
 
 func (m *ComplianceInfo) Marshal() (dAtA []byte, err error) {
@@ -331,14 +331,12 @@ func (m *ComplianceInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.SpecificationVersion) > 0 {
-		i -= len(m.SpecificationVersion)
-		copy(dAtA[i:], m.SpecificationVersion)
-		i = encodeVarintComplianceInfo(dAtA, i, uint64(len(m.SpecificationVersion)))
+	if m.SpecificationVersion != 0 {
+		i = encodeVarintComplianceInfo(dAtA, i, uint64(m.SpecificationVersion))
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0xca
+		dAtA[i] = 0xc8
 	}
 	if m.SchemaVersion != 0 {
 		i = encodeVarintComplianceInfo(dAtA, i, uint64(m.SchemaVersion))
@@ -633,9 +631,8 @@ func (m *ComplianceInfo) Size() (n int) {
 	if m.SchemaVersion != 0 {
 		n += 2 + sovComplianceInfo(uint64(m.SchemaVersion))
 	}
-	l = len(m.SpecificationVersion)
-	if l > 0 {
-		n += 2 + l + sovComplianceInfo(uint64(l))
+	if m.SpecificationVersion != 0 {
+		n += 2 + sovComplianceInfo(uint64(m.SpecificationVersion))
 	}
 	return n
 }
@@ -1368,10 +1365,10 @@ func (m *ComplianceInfo) Unmarshal(dAtA []byte) error {
 				}
 			}
 		case 25:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field SpecificationVersion", wireType)
 			}
-			var stringLen uint64
+			m.SpecificationVersion = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowComplianceInfo
@@ -1381,24 +1378,11 @@ func (m *ComplianceInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.SpecificationVersion |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthComplianceInfo
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthComplianceInfo
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.SpecificationVersion = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipComplianceInfo(dAtA[iNdEx:])

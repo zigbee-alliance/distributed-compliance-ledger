@@ -37,7 +37,7 @@ func CmdUpdateComplianceInfo() *cobra.Command {
 		OSVersion                          string
 		parentChild                        string
 		certificationIDOfSoftwareComponent string
-		specificationVersion               string
+		specificationVersion               uint32
 		schemaVersion                      uint32
 	)
 
@@ -90,6 +90,7 @@ func CmdUpdateComplianceInfo() *cobra.Command {
 	cmd.Flags().Uint32VarP(&softwareVersion, FlagSoftwareVersion, FlagSoftwareVersionShortcut, math.MaxUint32, TextSoftwareVersion)
 	cmd.Flags().StringVar(&cdVersionNumber, FlagCDVersionNumber, "", TextCDVersionNumber)
 	cmd.Flags().StringVarP(&certificationType, FlagCertificationType, FlagCertificationTypeShortcut, "", TextCertificationType)
+	cmd.Flags().Uint32Var(&specificationVersion, FlagSpecificationVersion, 0, TextSpecificationVersion)
 	cmd.Flags().StringVarP(&certificationDate, FlagCertificationDate, FlagDateShortcut, "", TextCertificationDate)
 	cmd.Flags().StringVar(&reason, FlagReason, "", TextCertificationReason)
 	cmd.Flags().StringVar(&owner, FlagOwner, "", TextOwner)

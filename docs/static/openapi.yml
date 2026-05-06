@@ -303,7 +303,8 @@ paths:
                       type: integer
                       format: int64
                     specificationVersion:
-                      type: string
+                      type: integer
+                      format: int64
               pagination:
                 type: object
                 properties:
@@ -493,7 +494,8 @@ paths:
                     type: integer
                     format: int64
                   specificationVersion:
-                    type: string
+                    type: integer
+                    format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -627,7 +629,8 @@ paths:
                             type: integer
                             format: int64
                           specificationVersion:
-                            type: string
+                            type: integer
+                            format: int64
                     schemaVersion:
                       type: integer
                       format: int64
@@ -827,7 +830,8 @@ paths:
                           type: integer
                           format: int64
                         specificationVersion:
-                          type: string
+                          type: integer
+                          format: int64
                   schemaVersion:
                     type: integer
                     format: int64
@@ -17396,7 +17400,8 @@ definitions:
         type: integer
         format: int64
       specificationVersion:
-        type: string
+        type: integer
+        format: int64
   zigbeealliance.distributedcomplianceledger.compliance.DeviceSoftwareCompliance:
     type: object
     properties:
@@ -17478,7 +17483,8 @@ definitions:
               type: integer
               format: int64
             specificationVersion:
-              type: string
+              type: integer
+              format: int64
       schemaVersion:
         type: integer
         format: int64
@@ -17630,7 +17636,8 @@ definitions:
               type: integer
               format: int64
             specificationVersion:
-              type: string
+              type: integer
+              format: int64
       pagination:
         type: object
         properties:
@@ -17743,7 +17750,8 @@ definitions:
                     type: integer
                     format: int64
                   specificationVersion:
-                    type: string
+                    type: integer
+                    format: int64
             schemaVersion:
               type: integer
               format: int64
@@ -17972,7 +17980,8 @@ definitions:
             type: integer
             format: int64
           specificationVersion:
-            type: string
+            type: integer
+            format: int64
   zigbeealliance.distributedcomplianceledger.compliance.QueryGetDeviceSoftwareComplianceResponse:
     type: object
     properties:
@@ -18057,7 +18066,8 @@ definitions:
                   type: integer
                   format: int64
                 specificationVersion:
-                  type: string
+                  type: integer
+                  format: int64
           schemaVersion:
             type: integer
             format: int64

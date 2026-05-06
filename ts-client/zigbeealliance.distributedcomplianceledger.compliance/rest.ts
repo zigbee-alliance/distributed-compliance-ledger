@@ -176,7 +176,9 @@ export interface DistributedcomplianceledgercomplianceComplianceInfo {
   OSVersion?: string;
   parentChild?: string;
   certificationIdOfSoftwareComponent?: string;
-  specificationVersion?: string;
+
+  /** @format int64 */
+  specificationVersion?: number;
 
   /** @format int64 */
   schemaVersion?: number;

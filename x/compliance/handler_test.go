@@ -431,7 +431,7 @@ func newMsgUpdateComplianceInfo(
 		OSVersion:                          "",
 		ParentChild:                        "",
 		CertificationIdOfSoftwareComponent: "",
-		SpecificationVersion:               "",
+		SpecificationVersion:               0,
 		SchemaVersion:                      testconstants.SchemaVersion,
 	}
 }
@@ -465,7 +465,7 @@ func newMsgUpdateComplianceInfoWithAllOptionalFlags(
 		OSVersion:                          "new OSVersion",
 		ParentChild:                        "new ParentChild",
 		CertificationIdOfSoftwareComponent: "new CertificationIdOfSoftwareComponent",
-		SpecificationVersion:               "2.0",
+		SpecificationVersion:               2,
 		SchemaVersion:                      testconstants.SchemaVersion,
 	}
 }

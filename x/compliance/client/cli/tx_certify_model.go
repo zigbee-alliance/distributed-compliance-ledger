@@ -36,7 +36,7 @@ func CmdCertifyModel() *cobra.Command {
 		transport                          string
 		parentChild                        string
 		certificationIDOfSoftwareComponent string
-		specificationVersion               string
+		specificationVersion               uint32
 		schemaVersion                      uint32
 	)
 
@@ -91,6 +91,7 @@ func CmdCertifyModel() *cobra.Command {
 	cmd.Flags().StringVar(&softwareVersionString, FlagSoftwareVersionString, "", TextSoftwareVersionString)
 	cmd.Flags().Uint32Var(&cdVersionNumber, FlagCDVersionNumber, 0, TextCDVersionNumber)
 	cmd.Flags().StringVarP(&certificationType, FlagCertificationType, FlagCertificationTypeShortcut, "", TextCertificationType)
+	cmd.Flags().Uint32Var(&specificationVersion, FlagSpecificationVersion, 0, TextSpecificationVersion)
 	cmd.Flags().StringVarP(&certificationDate, FlagCertificationDate, FlagDateShortcut, "", TextCertificationDate)
 	cmd.Flags().StringVar(&reason, FlagReason, "", TextCertificationReason)
 	cmd.Flags().StringVar(&CDCertificateID, FlagCDCertificateID, "", TextCDCertificateID)
@@ -99,7 +100,6 @@ func CmdCertifyModel() *cobra.Command {
 	cmd.Flags().StringVar(&certificationRoute, FlagCertificationRoute, "", TextCertificationRoute)
 	cmd.Flags().StringVar(&transport, FlagTransport, "", TextTransport)
 	cmd.Flags().StringVar(&parentChild, FlagParentChild, "", TextParentChild)
-	cmd.Flags().StringVar(&specificationVersion, FlagSpecificationVersion, "", TextSpecificationVersion)
 	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, TextSchemaVersion)
 	cmd.Flags().StringVar(&compliantPlatformUsed, FlagCompliantPlatformUsed, "", TextCompliantPlatformUsed)
 	cmd.Flags().StringVar(&compliantPlatformVersion, FlagCompliantPlatformVersion, "", TextCompliantPlatformVersion)
