@@ -25,7 +25,7 @@ from the revocation list.
   - softwareVersion: `uint32` - Software Version of model
   - softwareVersionString: `string` - Software Version String of model
   - certificationType: `string` - Certification program applied to the model. Supported values are `zigbee`, `matter` or `aliro`.
-  - specificationVersion: `uint32` - Version of certificationType (see `certificationType` for supported types). For example, for `Matter 1.5` this field would contain `1`.
+  - specificationVersion: `uint32` - Specification version applicable to the device model, and it matches the SpecificationVersion attribute in the Basic Information Cluster of a device running the software certified by this DeviceModel record.
   - certificationDate: `string` - The date of model certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
   - cdCertificateId: `string` - Connectivity Standards Alliance certification's certificate ID for the Certification that applies to this record. The value of this field is used in the Certification Declaration's `certificate_id` field for products using the VendorID, ProductID and SoftwareVersion in this schema entry.
   - reason: `optional(string)` - Optional comment describing the reason of certification
@@ -64,7 +64,7 @@ Updates a compliance info by VID, PID, Software Version and Certification Type.
   - pid: `uint16` - Model product ID (positive non-zero)
   - softwareVersion: `uint32` - Software Version of model
   - certificationType: `string` - Certification program applied to the model. Supported values are `zigbee`, `matter` or `aliro`.
-  - specificationVersion: `optional(uint32)` - Version of certificationType (see `certificationType` for supported types). For example, for `Matter 1.5` this field would contain `1`.
+  - specificationVersion: `optional(uint32)` - Specification version applicable to the device model, and it matches the SpecificationVersion attribute in the Basic Information Cluster of a device running the software certified by this DeviceModel record.
   - certificationDate: `optional(string)` - The date of model certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
   - cdCertificateId: `optional(string)` - Connectivity Standards Alliance certification's certificate ID for the Certification that applies to this record. The value of this field is used in the Certification Declaration's `certificate_id` field for products using the VendorID, ProductID and SoftwareVersion in this schema entry.
   - reason: `optional(string)` - Optional comment describing the reason of certification
@@ -157,7 +157,7 @@ Can not be set if there is already a certification record on the ledger (certifi
   - softwareVersion: `uint32` - Software Version of model
   - softwareVersionString: `string` - Software Version String of model
   - certificationType: `string` - Certification program applied to the model. Supported values are `zigbee`, `matter` or `aliro`.
-  - specificationVersion: `uint32` - Version of certificationType (see `certificationType` for supported types). For example, for `Matter 1.5` this field would contain `1`.
+  - specificationVersion: `uint32` - Specification version applicable to the device model, and it matches the SpecificationVersion attribute in the Basic Information Cluster of a device running the software certified by this DeviceModel record.
   - provisionalDate: `string` - The date of model provisional certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
   - cdCertificateId: `string` - Connectivity Standards Alliance certification's certificate ID for the Certification that applies to this record. The value of this field is used in the Certification Declaration's `certificate_id` field for products using the VendorID, ProductID and SoftwareVersion in this schema entry.
   - reason: `optional(string)` - Optional comment describing the reason of provisioning

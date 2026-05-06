@@ -73,7 +73,7 @@ const (
 	TextTransport                          = "Underlying communication technology the device uses to connect and exchange data. Supported transports are thread, wi-fi, ethernet, bluetooth and nfc. When multiple transports supported - should be used with comma-separator (e.g. wi-fi,ethernet,bluetooth)."
 	TextParentChild                        = "Parent vs. child characteristic when using the Product Family Certification or Portfolio Certification Program. Supported values are `parent` and `child`"
 	TextOwner                              = "Key to sign the transaction"
-	TextSpecificationVersion               = "Version of certificationType (see `certificationType` for supported types). For example, for Matter 1.5 this field should contain 1.5."
+	TextSpecificationVersion               = "Specification version applicable to the device model, and it matches the SpecificationVersion attribute in the Basic Information Cluster of a device running the software certified by this DeviceModel record"
 	TextCertificationIDOfSoftwareComponent = "Certification ID of software component."
 	TextSchemaVersion                      = "Schema version"
 	TextOSVersion                          = "Name and version of operating system separated by whitespace. For example, Android 16 or iOS 26.4."
