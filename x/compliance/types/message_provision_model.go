@@ -102,5 +102,9 @@ func (msg *MsgProvisionModel) ValidateBasic() error {
 		return NewErrInvalidFamilyID(msg.FamilyId)
 	}
 
+	if msg.Transport != "" && !IsValidTransport(msg.Transport) {
+		return NewErrInvalidTransport(msg.Transport, TransportsList)
+	}
+
 	return nil
 }

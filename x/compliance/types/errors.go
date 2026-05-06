@@ -21,6 +21,7 @@ var (
 	ErrInvalidUint32ForCdVersionNumber = errors.Register(ModuleName, 311, "invalid uint32 for cd version number")
 	ErrInvalidCertificationRoute       = errors.Register(ModuleName, 312, "invalid certification route")
 	ErrInvalidFamilyID                 = errors.Register(ModuleName, 313, "invalid familyID")
+	ErrInvalidTransport                = errors.Register(ModuleName, 314, "invalid transport")
 )
 
 func NewErrInconsistentDates(err interface{}) error {
@@ -134,5 +135,14 @@ func NewErrInvalidFamilyID(familyID interface{}) error {
 		ErrInvalidFamilyID,
 		"Invalid FamilyID: \"%v\", It should start with the 'FAM' prefix, followed by alphanumeric characters",
 		familyID,
+	)
+}
+
+func NewErrInvalidTransport(transport interface{}, transportList interface{}) error {
+	return errors.Wrapf(
+		ErrInvalidTransport,
+		"Invalid Transport: \"%v\". Supported transports: [%s]. When multiple transports are supported, "+
+			"they must be comma-separated without spaces or duplicates (e.g. \"wi-fi,ethernet,bluetooth\")",
+		transport, transportList,
 	)
 }

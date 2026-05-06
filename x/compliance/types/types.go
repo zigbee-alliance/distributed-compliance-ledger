@@ -1,6 +1,9 @@
 package types
 
-import "regexp"
+import (
+	"regexp"
+	"strings"
+)
 
 const (
 	ZigbeeCertificationType string = "zigbee"
@@ -83,4 +86,44 @@ func IsValidFamilyID(id string) bool {
 	}
 
 	return familyIDRegex.MatchString(id)
+}
+
+const (
+	TransportThread    = "thread"
+	TransportWifi      = "wi-fi"
+	TransportEthernet  = "ethernet"
+	TransportBluetooth = "bluetooth"
+	TransportNFC       = "nfc"
+)
+
+// Transports List of supported transports.
+type Transports []string
+
+var TransportsList = Transports{TransportThread, TransportWifi, TransportEthernet, TransportBluetooth, TransportNFC}
+
+// IsValidTransport reports whether transport is a comma-separated list of
+// supported transport values.
+func IsValidTransport(transport string) bool {
+	seen := make(map[string]struct{})
+	for _, item := range strings.Split(transport, ",") {
+		if !isSupportedTransport(item) {
+			return false
+		}
+		if _, ok := seen[item]; ok {
+			return false
+		}
+		seen[item] = struct{}{}
+	}
+
+	return true
+}
+
+func isSupportedTransport(transport string) bool {
+	for _, i := range TransportsList {
+		if i == transport {
+			return true
+		}
+	}
+
+	return false
 }

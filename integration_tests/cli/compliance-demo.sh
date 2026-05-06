@@ -574,7 +574,7 @@ test_divider
 
 # ADD CERTIFY MODEL WITH ALL OPTIONAL FIELDS
 echo "Certify Model with VID: $vid PID: $pid SV: ${sv} with zigbee certification"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --specificationVersion=$specification_version --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=$cd_version_number --programTypeVersion="1.0" --familyId="FAM123456abc" --supportedClusters="someClusters" --compliantPlatformUsed="WIFI" --compliantPlatformVersion="V1" --OSVersion="someV" --certificationRoute="fullTested" --productType="pType" --transport="someTransport" --parentChild="parent" --certificationIDOfSoftwareComponent="someIDOfSoftwareComponent" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --specificationVersion=$specification_version --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=$cd_version_number --programTypeVersion="1.0" --familyId="FAM123456abc" --supportedClusters="someClusters" --compliantPlatformUsed="WIFI" --compliantPlatformVersion="V1" --OSVersion="someV" --certificationRoute="fullTested" --productType="pType" --transport="wi-fi" --parentChild="parent" --certificationIDOfSoftwareComponent="someIDOfSoftwareComponent" --from $zb_account --yes)
 result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "\"code\": 0"
@@ -609,7 +609,7 @@ check_response "$result" "\"compliantPlatformVersion\": \"V1\""
 check_response "$result" "\"OSVersion\": \"someV\""
 check_response "$result" "\"certificationRoute\": \"fullTested\""
 check_response "$result" "\"programType\": \"pType\""
-check_response "$result" "\"transport\": \"someTransport\""
+check_response "$result" "\"transport\": \"wi-fi\""
 check_response "$result" "\"parentChild\": \"parent\""
 check_response "$result" "\"certificationIdOfSoftwareComponent\": \"someIDOfSoftwareComponent\""
 echo "$result"
@@ -634,7 +634,7 @@ check_response "$result" "\"compliantPlatformVersion\": \"V1\""
 check_response "$result" "\"OSVersion\": \"someV\""
 check_response "$result" "\"certificationRoute\": \"fullTested\""
 check_response "$result" "\"programType\": \"pType\""
-check_response "$result" "\"transport\": \"someTransport\""
+check_response "$result" "\"transport\": \"wi-fi\""
 check_response "$result" "\"parentChild\": \"parent\""
 check_response "$result" "\"certificationIdOfSoftwareComponent\": \"someIDOfSoftwareComponent\""
 echo "$result"
@@ -645,7 +645,7 @@ test_divider
 new_reason="new_reason"
 new_program_type="new_program_type"
 new_parent_child="child"
-new_transport="new_transport"
+new_transport="ethernet"
 
 # UPDATE COMPLIANCE INFO BY CERTIFICATION CENTER ACCOUNT
 echo "Update Compliance Info for Model with VID: ${vid} PID: ${pid} SV: ${sv} for $zigbee_certification_type with some optional fields set"
@@ -678,7 +678,7 @@ echo "$result"
 by_vendor_reason="by_vendor_reason"
 by_vendor_program_type="by_vendor_program_type"
 by_vendor_parent_child="parent"
-by_vendor_transport="by_vendor_transport"
+by_vendor_transport="bluetooth"
 
 test_divider
 
@@ -753,7 +753,7 @@ upd_program_type="brand_new_program_type"
 upd_program_type_version="brand_new_program_type_version"
 upd_compliant_platform_used="brand_new_compliant_platform_used"
 upd_compliant_platform_version="brand_new_compliant_platform_version"
-upd_transport="brand_new_transport"
+upd_transport="thread,nfc"
 upd_familyID="FAM123456abc"
 upd_supported_clusters="brand_new_clusters"
 upd_os_version="brand_new_os_version"
