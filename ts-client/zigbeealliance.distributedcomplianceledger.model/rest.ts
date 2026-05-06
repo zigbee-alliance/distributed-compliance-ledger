@@ -105,7 +105,10 @@ export interface DistributedcomplianceledgermodelModelVersion {
   /** @format int64 */
   schemaVersion?: number;
 
-  /** @format int64 */
+  /**
+   * Deprecated: will be stated/stored in ComplianceInfo record:
+   * @format int64
+   */
   specificationVersion?: number;
 }
 

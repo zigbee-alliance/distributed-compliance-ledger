@@ -13,20 +13,24 @@ export interface MsgCertifyModel {
   certificationDate: string;
   certificationType: string;
   reason: string;
+  /** @deprecated */
   programTypeVersion: string;
   cDCertificateId: string;
   familyId: string;
   supportedClusters: string;
+  /** @deprecated */
   compliantPlatformUsed: string;
+  /** @deprecated */
   compliantPlatformVersion: string;
+  /** @deprecated */
   OSVersion: string;
   certificationRoute: string;
   programType: string;
   transport: string;
   parentChild: string;
   certificationIdOfSoftwareComponent: string;
-  specificationVersion: number;
   schemaVersion: number;
+  specificationVersion: number;
 }
 
 export interface MsgCertifyModelResponse {
@@ -58,20 +62,24 @@ export interface MsgProvisionModel {
   provisionalDate: string;
   certificationType: string;
   reason: string;
+  /** @deprecated */
   programTypeVersion: string;
   cDCertificateId: string;
   familyId: string;
   supportedClusters: string;
+  /** @deprecated */
   compliantPlatformUsed: string;
+  /** @deprecated */
   compliantPlatformVersion: string;
+  /** @deprecated */
   OSVersion: string;
   certificationRoute: string;
   programType: string;
   transport: string;
   parentChild: string;
   certificationIdOfSoftwareComponent: string;
-  specificationVersion: number;
   schemaVersion: number;
+  specificationVersion: number;
 }
 
 export interface MsgProvisionModelResponse {
@@ -90,17 +98,21 @@ export interface MsgUpdateComplianceInfo {
   cDCertificateId: string;
   certificationRoute: string;
   programType: string;
+  /** @deprecated */
   programTypeVersion: string;
+  /** @deprecated */
   compliantPlatformUsed: string;
+  /** @deprecated */
   compliantPlatformVersion: string;
   transport: string;
   familyId: string;
   supportedClusters: string;
+  /** @deprecated */
   OSVersion: string;
   parentChild: string;
   certificationIdOfSoftwareComponent: string;
-  specificationVersion: number;
   schemaVersion: number;
+  specificationVersion: number;
 }
 
 export interface MsgUpdateComplianceInfoResponse {
@@ -140,8 +152,8 @@ function createBaseMsgCertifyModel(): MsgCertifyModel {
     transport: "",
     parentChild: "",
     certificationIdOfSoftwareComponent: "",
-    specificationVersion: 0,
     schemaVersion: 0,
+    specificationVersion: 0,
   };
 }
 
@@ -210,11 +222,11 @@ export const MsgCertifyModel = {
     if (message.certificationIdOfSoftwareComponent !== "") {
       writer.uint32(170).string(message.certificationIdOfSoftwareComponent);
     }
-    if (message.specificationVersion !== 0) {
-      writer.uint32(184).uint32(message.specificationVersion);
-    }
     if (message.schemaVersion !== 0) {
       writer.uint32(176).uint32(message.schemaVersion);
+    }
+    if (message.specificationVersion !== 0) {
+      writer.uint32(184).uint32(message.specificationVersion);
     }
     return writer;
   },
@@ -292,7 +304,7 @@ export const MsgCertifyModel = {
         case 22:
           message.schemaVersion = reader.uint32();
           break;
-       case 23:
+        case 23:
           message.specificationVersion = reader.uint32();
           break;
         default:
@@ -328,8 +340,8 @@ export const MsgCertifyModel = {
       certificationIdOfSoftwareComponent: isSet(object.certificationIdOfSoftwareComponent)
         ? String(object.certificationIdOfSoftwareComponent)
         : "",
-      specificationVersion: isSet(object.specificationVersion) ? Number(object.specificationVersion) : 0,
       schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
+      specificationVersion: isSet(object.specificationVersion) ? Number(object.specificationVersion) : 0,
     };
   },
 
@@ -357,8 +369,8 @@ export const MsgCertifyModel = {
     message.parentChild !== undefined && (obj.parentChild = message.parentChild);
     message.certificationIdOfSoftwareComponent !== undefined
       && (obj.certificationIdOfSoftwareComponent = message.certificationIdOfSoftwareComponent);
-    message.specificationVersion !== undefined && (obj.specificationVersion = message.specificationVersion);
     message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
+    message.specificationVersion !== undefined && (obj.specificationVersion = Math.round(message.specificationVersion));
     return obj;
   },
 
@@ -385,8 +397,8 @@ export const MsgCertifyModel = {
     message.transport = object.transport ?? "";
     message.parentChild = object.parentChild ?? "";
     message.certificationIdOfSoftwareComponent = object.certificationIdOfSoftwareComponent ?? "";
-    message.specificationVersion = object.specificationVersion ?? 0;
     message.schemaVersion = object.schemaVersion ?? 0;
+    message.specificationVersion = object.specificationVersion ?? 0;
     return message;
   },
 };
@@ -633,8 +645,8 @@ function createBaseMsgProvisionModel(): MsgProvisionModel {
     transport: "",
     parentChild: "",
     certificationIdOfSoftwareComponent: "",
-    specificationVersion: 0,
     schemaVersion: 0,
+    specificationVersion: 0,
   };
 }
 
@@ -703,11 +715,11 @@ export const MsgProvisionModel = {
     if (message.certificationIdOfSoftwareComponent !== "") {
       writer.uint32(170).string(message.certificationIdOfSoftwareComponent);
     }
-    if (message.specificationVersion !== 0) {
-      writer.uint32(184).uint32(message.specificationVersion);
-    }
     if (message.schemaVersion !== 0) {
       writer.uint32(176).uint32(message.schemaVersion);
+    }
+    if (message.specificationVersion !== 0) {
+      writer.uint32(184).uint32(message.specificationVersion);
     }
     return writer;
   },
@@ -783,10 +795,10 @@ export const MsgProvisionModel = {
           message.certificationIdOfSoftwareComponent = reader.string();
           break;
         case 22:
-          message.specificationVersion = reader.uint32();
+          message.schemaVersion = reader.uint32();
           break;
         case 23:
-          message.schemaVersion = reader.uint32();
+          message.specificationVersion = reader.uint32();
           break;
         default:
           reader.skipType(tag & 7);
@@ -821,8 +833,8 @@ export const MsgProvisionModel = {
       certificationIdOfSoftwareComponent: isSet(object.certificationIdOfSoftwareComponent)
         ? String(object.certificationIdOfSoftwareComponent)
         : "",
-      specificationVersion: isSet(object.specificationVersion) ? Number(object.specificationVersion) : 0,
       schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
+      specificationVersion: isSet(object.specificationVersion) ? Number(object.specificationVersion) : 0,
     };
   },
 
@@ -850,8 +862,8 @@ export const MsgProvisionModel = {
     message.parentChild !== undefined && (obj.parentChild = message.parentChild);
     message.certificationIdOfSoftwareComponent !== undefined
       && (obj.certificationIdOfSoftwareComponent = message.certificationIdOfSoftwareComponent);
-    message.specificationVersion !== undefined && (obj.specificationVersion = message.specificationVersion);
     message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
+    message.specificationVersion !== undefined && (obj.specificationVersion = Math.round(message.specificationVersion));
     return obj;
   },
 
@@ -878,8 +890,8 @@ export const MsgProvisionModel = {
     message.transport = object.transport ?? "";
     message.parentChild = object.parentChild ?? "";
     message.certificationIdOfSoftwareComponent = object.certificationIdOfSoftwareComponent ?? "";
-    message.specificationVersion = object.specificationVersion ?? 0;
     message.schemaVersion = object.schemaVersion ?? 0;
+    message.specificationVersion = object.specificationVersion ?? 0;
     return message;
   },
 };
@@ -946,8 +958,8 @@ function createBaseMsgUpdateComplianceInfo(): MsgUpdateComplianceInfo {
     OSVersion: "",
     parentChild: "",
     certificationIdOfSoftwareComponent: "",
-    specificationVersion: 0,
     schemaVersion: 0,
+    specificationVersion: 0,
   };
 }
 
@@ -1016,11 +1028,11 @@ export const MsgUpdateComplianceInfo = {
     if (message.certificationIdOfSoftwareComponent !== "") {
       writer.uint32(170).string(message.certificationIdOfSoftwareComponent);
     }
-    if (message.specificationVersion !== 0) {
-      writer.uint32(184).uint32(message.specificationVersion);
-    }
     if (message.schemaVersion !== 0) {
       writer.uint32(176).uint32(message.schemaVersion);
+    }
+    if (message.specificationVersion !== 0) {
+      writer.uint32(184).uint32(message.specificationVersion);
     }
     return writer;
   },
@@ -1096,10 +1108,10 @@ export const MsgUpdateComplianceInfo = {
           message.certificationIdOfSoftwareComponent = reader.string();
           break;
         case 22:
-          message.specificationVersion = reader.uint32();
+          message.schemaVersion = reader.uint32();
           break;
         case 23:
-          message.schemaVersion = reader.uint32();
+          message.specificationVersion = reader.uint32();
           break;
         default:
           reader.skipType(tag & 7);
@@ -1134,8 +1146,8 @@ export const MsgUpdateComplianceInfo = {
       certificationIdOfSoftwareComponent: isSet(object.certificationIdOfSoftwareComponent)
         ? String(object.certificationIdOfSoftwareComponent)
         : "",
-      specificationVersion: isSet(object.specificationVersion) ? Number(object.specificationVersion) : 0,
       schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
+      specificationVersion: isSet(object.specificationVersion) ? Number(object.specificationVersion) : 0,
     };
   },
 
@@ -1163,8 +1175,8 @@ export const MsgUpdateComplianceInfo = {
     message.parentChild !== undefined && (obj.parentChild = message.parentChild);
     message.certificationIdOfSoftwareComponent !== undefined
       && (obj.certificationIdOfSoftwareComponent = message.certificationIdOfSoftwareComponent);
-    message.specificationVersion !== undefined && (obj.specificationVersion = message.specificationVersion);
     message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
+    message.specificationVersion !== undefined && (obj.specificationVersion = Math.round(message.specificationVersion));
     return obj;
   },
 
@@ -1191,8 +1203,8 @@ export const MsgUpdateComplianceInfo = {
     message.OSVersion = object.OSVersion ?? "";
     message.parentChild = object.parentChild ?? "";
     message.certificationIdOfSoftwareComponent = object.certificationIdOfSoftwareComponent ?? "";
-    message.specificationVersion = object.specificationVersion ?? 0;
     message.schemaVersion = object.schemaVersion ?? 0;
+    message.specificationVersion = object.specificationVersion ?? 0;
     return message;
   },
 };

@@ -167,21 +167,29 @@ export interface DistributedcomplianceledgercomplianceComplianceInfo {
   cDCertificateId?: string;
   certificationRoute?: string;
   programType?: string;
+
+  /** Deprecated: superseded by specificationVersion; retained for backward compatibility with existing chain state. */
   programTypeVersion?: string;
+
+  /** Deprecated: no longer captured for new compliance records; retained for backward compatibility with existing chain state. */
   compliantPlatformUsed?: string;
+
+  /** Deprecated: no longer captured for new compliance records; retained for backward compatibility with existing chain state. */
   compliantPlatformVersion?: string;
   transport?: string;
   familyId?: string;
   supportedClusters?: string;
+
+  /** Deprecated: no longer captured for new compliance records; retained for backward compatibility with existing chain state. */
   OSVersion?: string;
   parentChild?: string;
   certificationIdOfSoftwareComponent?: string;
 
   /** @format int64 */
-  specificationVersion?: number;
+  schemaVersion?: number;
 
   /** @format int64 */
-  schemaVersion?: number;
+  specificationVersion?: number;
 }
 
 export interface DistributedcomplianceledgercomplianceDeviceSoftwareCompliance {
