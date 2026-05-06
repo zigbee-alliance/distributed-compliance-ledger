@@ -61,11 +61,11 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		complianceInfo.CertificationRoute = msg.CertificationRoute
 	}
 
-	if msg.CompliantPlatformUsed != "" {
+	if msg.CompliantPlatformUsed != "" { //nolint:staticcheck // ignore SA1019: use of deprecated field
 		complianceInfo.CompliantPlatformUsed = msg.CompliantPlatformUsed
 	}
 
-	if msg.CompliantPlatformVersion != "" {
+	if msg.CompliantPlatformVersion != "" { //nolint:staticcheck // ignore SA1019: use of deprecated field
 		complianceInfo.CompliantPlatformVersion = msg.CompliantPlatformVersion
 	}
 
@@ -77,7 +77,7 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		complianceInfo.FamilyId = msg.FamilyId
 	}
 
-	if msg.OSVersion != "" {
+	if msg.OSVersion != "" { //nolint:staticcheck // ignore SA1019: use of deprecated field
 		complianceInfo.OSVersion = msg.OSVersion
 	}
 
@@ -89,7 +89,7 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		complianceInfo.ProgramType = msg.ProgramType
 	}
 
-	if msg.ProgramTypeVersion != "" {
+	if msg.ProgramTypeVersion != "" { //nolint:staticcheck // ignore SA1019: use of deprecated field
 		complianceInfo.ProgramTypeVersion = msg.ProgramTypeVersion
 	}
 

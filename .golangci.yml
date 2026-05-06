@@ -80,4 +80,12 @@ issues:
         - perfsprint
         - dupword
         - testifylint
+    - path: _test\.go$
+      linters:
+        - staticcheck
+      text: "SA1019:"
+    - path: helpers\.go$
+      linters:
+        - staticcheck
+      text: "SA1019:"
 

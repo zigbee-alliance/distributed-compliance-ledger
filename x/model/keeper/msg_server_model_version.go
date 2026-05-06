@@ -73,7 +73,7 @@ func (k msgServer) CreateModelVersion(goCtx context.Context, msg *types.MsgCreat
 		MaxApplicableSoftwareVersion: msg.MaxApplicableSoftwareVersion,
 		ReleaseNotesUrl:              msg.ReleaseNotesUrl,
 		SchemaVersion:                msg.SchemaVersion,
-		SpecificationVersion:         msg.SpecificationVersion,
+		SpecificationVersion:         msg.SpecificationVersion, //nolint:staticcheck // ignore SA1019: use of deprecated field
 	}
 
 	// store new model version
