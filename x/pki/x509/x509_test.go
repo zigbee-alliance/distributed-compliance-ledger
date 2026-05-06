@@ -19,6 +19,7 @@ import (
 	"testing"
 	"time"
 
+	tmrand "github.com/cometbft/cometbft/libs/rand"
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 )
@@ -294,16 +295,8 @@ func Test_ParseAndValidateCertificate(t *testing.T) {
 			expectErrorSubstr: "failed to parse certificate",
 		},
 		{
-			name: "certificate size exceeds 100 KB",
-			certPem: func() string {
-				largeCert := "-----BEGIN CERTIFICATE-----\n"
-				for i := 0; i < 1600; i++ {
-					largeCert += "MIIEFzCCAv+gAwIBAgIUAPsN44tYPowXpX0cqFu8p0hcLqAwDQYJKoZIhvcNAQEL\n"
-				}
-				largeCert += "-----END CERTIFICATE-----"
-
-				return largeCert
-			}(),
+			name:              "certificate size exceeds 20 KB",
+			certPem:           tmrand.Str(20481),
 			expectErrorSubstr: "exceeds maximum limit",
 		},
 		{

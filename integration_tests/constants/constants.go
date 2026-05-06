@@ -68,7 +68,7 @@ var (
 	SoftwareVersionValid                              = true
 	OtaURL                                            = "https://ota.firmware.com"
 	OtaFileSize                                uint64 = 12345678
-	OtaChecksum                                       = "2fd4e1c67a2d28fced849ee1bb76e7391b93eb12" //nolint:lll
+	OtaChecksum                                       = "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk1Mzg4MjA3ZmFhNmM2NTg2YTBmNDU0MDk3YTU0ZWIzMw==" //nolint:lll
 	OtaChecksumType                            int32  = 1
 	OtaBlob                                           = "OTABlob Text"
 	CommissioningCustomFlow                    int32  = 1
@@ -96,6 +96,7 @@ var (
 	DataURL                                           = "https://url.data.dclmodel"
 	DataURL2                                          = "https://url.data.dclmodel2"
 	URLWithoutProtocol                                = "url.dclmodel"
+	URLStartsWithW3                                   = "www.example.org/path/to/file.txt"
 	LsfRevision                                int32  = 1
 	EnhancedSetupFlowOptions                   int32  = 1
 	EmptyLsfRevision                           int32
@@ -118,7 +119,7 @@ var (
 	Reason                             = "Some Reason"
 	RevocationReason                   = "Some Reason"
 	CertificationType                  = "zigbee"
-	CDCertificateID                    = "15DEXF"
+	CDCertificateID                    = "12345678910abcdefgh"
 	FamilyID                           = "Some Family ID"
 	SupportedClusters                  = "Some Supported Clusters"
 	CompliantPlatformUsed              = "Some Compliance Platform Used"

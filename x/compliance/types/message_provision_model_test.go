@@ -178,7 +178,7 @@ func TestMsgProvisionModel_ValidateBasic(t *testing.T) {
 				Vid:                   1,
 				SoftwareVersionString: testconstants.SoftwareVersionString,
 				ProvisionalDate:       testconstants.CertificationDate,
-				CertificationType:     "invalid certification type",
+				CertificationType:     "invalid type",
 				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 				Reason:                testconstants.Reason,
 				CDCertificateId:       testconstants.CDCertificateID,
@@ -193,7 +193,7 @@ func TestMsgProvisionModel_ValidateBasic(t *testing.T) {
 				Vid:                   1,
 				SoftwareVersionString: testconstants.SoftwareVersionString,
 				ProvisionalDate:       "2020-01-01",
-				CertificationType:     testconstants.TestResult,
+				CertificationType:     testconstants.CertificationType,
 				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 				Reason:                testconstants.Reason,
 				CDCertificateId:       testconstants.CDCertificateID,
@@ -247,7 +247,7 @@ func TestMsgProvisionModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "CDCertificateId > 64",
+			name: "CDCertificateId > 19",
 			msg: MsgProvisionModel{
 				Signer:                sample.AccAddress(),
 				Pid:                   1,
@@ -257,9 +257,24 @@ func TestMsgProvisionModel_ValidateBasic(t *testing.T) {
 				CertificationType:     testconstants.CertificationType,
 				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 				Reason:                testconstants.Reason,
-				CDCertificateId:       tmrand.Str(65),
+				CDCertificateId:       tmrand.Str(20),
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
+		},
+		{
+			name: "CDCertificateId < 19",
+			msg: MsgProvisionModel{
+				Signer:                sample.AccAddress(),
+				Pid:                   1,
+				Vid:                   1,
+				SoftwareVersionString: testconstants.TestDate,
+				ProvisionalDate:       testconstants.CertificationDate,
+				CertificationType:     testconstants.CertificationType,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				Reason:                testconstants.Reason,
+				CDCertificateId:       tmrand.Str(18),
+			},
+			err: validator.ErrFieldMinLengthNotReached,
 		},
 		{
 			name: "familyID > 64",
@@ -531,7 +546,7 @@ func TestMsgProvisionModel_ValidateBasic(t *testing.T) {
 			},
 		},
 		{
-			name: "CDCertificateId >= 0 && CDCertificateId <= 64",
+			name: "CDCertificateId == 19",
 			msg: MsgProvisionModel{
 				Signer:                sample.AccAddress(),
 				SoftwareVersionString: "1",
