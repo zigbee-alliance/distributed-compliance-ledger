@@ -21,13 +21,17 @@ message ComplianceInfo {
   string cDCertificateId = 12;
   string certificationRoute = 13;
   string programType = 14;
-  string programTypeVersion = 15;
-  string compliantPlatformUsed = 16;
-  string compliantPlatformVersion = 17;
+  // Deprecated: superseded by specificationVersion; retained for backward compatibility with existing chain state.
+  string programTypeVersion = 15 [deprecated = true];
+  // Deprecated: no longer captured for new compliance records; retained for backward compatibility with existing chain state.
+  string compliantPlatformUsed = 16 [deprecated = true];
+  // Deprecated: no longer captured for new compliance records; retained for backward compatibility with existing chain state.
+  string compliantPlatformVersion = 17 [deprecated = true];
   string transport = 18;
   string familyId = 19;
   string supportedClusters = 20;
-  string OSVersion = 21;
+  // Deprecated: no longer captured for new compliance records; retained for backward compatibility with existing chain state.
+  string OSVersion = 21 [deprecated = true];;
   string parentChild = 22;
   string certificationIdOfSoftwareComponent = 23;
   uint32 schemaVersion = 24;
