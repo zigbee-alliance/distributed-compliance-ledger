@@ -168,19 +168,19 @@ export interface DistributedcomplianceledgercomplianceComplianceInfo {
   certificationRoute?: string;
   programType?: string;
 
-  /** Deprecated: superseded by specificationVersion; retained for backward compatibility with existing chain state. */
+  /** Deprecated: superseded by specificationVersion; */
   programTypeVersion?: string;
 
-  /** Deprecated: no longer captured for new compliance records; retained for backward compatibility with existing chain state. */
+  /** Deprecated */
   compliantPlatformUsed?: string;
 
-  /** Deprecated: no longer captured for new compliance records; retained for backward compatibility with existing chain state. */
+  /** Deprecated */
   compliantPlatformVersion?: string;
   transport?: string;
   familyId?: string;
   supportedClusters?: string;
 
-  /** Deprecated: no longer captured for new compliance records; retained for backward compatibility with existing chain state. */
+  /** Deprecated */
   OSVersion?: string;
   parentChild?: string;
   certificationIdOfSoftwareComponent?: string;

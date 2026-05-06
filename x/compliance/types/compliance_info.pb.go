@@ -38,16 +38,16 @@ type ComplianceInfo struct {
 	CDCertificateId                    string                   `protobuf:"bytes,12,opt,name=cDCertificateId,proto3" json:"cDCertificateId,omitempty"`
 	CertificationRoute                 string                   `protobuf:"bytes,13,opt,name=certificationRoute,proto3" json:"certificationRoute,omitempty"`
 	ProgramType                        string                   `protobuf:"bytes,14,opt,name=programType,proto3" json:"programType,omitempty"`
-	// Deprecated: superseded by specificationVersion; retained for backward compatibility with existing chain state.
+	// Deprecated: superseded by specificationVersion;
 	ProgramTypeVersion string `protobuf:"bytes,15,opt,name=programTypeVersion,proto3" json:"programTypeVersion,omitempty"` // Deprecated: Do not use.
-	// Deprecated: no longer captured for new compliance records; retained for backward compatibility with existing chain state.
+	// Deprecated
 	CompliantPlatformUsed string `protobuf:"bytes,16,opt,name=compliantPlatformUsed,proto3" json:"compliantPlatformUsed,omitempty"` // Deprecated: Do not use.
-	// Deprecated: no longer captured for new compliance records; retained for backward compatibility with existing chain state.
+	// Deprecated
 	CompliantPlatformVersion string `protobuf:"bytes,17,opt,name=compliantPlatformVersion,proto3" json:"compliantPlatformVersion,omitempty"` // Deprecated: Do not use.
 	Transport                string `protobuf:"bytes,18,opt,name=transport,proto3" json:"transport,omitempty"`
 	FamilyId                 string `protobuf:"bytes,19,opt,name=familyId,proto3" json:"familyId,omitempty"`
 	SupportedClusters        string `protobuf:"bytes,20,opt,name=supportedClusters,proto3" json:"supportedClusters,omitempty"`
-	// Deprecated: no longer captured for new compliance records; retained for backward compatibility with existing chain state.
+	// Deprecated
 	OSVersion                          string `protobuf:"bytes,21,opt,name=OSVersion,proto3" json:"OSVersion,omitempty"` // Deprecated: Do not use.
 	ParentChild                        string `protobuf:"bytes,22,opt,name=parentChild,proto3" json:"parentChild,omitempty"`
 	CertificationIdOfSoftwareComponent string `protobuf:"bytes,23,opt,name=certificationIdOfSoftwareComponent,proto3" json:"certificationIdOfSoftwareComponent,omitempty"`

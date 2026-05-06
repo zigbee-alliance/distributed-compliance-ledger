@@ -30,17 +30,14 @@ const (
 	FlagReasonShortcut            = "r"
 	FlagCDVersionNumber           = "cdVersionNumber"
 	FlagProvisionalDate           = "provisionalDate"
-	// Deprecated: programTypeVersion is superseded by specificationVersion;
-	// the flag is kept for backward compatibility and will be removed in a future release.
+	// Deprecated: The flag is kept for backward compatibility and will be removed in a future release.
 	FlagProgramTypeVersion = "programTypeVersion"
 	FlagCDCertificateID    = "cdCertificateId"
 	FlagFamilyID           = "familyId"
 	FlagSupportedClusters  = "supportedClusters"
-	// Deprecated: compliantPlatformUsed is no longer captured for new compliance records;
-	// the flag is kept for backward compatibility and will be removed in a future release.
+	// Deprecated: The flag is kept for backward compatibility and will be removed in a future release.
 	FlagCompliantPlatformUsed = "compliantPlatformUsed"
-	// Deprecated: compliantPlatformVersion is no longer captured for new compliance records;
-	// the flag is kept for backward compatibility and will be removed in a future release.
+	// Deprecated: The flag is kept for backward compatibility and will be removed in a future release.
 	FlagCompliantPlatformVersion           = "compliantPlatformVersion"
 	FlagCertificationRoute                 = "certificationRoute"
 	FlagProgramType                        = "programType"
@@ -77,11 +74,11 @@ const (
 	TextCertificationIDOfSoftwareComponent = "Certification ID of software component."
 	TextSchemaVersion                      = "Schema version"
 	TextOSVersion                          = "Name and version of operating system separated by whitespace. For example, Android 16 or iOS 26.4."
-	DeprecatedTextOSVersion                = "Flag 'OSversion' is no longer captured for new compliance records and will be removed in a future release"
+	DeprecatedTextOSVersion                = "Flag 'OSversion' will be removed in a future release"
 	TextProgramTypeVersion                 = "Version of certificationType (see `certificationType` for supported types). For example, for Matter 1.5 this field would contain 1.5."
-	DeprecatedTextProgramTypeVersion       = "Flag 'compliantPlatformVersion' is no longer captured for new compliance records and will be removed in a future release"
+	DeprecatedTextProgramTypeVersion       = "Flag 'compliantPlatformVersion' will be removed in a future release"
 	TextCompliantPlatformUsed              = "Certification ID of the compliant platform used with the product."
-	DeprecatedTextCompliantPlatformUsed    = "Flag 'compliantPlatformUsed' is no longer captured for new compliance records and will be removed in a future release."
+	DeprecatedTextCompliantPlatformUsed    = "Flag 'compliantPlatformUsed' will be removed in a future release."
 	TextCompliantPlatformVersion           = "Certified firmware version of Compliant Platform."
-	DeprecatedTextCompliantPlatformVersion = "Flag 'compliantPlatformVersion' is no longer captured for new compliance records and will be removed in a future release."
+	DeprecatedTextCompliantPlatformVersion = "Flag 'compliantPlatformVersion' will be removed in a future release."
 )

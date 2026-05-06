@@ -283,21 +283,13 @@ paths:
                       type: string
                     programTypeVersion:
                       type: string
-                      description: >-
-                        Deprecated: superseded by specificationVersion; retained
-                        for backward compatibility with existing chain state.
+                      title: 'Deprecated: superseded by specificationVersion;'
                     compliantPlatformUsed:
                       type: string
-                      description: >-
-                        Deprecated: no longer captured for new compliance
-                        records; retained for backward compatibility with
-                        existing chain state.
+                      title: Deprecated
                     compliantPlatformVersion:
                       type: string
-                      description: >-
-                        Deprecated: no longer captured for new compliance
-                        records; retained for backward compatibility with
-                        existing chain state.
+                      title: Deprecated
                     transport:
                       type: string
                     familyId:
@@ -306,10 +298,7 @@ paths:
                       type: string
                     OSVersion:
                       type: string
-                      description: >-
-                        Deprecated: no longer captured for new compliance
-                        records; retained for backward compatibility with
-                        existing chain state.
+                      title: Deprecated
                     parentChild:
                       type: string
                     certificationIdOfSoftwareComponent:
@@ -489,21 +478,13 @@ paths:
                     type: string
                   programTypeVersion:
                     type: string
-                    description: >-
-                      Deprecated: superseded by specificationVersion; retained
-                      for backward compatibility with existing chain state.
+                    title: 'Deprecated: superseded by specificationVersion;'
                   compliantPlatformUsed:
                     type: string
-                    description: >-
-                      Deprecated: no longer captured for new compliance records;
-                      retained for backward compatibility with existing chain
-                      state.
+                    title: Deprecated
                   compliantPlatformVersion:
                     type: string
-                    description: >-
-                      Deprecated: no longer captured for new compliance records;
-                      retained for backward compatibility with existing chain
-                      state.
+                    title: Deprecated
                   transport:
                     type: string
                   familyId:
@@ -512,10 +493,7 @@ paths:
                     type: string
                   OSVersion:
                     type: string
-                    description: >-
-                      Deprecated: no longer captured for new compliance records;
-                      retained for backward compatibility with existing chain
-                      state.
+                    title: Deprecated
                   parentChild:
                     type: string
                   certificationIdOfSoftwareComponent:
@@ -639,22 +617,13 @@ paths:
                             type: string
                           programTypeVersion:
                             type: string
-                            description: >-
-                              Deprecated: superseded by specificationVersion;
-                              retained for backward compatibility with existing
-                              chain state.
+                            title: 'Deprecated: superseded by specificationVersion;'
                           compliantPlatformUsed:
                             type: string
-                            description: >-
-                              Deprecated: no longer captured for new compliance
-                              records; retained for backward compatibility with
-                              existing chain state.
+                            title: Deprecated
                           compliantPlatformVersion:
                             type: string
-                            description: >-
-                              Deprecated: no longer captured for new compliance
-                              records; retained for backward compatibility with
-                              existing chain state.
+                            title: Deprecated
                           transport:
                             type: string
                           familyId:
@@ -663,10 +632,7 @@ paths:
                             type: string
                           OSVersion:
                             type: string
-                            description: >-
-                              Deprecated: no longer captured for new compliance
-                              records; retained for backward compatibility with
-                              existing chain state.
+                            title: Deprecated
                           parentChild:
                             type: string
                           certificationIdOfSoftwareComponent:
@@ -856,22 +822,13 @@ paths:
                           type: string
                         programTypeVersion:
                           type: string
-                          description: >-
-                            Deprecated: superseded by specificationVersion;
-                            retained for backward compatibility with existing
-                            chain state.
+                          title: 'Deprecated: superseded by specificationVersion;'
                         compliantPlatformUsed:
                           type: string
-                          description: >-
-                            Deprecated: no longer captured for new compliance
-                            records; retained for backward compatibility with
-                            existing chain state.
+                          title: Deprecated
                         compliantPlatformVersion:
                           type: string
-                          description: >-
-                            Deprecated: no longer captured for new compliance
-                            records; retained for backward compatibility with
-                            existing chain state.
+                          title: Deprecated
                         transport:
                           type: string
                         familyId:
@@ -880,10 +837,7 @@ paths:
                           type: string
                         OSVersion:
                           type: string
-                          description: >-
-                            Deprecated: no longer captured for new compliance
-                            records; retained for backward compatibility with
-                            existing chain state.
+                          title: Deprecated
                         parentChild:
                           type: string
                         certificationIdOfSoftwareComponent:
@@ -17445,19 +17399,13 @@ definitions:
         type: string
       programTypeVersion:
         type: string
-        description: >-
-          Deprecated: superseded by specificationVersion; retained for backward
-          compatibility with existing chain state.
+        title: 'Deprecated: superseded by specificationVersion;'
       compliantPlatformUsed:
         type: string
-        description: >-
-          Deprecated: no longer captured for new compliance records; retained
-          for backward compatibility with existing chain state.
+        title: Deprecated
       compliantPlatformVersion:
         type: string
-        description: >-
-          Deprecated: no longer captured for new compliance records; retained
-          for backward compatibility with existing chain state.
+        title: Deprecated
       transport:
         type: string
       familyId:
@@ -17466,9 +17414,7 @@ definitions:
         type: string
       OSVersion:
         type: string
-        description: >-
-          Deprecated: no longer captured for new compliance records; retained
-          for backward compatibility with existing chain state.
+        title: Deprecated
       parentChild:
         type: string
       certificationIdOfSoftwareComponent:
@@ -17540,19 +17486,13 @@ definitions:
               type: string
             programTypeVersion:
               type: string
-              description: >-
-                Deprecated: superseded by specificationVersion; retained for
-                backward compatibility with existing chain state.
+              title: 'Deprecated: superseded by specificationVersion;'
             compliantPlatformUsed:
               type: string
-              description: >-
-                Deprecated: no longer captured for new compliance records;
-                retained for backward compatibility with existing chain state.
+              title: Deprecated
             compliantPlatformVersion:
               type: string
-              description: >-
-                Deprecated: no longer captured for new compliance records;
-                retained for backward compatibility with existing chain state.
+              title: Deprecated
             transport:
               type: string
             familyId:
@@ -17561,9 +17501,7 @@ definitions:
               type: string
             OSVersion:
               type: string
-              description: >-
-                Deprecated: no longer captured for new compliance records;
-                retained for backward compatibility with existing chain state.
+              title: Deprecated
             parentChild:
               type: string
             certificationIdOfSoftwareComponent:
@@ -17705,19 +17643,13 @@ definitions:
               type: string
             programTypeVersion:
               type: string
-              description: >-
-                Deprecated: superseded by specificationVersion; retained for
-                backward compatibility with existing chain state.
+              title: 'Deprecated: superseded by specificationVersion;'
             compliantPlatformUsed:
               type: string
-              description: >-
-                Deprecated: no longer captured for new compliance records;
-                retained for backward compatibility with existing chain state.
+              title: Deprecated
             compliantPlatformVersion:
               type: string
-              description: >-
-                Deprecated: no longer captured for new compliance records;
-                retained for backward compatibility with existing chain state.
+              title: Deprecated
             transport:
               type: string
             familyId:
@@ -17726,9 +17658,7 @@ definitions:
               type: string
             OSVersion:
               type: string
-              description: >-
-                Deprecated: no longer captured for new compliance records;
-                retained for backward compatibility with existing chain state.
+              title: Deprecated
             parentChild:
               type: string
             certificationIdOfSoftwareComponent:
@@ -17831,21 +17761,13 @@ definitions:
                     type: string
                   programTypeVersion:
                     type: string
-                    description: >-
-                      Deprecated: superseded by specificationVersion; retained
-                      for backward compatibility with existing chain state.
+                    title: 'Deprecated: superseded by specificationVersion;'
                   compliantPlatformUsed:
                     type: string
-                    description: >-
-                      Deprecated: no longer captured for new compliance records;
-                      retained for backward compatibility with existing chain
-                      state.
+                    title: Deprecated
                   compliantPlatformVersion:
                     type: string
-                    description: >-
-                      Deprecated: no longer captured for new compliance records;
-                      retained for backward compatibility with existing chain
-                      state.
+                    title: Deprecated
                   transport:
                     type: string
                   familyId:
@@ -17854,10 +17776,7 @@ definitions:
                     type: string
                   OSVersion:
                     type: string
-                    description: >-
-                      Deprecated: no longer captured for new compliance records;
-                      retained for backward compatibility with existing chain
-                      state.
+                    title: Deprecated
                   parentChild:
                     type: string
                   certificationIdOfSoftwareComponent:
@@ -18076,19 +17995,13 @@ definitions:
             type: string
           programTypeVersion:
             type: string
-            description: >-
-              Deprecated: superseded by specificationVersion; retained for
-              backward compatibility with existing chain state.
+            title: 'Deprecated: superseded by specificationVersion;'
           compliantPlatformUsed:
             type: string
-            description: >-
-              Deprecated: no longer captured for new compliance records;
-              retained for backward compatibility with existing chain state.
+            title: Deprecated
           compliantPlatformVersion:
             type: string
-            description: >-
-              Deprecated: no longer captured for new compliance records;
-              retained for backward compatibility with existing chain state.
+            title: Deprecated
           transport:
             type: string
           familyId:
@@ -18097,9 +18010,7 @@ definitions:
             type: string
           OSVersion:
             type: string
-            description: >-
-              Deprecated: no longer captured for new compliance records;
-              retained for backward compatibility with existing chain state.
+            title: Deprecated
           parentChild:
             type: string
           certificationIdOfSoftwareComponent:
@@ -18174,21 +18085,13 @@ definitions:
                   type: string
                 programTypeVersion:
                   type: string
-                  description: >-
-                    Deprecated: superseded by specificationVersion; retained for
-                    backward compatibility with existing chain state.
+                  title: 'Deprecated: superseded by specificationVersion;'
                 compliantPlatformUsed:
                   type: string
-                  description: >-
-                    Deprecated: no longer captured for new compliance records;
-                    retained for backward compatibility with existing chain
-                    state.
+                  title: Deprecated
                 compliantPlatformVersion:
                   type: string
-                  description: >-
-                    Deprecated: no longer captured for new compliance records;
-                    retained for backward compatibility with existing chain
-                    state.
+                  title: Deprecated
                 transport:
                   type: string
                 familyId:
@@ -18197,10 +18100,7 @@ definitions:
                   type: string
                 OSVersion:
                   type: string
-                  description: >-
-                    Deprecated: no longer captured for new compliance records;
-                    retained for backward compatibility with existing chain
-                    state.
+                  title: Deprecated
                 parentChild:
                   type: string
                 certificationIdOfSoftwareComponent:

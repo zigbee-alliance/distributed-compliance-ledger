@@ -20,19 +20,19 @@ export interface ComplianceInfo {
   certificationRoute: string;
   programType: string;
   /**
-   * Deprecated: superseded by specificationVersion; retained for backward compatibility with existing chain state.
+   * Deprecated: superseded by specificationVersion;
    *
    * @deprecated
    */
   programTypeVersion: string;
   /**
-   * Deprecated: no longer captured for new compliance records; retained for backward compatibility with existing chain state.
+   * Deprecated
    *
    * @deprecated
    */
   compliantPlatformUsed: string;
   /**
-   * Deprecated: no longer captured for new compliance records; retained for backward compatibility with existing chain state.
+   * Deprecated
    *
    * @deprecated
    */
@@ -41,7 +41,7 @@ export interface ComplianceInfo {
   familyId: string;
   supportedClusters: string;
   /**
-   * Deprecated: no longer captured for new compliance records; retained for backward compatibility with existing chain state.
+   * Deprecated
    *
    * @deprecated
    */
