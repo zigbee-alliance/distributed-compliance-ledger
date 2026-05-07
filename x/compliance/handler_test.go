@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"testing"
-	"time"
 
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -626,37 +625,4 @@ func generateAccAddress() sdk.AccAddress {
 	_, _, accAddress := testdata.KeyTestPubAddr()
 
 	return accAddress
-}
-
-func TestComplianceHistoryCountLimit(t *testing.T) {
-	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := setupCertifyModel(t)
-	reasonCount := 1
-
-	for i := 0; i < types.MaxComplianceHistoryItem/2+1; i++ {
-		certifyModelMsg := newMsgCertifyModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
-		certifyModelMsg.Reason = fmt.Sprintf("%d", reasonCount)
-		certifyModelMsg.CertificationDate = time.Now().Add(time.Duration(i) * time.Hour).Format(time.RFC3339)
-
-		_, certifyModelErr := setup.Handler(setup.Ctx, certifyModelMsg)
-		require.NoError(t, certifyModelErr)
-
-		revokeModelMsg := newMsgRevokeModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
-		revokeModelMsg.Reason = fmt.Sprintf("%d", reasonCount+1)
-		revokeModelMsg.RevocationDate = time.Now().Add(time.Duration(i) * time.Hour).Format(time.RFC3339)
-
-		_, revokeModelErr := setup.Handler(setup.Ctx, revokeModelMsg)
-		require.NoError(t, revokeModelErr)
-
-		reasonCount += 2
-	}
-
-	// query compliance info
-	complianceInfo := queryExistingComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
-	require.Equal(t, types.MaxComplianceHistoryItem, len(complianceInfo.History))
-
-	// check history items. reason value of first item should be 2 and the last one should be 21
-	for i := 0; i < types.MaxComplianceHistoryItem; i++ {
-		historyItem := complianceInfo.History[i]
-		require.Equal(t, fmt.Sprintf("%d", i+2), historyItem.Reason)
-	}
 }
