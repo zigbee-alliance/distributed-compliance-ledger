@@ -114,7 +114,7 @@ go.sum: go.mod
 	GO111MODULE=on go mod verify
 
 test:
-	URL_LIVENESS_CHECK_ENABLED=false go test -tags=dev -v $(PACKAGES)
+	go test -tags=dev -v $(PACKAGES)
 	go test -v utils/validator/url_liveness_test.go
 
 lint:
