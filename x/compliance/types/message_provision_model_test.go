@@ -752,6 +752,42 @@ func TestMsgProvisionModel_ValidateBasic(t *testing.T) {
 			},
 			err: validator.ErrFieldEqualBoundViolated,
 		},
+		{
+			name: "parent/child unsupported value",
+			msg: MsgProvisionModel{
+				Signer:                sample.AccAddress(),
+				SoftwareVersionString: testconstants.SoftwareVersionString,
+				Pid:                   1,
+				Vid:                   1,
+				ProvisionalDate:       testconstants.CertificationDate,
+				CertificationType:     testconstants.CertificationType,
+				SpecificationVersion:  testconstants.SpecificationVersion,
+				SoftwareVersion:       testconstants.SoftwareVersion,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				Reason:                testconstants.Reason,
+				CDCertificateId:       testconstants.CDCertificateID,
+				ParentChild:           "parent/child",
+			},
+			err: ErrInvalidPFCCertificationRoute,
+		},
+		{
+			name: "parent/child wrong case",
+			msg: MsgProvisionModel{
+				Signer:                sample.AccAddress(),
+				SoftwareVersionString: testconstants.SoftwareVersionString,
+				Pid:                   1,
+				Vid:                   1,
+				ProvisionalDate:       testconstants.CertificationDate,
+				CertificationType:     testconstants.CertificationType,
+				SpecificationVersion:  testconstants.SpecificationVersion,
+				SoftwareVersion:       testconstants.SoftwareVersion,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				Reason:                testconstants.Reason,
+				CDCertificateId:       testconstants.CDCertificateID,
+				ParentChild:           "Parent",
+			},
+			err: ErrInvalidPFCCertificationRoute,
+		},
 	}
 
 	positiveTests := []struct {
