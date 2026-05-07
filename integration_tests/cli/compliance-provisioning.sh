@@ -46,7 +46,7 @@ schema_version_0=0
 test_divider
 
 echo "Provision unknown Model with VID: $vid PID: $pid  SV: ${sv} with zigbee certification"
-result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType=$certification_type_zb --provisionalDate="$provision_date" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType=$certification_type_zb --specificationVersion=$specification_version --provisionalDate="$provision_date" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --from $zb_account --yes)
 result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "\"code\": 0"
@@ -58,6 +58,7 @@ check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"softwareVersion\": $sv"
 check_response "$result" "\"softwareVersionString\": \"$svs\""
 check_response "$result" "\"certificationType\": \"$certification_type_zb\""
+check_response "$result" "\"specificationVersion\": \"$specification_version\""
 check_response "$result" "\"date\": \"$provision_date\""
 check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id\""
 
@@ -71,7 +72,7 @@ echo "Add Model and a New Model Version with VID: $vid PID: $pid SV: $sv"
 create_model_and_version $vid $pid $sv $svs $vendor_account
 
 echo "Provision for uncertificate Model with VID: $vid PID: $pid for ZB"
-result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1  --schemaVersion=$schema_version_0 --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --specificationVersion=$specification_version --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1  --schemaVersion=$schema_version_0 --from $zb_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
@@ -79,7 +80,7 @@ echo "$result"
 test_divider
 
 echo "Provision for uncertificate Model with VID: $vid PID: $pid for Matter"
-result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_matter" --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_matter" --specificationVersion=$specification_version --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --from $zb_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
@@ -88,7 +89,7 @@ test_divider
 
 
 echo "ReProvision Model with VID: $vid PID: $pid  SV: ${sv} by different account"
-result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --specificationVersion=$specification_version --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --from $zb_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 305"
 check_response "$result" "already in provisional state"
@@ -97,7 +98,7 @@ echo "$result"
 test_divider
 
 echo "ReProvision Model with VID: $vid PID: $pid  SV: ${sv} by same account"
-result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --specificationVersion=$specification_version --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --from $zb_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 305"
 check_response "$result" "already in provisional state"
@@ -280,7 +281,7 @@ check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id\""
 test_divider
 
 echo "Provision for already certified Model with VID: $vid PID: $pid2 for Matter"
-result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid2 --softwareVersion=$sv2 --softwareVersionString=$svs2 --certificationType="$certification_type_matter" --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid2 --softwareVersion=$sv2 --softwareVersionString=$svs2 --certificationType="$certification_type_matter" --specificationVersion=$specification_version --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --from $zb_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 303"
 check_response "$result" "already certified on the ledger"
@@ -308,7 +309,7 @@ echo "$result"
 test_divider
 
 echo "Provision for already revoked Model with VID: $vid PID: $pid3 for Matter"
-result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid3 --softwareVersion=$sv3 --softwareVersionString=$svs3 --certificationType="$certification_type_zb" --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid3 --softwareVersion=$sv3 --softwareVersionString=$svs3 --certificationType="$certification_type_zb" --specificationVersion=$specification_version --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --from $zb_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 304"
 check_response "$result" "already revoked on the ledger"
