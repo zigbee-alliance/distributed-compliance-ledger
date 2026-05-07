@@ -42,7 +42,7 @@ func CmdCertifyModel() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "certify-model",
-		Short: "Certify an existing model",
+		Short: "Certify a model-version",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
