@@ -21,8 +21,7 @@ message ComplianceInfo {
   string cDCertificateId = 12;
   string certificationRoute = 13;
   string programType = 14;
-  // Deprecated: superseded by specificationVersion;
-  string programTypeVersion = 15 [deprecated = true];
+  string programTypeVersion = 15;
   // Deprecated
   string compliantPlatformUsed = 16 [deprecated = true];
   // Deprecated

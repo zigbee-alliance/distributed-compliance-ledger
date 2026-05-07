@@ -90,7 +90,7 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 	}
 
 	if msg.ProgramTypeVersion != "" {
-		complianceInfo.ProgramTypeVersion = msg.ProgramTypeVersion //nolint:staticcheck // SA1019: superseded by SpecificationVersion, retained for backward compatibility
+		complianceInfo.ProgramTypeVersion = msg.ProgramTypeVersion
 	}
 
 	if msg.Reason != "" {

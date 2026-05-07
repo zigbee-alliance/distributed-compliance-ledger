@@ -100,6 +100,7 @@ func CmdProvisionModel() *cobra.Command {
 	cmd.Flags().StringVar(&supportedClusters, FlagSupportedClusters, "", TextSupportedClusters)
 	cmd.Flags().StringVar(&certificationRoute, FlagCertificationRoute, "", TextCertificationRoute)
 	cmd.Flags().StringVar(&programType, FlagProgramType, "", TextProgramType)
+	cmd.Flags().StringVar(&programTypeVersion, FlagProgramTypeVersion, "", TextProgramTypeVersion)
 	cmd.Flags().StringVar(&transport, FlagTransport, "", TextTransport)
 	cmd.Flags().StringVar(&parentChild, FlagParentChild, "", TextParentChild)
 	cmd.Flags().StringVar(&certificationIDOfSoftwareComponent, FlagCertificationIDOfSoftwareComponent, "", TextCertificationIDOfSoftwareComponent)
@@ -109,8 +110,6 @@ func CmdProvisionModel() *cobra.Command {
 	_ = cmd.Flags().MarkDeprecated(FlagCompliantPlatformUsed, DeprecatedTextCompliantPlatformUsed)
 	cmd.Flags().StringVar(&compliantPlatformVersion, FlagCompliantPlatformVersion, "", TextCompliantPlatformVersion)
 	_ = cmd.Flags().MarkDeprecated(FlagCompliantPlatformVersion, DeprecatedTextCompliantPlatformVersion)
-	cmd.Flags().StringVar(&programTypeVersion, FlagProgramTypeVersion, "", TextProgramTypeVersion)
-	_ = cmd.Flags().MarkDeprecated(FlagProgramTypeVersion, DeprecatedTextProgramTypeVersion)
 	cmd.Flags().StringVar(&OSVersion, FlagOSVersion, "", TextOSVersion)
 	_ = cmd.Flags().MarkDeprecated(FlagOSVersion, DeprecatedTextOSVersion)
 

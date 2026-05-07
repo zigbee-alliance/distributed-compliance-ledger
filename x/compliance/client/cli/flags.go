@@ -30,11 +30,10 @@ const (
 	FlagReasonShortcut            = "r"
 	FlagCDVersionNumber           = "cdVersionNumber"
 	FlagProvisionalDate           = "provisionalDate"
-	// Deprecated: The flag is kept for backward compatibility and will be removed in a future release.
-	FlagProgramTypeVersion = "programTypeVersion"
-	FlagCDCertificateID    = "cdCertificateId"
-	FlagFamilyID           = "familyId"
-	FlagSupportedClusters  = "supportedClusters"
+	FlagProgramTypeVersion        = "programTypeVersion"
+	FlagCDCertificateID           = "cdCertificateId"
+	FlagFamilyID                  = "familyId"
+	FlagSupportedClusters         = "supportedClusters"
 	// Deprecated: The flag is kept for backward compatibility and will be removed in a future release.
 	FlagCompliantPlatformUsed = "compliantPlatformUsed"
 	// Deprecated: The flag is kept for backward compatibility and will be removed in a future release.
@@ -76,7 +75,6 @@ const (
 	TextOSVersion                          = "Name and version of operating system separated by whitespace. For example, Android 16 or iOS 26.4."
 	DeprecatedTextOSVersion                = "Flag 'OSversion' will be removed in a future release"
 	TextProgramTypeVersion                 = "Version of certificationType (see `certificationType` for supported types). For example, for Matter 1.5 this field would contain 1.5."
-	DeprecatedTextProgramTypeVersion       = "Flag 'compliantPlatformVersion' will be removed in a future release"
 	TextCompliantPlatformUsed              = "Certification ID of the compliant platform used with the product."
 	DeprecatedTextCompliantPlatformUsed    = "Flag 'compliantPlatformUsed' will be removed in a future release."
 	TextCompliantPlatformVersion           = "Certified firmware version of Compliant Platform."

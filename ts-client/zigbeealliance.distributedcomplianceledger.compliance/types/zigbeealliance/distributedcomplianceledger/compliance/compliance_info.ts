@@ -19,11 +19,6 @@ export interface ComplianceInfo {
   cDCertificateId: string;
   certificationRoute: string;
   programType: string;
-  /**
-   * Deprecated: superseded by specificationVersion;
-   *
-   * @deprecated
-   */
   programTypeVersion: string;
   /**
    * Deprecated

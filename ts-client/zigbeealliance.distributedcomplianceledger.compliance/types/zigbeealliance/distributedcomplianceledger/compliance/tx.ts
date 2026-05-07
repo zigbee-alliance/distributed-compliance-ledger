@@ -13,7 +13,6 @@ export interface MsgCertifyModel {
   certificationDate: string;
   certificationType: string;
   reason: string;
-  /** @deprecated */
   programTypeVersion: string;
   cDCertificateId: string;
   familyId: string;
@@ -62,7 +61,6 @@ export interface MsgProvisionModel {
   provisionalDate: string;
   certificationType: string;
   reason: string;
-  /** @deprecated */
   programTypeVersion: string;
   cDCertificateId: string;
   familyId: string;
@@ -98,7 +96,6 @@ export interface MsgUpdateComplianceInfo {
   cDCertificateId: string;
   certificationRoute: string;
   programType: string;
-  /** @deprecated */
   programTypeVersion: string;
   /** @deprecated */
   compliantPlatformUsed: string;

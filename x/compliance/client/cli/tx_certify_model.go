@@ -102,14 +102,13 @@ func CmdCertifyModel() *cobra.Command {
 	cmd.Flags().StringVar(&parentChild, FlagParentChild, "", TextParentChild)
 	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, TextSchemaVersion)
 	cmd.Flags().StringVar(&programType, FlagProgramType, "", TextProgramType)
+	cmd.Flags().StringVar(&programTypeVersion, FlagProgramTypeVersion, "", TextProgramTypeVersion)
 	cmd.Flags().StringVar(&certificationIDOfSoftwareComponent, FlagCertificationIDOfSoftwareComponent, "", TextCertificationIDOfSoftwareComponent)
 	// Deprecated fields
 	cmd.Flags().StringVar(&compliantPlatformUsed, FlagCompliantPlatformUsed, "", TextCompliantPlatformUsed)
 	_ = cmd.Flags().MarkDeprecated(FlagCompliantPlatformUsed, DeprecatedTextCompliantPlatformUsed)
 	cmd.Flags().StringVar(&compliantPlatformVersion, FlagCompliantPlatformVersion, "", TextCompliantPlatformVersion)
 	_ = cmd.Flags().MarkDeprecated(FlagCompliantPlatformVersion, DeprecatedTextCompliantPlatformVersion)
-	cmd.Flags().StringVar(&programTypeVersion, FlagProgramTypeVersion, "", TextProgramTypeVersion)
-	_ = cmd.Flags().MarkDeprecated(FlagProgramTypeVersion, DeprecatedTextProgramTypeVersion)
 	cmd.Flags().StringVar(&OSVersion, FlagOSVersion, "", TextOSVersion)
 	_ = cmd.Flags().MarkDeprecated(FlagOSVersion, DeprecatedTextOSVersion)
 

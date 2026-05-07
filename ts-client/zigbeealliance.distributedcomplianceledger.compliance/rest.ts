@@ -167,8 +167,6 @@ export interface DistributedcomplianceledgercomplianceComplianceInfo {
   cDCertificateId?: string;
   certificationRoute?: string;
   programType?: string;
-
-  /** Deprecated: superseded by specificationVersion; */
   programTypeVersion?: string;
 
   /** Deprecated */

@@ -37,7 +37,7 @@ from the revocation list.
   - OSVersion: `optional(string)` - **Deprecated.**  Name and version of an operating system separated by whitespace. For example, `Android 16` or `iOS 26.4`.
   - certificationRoute: `optional(string)` - Various certification paths, such as Fully Tested, Certification by Similarity, Family/Portfolio Certification, Certification Transfer etc. Supported values are `fullTested`, `similarity`, `rapid-recert`, `fastTrack`, `ctp`, `family`, and `portfolio`. Note that some values could be added or removed in the future.
   - programType: `optional(string)` - Product type. Supported values are `endProduct`, `softwareComponent` or `compliantPlatform`.
-  - programTypeVersion: `optional(string)` - **Deprecated.** Superseded by `specificationVersion`; retained for backward compatibility. Version of certificationType (see `certificationType` for supported types). For example, for `Matter 1.5` this field would contain `1.5`.
+  - programTypeVersion: `optional(string)` - Version of certificationType (see `certificationType` for supported types). For example, for `Matter 1.5` this field would contain `1.5`.
   - transport: `optional(string)` - Underlying communication technology the device uses to connect and exchange data. Supported transports are `thread`, `wi-fi`, `ethernet`, `bluetooth` and `nfc`. When multiple transports supported - should be used with comma-separator (e.g. `wi-fi,ethernet,bluetooth`).
   - parentChild: `optional(string)` - Parent vs. child characteristic when using the Product Family Certification or Portfolio Certification Program. Supported values are `parent` and `child`.
   - certificationIDOfSoftwareComponent: `optional(string)` - Certification ID of software component.
@@ -77,7 +77,7 @@ Updates a compliance info by VID, PID, Software Version and Certification Type.
   - OSVersion: `optional(string)` - **Deprecated.**  Name and version of operating system separated by whitespace. For example, `Android 16` or `iOS 26.4`.
   - certificationRoute: `optional(string)` - Various certification paths, such as Fully Tested, Certification by Similarity, Family/Portfolio Certification, Certification Transfer etc. Supported values are `fullTested`, `similarity`, `rapid-recert`, `fastTrack`, `ctp`, `family`, and `portfolio`. Note that some values could be added or removed in the future.
   - programType: `optional(string)` - Product type. Supported values are `endProduct`, `softwareComponent` or `compliantPlatform`.
-  - programTypeVersion: `optional(string)` - **Deprecated.** Superseded by `specificationVersion`; retained for backward compatibility. Version of certificationType (see `certificationType` for supported types). For example, for `Matter 1.5` this field would contain `1.5`.
+  - programTypeVersion: `optional(string)` - Version of certificationType (see `certificationType` for supported types). For example, for `Matter 1.5` this field would contain `1.5`.
   - transport: `optional(string)` - Underlying communication technology the device uses to connect and exchange data. Supported transports are `thread`, `wi-fi`, `ethernet`, `bluetooth` and `nfc`. When multiple transports supported - should be used with comma-separator (e.g. `wi-fi,ethernet,bluetooth`).
   - parentChild: `optional(string)` - Parent vs. child characteristic when using the Product Family Certification or Portfolio Certification Program. Supported values are `parent` and `child`.
   - certificationIDOfSoftwareComponent: `optional(string)` - Certification ID of software component.
@@ -169,7 +169,7 @@ Can not be set if there is already a certification record on the ledger (certifi
   - OSVersion: `optional(string)` - **Deprecated.**  Name and version of operating system separated by whitespace. For example, `Android 16` or `iOS 26.4`.
   - certificationRoute: `optional(string)` - Various certification paths, such as Fully Tested, Certification by Similarity, Family/Portfolio Certification, Certification Transfer etc. Supported values are `fullTested`, `similarity`, `rapid-recert`, `fastTrack`, `ctp`, `family`, and `portfolio`. Note that some values could be added or removed in the future.
   - programType: `optional(string)` - Product type. Supported values are `endProduct`, `softwareComponent` or `compliantPlatform`.
-  - programTypeVersion: `optional(string)` - **Deprecated.** Superseded by `specificationVersion`; retained for backward compatibility. Version of certificationType (see `certificationType` for supported types). For example, for `Matter 1.5` this field would contain `1.5`.
+  - programTypeVersion: `optional(string)` - Version of certificationType (see `certificationType` for supported types). For example, for `Matter 1.5` this field would contain `1.5`.
   - transport: `optional(string)` - Underlying communication technology the device uses to connect and exchange data. Supported transports are `thread`, `wi-fi`, `ethernet`, `bluetooth` and `nfc`. When multiple transports supported - should be used with comma-separator (e.g. `wi-fi,ethernet,bluetooth`).
   - parentChild: `optional(string)` - Parent vs. child characteristic when using the Product Family Certification or Portfolio Certification Program. Supported values are `parent` and `child`.
   - certificationIDOfSoftwareComponent: `optional(string)` - Certification ID of software component.

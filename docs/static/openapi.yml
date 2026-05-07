@@ -283,7 +283,6 @@ paths:
                       type: string
                     programTypeVersion:
                       type: string
-                      title: 'Deprecated: superseded by specificationVersion;'
                     compliantPlatformUsed:
                       type: string
                       title: Deprecated
@@ -478,7 +477,6 @@ paths:
                     type: string
                   programTypeVersion:
                     type: string
-                    title: 'Deprecated: superseded by specificationVersion;'
                   compliantPlatformUsed:
                     type: string
                     title: Deprecated
@@ -617,7 +615,6 @@ paths:
                             type: string
                           programTypeVersion:
                             type: string
-                            title: 'Deprecated: superseded by specificationVersion;'
                           compliantPlatformUsed:
                             type: string
                             title: Deprecated
@@ -822,7 +819,6 @@ paths:
                           type: string
                         programTypeVersion:
                           type: string
-                          title: 'Deprecated: superseded by specificationVersion;'
                         compliantPlatformUsed:
                           type: string
                           title: Deprecated
@@ -17399,7 +17395,6 @@ definitions:
         type: string
       programTypeVersion:
         type: string
-        title: 'Deprecated: superseded by specificationVersion;'
       compliantPlatformUsed:
         type: string
         title: Deprecated
@@ -17486,7 +17481,6 @@ definitions:
               type: string
             programTypeVersion:
               type: string
-              title: 'Deprecated: superseded by specificationVersion;'
             compliantPlatformUsed:
               type: string
               title: Deprecated
@@ -17643,7 +17637,6 @@ definitions:
               type: string
             programTypeVersion:
               type: string
-              title: 'Deprecated: superseded by specificationVersion;'
             compliantPlatformUsed:
               type: string
               title: Deprecated
@@ -17761,7 +17754,6 @@ definitions:
                     type: string
                   programTypeVersion:
                     type: string
-                    title: 'Deprecated: superseded by specificationVersion;'
                   compliantPlatformUsed:
                     type: string
                     title: Deprecated
@@ -17995,7 +17987,6 @@ definitions:
             type: string
           programTypeVersion:
             type: string
-            title: 'Deprecated: superseded by specificationVersion;'
           compliantPlatformUsed:
             type: string
             title: Deprecated
@@ -18085,7 +18076,6 @@ definitions:
                   type: string
                 programTypeVersion:
                   type: string
-                  title: 'Deprecated: superseded by specificationVersion;'
                 compliantPlatformUsed:
                   type: string
                   title: Deprecated
