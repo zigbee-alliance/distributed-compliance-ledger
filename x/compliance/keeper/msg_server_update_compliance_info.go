@@ -62,11 +62,11 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 	}
 
 	if msg.CompliantPlatformUsed != "" {
-		complianceInfo.CompliantPlatformUsed = msg.CompliantPlatformUsed //nolint:staticcheck // SA1019: deprecated field, retained for backward compatibility
+		complianceInfo.CompliantPlatformUsed = msg.CompliantPlatformUsed
 	}
 
 	if msg.CompliantPlatformVersion != "" {
-		complianceInfo.CompliantPlatformVersion = msg.CompliantPlatformVersion //nolint:staticcheck // SA1019: deprecated field, retained for backward compatibility
+		complianceInfo.CompliantPlatformVersion = msg.CompliantPlatformVersion
 	}
 
 	if msg.Date != "" {
@@ -78,7 +78,7 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 	}
 
 	if msg.OSVersion != "" {
-		complianceInfo.OSVersion = msg.OSVersion //nolint:staticcheck // SA1019: deprecated field, retained for backward compatibility
+		complianceInfo.OSVersion = msg.OSVersion
 	}
 
 	if msg.ParentChild != "" {
