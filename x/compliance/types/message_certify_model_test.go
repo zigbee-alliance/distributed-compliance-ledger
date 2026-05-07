@@ -792,7 +792,7 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldEqualBoundViolated,
 		},
 		{
-			name: "parent/child unsupported value",
+			name: "parentChild unsupported value",
 			msg: MsgCertifyModel{
 				Signer:                sample.AccAddress(),
 				SoftwareVersionString: testconstants.SoftwareVersionString,
@@ -809,7 +809,7 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 			err: ErrInvalidPFCCertificationRoute,
 		},
 		{
-			name: "parent/child wrong case",
+			name: "parentChild wrong case",
 			msg: MsgCertifyModel{
 				Signer:                sample.AccAddress(),
 				SoftwareVersionString: testconstants.SoftwareVersionString,
@@ -824,6 +824,74 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 				ParentChild:           "Parent",
 			},
 			err: ErrInvalidPFCCertificationRoute,
+		},
+		{
+			name: "familyID contains hyphen",
+			msg: MsgCertifyModel{
+				Signer:                sample.AccAddress(),
+				SoftwareVersionString: testconstants.SoftwareVersionString,
+				Pid:                   1,
+				Vid:                   1,
+				CertificationDate:     testconstants.CertificationDate,
+				CertificationType:     testconstants.CertificationType,
+				SpecificationVersion:  testconstants.SpecificationVersion,
+				SoftwareVersion:       testconstants.SoftwareVersion,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				CDCertificateId:       testconstants.CDCertificateID,
+				FamilyId:              "FAM-123",
+			},
+			err: ErrInvalidFamilyID,
+		},
+		{
+			name: "familyID contains space",
+			msg: MsgCertifyModel{
+				Signer:                sample.AccAddress(),
+				SoftwareVersionString: testconstants.SoftwareVersionString,
+				Pid:                   1,
+				Vid:                   1,
+				CertificationDate:     testconstants.CertificationDate,
+				CertificationType:     testconstants.CertificationType,
+				SpecificationVersion:  testconstants.SpecificationVersion,
+				SoftwareVersion:       testconstants.SoftwareVersion,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				CDCertificateId:       testconstants.CDCertificateID,
+				FamilyId:              "FAM 123",
+			},
+			err: ErrInvalidFamilyID,
+		},
+		{
+			name: "certificationRoute unsupported value",
+			msg: MsgCertifyModel{
+				Signer:                sample.AccAddress(),
+				SoftwareVersionString: testconstants.SoftwareVersionString,
+				Pid:                   1,
+				Vid:                   1,
+				CertificationDate:     testconstants.CertificationDate,
+				CertificationType:     testconstants.CertificationType,
+				SpecificationVersion:  testconstants.SpecificationVersion,
+				SoftwareVersion:       testconstants.SoftwareVersion,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				CDCertificateId:       testconstants.CDCertificateID,
+				CertificationRoute:    "unknown-route",
+			},
+			err: ErrInvalidCertificationRoute,
+		},
+		{
+			name: "certificationRoute wrong case",
+			msg: MsgCertifyModel{
+				Signer:                sample.AccAddress(),
+				SoftwareVersionString: testconstants.SoftwareVersionString,
+				Pid:                   1,
+				Vid:                   1,
+				CertificationDate:     testconstants.CertificationDate,
+				CertificationType:     testconstants.CertificationType,
+				SpecificationVersion:  testconstants.SpecificationVersion,
+				SoftwareVersion:       testconstants.SoftwareVersion,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				CDCertificateId:       testconstants.CDCertificateID,
+				CertificationRoute:    "FullTested",
+			},
+			err: ErrInvalidCertificationRoute,
 		},
 	}
 
@@ -1224,7 +1292,7 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 			},
 		},
 		{
-			name: "parent/child value is parent",
+			name: "parentChild value is parent",
 			msg: MsgCertifyModel{
 				Signer:                sample.AccAddress(),
 				SoftwareVersionString: testconstants.SoftwareVersionString,
@@ -1240,7 +1308,7 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 			},
 		},
 		{
-			name: "parent/child value is child",
+			name: "parentChild value is child",
 			msg: MsgCertifyModel{
 				Signer:                sample.AccAddress(),
 				SoftwareVersionString: testconstants.SoftwareVersionString,
