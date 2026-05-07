@@ -23,6 +23,7 @@ var (
 	ErrInvalidFamilyID                 = errors.Register(ModuleName, 313, "invalid familyID")
 	ErrInvalidTransport                = errors.Register(ModuleName, 314, "invalid transport")
 	ErrInvalidSupportedClusters        = errors.Register(ModuleName, 315, "invalid supportedClusters")
+	ErrInvalidProgramType              = errors.Register(ModuleName, 316, "invalid program type")
 )
 
 func NewErrInconsistentDates(err interface{}) error {
@@ -155,5 +156,12 @@ func NewErrInvalidSupportedClusters(supportedClusters interface{}) error {
 			"each formatted as 0x followed by 1-4 hex digits, without spaces or duplicates "+
 			"(e.g. \"0x0003,0x0004,0x0006,0x0008,0x0062,0x0300\")",
 		supportedClusters,
+	)
+}
+
+func NewErrInvalidProgramType(programType interface{}, programTypeList interface{}) error {
+	return errors.Wrapf(ErrInvalidProgramType,
+		"Invalid ProgramType: \"%s\". Supported types: [%s]",
+		programType, programTypeList,
 	)
 }

@@ -574,7 +574,7 @@ test_divider
 
 # ADD CERTIFY MODEL WITH ALL OPTIONAL FIELDS
 echo "Certify Model with VID: $vid PID: $pid SV: ${sv} with zigbee certification"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --specificationVersion=$specification_version --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=$cd_version_number --programTypeVersion="1.0" --familyId="FAM123456abc" --supportedClusters="0x0003,0x0004" --compliantPlatformUsed="WIFI" --compliantPlatformVersion="V1" --OSVersion="someV" --certificationRoute="fullTested" --programType="pType" --transport="wi-fi" --parentChild="parent" --certificationIDOfSoftwareComponent="someIDOfSoftwareComponent" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --specificationVersion=$specification_version --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=$cd_version_number --programTypeVersion="1.0" --familyId="FAM123456abc" --supportedClusters="0x0003,0x0004" --compliantPlatformUsed="WIFI" --compliantPlatformVersion="V1" --OSVersion="someV" --certificationRoute="fullTested" --programType="endProduct" --transport="wi-fi" --parentChild="parent" --certificationIDOfSoftwareComponent="someIDOfSoftwareComponent" --from $zb_account --yes)
 result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "\"code\": 0"
@@ -643,7 +643,7 @@ echo "$result"
 test_divider
 
 new_reason="new_reason"
-new_program_type="new_program_type"
+new_program_type="softwareComponent"
 new_parent_child="child"
 new_transport="ethernet"
 
@@ -676,7 +676,7 @@ check_response "$result" "\"certificationIdOfSoftwareComponent\": \"someIDOfSoft
 echo "$result"
 
 by_vendor_reason="by_vendor_reason"
-by_vendor_program_type="by_vendor_program_type"
+by_vendor_program_type="compliantPlatform"
 by_vendor_parent_child="parent"
 by_vendor_transport="bluetooth"
 
@@ -749,7 +749,7 @@ upd_certification_date="2022-01-01T00:00:01Z"
 upd_reason="brand_new_reason"
 upd_cd_certificate_id="brand_new_ID1234567"
 upd_certification_route="similarity"
-upd_program_type="brand_new_program_type"
+upd_program_type="endProduct"
 upd_program_type_version="brand_new_program_type_version"
 upd_compliant_platform_used="brand_new_compliant_platform_used"
 upd_compliant_platform_version="brand_new_compliant_platform_version"

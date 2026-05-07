@@ -127,6 +127,10 @@ func (msg *MsgUpdateComplianceInfo) ValidateBasic() error {
 		return NewErrInvalidTransport(msg.Transport, TransportsList)
 	}
 
+	if msg.ProgramType != "" && !IsValidProgramType(msg.ProgramType) {
+		return NewErrInvalidProgramType(msg.ProgramType, ProgramTypesList)
+	}
+
 	if !IsValidSupportedClusters(msg.SupportedClusters) {
 		return NewErrInvalidSupportedClusters(msg.SupportedClusters)
 	}

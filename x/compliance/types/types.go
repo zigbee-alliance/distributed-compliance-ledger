@@ -27,6 +27,27 @@ func IsValidCertificationType(certificationType string) bool {
 }
 
 const (
+	EndProductProgramType        string = "endProduct"
+	SoftwareComponentProgramType string = "softwareComponent"
+	CompliantPlatformProgramType string = "compliantPlatform"
+)
+
+// List of supported Program Types.
+type ProgramTypes []string
+
+var ProgramTypesList = ProgramTypes{EndProductProgramType, SoftwareComponentProgramType, CompliantPlatformProgramType}
+
+func IsValidProgramType(programType string) bool {
+	for _, i := range ProgramTypesList {
+		if i == programType {
+			return true
+		}
+	}
+
+	return false
+}
+
+const (
 	CodeProvisional uint32 = 1
 	CodeCertified   uint32 = 2
 	CodeRevoked     uint32 = 3

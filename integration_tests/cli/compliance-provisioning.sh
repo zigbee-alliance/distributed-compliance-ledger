@@ -498,7 +498,7 @@ create_model_and_version $vid $pid $sv $svs $vendor_account
 
 # ADD PROVISION MODEL WITH ALL OPTIONAL FIELDS
 echo "Provision Model with VID: $vid PID: $pid  SV: ${sv} with zigbee certification"
-result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --specificationVersion=$specification_version --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificateId="$cd_certificate_id" --programTypeVersion="1.0" --familyId="FAM123456abc" --supportedClusters="0x0003,0x0004" --compliantPlatformUsed="WIFI" --compliantPlatformVersion="V1" --OSVersion="someV" --certificationRoute="fullTested" --programType="pType" --transport="wi-fi" --parentChild="parent" --certificationIDOfSoftwareComponent="someIDOfSoftwareComponent1" --cdVersionNumber=1 --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --specificationVersion=$specification_version --provisionalDate="$provision_date" --reason "$provision_reason" --cdCertificateId="$cd_certificate_id" --programTypeVersion="1.0" --familyId="FAM123456abc" --supportedClusters="0x0003,0x0004" --compliantPlatformUsed="WIFI" --compliantPlatformVersion="V1" --OSVersion="someV" --certificationRoute="fullTested" --programType="endProduct" --transport="wi-fi" --parentChild="parent" --certificationIDOfSoftwareComponent="someIDOfSoftwareComponent1" --cdVersionNumber=1 --from $zb_account --yes)
 result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "\"code\": 0"
