@@ -110,6 +110,10 @@ func (msg *MsgCertifyModel) ValidateBasic() error {
 		return NewErrInvalidProgramType(msg.ProgramType, ProgramTypesList)
 	}
 
+	if msg.ProgramType == "" && msg.ProgramTypeVersion != "" {
+		return NewErrProgramTypeVersionWithoutProgramType()
+	}
+
 	if !IsValidSupportedClusters(msg.SupportedClusters) {
 		return NewErrInvalidSupportedClusters(msg.SupportedClusters)
 	}

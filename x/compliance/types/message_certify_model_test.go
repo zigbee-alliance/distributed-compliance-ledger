@@ -575,6 +575,24 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 			err: ErrInvalidProgramType,
 		},
 		{
+			name: "programTypeVersion set when programType is empty",
+			msg: MsgCertifyModel{
+				Signer:                sample.AccAddress(),
+				Pid:                   1,
+				Vid:                   1,
+				SoftwareVersionString: testconstants.TestDate,
+				CertificationDate:     testconstants.CertificationDate,
+				CertificationType:     testconstants.CertificationType,
+				SpecificationVersion:  testconstants.SpecificationVersion,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				Reason:                testconstants.Reason,
+				CDCertificateId:       testconstants.CDCertificateID,
+				ProgramType:           "",
+				ProgramTypeVersion:    testconstants.ProgramTypeVersion,
+			},
+			err: ErrProgramTypeVersionWithoutProgramType,
+		},
+		{
 			name: "transport > 64",
 			msg: MsgCertifyModel{
 				Signer:                sample.AccAddress(),
@@ -1051,6 +1069,7 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 				Reason:                testconstants.Reason,
 				CDCertificateId:       testconstants.CDCertificateID,
+				ProgramType:           EndProductProgramType,
 				ProgramTypeVersion:    testconstants.ProgramTypeVersion,
 			},
 		},

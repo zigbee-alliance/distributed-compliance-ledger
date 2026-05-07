@@ -600,6 +600,24 @@ func TestMsgProvisionModel_ValidateBasic(t *testing.T) {
 			err: ErrInvalidProgramType,
 		},
 		{
+			name: "programTypeVersion set when programType is empty",
+			msg: MsgProvisionModel{
+				Signer:                sample.AccAddress(),
+				Pid:                   1,
+				Vid:                   1,
+				SoftwareVersionString: testconstants.TestDate,
+				ProvisionalDate:       testconstants.CertificationDate,
+				CertificationType:     testconstants.CertificationType,
+				SpecificationVersion:  testconstants.SpecificationVersion,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				Reason:                testconstants.Reason,
+				CDCertificateId:       testconstants.CDCertificateID,
+				ProgramType:           "",
+				ProgramTypeVersion:    testconstants.ProgramTypeVersion,
+			},
+			err: ErrProgramTypeVersionWithoutProgramType,
+		},
+		{
 			name: "transport > 64",
 			msg: MsgProvisionModel{
 				Signer:                sample.AccAddress(),
@@ -1023,6 +1041,7 @@ func TestMsgProvisionModel_ValidateBasic(t *testing.T) {
 				SoftwareVersion:       0,
 				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 				CDCertificateId:       testconstants.CDCertificateID,
+				ProgramType:           EndProductProgramType,
 				ProgramTypeVersion:    testconstants.ProgramTypeVersion,
 			},
 		},
@@ -1231,6 +1250,7 @@ func TestMsgProvisionModel_ValidateBasic(t *testing.T) {
 				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 				CDCertificateId:       testconstants.CDCertificateID,
 				ProgramType:           EndProductProgramType,
+				ProgramTypeVersion:    testconstants.ProgramTypeVersion,
 			},
 		},
 		{
@@ -1247,6 +1267,7 @@ func TestMsgProvisionModel_ValidateBasic(t *testing.T) {
 				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 				CDCertificateId:       testconstants.CDCertificateID,
 				ProgramType:           SoftwareComponentProgramType,
+				ProgramTypeVersion:    testconstants.ProgramTypeVersion,
 			},
 		},
 		{
@@ -1263,6 +1284,7 @@ func TestMsgProvisionModel_ValidateBasic(t *testing.T) {
 				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 				CDCertificateId:       testconstants.CDCertificateID,
 				ProgramType:           CompliantPlatformProgramType,
+				ProgramTypeVersion:    testconstants.ProgramTypeVersion,
 			},
 		},
 		{

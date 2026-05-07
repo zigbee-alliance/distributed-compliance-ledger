@@ -8,22 +8,23 @@ import (
 
 // x/compliance module sentinel errors.
 var (
-	ErrComplianceInfoAlreadyExist      = errors.Register(ModuleName, 301, "compliance info already exist")
-	ErrInconsistentDates               = errors.Register(ModuleName, 302, "inconsistent dates")
-	ErrAlreadyCertified                = errors.Register(ModuleName, 303, "model already certified")
-	ErrAlreadyRevoked                  = errors.Register(ModuleName, 304, "model already revoked")
-	ErrAlreadyProvisional              = errors.Register(ModuleName, 305, "model already in provisional state")
-	ErrModelVersionStringDoesNotMatch  = errors.Register(ModuleName, 306, "model version does not match")
-	ErrInvalidTestDateFormat           = errors.Register(ModuleName, 307, "test date must be in RFC3339 format")
-	ErrInvalidCertificationType        = errors.Register(ModuleName, 308, "invalid certification type")
-	ErrInvalidPFCCertificationRoute    = errors.Register(ModuleName, 309, "invalid PFC certification route")
-	ErrComplianceInfoDoesNotExist      = errors.Register(ModuleName, 310, "compliance info not found")
-	ErrInvalidUint32ForCdVersionNumber = errors.Register(ModuleName, 311, "invalid uint32 for cd version number")
-	ErrInvalidCertificationRoute       = errors.Register(ModuleName, 312, "invalid certification route")
-	ErrInvalidFamilyID                 = errors.Register(ModuleName, 313, "invalid familyID")
-	ErrInvalidTransport                = errors.Register(ModuleName, 314, "invalid transport")
-	ErrInvalidSupportedClusters        = errors.Register(ModuleName, 315, "invalid supportedClusters")
-	ErrInvalidProgramType              = errors.Register(ModuleName, 316, "invalid program type")
+	ErrComplianceInfoAlreadyExist           = errors.Register(ModuleName, 301, "compliance info already exist")
+	ErrInconsistentDates                    = errors.Register(ModuleName, 302, "inconsistent dates")
+	ErrAlreadyCertified                     = errors.Register(ModuleName, 303, "model already certified")
+	ErrAlreadyRevoked                       = errors.Register(ModuleName, 304, "model already revoked")
+	ErrAlreadyProvisional                   = errors.Register(ModuleName, 305, "model already in provisional state")
+	ErrModelVersionStringDoesNotMatch       = errors.Register(ModuleName, 306, "model version does not match")
+	ErrInvalidTestDateFormat                = errors.Register(ModuleName, 307, "test date must be in RFC3339 format")
+	ErrInvalidCertificationType             = errors.Register(ModuleName, 308, "invalid certification type")
+	ErrInvalidPFCCertificationRoute         = errors.Register(ModuleName, 309, "invalid PFC certification route")
+	ErrComplianceInfoDoesNotExist           = errors.Register(ModuleName, 310, "compliance info not found")
+	ErrInvalidUint32ForCdVersionNumber      = errors.Register(ModuleName, 311, "invalid uint32 for cd version number")
+	ErrInvalidCertificationRoute            = errors.Register(ModuleName, 312, "invalid certification route")
+	ErrInvalidFamilyID                      = errors.Register(ModuleName, 313, "invalid familyID")
+	ErrInvalidTransport                     = errors.Register(ModuleName, 314, "invalid transport")
+	ErrInvalidSupportedClusters             = errors.Register(ModuleName, 315, "invalid supportedClusters")
+	ErrInvalidProgramType                   = errors.Register(ModuleName, 316, "invalid program type")
+	ErrProgramTypeVersionWithoutProgramType = errors.Register(ModuleName, 317, "programTypeVersion must not be provided when programType is empty")
 )
 
 func NewErrInconsistentDates(err interface{}) error {
@@ -163,5 +164,12 @@ func NewErrInvalidProgramType(programType interface{}, programTypeList interface
 	return errors.Wrapf(ErrInvalidProgramType,
 		"Invalid ProgramType: \"%s\". Supported types: [%s]",
 		programType, programTypeList,
+	)
+}
+
+func NewErrProgramTypeVersionWithoutProgramType() error {
+	return errors.Wrap(
+		ErrProgramTypeVersionWithoutProgramType,
+		"ProgramTypeVersion must not be provided when ProgramType is empty",
 	)
 }
