@@ -156,6 +156,24 @@ func init() {
 	})
 
 	vl.RegisterValidation("required_if_bit_0_set", requiredIfBit0Set)
+
+	vl.RegisterValidation("https_url", isValidHttpsUrl)
+	vl.RegisterTranslation("https_url", trans, func(ut ut.Translator) error {
+		return ut.Add("https_url", "Field {0} : {1} is invalid HTTPS URL", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("https_url", fe.Field(), fmt.Sprintf("%v", fe.Value()))
+
+		return t
+	})
+
+	vl.RegisterValidation("http_or_https_url", isValidHttpOrHttpsUrl)
+	vl.RegisterTranslation("http_or_https_url", trans, func(ut ut.Translator) error {
+		return ut.Add("http_or_https_url", "Field {0} : {1} is invalid HTTP or HTTPS URL", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("http_or_https_url", fe.Field(), fmt.Sprintf("%v", fe.Value()))
+
+		return t
+	})
 }
 
 func Validate(s interface{}) error {
@@ -177,7 +195,8 @@ func Validate(s interface{}) error {
 				return errors.Wrap(ErrFieldMinLengthNotReached, e.Translate(trans))
 			}
 
-			if e.Tag() == "url" || e.Tag() == "startsnotwith" || e.Tag() == "startswith" || e.Tag() == "gtecsfield" {
+			if e.Tag() == "url" || e.Tag() == "startsnotwith" || e.Tag() == "startswith" ||
+				e.Tag() == "gtecsfield" || e.Tag() == "https_url" || e.Tag() == "http_or_https_url" {
 				return errors.Wrap(ErrFieldNotValid, e.Translate(trans))
 			}
 

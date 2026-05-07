@@ -182,9 +182,9 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			err: validator.ErrRequiredFieldMissing,
 		},
 		{
-			name: "OtaChecksum length > 64",
+			name: "OtaChecksum length > 88",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
-				msg.OtaChecksum = "SGVsbG8gd29ybGQhSGVsbG8gd29ybGQhSGVsbG8gd29ybGQhSGVsbG8gd29ybGQhSGVsbG8gd29ybGQhSGVsbG8gd29ybGQhSGVsbG8gd29ybGQh"
+				msg.OtaChecksum = tmrand.Str(89)
 
 				return msg
 			}(validMsgCreateModelVersion()),
@@ -194,11 +194,21 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaChecksum is not base64 encoded",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaUrl = "https://sampleflowurl.dclmodel"
-				msg.OtaChecksum = "not_base64_encoded"
+				msg.OtaChecksum = tmrand.Str(41) + "==="
 
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: ErrFieldIsNotBase64Encoded,
+		},
+		{
+			name: "OtaChecksum length < 44",
+			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
+				msg.OtaUrl = "https://sampleflowurl.dclmodel"
+				msg.OtaChecksum = tmrand.Str(43)
+
+				return msg
+			}(validMsgCreateModelVersion()),
+			err: validator.ErrFieldMinLengthNotReached,
 		},
 		{
 			name: "OtaChecksumType == 0 when OtaUrl is set",
@@ -208,7 +218,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 
 				return msg
 			}(validMsgCreateModelVersion()),
-			err: ErrUnsupportedOtaChecksumType,
+			err: validator.ErrRequiredFieldMissing,
 		},
 		{
 			name: "OtaChecksumType < 0",
@@ -217,7 +227,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 
 				return msg
 			}(validMsgCreateModelVersion()),
-			err: ErrUnsupportedOtaChecksumType,
+			err: validator.ErrFieldLowerBoundViolated,
 		},
 		{
 			name: "OtaChecksumType is unsupported, OtaChecksumType = 13",
@@ -226,7 +236,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 
 				return msg
 			}(validMsgCreateModelVersion()),
-			err: ErrUnsupportedOtaChecksumType,
+			err: validator.ErrFieldUpperBoundViolated,
 		},
 		{
 			name: "OtaChecksumType is unsupported - not within supported range, OtaChecksumType = 9",
@@ -422,6 +432,9 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaUrl is omitted",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaUrl = ""
+				msg.OtaChecksum = ""
+				msg.OtaFileSize = 0
+				msg.OtaChecksumType = 0
 
 				return msg
 			}(validMsgCreateModelVersion()),
@@ -435,10 +448,12 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			}(validMsgCreateModelVersion()),
 		},
 		{
-			name: "OtaFileSize == 0 when OtaUrl is omitted",
+			name: "When OtaUrl is omitted then OtaFileSize, OtaChecksumType, and  OtaChecksum must be omitted too",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaUrl = ""
 				msg.OtaFileSize = 0
+				msg.OtaChecksum = ""
+				msg.OtaChecksumType = 0
 
 				return msg
 			}(validMsgCreateModelVersion()),
@@ -453,36 +468,18 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			}(validMsgCreateModelVersion()),
 		},
 		{
-			name: "OtaChecksum is omitted when OtaUrl is omitted",
-			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
-				msg.OtaUrl = ""
-				msg.OtaChecksum = ""
-
-				return msg
-			}(validMsgCreateModelVersion()),
-		},
-		{
 			name: "OtaChecksum is set when OtaUrl is set",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaUrl = "https://sampleflowurl.dclmodel"
-				msg.OtaChecksum = "SGVsbG8gd29ybGQh"
+				msg.OtaChecksum = "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk="
 
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
 		{
-			name: "OtaChecksum length == 64",
+			name: "OtaChecksum length == 88",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
-				msg.OtaChecksum = tmrand.Str(64)
-
-				return msg
-			}(validMsgCreateModelVersion()),
-		},
-		{
-			name: "OtaChecksumType == 0 when OtaUrl is omitted",
-			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
-				msg.OtaUrl = ""
-				msg.OtaChecksumType = 0
+				msg.OtaChecksum = tmrand.Str(88)
 
 				return msg
 			}(validMsgCreateModelVersion()),
@@ -693,11 +690,25 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaChecksum is not base64 encoded",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.OtaUrl = "https://sampleflowurl.dclmodel"
-				msg.OtaChecksum = "not_base64_encoded"
+				msg.OtaChecksum = tmrand.Str(41) + "==="
+				msg.OtaFileSize = 1
+				msg.OtaChecksumType = 1
 
 				return msg
 			}(validMsgUpdateModelVersion()),
 			err: ErrFieldIsNotBase64Encoded,
+		},
+		{
+			name: "OtaChecksum length < 44",
+			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
+				msg.OtaUrl = "https://sampleflowurl.dclmodel"
+				msg.OtaChecksum = tmrand.Str(43)
+				msg.OtaFileSize = 1
+				msg.OtaChecksumType = 1
+
+				return msg
+			}(validMsgUpdateModelVersion()),
+			err: validator.ErrFieldMinLengthNotReached,
 		},
 		{
 			name: "MinApplicableSoftwareVersion and MaxApplicableSoftwareVersion are set " +
@@ -825,7 +836,9 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaChecksum is base64 encoded",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.OtaUrl = "https://sampleflowurl.dclmodel"
-				msg.OtaChecksum = "SGVsbG8gd29ybGQh"
+				msg.OtaChecksum = "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk="
+				msg.OtaFileSize = 1
+				msg.OtaChecksumType = 1
 
 				return msg
 			}(validMsgUpdateModelVersion()),

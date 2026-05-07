@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	tmrand "github.com/cometbft/cometbft/libs/rand"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 
@@ -93,6 +94,17 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			err: validator.ErrRequiredFieldMissing,
 		},
 		{
+			name: "label > 64",
+			msg: MsgAddPkiRevocationDistributionPoint{
+				Signer:        sample.AccAddress(),
+				Vid:           1,
+				IsPAA:         true,
+				SchemaVersion: 0,
+				Label:         tmrand.Str(65),
+			},
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
+		{
 			name: "crl signer certificate empty",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:        sample.AccAddress(),
@@ -174,7 +186,7 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 			err: pkitypes.ErrInvalidRevocationType,
 		},
 		{
-			name: "dataURL starts not with http or https",
+			name: "dataURL with invalid protocol (ftp)",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
 				Vid:                  testconstants.PAACertWithNumericVidVid,
@@ -186,17 +198,17 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 				RevocationType:       1,
 				SchemaVersion:        0,
 			},
-			err: pkitypes.ErrInvalidDataURLFormat,
+			err: validator.ErrFieldNotValid,
 		},
 		{
-			name: "dataURL without protocol",
+			name: "dataURL without http or https protocol",
 			msg: MsgAddPkiRevocationDistributionPoint{
 				Signer:               sample.AccAddress(),
 				Vid:                  testconstants.PAACertWithNumericVidVid,
 				IsPAA:                true,
 				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
 				Label:                "label",
-				DataURL:              testconstants.URLWithoutProtocol,
+				DataURL:              testconstants.URLStartsWithW3,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 				RevocationType:       1,
 				SchemaVersion:        0,
@@ -403,6 +415,21 @@ func TestMsgAddPkiRevocationDistributionPoint_ValidateBasic(t *testing.T) {
 				DataURL:              testconstants.DataURL,
 				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
 				CrlSignerDelegator:   testconstants.CertWithSizeGreater2KB,
+				RevocationType:       1,
+				SchemaVersion:        0,
+			},
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
+		{
+			name: "issuerSubjectKeyID > 64",
+			msg: MsgAddPkiRevocationDistributionPoint{
+				Signer:               sample.AccAddress(),
+				Vid:                  testconstants.PAACertWithNumericVidVid,
+				IsPAA:                true,
+				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
+				Label:                "label",
+				DataURL:              testconstants.DataURL,
+				IssuerSubjectKeyID:   tmrand.Str(65),
 				RevocationType:       1,
 				SchemaVersion:        0,
 			},

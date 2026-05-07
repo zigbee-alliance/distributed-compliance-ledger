@@ -151,8 +151,8 @@ func NewMsgUpdateModelVersion(
 		Pid:             pid,
 		SoftwareVersion: softwareVersion,
 		OtaUrl:          testconstants.OtaURL + "/new",
-		OtaFileSize:     testconstants.OtaFileSize + 1,
-		OtaChecksum:     testconstants.OtaChecksum + "/new",
+		OtaFileSize:     0,
+		OtaChecksum:     "",
 		ReleaseNotesUrl: testconstants.ReleaseNotesURL + "/new",
 	}
 }
@@ -302,6 +302,39 @@ func GetModelVersion(
 			return nil, err
 		}
 		res = resp.GetModelVersion()
+	}
+
+	return &res, nil
+}
+
+func GetModelVersions(
+	suite *utils.TestSuite,
+	vid int32,
+	pid int32,
+) (*modeltypes.ModelVersions, error) {
+	var res modeltypes.ModelVersions
+
+	if suite.Rest {
+		var resp modeltypes.QueryGetModelVersionsResponse
+		err := suite.QueryREST(fmt.Sprintf("/dcl/model/versions/%v/%v", vid, pid), &resp)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetModelVersions()
+	} else {
+		grpcConn := suite.GetGRPCConn()
+		defer grpcConn.Close()
+
+		// This creates a gRPC client to query the x/dclauth service.
+		modelClient := modeltypes.NewQueryClient(grpcConn)
+		resp, err := modelClient.ModelVersions(
+			context.Background(),
+			&modeltypes.QueryGetModelVersionsRequest{Vid: vid, Pid: pid},
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetModelVersions()
 	}
 
 	return &res, nil
@@ -739,6 +772,11 @@ func DeleteModelVersionBeforeDeletingModel(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModelVersionMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
+	modelVersions, err := GetModelVersions(suite, vid, pid)
+	require.NoError(suite.T, err)
+	require.Len(suite.T, modelVersions.SoftwareVersions, 1)
+	require.Equal(suite.T, modelVersions.SoftwareVersions[0], createModelVersion2Msg.SoftwareVersion)
+
 	deleteModelMsg := NewMsgDeleteModel(vid, pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{deleteModelMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
@@ -1150,8 +1188,6 @@ func Demo(suite *utils.TestSuite) {
 	// Check model version is updated
 	receivedModelVersion, err := GetModelVersion(suite, createFirstModelMsg.Vid, createFirstModelMsg.Pid, createModelVersionMsg.SoftwareVersion)
 	require.NoError(suite.T, err)
-	require.Equal(suite.T, createModelVersionMsg.OtaFileSize+1, receivedModelVersion.OtaFileSize)
-	require.Equal(suite.T, createModelVersionMsg.OtaChecksum+"/new", receivedModelVersion.OtaChecksum)
 	require.Equal(suite.T, createModelVersionMsg.OtaUrl+"/new", receivedModelVersion.OtaUrl)
 }
 

@@ -171,21 +171,21 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 				Vid:                   1,
 				SoftwareVersionString: testconstants.SoftwareVersionString,
 				CertificationDate:     "2020-01-01",
-				CertificationType:     testconstants.TestResult,
+				CertificationType:     testconstants.CertificationType,
 				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 				CDCertificateId:       testconstants.CDCertificateID,
 			},
 			err: ErrInvalidTestDateFormat,
 		},
 		{
-			name: "invalid certification type",
+			name: "invalid type",
 			msg: MsgCertifyModel{
 				Signer:                sample.AccAddress(),
 				Pid:                   1,
 				Vid:                   1,
 				SoftwareVersionString: testconstants.SoftwareVersionString,
 				CertificationDate:     testconstants.CertificationDate,
-				CertificationType:     "invalid certification type",
+				CertificationType:     "invalid type",
 				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 				Reason:                testconstants.Reason,
 				CDCertificateId:       testconstants.CDCertificateID,
@@ -239,7 +239,7 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "CDCertificateId > 64",
+			name: "CDCertificateId > 19",
 			msg: MsgCertifyModel{
 				Signer:                sample.AccAddress(),
 				Pid:                   1,
@@ -249,9 +249,24 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 				CertificationType:     testconstants.CertificationType,
 				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 				Reason:                testconstants.Reason,
-				CDCertificateId:       tmrand.Str(65),
+				CDCertificateId:       tmrand.Str(20),
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
+		},
+		{
+			name: "CDCertificateId < 19",
+			msg: MsgCertifyModel{
+				Signer:                sample.AccAddress(),
+				Pid:                   1,
+				Vid:                   1,
+				SoftwareVersionString: testconstants.TestDate,
+				CertificationDate:     testconstants.CertificationDate,
+				CertificationType:     testconstants.CertificationType,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				Reason:                testconstants.Reason,
+				CDCertificateId:       tmrand.Str(18),
+			},
+			err: validator.ErrFieldMinLengthNotReached,
 		},
 		{
 			name: "familyID > 64",
@@ -398,6 +413,21 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 			err: ErrInvalidPFCCertificationRoute,
 		},
 		{
+			name: "CertificationType > 20",
+			msg: MsgCertifyModel{
+				Signer:                sample.AccAddress(),
+				Pid:                   1,
+				Vid:                   1,
+				SoftwareVersionString: testconstants.TestDate,
+				CertificationDate:     testconstants.CertificationDate,
+				CertificationType:     tmrand.Str(20),
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				Reason:                testconstants.Reason,
+				CDCertificateId:       testconstants.CDCertificateID,
+			},
+			err: ErrInvalidCertificationType,
+		},
+		{
 			name: "schemaVersion != 0",
 			msg: MsgCertifyModel{
 				Signer:                sample.AccAddress(),
@@ -533,7 +563,7 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 			},
 		},
 		{
-			name: "CDCertificateId >= 0 && CDCertificateId <= 64",
+			name: "CDCertificateId == 19",
 			msg: MsgCertifyModel{
 				Signer:                sample.AccAddress(),
 				Pid:                   1,

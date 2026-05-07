@@ -95,7 +95,7 @@ func TestMsgDeleteComplianceInfo_ValidateBasic(t *testing.T) {
 				Creator:           sample.AccAddress(),
 				Pid:               1,
 				Vid:               1,
-				CertificationType: "invalid certification type",
+				CertificationType: "invalid type",
 			},
 			err: ErrInvalidCertificationType,
 		},

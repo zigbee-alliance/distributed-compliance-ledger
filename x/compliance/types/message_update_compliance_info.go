@@ -110,5 +110,9 @@ func (msg *MsgUpdateComplianceInfo) ValidateBasic() error {
 		return NewErrInvalidPFCCertificationRoute(msg.ParentChild, PFCCertificationRouteList)
 	}
 
+	if msg.CDCertificateId != "" && len(msg.CDCertificateId) != 19 {
+		return errors.Wrap(validator.ErrFieldEqualBoundViolated, "CDCertificateId length must be equal to 19")
+	}
+
 	return nil
 }
