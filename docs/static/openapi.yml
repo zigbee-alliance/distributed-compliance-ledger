@@ -302,6 +302,7 @@ paths:
                       type: string
                     certificationIdOfSoftwareComponent:
                       type: string
+                      title: Deprecated
                     schemaVersion:
                       type: integer
                       format: int64
@@ -496,6 +497,7 @@ paths:
                     type: string
                   certificationIdOfSoftwareComponent:
                     type: string
+                    title: Deprecated
                   schemaVersion:
                     type: integer
                     format: int64
@@ -634,6 +636,7 @@ paths:
                             type: string
                           certificationIdOfSoftwareComponent:
                             type: string
+                            title: Deprecated
                           schemaVersion:
                             type: integer
                             format: int64
@@ -838,6 +841,7 @@ paths:
                           type: string
                         certificationIdOfSoftwareComponent:
                           type: string
+                          title: Deprecated
                         schemaVersion:
                           type: integer
                           format: int64
@@ -17414,6 +17418,7 @@ definitions:
         type: string
       certificationIdOfSoftwareComponent:
         type: string
+        title: Deprecated
       schemaVersion:
         type: integer
         format: int64
@@ -17500,6 +17505,7 @@ definitions:
               type: string
             certificationIdOfSoftwareComponent:
               type: string
+              title: Deprecated
             schemaVersion:
               type: integer
               format: int64
@@ -17656,6 +17662,7 @@ definitions:
               type: string
             certificationIdOfSoftwareComponent:
               type: string
+              title: Deprecated
             schemaVersion:
               type: integer
               format: int64
@@ -17773,6 +17780,7 @@ definitions:
                     type: string
                   certificationIdOfSoftwareComponent:
                     type: string
+                    title: Deprecated
                   schemaVersion:
                     type: integer
                     format: int64
@@ -18006,6 +18014,7 @@ definitions:
             type: string
           certificationIdOfSoftwareComponent:
             type: string
+            title: Deprecated
           schemaVersion:
             type: integer
             format: int64
@@ -18095,6 +18104,7 @@ definitions:
                   type: string
                 certificationIdOfSoftwareComponent:
                   type: string
+                  title: Deprecated
                 schemaVersion:
                   type: integer
                   format: int64

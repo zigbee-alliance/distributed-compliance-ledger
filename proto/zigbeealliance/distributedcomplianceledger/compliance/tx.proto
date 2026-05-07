@@ -39,7 +39,7 @@ message MsgCertifyModel {
   string programType = 18 [(gogoproto.moretags) = "validate:\"max=64\""];
   string transport = 19 [(gogoproto.moretags) = "validate:\"max=64\""];
   string parentChild = 20 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string certificationIdOfSoftwareComponent = 21 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string certificationIdOfSoftwareComponent = 21 [(gogoproto.moretags) = "validate:\"max=64\"", deprecated = true];
   uint32 schemaVersion = 22 [(gogoproto.moretags) = "validate:\"eq=0\""];
   uint32 specificationVersion = 23 [(gogoproto.moretags) = "validate:\"required\""];
 }
@@ -84,7 +84,7 @@ message MsgProvisionModel {
   string programType = 18 [(gogoproto.moretags) = "validate:\"max=64\""];
   string transport = 19 [(gogoproto.moretags) = "validate:\"max=64\""];
   string parentChild = 20 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string certificationIdOfSoftwareComponent = 21 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string certificationIdOfSoftwareComponent = 21 [(gogoproto.moretags) = "validate:\"max=64\"", deprecated = true];
   uint32 schemaVersion = 22 [(gogoproto.moretags) = "validate:\"eq=0\""];
   uint32 specificationVersion = 23 [(gogoproto.moretags) = "validate:\"required\""];
 }
@@ -113,7 +113,7 @@ message MsgUpdateComplianceInfo {
   string supportedClusters = 18 [(gogoproto.moretags) = "validate:\"omitempty,max=128\""];
   string OSVersion = 19 [(gogoproto.moretags) = "validate:\"omitempty,max=64\"", deprecated = true];
   string parentChild = 20 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
-  string certificationIdOfSoftwareComponent = 21 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
+  string certificationIdOfSoftwareComponent = 21 [(gogoproto.moretags) = "validate:\"omitempty,max=64\"", deprecated = true];
   uint32 schemaVersion = 22 [(gogoproto.moretags) = "validate:\"eq=0\""];
   uint32 specificationVersion = 23;
 }

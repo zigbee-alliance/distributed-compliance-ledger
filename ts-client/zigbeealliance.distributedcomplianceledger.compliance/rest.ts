@@ -181,6 +181,8 @@ export interface DistributedcomplianceledgercomplianceComplianceInfo {
   /** Deprecated */
   OSVersion?: string;
   parentChild?: string;
+
+  /** Deprecated */
   certificationIdOfSoftwareComponent?: string;
 
   /** @format int64 */

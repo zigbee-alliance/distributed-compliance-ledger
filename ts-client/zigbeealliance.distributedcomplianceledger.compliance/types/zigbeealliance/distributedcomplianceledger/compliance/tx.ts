@@ -27,6 +27,7 @@ export interface MsgCertifyModel {
   programType: string;
   transport: string;
   parentChild: string;
+  /** @deprecated */
   certificationIdOfSoftwareComponent: string;
   schemaVersion: number;
   specificationVersion: number;
@@ -75,6 +76,7 @@ export interface MsgProvisionModel {
   programType: string;
   transport: string;
   parentChild: string;
+  /** @deprecated */
   certificationIdOfSoftwareComponent: string;
   schemaVersion: number;
   specificationVersion: number;
@@ -107,6 +109,7 @@ export interface MsgUpdateComplianceInfo {
   /** @deprecated */
   OSVersion: string;
   parentChild: string;
+  /** @deprecated */
   certificationIdOfSoftwareComponent: string;
   schemaVersion: number;
   specificationVersion: number;

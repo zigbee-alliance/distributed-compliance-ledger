@@ -42,6 +42,11 @@ export interface ComplianceInfo {
    */
   OSVersion: string;
   parentChild: string;
+  /**
+   * Deprecated
+   *
+   * @deprecated
+   */
   certificationIdOfSoftwareComponent: string;
   schemaVersion: number;
   specificationVersion: number;

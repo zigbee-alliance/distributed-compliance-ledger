@@ -32,7 +32,8 @@ message ComplianceInfo {
   // Deprecated
   string OSVersion = 21 [deprecated = true];;
   string parentChild = 22;
-  string certificationIdOfSoftwareComponent = 23;
+  // Deprecated
+  string certificationIdOfSoftwareComponent = 23 [deprecated = true];
   uint32 schemaVersion = 24;
   uint32 specificationVersion = 25;
 }
