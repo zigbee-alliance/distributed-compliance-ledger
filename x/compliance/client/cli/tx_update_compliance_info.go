@@ -101,6 +101,7 @@ func CmdUpdateComplianceInfo() *cobra.Command {
 	cmd.Flags().StringVar(&programType, FlagProgramType, "", TextProgramType)
 	cmd.Flags().StringVar(&transport, FlagTransport, "", TextTransport)
 	cmd.Flags().StringVar(&parentChild, FlagParentChild, "", TextParentChild)
+	cmd.Flags().StringVar(&certificationIDOfSoftwareComponent, FlagCertificationIDOfSoftwareComponent, "", TextCertificationIDOfSoftwareComponent)
 	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, TextSchemaVersion)
 	// Deprecated fields
 	cmd.Flags().StringVar(&compliantPlatformUsed, FlagCompliantPlatformUsed, "", TextCompliantPlatformUsed)
