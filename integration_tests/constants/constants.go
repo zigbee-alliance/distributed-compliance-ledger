@@ -127,7 +127,7 @@ var (
 	OSVersion                          = "Some OS Version"
 	CertificationRoute                 = "fullTested"
 	ProgramType                        = "endProduct"
-	ProgramTypeVersion                 = "Some Program Type Version"
+	ProgramTypeVersion                 = "1.4.2"
 	Transport                          = "wi-fi,ethernet"
 	SoftwareVersionCertificationStatus = uint32(
 		3,
