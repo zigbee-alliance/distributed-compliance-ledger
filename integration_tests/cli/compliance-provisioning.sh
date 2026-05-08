@@ -58,7 +58,7 @@ check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"softwareVersion\": $sv"
 check_response "$result" "\"softwareVersionString\": \"$svs\""
 check_response "$result" "\"certificationType\": \"$certification_type_zb\""
-check_response "$result" "\"specificationVersion\": \"$specification_version\""
+check_response "$result" "\"specificationVersion\": $specification_version"
 check_response "$result" "\"date\": \"$provision_date\""
 check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id\""
 
