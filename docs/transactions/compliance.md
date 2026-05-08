@@ -6,7 +6,7 @@
 
 **Status: Implemented**
 
-Attests compliance of the Model Version to the ZB or Matter standard.
+Attests compliance of a Model Version to the Matter, Zigbee or Aliro certification.
 
 `REVOKE_MODEL_CERTIFICATION` should be used for revoking (disabling) the compliance.
 It's possible to call `CERTIFY_MODEL` for revoked model versions to enable them back.
@@ -145,7 +145,8 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
 
 **Status: Implemented**
 
-Sets provisional state for the Model Version.
+Sets a provisional certification state for a Model Version. It allows production and distribution of the Model Version 
+to occur in parallel with certification (with potential software fixes yielding a higher SoftwareVersion which gets certification).
 
 The corresponding Model and Model Version are not required to be present in the ledger. It can be added later by Vendors.
 

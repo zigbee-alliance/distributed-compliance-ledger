@@ -42,7 +42,7 @@ func CmdProvisionModel() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "provision-model",
-		Short: "Set provisional state for the model",
+		Short: "Set provisional certification state for a model version",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
