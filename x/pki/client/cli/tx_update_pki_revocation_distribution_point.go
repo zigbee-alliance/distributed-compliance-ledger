@@ -64,7 +64,7 @@ func CmdUpdatePkiRevocationDistributionPoint() *cobra.Command {
 				schemaVersion,
 			)
 
-			if dataURL != "" && cli.IsLiveURL(dataURL) {
+			if dataURL != "" && !cli.IsLiveURL(dataURL) {
 				return fmt.Errorf("%s is not reachable", dataURL)
 			}
 

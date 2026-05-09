@@ -61,7 +61,7 @@ func CmdCreateModelVersion() *cobra.Command {
 				specificationVersion,
 			)
 
-			if releaseNotesURL != "" && cli.IsLiveURL(releaseNotesURL) {
+			if releaseNotesURL != "" && !cli.IsLiveURL(releaseNotesURL) {
 				return fmt.Errorf("%s is not reachable", releaseNotesURL)
 			}
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -171,7 +171,7 @@ func CmdUpdateModelVersion() *cobra.Command {
 				schemaVersion,
 			)
 
-			if releaseNotesURL != "" && cli.IsLiveURL(releaseNotesURL) {
+			if releaseNotesURL != "" && !cli.IsLiveURL(releaseNotesURL) {
 				return fmt.Errorf("%s is not reachable", releaseNotesURL)
 			}
 

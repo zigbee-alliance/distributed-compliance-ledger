@@ -42,7 +42,7 @@ func CmdCreateVendorInfo() *cobra.Command {
 				schemaVersion,
 			)
 
-			if vendorLandingPageURL != "" && cli.IsLiveURL(vendorLandingPageURL) {
+			if vendorLandingPageURL != "" && !cli.IsLiveURL(vendorLandingPageURL) {
 				return fmt.Errorf("%s is not reachable", vendorLandingPageURL)
 			}
 
@@ -107,7 +107,7 @@ func CmdUpdateVendorInfo() *cobra.Command {
 				schemaVersion,
 			)
 
-			if vendorLandingPageURL != "" && cli.IsLiveURL(vendorLandingPageURL) {
+			if vendorLandingPageURL != "" && !cli.IsLiveURL(vendorLandingPageURL) {
 				return fmt.Errorf("%s is not reachable", vendorLandingPageURL)
 			}
 
