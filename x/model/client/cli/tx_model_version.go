@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -59,6 +61,9 @@ func CmdCreateModelVersion() *cobra.Command {
 				specificationVersion,
 			)
 
+			if releaseNotesURL != "" && cli.IsLiveURL(releaseNotesURL) {
+				return fmt.Errorf("%s is not reachable", releaseNotesURL)
+			}
 			// validate basic will be called in GenerateOrBroadcastTxCLI
 			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 			if cli.IsWriteInsteadReadRPCError(err) {
@@ -165,6 +170,10 @@ func CmdUpdateModelVersion() *cobra.Command {
 				releaseNotesURL,
 				schemaVersion,
 			)
+
+			if releaseNotesURL != "" && cli.IsLiveURL(releaseNotesURL) {
+				return fmt.Errorf("%s is not reachable", releaseNotesURL)
+			}
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
 			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)

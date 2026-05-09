@@ -15,14 +15,10 @@
 package validator
 
 import (
-	"context"
-	"net/http"
 	"net/url"
 	"reflect"
-	"time"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/internal/config"
 )
 
 func requiredIfBit0Set(fl validator.FieldLevel) bool {
@@ -60,18 +56,6 @@ func isValidHttpsUrl(fl validator.FieldLevel) bool { //nolint:stylecheck
 	return validURL(fl, "https")
 }
 
-var allowed4XXStatusCodes = []int{
-	http.StatusUnauthorized,
-	http.StatusForbidden,
-	http.StatusUnavailableForLegalReasons,
-}
-
-const (
-	livenessCheckTimeout = 10 * time.Second
-)
-
-var httpClient = &http.Client{Timeout: livenessCheckTimeout}
-
 func validURL(fl validator.FieldLevel, allowedSchemes ...string) bool {
 	raw := fl.Field().String()
 	if raw == "" {
@@ -83,48 +67,12 @@ func validURL(fl validator.FieldLevel, allowedSchemes ...string) bool {
 		return false
 	}
 
-	if !isSchemeAllowed(u.Scheme, allowedSchemes) {
-		return false
-	}
-
-	return isLiveURL(u)
+	return isSchemeAllowed(u.Scheme, allowedSchemes)
 }
 
 func isSchemeAllowed(scheme string, allowed []string) bool {
 	for _, s := range allowed {
 		if scheme == s {
-			return true
-		}
-	}
-
-	return false
-}
-
-func isLiveURL(u *url.URL) bool {
-	if config.DisableURLLivenessCheck {
-		return true
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), livenessCheckTimeout)
-	defer cancel()
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodHead, u.String(), nil)
-	if err != nil {
-		return false
-	}
-
-	resp, err := httpClient.Do(req)
-	if err != nil {
-		return false
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode >= http.StatusOK && resp.StatusCode < http.StatusBadRequest {
-		return true
-	}
-
-	for _, code := range allowed4XXStatusCodes {
-		if code == resp.StatusCode {
 			return true
 		}
 	}

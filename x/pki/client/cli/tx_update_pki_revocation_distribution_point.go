@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -62,6 +63,10 @@ func CmdUpdatePkiRevocationDistributionPoint() *cobra.Command {
 				dataDigestType,
 				schemaVersion,
 			)
+
+			if dataURL != "" && cli.IsLiveURL(dataURL) {
+				return fmt.Errorf("%s is not reachable", dataURL)
+			}
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
 			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
