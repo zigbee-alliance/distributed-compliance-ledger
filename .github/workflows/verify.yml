@@ -108,7 +108,7 @@ jobs:
           set -euo pipefail
           # shellcheck disable=SC2046
           go test -tags=dev -json -v $(go list ./... | grep -v '/integration_tests') -coverprofile=./cover.out -covermode=set -coverpkg=./... 2>&1 | tee /tmp/gotest.log | gotestfmt
-          go test -v -run TestURLLivenessCheck github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator
+          go test -v utils/cli/url_liveness.go  utils/cli/url_liveness_test.go
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GOCOVER_MODE: set

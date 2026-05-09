@@ -115,7 +115,7 @@ go.sum: go.mod
 
 test:
 	go test -tags=dev -v $(PACKAGES)
-	go test -v utils/validator/url_liveness_test.go
+	go test -v utils/cli/url_liveness.go  utils/cli/url_liveness_test.go
 
 lint:
 	golangci-lint run ./... --timeout 5m0s
