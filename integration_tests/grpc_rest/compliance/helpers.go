@@ -1690,6 +1690,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 		SpecificationVersion:               testconstants.SpecificationVersion,
 		Reason:                             certReason,
 		CDCertificateId:                    testconstants.CDCertificateID,
+		ProgramType:                        "softwareComponent",
 		ProgramTypeVersion:                 "pTypeVersion",
 		FamilyId:                           "familyID",
 		SupportedClusters:                  "sClusters",
@@ -1715,6 +1716,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.SpecificationVersion, complianceInfo.SpecificationVersion)
 	require.Equal(suite.T, certReason, complianceInfo.Reason)
 	require.Equal(suite.T, certDate, complianceInfo.Date)
+	require.Equal(suite.T, "softwareComponent", complianceInfo.ProgramType)
 	require.Equal(suite.T, "pTypeVersion", complianceInfo.ProgramTypeVersion)
 	require.Equal(suite.T, "FAM12345abc", complianceInfo.FamilyId)
 	require.Equal(suite.T, "sClusters", complianceInfo.SupportedClusters)
@@ -1746,6 +1748,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.SpecificationVersion, deviceSoftwareCompliance.ComplianceInfo[3].SpecificationVersion)
 	require.Equal(suite.T, certReason, deviceSoftwareCompliance.ComplianceInfo[3].Reason)
 	require.Equal(suite.T, certDate, deviceSoftwareCompliance.ComplianceInfo[3].Date)
+	require.Equal(suite.T, "softwareComponent", deviceSoftwareCompliance.ComplianceInfo[3].ProgramType)
 	require.Equal(suite.T, "pTypeVersion", deviceSoftwareCompliance.ComplianceInfo[3].ProgramTypeVersion)
 	require.Equal(suite.T, "FAM12345abc", deviceSoftwareCompliance.ComplianceInfo[3].FamilyId)
 	require.Equal(suite.T, "sClusters", deviceSoftwareCompliance.ComplianceInfo[3].SupportedClusters)
