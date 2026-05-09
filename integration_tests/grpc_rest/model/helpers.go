@@ -161,6 +161,7 @@ func NewMsgCertifyModelVersion(
 	signer string,
 	softwareVersion uint32,
 	softwareVersionString string,
+	specificationVersion uint32,
 	vid int32,
 	pid int32,
 ) *types.MsgCertifyModel {
@@ -171,6 +172,7 @@ func NewMsgCertifyModelVersion(
 		CertificationDate:     testconstants.CertificationDate,
 		CDCertificateId:       testconstants.CDCertificateID,
 		CertificationType:     testconstants.CertificationType,
+		SpecificationVersion:  specificationVersion,
 		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		SoftwareVersion:       softwareVersion,
 		SoftwareVersionString: softwareVersionString,
@@ -640,7 +642,7 @@ func DeleteModelWithAssociatedModelVersionsCertified(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// certify model version
-	certifyModelVersionMsg := NewMsgCertifyModelVersion(ccAccount.Address, 1, "1", vid, pid)
+	certifyModelVersionMsg := NewMsgCertifyModelVersion(ccAccount.Address, 1, "1", 0x01040200, vid, pid)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{certifyModelVersionMsg}, ccName, ccAccount)
 	require.NoError(suite.T, err)
 
