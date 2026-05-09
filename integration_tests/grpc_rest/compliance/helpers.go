@@ -1043,7 +1043,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 		CDVersionNumber:      "312",
 		CertificationType:    compliancetypes.ZigbeeCertificationType,
 		SpecificationVersion: testconstants.SpecificationVersion,
-		ProgramType:          "new program type",
+		ProgramType:          "endProduct",
 		Reason:               "new reason",
 		ParentChild:          "child",
 	}
