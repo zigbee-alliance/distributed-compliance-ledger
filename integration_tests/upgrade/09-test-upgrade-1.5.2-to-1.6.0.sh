@@ -33,12 +33,12 @@ test_divider
 # Upgrade constants
 
 plan_name="v1.6.0"
-upgrade_checksum="sha256:63a27d50985947dc79f03421a2f7c6475adb84932b431d26d0b6d0a2e2d539ad"
+upgrade_checksum="sha256:47d91b6be0b0a15e7edde7b78e3013d4eedbbb3c2c1b164de78409198548a2de"
 # TODO it must be v1.6.0 before actual release
-binary_version_new="v1.6.0-0.dev.2"
+binary_version_new="v1.6.0-0.dev.3"
 
 DCLD_BIN_OLD="/tmp/dcld_bins/dcld_v1.5.2"
-DCLD_BIN_NEW="/tmp/dcld_bins/dcld_v1.6.0-0.dev.2" # TODO it must be v1.6.0 before actual release
+DCLD_BIN_NEW="/tmp/dcld_bins/dcld_v1.6.0-0.dev.3" # TODO it must be v1.6.0 before actual release
 $DCLD_BIN_NEW config broadcast-mode sync
 ########################################################################################
 
