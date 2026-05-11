@@ -1057,6 +1057,7 @@ func DeleteModelVersionCertified(suite *utils.TestSuite) {
 		SoftwareVersionString: "1",
 		CertificationDate:     certDate,
 		CertificationType:     "zigbee",
+		SpecificationVersion:  testconstants.SpecificationVersion,
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
 		CDVersionNumber:       uint32(createModelVersionMsg.CdVersionNumber),
