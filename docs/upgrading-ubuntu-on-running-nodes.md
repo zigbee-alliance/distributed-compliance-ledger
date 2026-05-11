@@ -172,6 +172,8 @@ This document outlines the procedure for upgrading an active Distributed Complia
     sudo do-release-upgrade 
     ```
 
+    > **_Note:_** Near the start of the run, `do-release-upgrade` prints a notice that **third-party APT sources** (PPAs and any custom repositories in `/etc/apt/sources.list.d/`) have been **disabled** for the duration of the upgrade. This is expected — re-enable them manually after the upgrade if you still need them (and only after verifying they support the new release).
+
     4.3 During the upgrade, you will be asked to open an additional SSH daemon on port `1022`. Enter `y` to continue.
  
     4.4 You will also be asked to open the port in the firewall. This refers to the OS-level firewall. Press `Enter` to continue. 
@@ -242,22 +244,27 @@ This document outlines the procedure for upgrading an active Distributed Complia
 
     *Note: Port 1022 is a fallback to ensure you can connect if the default SSH port (22) fails during the upgrade. Remember to remove this rule after the upgrade is complete.*
 
-    4.5 When prompted "Installing the upgrade can take several hours", press `y` to continue.
+    4.5 After the package plan is computed, `do-release-upgrade` shows a summary of the form **"`N` packages are going to be installed/upgraded/removed, `M` MB will be downloaded"** followed by **"Continue [yN]?"**. Press `y` and `Enter` to start the actual upgrade. (A warning that "Installing the upgrade can take several hours" appears at the same time.)
 
     4.6 While the upgrade is downloading packages, it is recommended to connect to the `1022` SSH port as a backup connection:
     ```bash
     ssh -p 1022 -i "private-key.pem" {{user}}@{{ip or hostname}}
     ```
 
-    4.7 For the prompt regarding restarting services (libpam, libc, etc.), select `Yes` and press `Enter`.
+    4.7 When the `libpam` / `libc6` debconf dialog asks **"Restart services during package upgrades without asking?"**, select `Yes` and press `Enter`. (Always appears.)
 
-    4.8 For the `Postfix Configuration` prompt, select `No configuration` and press `Enter`.
+    4.8 *(Conditional — only if the corresponding package is installed.)* You may be presented with package-specific debconf prompts, e.g. for **Postfix**. If asked, choose `No configuration` for Postfix unless you actively use it for mail. A vanilla DCL node will not see this prompt, since neither `postfix` nor `monit` is installed by the DCL deployment.
 
-    4.9 For the `Configuration file 'etc/monit/monitrc'` prompt, press `Y` to use the new version (or your preferred choice if you have custom configurations).
+    4.9 *(Conditional — only if you have locally modified the corresponding config file.)* For any `Configuration file '/path/to/file'` prompt with options `Y/I/N/O/D/Z` (typical files: `/etc/ssh/sshd_config`, `/etc/sudoers`, `/etc/sysctl.conf`, `/etc/default/grub`, `/etc/monit/monitrc`):
+    *   Press `N` to **keep your local version** (recommended if you have customized that file).
+    *   Press `Y` to take the **new package-maintainer version** (recommended if you have not customized it).
+    *   Press `D` to see a diff before deciding.
 
-    4.10 For the `Remove obsolete packages` prompt, enter `y`.
+    4.10 For the `Remove obsolete packages` prompt, enter `y`. (Always appears.)
 
-    4.11 When prompted "System upgrade complete. Restart required", enter `y` to reboot.
+    4.11 *(Conditional — appears once `needrestart` is installed during the upgrade.)* If the **"Daemons using outdated libraries"** TUI (purple screen, from `needrestart`) lists services to restart, accept the default selection and press `Enter` / `OK`.
+
+    4.12 When prompted **"System upgrade complete. Restart required"**, enter `y` to reboot. (Always appears.)
 
 5.  **Verification (22.04)**: After rebooting, ensure the instance is running Ubuntu 22.04 and `dcld` is functional. 
 
