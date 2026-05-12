@@ -38,6 +38,7 @@ func TestIsLiveURL(t *testing.T) {
 		{"301 redirect", http.StatusMovedPermanently, true},
 		{"401 unauthorized", http.StatusUnauthorized, true},
 		{"403 forbidden", http.StatusForbidden, true},
+		{"405 method not allowed", http.StatusMethodNotAllowed, true},
 		{"451 unavailable for legal reasons", http.StatusUnavailableForLegalReasons, true},
 		{"404 not found", http.StatusNotFound, false},
 		{"500 internal server error", http.StatusInternalServerError, false},

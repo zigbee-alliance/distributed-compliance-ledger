@@ -17,6 +17,7 @@ var allowed4XXStatusCodes = []int{
 	http.StatusUnauthorized,
 	http.StatusForbidden,
 	http.StatusUnavailableForLegalReasons,
+	http.StatusMethodNotAllowed,
 }
 var httpClient = &http.Client{Timeout: livenessCheckTimeout}
 
