@@ -124,9 +124,17 @@ license-check:
 clean:
 	rm -rf $(OUTPUT_DIR)
 
+# Regenerate the TypeScript client and apply the RFC 3986 query-encoding patch.
+# The patch is required so base64 pagination keys (+, /, =) survive transit;
+# without it the cosmos-sdk gRPC-gateway decodes '+' as space and rejects next_key.
+ts-client-gen:
+	ignite generate ts-client
+	./scripts/patch-ts-client-encoding.sh
+
 ${TEST_TARGETS}:
 	make -f ${MK_TEST} $@
 
 .PHONY: all build install test lint clean \
+		ts-client-gen \
 		license license-check \
 		${TEST_TARGETS}

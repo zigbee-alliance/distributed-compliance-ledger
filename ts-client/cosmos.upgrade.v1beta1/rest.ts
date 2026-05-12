@@ -297,7 +297,25 @@ export class HttpClient<SecurityDataType = unknown> {
   private format?: ResponseType;
 
   constructor({ securityWorker, secure, format, ...axiosConfig }: ApiConfig<SecurityDataType> = {}) {
-    this.instance = axios.create({ ...axiosConfig, baseURL: axiosConfig.baseURL || "" });
+    this.instance = axios.create({
+      ...axiosConfig,
+      baseURL: axiosConfig.baseURL || "",
+      // RFC 3986 encode every value so base64 pagination keys (+, /, =) survive transit.
+      paramsSerializer: (params: Record<string, any>) => {
+        const parts: string[] = [];
+        for (const key of Object.keys(params)) {
+          const value = params[key];
+          if (value === undefined || value === null) continue;
+          const ek = encodeURIComponent(key);
+          if (Array.isArray(value)) {
+            for (const item of value) parts.push(`${ek}=${encodeURIComponent(String(item))}`);
+          } else {
+            parts.push(`${ek}=${encodeURIComponent(String(value))}`);
+          }
+        }
+        return parts.join("&");
+      },
+    });
     this.secure = secure;
     this.format = format;
     this.securityWorker = securityWorker;
