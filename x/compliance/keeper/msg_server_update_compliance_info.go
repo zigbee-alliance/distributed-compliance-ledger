@@ -7,6 +7,7 @@ import (
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	commontypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
@@ -110,10 +111,9 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 	}
 
 	if msg.SpecificationVersion != 0 {
+		commontypes.SetCurrentSchemaVersion(&complianceInfo, complianceInfo.SchemaVersion == 0)
 		complianceInfo.SpecificationVersion = msg.SpecificationVersion
 	}
-
-	complianceInfo.SchemaVersion = msg.SchemaVersion
 
 	//nolint:nestif
 	if msg.CDCertificateId != "" && msg.CDCertificateId != complianceInfo.CDCertificateId {
@@ -128,6 +128,7 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		if len(currentDeviceSoftwareCompliance.ComplianceInfo) == 0 {
 			k.RemoveDeviceSoftwareCompliance(ctx, currentDeviceSoftwareCompliance.CDCertificateId)
 		} else {
+			commontypes.SetCurrentSchemaVersion(&currentDeviceSoftwareCompliance)
 			k.SetDeviceSoftwareCompliance(ctx, currentDeviceSoftwareCompliance)
 		}
 
@@ -141,6 +142,8 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 			targetDeviceSoftwareCompliance.CDCertificateId = msg.CDCertificateId
 		}
 		targetDeviceSoftwareCompliance.ComplianceInfo = append(targetDeviceSoftwareCompliance.ComplianceInfo, &complianceInfo)
+
+		commontypes.SetCurrentSchemaVersion(&targetDeviceSoftwareCompliance)
 		k.SetDeviceSoftwareCompliance(ctx, targetDeviceSoftwareCompliance)
 	} else { // update the corresponding device software compliance to sync with compliance info.
 		deviceSoftwareCompliance, _ := k.GetDeviceSoftwareCompliance(ctx, complianceInfo.CDCertificateId)
@@ -150,6 +153,7 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 			deviceSoftwareCompliance.ComplianceInfo[index] = &complianceInfo
 		}
 
+		commontypes.SetCurrentSchemaVersion(&deviceSoftwareCompliance)
 		k.SetDeviceSoftwareCompliance(ctx, deviceSoftwareCompliance)
 	}
 

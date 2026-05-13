@@ -7,6 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
+	commontypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
@@ -81,8 +82,8 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvision
 		ParentChild:                        msg.ParentChild,
 		CertificationIdOfSoftwareComponent: msg.CertificationIdOfSoftwareComponent,
 		SpecificationVersion:               msg.SpecificationVersion,
-		SchemaVersion:                      msg.SchemaVersion,
 	}
+	commontypes.SetCurrentSchemaVersion(&complianceInfo)
 
 	// store compliance info
 	k.SetComplianceInfo(ctx, complianceInfo)
@@ -95,6 +96,7 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvision
 		CertificationType: msg.CertificationType,
 		Value:             true,
 	}
+	commontypes.SetCurrentSchemaVersion(&provisionalModel)
 	k.SetProvisionalModel(ctx, provisionalModel)
 
 	return &types.MsgProvisionModelResponse{}, nil
