@@ -84,20 +84,20 @@ jobs:
 
           # build json string to use later as a job matrix
           included=()
-          for os in "ubuntu-22.04" "ubuntu-24.04"; do
+          for os in "ubuntu-20.04" "ubuntu-24.04"; do
             asset_bin_url="$(echo "$release_info" | jq -r ".assets[] | select(.name == \"${{ env.BIN_NAME }}-$os\") | .browser_download_url")"
             asset_tgz_url="$(echo "$release_info" | jq -r ".assets[] | select(.name == \"$os.tar.gz\") | .browser_download_url")"
             asset_cv_url="$(echo "$release_info" | jq -r ".assets[] | select(.name == \"cosmovisor-v${{ env.COSMOVISOR_VERSION }}-$os\") | .browser_download_url")"
 
             # Check if we need to run the job for this OS
-            # For 22.04, we don't care if BIN or CV are missing (we only want TGZ and common assets)
+            # For 20.04, we don't care if BIN or CV are missing (we only want TGZ and common assets)
             if [[ -z "$asset_tgz_url" || \
                   ( "$os" == "ubuntu-24.04" && ( -z "$asset_bin_url" || -z "$asset_cv_url" ) ) || \
-                  ( "$os" == "ubuntu-22.04" && ( -z "$asset_service_url" || -z "$asset_service_conf_url" || -z "$asset_start_url" || -z "$asset_preupgrade_url" || -z "$asset_deploy_script_url" ) ) ]]; then
+                  ( "$os" == "ubuntu-20.04" && ( -z "$asset_service_url" || -z "$asset_service_conf_url" || -z "$asset_start_url" || -z "$asset_preupgrade_url" || -z "$asset_deploy_script_url" ) ) ]]; then
           
-              # For non-22.04, we don't want to re-check/re-upload generic assets if they are being handled by 22.04 or already exist
-              # If they are missing, 22.04 job will upload them.
-              if [[ "$os" == "ubuntu-22.04" ]]; then
+              # For non-20.04, we don't want to re-check/re-upload generic assets if they are being handled by 20.04 or already exist
+              # If they are missing, 20.04 job will upload them.
+              if [[ "$os" == "ubuntu-20.04" ]]; then
                 # os|bin-url|tgz-url|cosmovisor-url|service-file-url|service-conf-file-url|start-script-url|preupgrade-script-url|deploy-script-url|tgz-filename
                 included+=("$os|$asset_bin_url|$asset_tgz_url|$asset_cv_url|$asset_service_url|$asset_service_conf_url|$asset_start_url|$asset_preupgrade_url|$asset_deploy_script_url|$os.tar.gz")
               else
