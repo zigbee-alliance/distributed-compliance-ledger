@@ -34,11 +34,11 @@ services:
     command: /var/lib/dcl/./node_helper.sh
 
   node1:
-    image: dcledger-20.04
+    image: dcledger-22.04
     build:
       context: .
       args:
-        UBUNTU_VERSION: 20.04
+        UBUNTU_VERSION: 22.04
     container_name: node1
     ports:
       - "26658-26659:26656-26657"
