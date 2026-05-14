@@ -39,7 +39,7 @@ func CmdCreateModel() *cobra.Command {
 		enhancedSetupFlowTCRevision                int32
 		enhancedSetupFlowTCDigest                  string
 		enhancedSetupFlowTCFileSize                uint32
-		enhancedSetupFlowMaintenanceURL            string
+		maintenanceURL                             string
 		commissioningFallbackURL                   string
 		schemaVersion                              uint32
 	)
@@ -95,7 +95,7 @@ func CmdCreateModel() *cobra.Command {
 				enhancedSetupFlowTCRevision,
 				enhancedSetupFlowTCDigest,
 				enhancedSetupFlowTCFileSize,
-				enhancedSetupFlowMaintenanceURL,
+				maintenanceURL,
 				commissioningFallbackURL,
 			)
 
@@ -190,8 +190,8 @@ indicates a dependency in the Instruction Dependency column.`)
 		"enhancedSetupFlowTCDigest SHALL contain the digest of the entire contents of the associated file downloaded from the EnhancedSetupFlowTCUrl field, encoded in base64 string representation and SHALL be used to ensure the contents of the downloaded file are authentic. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
 	cmd.Flags().Uint32Var(&enhancedSetupFlowTCFileSize, FlagEnhancedSetupFlowTCFileSize, 0,
 		"enhancedSetupFlowTCFileSize SHALL indicate the total size of the Enhanced Setup Flow Terms and Conditions file in bytes, and SHALL be used to ensure the downloaded file size is within the bounds of EnhancedSetupFlowTCFileSize. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
-	cmd.Flags().StringVar(&enhancedSetupFlowMaintenanceURL, FlagEnhancedSetupFlowMaintenanceURL, "",
-		"enhancedSetupFlowMaintenanceURL SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
+	cmd.Flags().StringVar(&maintenanceURL, FlagMaintenanceURL, "",
+		"maintenanceURL SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
 	cmd.Flags().StringVar(&commissioningFallbackURL, FlagCommissioningFallbackURL, "",
 		"This field SHALL identify a vendor-specific commissioning-fallback URL for the device model, which can be used by a Commissioner in case commissioning fails to direct the user to a manufacturer-provided mechanism to provide resolution to commissioning issues.")
 
@@ -233,7 +233,7 @@ func CmdUpdateModel() *cobra.Command {
 		enhancedSetupFlowTCRevision                int32
 		enhancedSetupFlowTCDigest                  string
 		enhancedSetupFlowTCFileSize                uint32
-		enhancedSetupFlowMaintenanceURL            string
+		maintenanceURL                             string
 		commissioningFallbackURL                   string
 		commissioningModeSecondaryStepsHint        uint32
 	)
@@ -275,7 +275,7 @@ func CmdUpdateModel() *cobra.Command {
 				enhancedSetupFlowTCRevision,
 				enhancedSetupFlowTCDigest,
 				enhancedSetupFlowTCFileSize,
-				enhancedSetupFlowMaintenanceURL,
+				maintenanceURL,
 				commissioningFallbackURL,
 				commissioningModeSecondaryStepsHint,
 				icdUserActiveModeTriggerHint,
@@ -366,8 +366,8 @@ a value of 64 (bit 6 is set) indicates that a device will be factory reset when 
 		"enhancedSetupFlowTCDigest SHALL contain the digest of the entire contents of the associated file downloaded from the EnhancedSetupFlowTCUrl field, encoded in base64 string representation and SHALL be used to ensure the contents of the downloaded file are authentic. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
 	cmd.Flags().Uint32Var(&enhancedSetupFlowTCFileSize, FlagEnhancedSetupFlowTCFileSize, 0,
 		"enhancedSetupFlowTCFileSize SHALL indicate the total size of the Enhanced Setup Flow Terms and Conditions file in bytes, and SHALL be used to ensure the downloaded file size is within the bounds of EnhancedSetupFlowTCFileSize. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
-	cmd.Flags().StringVar(&enhancedSetupFlowMaintenanceURL, FlagEnhancedSetupFlowMaintenanceURL, "",
-		"enhancedSetupFlowMaintenanceURL SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
+	cmd.Flags().StringVar(&maintenanceURL, FlagMaintenanceURL, "",
+		"maintenanceURL SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
 	cmd.Flags().StringVar(&commissioningFallbackURL, FlagCommissioningFallbackURL, "",
 		"This field SHALL identify a vendor-specific commissioning-fallback URL for the device model, which can be used by a Commissioner in case commissioning fails to direct the user to a manufacturer-provided mechanism to provide resolution to commissioning issues.")
 

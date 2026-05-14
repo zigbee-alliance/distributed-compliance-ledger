@@ -89,7 +89,7 @@ var (
 	EnhancedSetupFlowTCRevision                       = 1
 	EnhancedSetupFlowTCDigest                         = "MmNmMjRkYmE1ZmIwYTMwZTI2ZTgzYjJhYzViOWUyOWUxYjE2MWU1YzFmYTc0MjVlNzMwNDMzNjI5MzhiOTgyNA=="
 	EnhancedSetupFlowTCFileSize                       = 1
-	EnhancedSetupFlowMaintenanceURL                   = "https://url.maintenanceurl.dclmodel"
+	MaintenanceURL                                    = "https://url.maintenanceurl.dclmodel"
 	CommissioningFallbackURL                          = "https://url.commissioningfallbackurl.dclmodel"
 	DiscoveryCapabilitiesBitmask               uint32 = 0
 	LsfURL                                            = "https://url.lsfurl.dclmodel"

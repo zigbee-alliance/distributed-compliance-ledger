@@ -28,7 +28,7 @@ export interface MsgCreateModel {
   enhancedSetupFlowTCRevision: number;
   enhancedSetupFlowTCDigest: string;
   enhancedSetupFlowTCFileSize: number;
-  enhancedSetupFlowMaintenanceUrl: string;
+  maintenanceUrl: string;
   discoveryCapabilitiesBitmask: number;
   commissioningFallbackUrl: string;
   icdUserActiveModeTriggerHint: number;
@@ -62,7 +62,7 @@ export interface MsgUpdateModel {
   enhancedSetupFlowTCRevision: number;
   enhancedSetupFlowTCDigest: string;
   enhancedSetupFlowTCFileSize: number;
-  enhancedSetupFlowMaintenanceUrl: string;
+  maintenanceUrl: string;
   commissioningFallbackUrl: string;
   commissioningModeSecondaryStepsHint: number;
   icdUserActiveModeTriggerHint: number;
@@ -165,7 +165,7 @@ function createBaseMsgCreateModel(): MsgCreateModel {
     enhancedSetupFlowTCRevision: 0,
     enhancedSetupFlowTCDigest: "",
     enhancedSetupFlowTCFileSize: 0,
-    enhancedSetupFlowMaintenanceUrl: "",
+    maintenanceUrl: "",
     discoveryCapabilitiesBitmask: 0,
     commissioningFallbackUrl: "",
     icdUserActiveModeTriggerHint: 0,
@@ -246,8 +246,8 @@ export const MsgCreateModel = {
     if (message.enhancedSetupFlowTCFileSize !== 0) {
       writer.uint32(184).uint32(message.enhancedSetupFlowTCFileSize);
     }
-    if (message.enhancedSetupFlowMaintenanceUrl !== "") {
-      writer.uint32(194).string(message.enhancedSetupFlowMaintenanceUrl);
+    if (message.maintenanceUrl !== "") {
+      writer.uint32(194).string(message.maintenanceUrl);
     }
     if (message.discoveryCapabilitiesBitmask !== 0) {
       writer.uint32(200).uint32(message.discoveryCapabilitiesBitmask);
@@ -347,7 +347,7 @@ export const MsgCreateModel = {
           message.enhancedSetupFlowTCFileSize = reader.uint32();
           break;
         case 24:
-          message.enhancedSetupFlowMaintenanceUrl = reader.string();
+          message.maintenanceUrl = reader.string();
           break;
         case 25:
           message.discoveryCapabilitiesBitmask = reader.uint32();
@@ -416,8 +416,8 @@ export const MsgCreateModel = {
       enhancedSetupFlowTCFileSize: isSet(object.enhancedSetupFlowTCFileSize)
         ? Number(object.enhancedSetupFlowTCFileSize)
         : 0,
-      enhancedSetupFlowMaintenanceUrl: isSet(object.enhancedSetupFlowMaintenanceUrl)
-        ? String(object.enhancedSetupFlowMaintenanceUrl)
+      maintenanceUrl: isSet(object.maintenanceUrl)
+        ? String(object.maintenanceUrl)
         : "",
       discoveryCapabilitiesBitmask: isSet(object.discoveryCapabilitiesBitmask)
         ? Number(object.discoveryCapabilitiesBitmask)
@@ -471,8 +471,8 @@ export const MsgCreateModel = {
       && (obj.enhancedSetupFlowTCDigest = message.enhancedSetupFlowTCDigest);
     message.enhancedSetupFlowTCFileSize !== undefined
       && (obj.enhancedSetupFlowTCFileSize = Math.round(message.enhancedSetupFlowTCFileSize));
-    message.enhancedSetupFlowMaintenanceUrl !== undefined
-      && (obj.enhancedSetupFlowMaintenanceUrl = message.enhancedSetupFlowMaintenanceUrl);
+    message.maintenanceUrl !== undefined
+      && (obj.maintenanceUrl = message.maintenanceUrl);
     message.discoveryCapabilitiesBitmask !== undefined
       && (obj.discoveryCapabilitiesBitmask = Math.round(message.discoveryCapabilitiesBitmask));
     message.commissioningFallbackUrl !== undefined && (obj.commissioningFallbackUrl = message.commissioningFallbackUrl);
@@ -512,7 +512,7 @@ export const MsgCreateModel = {
     message.enhancedSetupFlowTCRevision = object.enhancedSetupFlowTCRevision ?? 0;
     message.enhancedSetupFlowTCDigest = object.enhancedSetupFlowTCDigest ?? "";
     message.enhancedSetupFlowTCFileSize = object.enhancedSetupFlowTCFileSize ?? 0;
-    message.enhancedSetupFlowMaintenanceUrl = object.enhancedSetupFlowMaintenanceUrl ?? "";
+    message.maintenanceUrl = object.maintenanceUrl ?? "";
     message.discoveryCapabilitiesBitmask = object.discoveryCapabilitiesBitmask ?? 0;
     message.commissioningFallbackUrl = object.commissioningFallbackUrl ?? "";
     message.icdUserActiveModeTriggerHint = object.icdUserActiveModeTriggerHint ?? 0;
@@ -585,7 +585,7 @@ function createBaseMsgUpdateModel(): MsgUpdateModel {
     enhancedSetupFlowTCRevision: 0,
     enhancedSetupFlowTCDigest: "",
     enhancedSetupFlowTCFileSize: 0,
-    enhancedSetupFlowMaintenanceUrl: "",
+    maintenanceUrl: "",
     commissioningFallbackUrl: "",
     commissioningModeSecondaryStepsHint: 0,
     icdUserActiveModeTriggerHint: 0,
@@ -660,8 +660,8 @@ export const MsgUpdateModel = {
     if (message.enhancedSetupFlowTCFileSize !== 0) {
       writer.uint32(168).uint32(message.enhancedSetupFlowTCFileSize);
     }
-    if (message.enhancedSetupFlowMaintenanceUrl !== "") {
-      writer.uint32(178).string(message.enhancedSetupFlowMaintenanceUrl);
+    if (message.maintenanceUrl !== "") {
+      writer.uint32(178).string(message.maintenanceUrl);
     }
     if (message.commissioningFallbackUrl !== "") {
       writer.uint32(186).string(message.commissioningFallbackUrl);
@@ -755,7 +755,7 @@ export const MsgUpdateModel = {
           message.enhancedSetupFlowTCFileSize = reader.uint32();
           break;
         case 22:
-          message.enhancedSetupFlowMaintenanceUrl = reader.string();
+          message.maintenanceUrl = reader.string();
           break;
         case 23:
           message.commissioningFallbackUrl = reader.string();
@@ -820,8 +820,8 @@ export const MsgUpdateModel = {
       enhancedSetupFlowTCFileSize: isSet(object.enhancedSetupFlowTCFileSize)
         ? Number(object.enhancedSetupFlowTCFileSize)
         : 0,
-      enhancedSetupFlowMaintenanceUrl: isSet(object.enhancedSetupFlowMaintenanceUrl)
-        ? String(object.enhancedSetupFlowMaintenanceUrl)
+      maintenanceUrl: isSet(object.maintenanceUrl)
+        ? String(object.maintenanceUrl)
         : "",
       commissioningFallbackUrl: isSet(object.commissioningFallbackUrl) ? String(object.commissioningFallbackUrl) : "",
       commissioningModeSecondaryStepsHint: isSet(object.commissioningModeSecondaryStepsHint)
@@ -871,8 +871,8 @@ export const MsgUpdateModel = {
       && (obj.enhancedSetupFlowTCDigest = message.enhancedSetupFlowTCDigest);
     message.enhancedSetupFlowTCFileSize !== undefined
       && (obj.enhancedSetupFlowTCFileSize = Math.round(message.enhancedSetupFlowTCFileSize));
-    message.enhancedSetupFlowMaintenanceUrl !== undefined
-      && (obj.enhancedSetupFlowMaintenanceUrl = message.enhancedSetupFlowMaintenanceUrl);
+    message.maintenanceUrl !== undefined
+      && (obj.maintenanceUrl = message.maintenanceUrl);
     message.commissioningFallbackUrl !== undefined && (obj.commissioningFallbackUrl = message.commissioningFallbackUrl);
     message.commissioningModeSecondaryStepsHint !== undefined
       && (obj.commissioningModeSecondaryStepsHint = Math.round(message.commissioningModeSecondaryStepsHint));
@@ -910,7 +910,7 @@ export const MsgUpdateModel = {
     message.enhancedSetupFlowTCRevision = object.enhancedSetupFlowTCRevision ?? 0;
     message.enhancedSetupFlowTCDigest = object.enhancedSetupFlowTCDigest ?? "";
     message.enhancedSetupFlowTCFileSize = object.enhancedSetupFlowTCFileSize ?? 0;
-    message.enhancedSetupFlowMaintenanceUrl = object.enhancedSetupFlowMaintenanceUrl ?? "";
+    message.maintenanceUrl = object.maintenanceUrl ?? "";
     message.commissioningFallbackUrl = object.commissioningFallbackUrl ?? "";
     message.commissioningModeSecondaryStepsHint = object.commissioningModeSecondaryStepsHint ?? 0;
     message.icdUserActiveModeTriggerHint = object.icdUserActiveModeTriggerHint ?? 0;

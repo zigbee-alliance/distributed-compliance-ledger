@@ -55,7 +55,7 @@ export interface DistributedcomplianceledgermodelModel {
 
   /** @format int64 */
   enhancedSetupFlowTCFileSize?: number;
-  enhancedSetupFlowMaintenanceUrl?: string;
+  maintenanceUrl?: string;
 
   /** @format int64 */
   discoveryCapabilitiesBitmask?: number;

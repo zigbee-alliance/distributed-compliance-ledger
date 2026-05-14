@@ -31,7 +31,7 @@ const (
 	FlagEnhancedSetupFlowTCRevision                = "enhancedSetupFlowTCRevision"
 	FlagEnhancedSetupFlowTCDigest                  = "enhancedSetupFlowTCDigest"
 	FlagEnhancedSetupFlowTCFileSize                = "enhancedSetupFlowTCFileSize"
-	FlagEnhancedSetupFlowMaintenanceURL            = "enhancedSetupFlowMaintenanceUrl"
+	FlagMaintenanceURL                             = "maintenanceUrl"
 	FlagCommissioningFallbackURL                   = "commissioningFallbackUrl"
 	// Flags for ModelVersion.
 	FlagSoftwareVersion              = "softwareVersion"
