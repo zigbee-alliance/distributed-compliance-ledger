@@ -22,7 +22,7 @@ var allowed4XXStatusCodes = []int{
 var httpClient = &http.Client{Timeout: livenessCheckTimeout}
 
 func IsLiveURL(u string) bool {
-	if config.DisableURLLivenessCheck {
+	if !config.URLLivenessCheckEnabled {
 		return true
 	}
 
@@ -53,13 +53,13 @@ func IsLiveURL(u string) bool {
 	return false
 }
 
-// FirstUnreachableURL checks the liveness of the given URLs concurrently and
-// returns the first one that is not reachable.
+// CheckURLsForLiveness checks the liveness of the given URLs concurrently and
+// returns unreachable URLs as a list.
 // Empty strings are skipped.
 //
-// Returns an empty string if all non-empty URLs are reachable.
-func FirstUnreachableURL(urls ...string) string {
-	unreachable := make([]string, len(urls))
+// Returns an empty list if all non-empty URLs are reachable.
+func CheckURLsForLiveness(urls ...string) []string {
+	results := make([]string, len(urls))
 
 	var wg sync.WaitGroup
 	for i, u := range urls {
@@ -71,17 +71,18 @@ func FirstUnreachableURL(urls ...string) string {
 		go func(i int, u string) {
 			defer wg.Done()
 			if !IsLiveURL(u) {
-				unreachable[i] = u
+				results[i] = u
 			}
 		}(i, u)
 	}
 	wg.Wait()
 
-	for _, u := range unreachable {
+	var unreachable []string
+	for _, u := range results {
 		if u != "" {
-			return u
+			unreachable = append(unreachable, u)
 		}
 	}
 
-	return ""
+	return unreachable
 }

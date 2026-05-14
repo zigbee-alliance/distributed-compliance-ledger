@@ -68,7 +68,7 @@ func TestIsLiveURLUnreachable(t *testing.T) {
 	require.False(t, IsLiveURL(u.String()))
 }
 
-func TestFirstUnreachableURL(t *testing.T) {
+func TestCheckURLsForLiveness(t *testing.T) {
 	okSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
@@ -82,33 +82,33 @@ func TestFirstUnreachableURL(t *testing.T) {
 	tests := []struct {
 		name string
 		urls []string
-		want string
+		want []string
 	}{
-		{"no URLs", nil, ""},
-		{"all empty strings", []string{"", "", ""}, ""},
-		{"all reachable", []string{okSrv.URL, okSrv.URL}, ""},
-		{"single unreachable", []string{okSrv.URL, notFoundSrv.URL}, notFoundSrv.URL},
-		{"empties skipped", []string{"", okSrv.URL, ""}, ""},
+		{"no URLs", nil, nil},
+		{"all empty strings", []string{"", "", ""}, nil},
+		{"all reachable", []string{okSrv.URL, okSrv.URL}, nil},
+		{"single unreachable", []string{okSrv.URL, notFoundSrv.URL}, []string{notFoundSrv.URL}},
+		{"empties skipped", []string{"", okSrv.URL, ""}, nil},
 		{
-			"first unreachable wins over later unreachable",
+			"multiple unreachable preserve input order",
 			[]string{okSrv.URL, notFoundSrv.URL, unreachableURL},
-			notFoundSrv.URL,
+			[]string{notFoundSrv.URL, unreachableURL},
 		},
 		{
 			"unreachable later in list",
 			[]string{okSrv.URL, "", notFoundSrv.URL},
-			notFoundSrv.URL,
+			[]string{notFoundSrv.URL},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			require.Equal(t, tt.want, FirstUnreachableURL(tt.urls...))
+			require.Equal(t, tt.want, CheckURLsForLiveness(tt.urls...))
 		})
 	}
 }
 
-func TestFirstUnreachableURLRunsConcurrently(t *testing.T) {
+func TestCheckURLsForLivenessRunsConcurrently(t *testing.T) {
 	const handlerDelay = 200 * time.Millisecond
 	const concurrentURLs = 5
 
@@ -124,7 +124,7 @@ func TestFirstUnreachableURLRunsConcurrently(t *testing.T) {
 	}
 
 	start := time.Now()
-	require.Equal(t, "", FirstUnreachableURL(urls...))
+	require.Empty(t, CheckURLsForLiveness(urls...))
 	elapsed := time.Since(start)
 
 	// Sequential calls would take approximately concurrentURLs*handlerDelay time

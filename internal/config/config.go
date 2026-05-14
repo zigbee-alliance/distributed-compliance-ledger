@@ -2,4 +2,4 @@
 
 package config
 
-const DisableURLLivenessCheck = false
+const URLLivenessCheckEnabled = true

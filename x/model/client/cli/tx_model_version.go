@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -61,9 +62,9 @@ func CmdCreateModelVersion() *cobra.Command {
 				specificationVersion,
 			)
 
-			unreachable := cli.FirstUnreachableURL(otaURL, releaseNotesURL)
-			if unreachable != "" {
-				return fmt.Errorf("%s is not reachable", unreachable)
+			unreachable := cli.CheckURLsForLiveness(otaURL, releaseNotesURL)
+			if len(unreachable) > 0 {
+				return fmt.Errorf("URLs not reachable: %s", strings.Join(unreachable, ", "))
 			}
 			// validate basic will be called in GenerateOrBroadcastTxCLI
 			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
@@ -172,9 +173,9 @@ func CmdUpdateModelVersion() *cobra.Command {
 				schemaVersion,
 			)
 
-			unreachable := cli.FirstUnreachableURL(otaURL, releaseNotesURL)
-			if unreachable != "" {
-				return fmt.Errorf("%s is not reachable", unreachable)
+			unreachable := cli.CheckURLsForLiveness(otaURL, releaseNotesURL)
+			if len(unreachable) > 0 {
+				return fmt.Errorf("URLs not reachable: %s", strings.Join(unreachable, ", "))
 			}
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
