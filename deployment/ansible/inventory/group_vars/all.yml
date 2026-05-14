@@ -23,7 +23,7 @@ accounts:
 
 chain_id: testnet-2.0
 company_name: CSA
-type_name: "ON" # "ON", "Priv-SN", "Pub-SN", "SeedN" or "VN"
+type_name: "" # "ON", "Priv-SN", "Pub-SN", "SeedN" or "VN"
 dcld_version: 1.5.2
 cosmovisor_version: 1.5.2
 
