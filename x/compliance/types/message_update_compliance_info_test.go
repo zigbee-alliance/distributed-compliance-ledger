@@ -515,6 +515,21 @@ func TestMsgUpdateComplianceInfo_ValidateBasic(t *testing.T) {
 			},
 		},
 		{
+			name: "SupportedClusters > 256",
+			msg: MsgUpdateComplianceInfo{
+				Creator:              sample.AccAddress(),
+				Vid:                  1,
+				Pid:                  1,
+				CertificationType:    testconstants.CertificationType,
+				SpecificationVersion: testconstants.SpecificationVersion,
+				SoftwareVersion:      testconstants.SoftwareVersion,
+				Reason:               testconstants.Reason,
+				CDVersionNumber:      "312",
+				SupportedClusters:    tmrand.Str(257),
+			},
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
+		{
 			name: "SupportedClusters not hex",
 			msg: MsgUpdateComplianceInfo{
 				Creator:              sample.AccAddress(),
