@@ -110,8 +110,13 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		complianceInfo.Transport = msg.Transport
 	}
 
+	// Preserve the previously stored schema version unless it's still unset (0)
+	// and the caller is actually changing SpecificationVersion. SetComplianceInfo
+	// skips the stamp when this guard evaluates false.
+	stampComplianceInfo := commontypes.SchemaVersionGuard(
+		msg.SpecificationVersion != 0 && complianceInfo.SchemaVersion == 0,
+	)
 	if msg.SpecificationVersion != 0 {
-		commontypes.SetCurrentSchemaVersion(&complianceInfo, complianceInfo.SchemaVersion == 0)
 		complianceInfo.SpecificationVersion = msg.SpecificationVersion
 	}
 
@@ -128,8 +133,7 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		if len(currentDeviceSoftwareCompliance.ComplianceInfo) == 0 {
 			k.RemoveDeviceSoftwareCompliance(ctx, currentDeviceSoftwareCompliance.CDCertificateId)
 		} else {
-			commontypes.SetCurrentSchemaVersion(&currentDeviceSoftwareCompliance)
-			k.SetDeviceSoftwareCompliance(ctx, currentDeviceSoftwareCompliance)
+			k.SetDeviceSoftwareCompliance(ctx, &currentDeviceSoftwareCompliance)
 		}
 
 		// update the compliance info cd certificate id field
@@ -143,8 +147,7 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		}
 		targetDeviceSoftwareCompliance.ComplianceInfo = append(targetDeviceSoftwareCompliance.ComplianceInfo, &complianceInfo)
 
-		commontypes.SetCurrentSchemaVersion(&targetDeviceSoftwareCompliance)
-		k.SetDeviceSoftwareCompliance(ctx, targetDeviceSoftwareCompliance)
+		k.SetDeviceSoftwareCompliance(ctx, &targetDeviceSoftwareCompliance)
 	} else { // update the corresponding device software compliance to sync with compliance info.
 		deviceSoftwareCompliance, _ := k.GetDeviceSoftwareCompliance(ctx, complianceInfo.CDCertificateId)
 
@@ -153,11 +156,10 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 			deviceSoftwareCompliance.ComplianceInfo[index] = &complianceInfo
 		}
 
-		commontypes.SetCurrentSchemaVersion(&deviceSoftwareCompliance)
-		k.SetDeviceSoftwareCompliance(ctx, deviceSoftwareCompliance)
+		k.SetDeviceSoftwareCompliance(ctx, &deviceSoftwareCompliance)
 	}
 
-	k.SetComplianceInfo(ctx, complianceInfo)
+	k.SetComplianceInfo(ctx, &complianceInfo, stampComplianceInfo)
 
 	return &types.MsgUpdateComplianceInfoResponse{}, nil
 }

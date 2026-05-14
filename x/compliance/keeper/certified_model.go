@@ -3,13 +3,16 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	commontypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
 // SetCertifiedModel set a specific certifiedModel in the store from its index.
-func (k Keeper) SetCertifiedModel(ctx sdk.Context, certifiedModel types.CertifiedModel) {
+// The schema version is stamped to the current value unless any guard returns false.
+func (k Keeper) SetCertifiedModel(ctx sdk.Context, certifiedModel *types.CertifiedModel, guards ...commontypes.SchemaVersionGuard) {
+	commontypes.SetCurrentSchemaVersion(certifiedModel, guards...)
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CertifiedModelKeyPrefix))
-	b := k.cdc.MustMarshal(&certifiedModel)
+	b := k.cdc.MustMarshal(certifiedModel)
 	store.Set(types.CertifiedModelKey(
 		certifiedModel.Vid,
 		certifiedModel.Pid,

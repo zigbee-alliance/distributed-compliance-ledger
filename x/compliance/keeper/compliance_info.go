@@ -4,13 +4,20 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	commontypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
 // SetComplianceInfo set a specific complianceInfo in the store from its index.
-func (k Keeper) SetComplianceInfo(ctx sdk.Context, complianceInfo types.ComplianceInfo) {
+// The schema version is stamped to the current value unless any guard returns
+// false (e.g. pass `commontypes.SchemaVersionGuard(complianceInfo.SchemaVersion == 0)`
+// to keep the previously stored version on update paths).
+func (k Keeper) SetComplianceInfo(ctx sdk.Context, complianceInfo *types.ComplianceInfo, guards ...commontypes.SchemaVersionGuard) {
+	// Bump schema version if guards passed
+	commontypes.SetCurrentSchemaVersion(complianceInfo, guards...)
+
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ComplianceInfoKeyPrefix))
-	b := k.cdc.MustMarshal(&complianceInfo)
+	b := k.cdc.MustMarshal(complianceInfo)
 	store.Set(types.ComplianceInfoKey(
 		complianceInfo.Vid,
 		complianceInfo.Pid,

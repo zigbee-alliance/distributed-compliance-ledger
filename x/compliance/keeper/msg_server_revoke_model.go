@@ -9,7 +9,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	commontypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
@@ -86,8 +85,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 			}
 		}
 
-		commontypes.SetCurrentSchemaVersion(&deviceSoftwareCompliance)
-		k.SetDeviceSoftwareCompliance(ctx, deviceSoftwareCompliance)
+		k.SetDeviceSoftwareCompliance(ctx, &deviceSoftwareCompliance)
 
 		// If we don't have compliance info in Device Software Compliance - we should delete this Device Software Compliance
 		if len(deviceSoftwareCompliance.ComplianceInfo) == 0 {
@@ -102,8 +100,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 			CertificationType: msg.CertificationType,
 			Value:             false,
 		}
-		commontypes.SetCurrentSchemaVersion(&certifiedModel)
-		k.SetCertifiedModel(ctx, certifiedModel)
+		k.SetCertifiedModel(ctx, &certifiedModel)
 
 		provisionalModel := types.ProvisionalModel{
 			Vid:               msg.Vid,
@@ -112,8 +109,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 			CertificationType: msg.CertificationType,
 			Value:             false,
 		}
-		commontypes.SetCurrentSchemaVersion(&provisionalModel)
-		k.SetProvisionalModel(ctx, provisionalModel)
+		k.SetProvisionalModel(ctx, &provisionalModel)
 	} else {
 		// There is no compliance record yet. So only revocation will be tracked on ledger.
 
@@ -132,9 +128,8 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 		}
 	}
 
-	// store compliance info
-	commontypes.SetCurrentSchemaVersion(&complianceInfo)
-	k.SetComplianceInfo(ctx, complianceInfo)
+	// store compliance info — Set* stamps the current schema version internally.
+	k.SetComplianceInfo(ctx, &complianceInfo)
 
 	// update revoked index
 	revokedModel := types.RevokedModel{
@@ -144,8 +139,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 		CertificationType: msg.CertificationType,
 		Value:             true,
 	}
-	commontypes.SetCurrentSchemaVersion(&revokedModel)
-	k.SetRevokedModel(ctx, revokedModel)
+	k.SetRevokedModel(ctx, &revokedModel)
 
 	return &types.MsgRevokeModelResponse{}, nil
 }

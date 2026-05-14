@@ -42,7 +42,7 @@ func (k msgServer) DeleteComplianceInfo(goCtx context.Context, msg *types.MsgDel
 		}
 	}
 	if len(deviceSoftwareCompliance.ComplianceInfo) != 0 {
-		k.SetDeviceSoftwareCompliance(ctx, deviceSoftwareCompliance)
+		k.SetDeviceSoftwareCompliance(ctx, &deviceSoftwareCompliance)
 	}
 	// If we don't have compliance info in Device Software Compliance - we should delete this Device Software Compliance
 	if len(deviceSoftwareCompliance.ComplianceInfo) == 0 {
