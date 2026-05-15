@@ -250,3 +250,32 @@ func TestHandler_UpdateComplianceInfo_AcceptsProgramTypeVersionOnly_WhenExisting
 	require.Equal(t, types.EndProductProgramType, updated.ProgramType)
 	require.Equal(t, "2.0", updated.ProgramTypeVersion)
 }
+
+func TestHandler_SchemaVersion_UpdateComplianceInfo_PreservesStored_WhenSpecVersionAbsent(t *testing.T) {
+	setup, vid, pid, softwareVersion, certificationType, _, _, _ := setupUpdateComplianceInfo(t)
+	setup.seedStoredSchemaVersion(vid, pid, softwareVersion, certificationType, 0)
+
+	updateMsg := newMsgUpdateComplianceInfo(setup.CertificationCenter, vid, pid, softwareVersion, certificationType)
+	updateMsg.ParentChild = testconstants.ParentChild1
+	require.Zero(t, updateMsg.SpecificationVersion)
+	_, err := setup.Handler(setup.Ctx, updateMsg)
+	require.NoError(t, err)
+
+	updated := queryExistingComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
+	require.Equal(t, uint32(0), updated.SchemaVersion)
+	require.Equal(t, testconstants.ParentChild1, updated.ParentChild)
+}
+
+func TestHandler_SchemaVersion_UpdateComplianceInfo_BumpsToCurrent_WhenSpecVersionProvided(t *testing.T) {
+	setup, vid, pid, softwareVersion, certificationType, _, _, _ := setupUpdateComplianceInfo(t)
+	setup.seedStoredSchemaVersion(vid, pid, softwareVersion, certificationType, 0)
+
+	updateMsg := newMsgUpdateComplianceInfoWithAllOptionalFlags(setup.CertificationCenter, vid, pid, softwareVersion, certificationType)
+	require.NotZero(t, updateMsg.SpecificationVersion)
+	_, err := setup.Handler(setup.Ctx, updateMsg)
+	require.NoError(t, err)
+
+	updated := queryExistingComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
+	require.Equal(t, updated.CurrentSchemaVersion(), updated.SchemaVersion)
+	require.Equal(t, updateMsg.SpecificationVersion, updated.SpecificationVersion)
+}

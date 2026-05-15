@@ -45,10 +45,10 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 
 	complianceInfo, found := k.GetComplianceInfo(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 	// On the update path (existing record) only bump the schema version when
-	// SpecificationVersion is being supplied and the stored version is still
-	// unset; on the create path the guard slice stays empty so SetComplianceInfo
-	// stamps unconditionally.
-	var complianceInfoGuards []commontypes.SchemaVersionGuard
+	// SpecificationVersion is being supplied and the stored SchemaVersion is still
+	// unset; on the creation path the guard true, so SetComplianceInfo
+	// stamps to the current schema version internally.
+	var complianceInfoGuard commontypes.SchemaVersionGuard = true
 	//nolint:nestif
 	if found {
 		// Compliance record already exist. Cases:
@@ -81,8 +81,9 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 		}
 
 		complianceInfo.SetCertifiedStatus(msg.CertificationDate, msg.Reason, msg.CDCertificateId)
-		complianceInfoGuards = append(complianceInfoGuards,
-			commontypes.SchemaVersionGuard(msg.SpecificationVersion > 0 && complianceInfo.SchemaVersion == 0))
+		// Preserve the previously stored schema version if SpecificationVersion is not set.
+		//SetComplianceInfo skips the stamp when this guard evaluates false.
+		complianceInfoGuard = msg.SpecificationVersion > 0 && complianceInfo.SchemaVersion < complianceInfo.CurrentSchemaVersion()
 	} else {
 		// There is no compliance record yet. So certification will be tracked on ledger.
 
@@ -118,9 +119,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 	}
 
 	complianceInfo.SetOptionalFields(optionalFields)
-	// store compliance info — Set* stamps the current schema version internally,
-	// gated by the guards collected per branch above.
-	k.SetComplianceInfo(ctx, &complianceInfo, complianceInfoGuards...)
+	k.SetComplianceInfo(ctx, &complianceInfo, complianceInfoGuard)
 
 	deviceSoftwareCompliance, found := k.GetDeviceSoftwareCompliance(ctx, msg.CDCertificateId)
 	if !found {

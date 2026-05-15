@@ -10,7 +10,9 @@ import (
 // SetCertifiedModel set a specific certifiedModel in the store from its index.
 // The schema version is stamped to the current value unless any guard returns false.
 func (k Keeper) SetCertifiedModel(ctx sdk.Context, certifiedModel *types.CertifiedModel, guards ...commontypes.SchemaVersionGuard) {
+	// Bump schema version if guards passed
 	commontypes.SetCurrentSchemaVersion(certifiedModel, guards...)
+
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CertifiedModelKeyPrefix))
 	b := k.cdc.MustMarshal(certifiedModel)
 	store.Set(types.CertifiedModelKey(

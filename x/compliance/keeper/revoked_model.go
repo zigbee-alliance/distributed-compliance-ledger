@@ -10,7 +10,9 @@ import (
 // SetRevokedModel set a specific revokedModel in the store from its index.
 // The schema version is stamped to the current value unless any guard returns false.
 func (k Keeper) SetRevokedModel(ctx sdk.Context, revokedModel *types.RevokedModel, guards ...commontypes.SchemaVersionGuard) {
+	// Bump schema version if guards passed
 	commontypes.SetCurrentSchemaVersion(revokedModel, guards...)
+
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedModelKeyPrefix))
 	b := k.cdc.MustMarshal(revokedModel)
 	store.Set(types.RevokedModelKey(
