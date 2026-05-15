@@ -399,6 +399,7 @@ func newMsgProvisionModel(
 		CertificationType:     certificationType,
 		Reason:                testconstants.Reason,
 		CDCertificateId:       testconstants.CDCertificateID,
+		SchemaVersion:         1,
 	}
 }
 
@@ -501,6 +502,7 @@ func newMsgProvisionModelWithAllOptionalFlags(
 		ParentChild:                        testconstants.ParentChild1,
 		CertificationIdOfSoftwareComponent: testconstants.CertificationIDOfSoftwareComponent,
 		SpecificationVersion:               testconstants.SpecificationVersion,
+		SchemaVersion:                      1,
 	}
 }
 
@@ -523,6 +525,7 @@ func newMsgCertifyModel(
 		CertificationType:     certificationType,
 		Reason:                testconstants.Reason,
 		CDCertificateId:       testconstants.CDCertificateID,
+		SchemaVersion:         1,
 	}
 }
 
@@ -573,6 +576,7 @@ func newMsgCertifyModelWithAllOptionalFlags(
 		ParentChild:                        testconstants.ParentChild1,
 		CertificationIdOfSoftwareComponent: testconstants.CertificationIDOfSoftwareComponent,
 		SpecificationVersion:               testconstants.SpecificationVersion,
+		SchemaVersion:                      1,
 	}
 }
 
@@ -594,6 +598,7 @@ func newMsgRevokeModel(
 		RevocationDate:        testconstants.RevocationDate,
 		CertificationType:     certificationType,
 		Reason:                testconstants.RevocationReason,
+		SchemaVersion:         1,
 	}
 }
 

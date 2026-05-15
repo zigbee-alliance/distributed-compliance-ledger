@@ -57,7 +57,7 @@ message MsgRevokeModel {
   string revocationDate = 7 [(gogoproto.moretags) = "validate:\"required\""];
   string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=20\""];
   string reason = 9 [(gogoproto.moretags) = "validate:\"max=20480\""];
-  uint32 schemaVersion = 10 [(gogoproto.moretags) = "validate:\"default=1,max=1\""];
+  uint32 schemaVersion = 10 [(gogoproto.moretags) = "validate:\"eq=1\""];
 }
 
 message MsgRevokeModelResponse {

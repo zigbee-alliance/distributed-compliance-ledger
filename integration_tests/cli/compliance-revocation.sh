@@ -50,7 +50,7 @@ echo "Revoke Certification for uncertificate Model with VID: $vid PID: $pid"
 revocation_date="2020-02-02T02:20:20Z"
 revocation_reason="some reason"
 schema_version_0=0
-result=$(echo "$passphrase" | dcld tx compliance revoke-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type" --revocationDate="$revocation_date" --reason "$revocation_reason" --cdVersionNumber=1  --schemaVersion=$schema_version_0 --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance revoke-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type" --revocationDate="$revocation_date" --reason "$revocation_reason" --cdVersionNumber=1  --schemaVersion=1 --from $zb_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
@@ -58,7 +58,7 @@ echo "$result"
 test_divider
 
 echo "ReRevoke Model with VID: $vid PID: $pid  SV: ${sv} by different account"
-result=$(echo "$passphrase" | dcld tx compliance revoke-model --vid=$vid --pid=$pid  --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type" --revocationDate="$revocation_date" --from $second_zb_account --cdVersionNumber=1 --yes)
+result=$(echo "$passphrase" | dcld tx compliance revoke-model --vid=$vid --pid=$pid  --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type" --revocationDate="$revocation_date" --schemaVersion=1 --from $second_zb_account --cdVersionNumber=1 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 304"
 check_response "$result" "already revoked on the ledger"
@@ -67,7 +67,7 @@ echo "$result"
 test_divider
 
 echo "ReRevoke Model with VID: $vid PID: $pid  SV: ${sv} by same account"
-result=$(echo "$passphrase" | dcld tx compliance revoke-model --vid=$vid --pid=$pid  --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type" --revocationDate="$revocation_date" --cdVersionNumber=1 --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance revoke-model --vid=$vid --pid=$pid  --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type" --revocationDate="$revocation_date" --cdVersionNumber=1 --schemaVersion=1 --from $zb_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 304"
 check_response "$result" "already revoked on the ledger"
@@ -78,7 +78,7 @@ test_divider
 echo "Revoke Certification for uncertificate Model with VID: $vid PID: $pid for matter"
 revocation_date="2020-02-02T02:20:20Z"
 revocation_reason="some reason"
-result=$(echo "$passphrase" | dcld tx compliance revoke-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_matter" --revocationDate="$revocation_date" --reason "$revocation_reason" --cdVersionNumber=1 --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance revoke-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_matter" --revocationDate="$revocation_date" --reason "$revocation_reason" --cdVersionNumber=1 --schemaVersion=1 --from $zb_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
@@ -209,7 +209,7 @@ certification_reason="some reason 2"
 
 echo "Certify revoked Model with VID: $vid PID: $pid from the past"
 certification_date_past="2020-02-02T02:20:19Z"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type" --specificationVersion=$specification_version --certificationDate="$certification_date_past" --reason "$certification_reason" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type" --specificationVersion=$specification_version --certificationDate="$certification_date_past" --reason "$certification_reason" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --schemaVersion=1 --from $zb_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 302"
 check_response "$result" "must be after"
@@ -219,7 +219,7 @@ test_divider
 
 echo "Certify revoked Model with VID: $vid PID: $pid for ZB"
 certification_date="2020-02-02T02:20:21Z"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type" --specificationVersion=$specification_version --certificationDate="$certification_date" --reason "$certification_reason" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type" --specificationVersion=$specification_version --certificationDate="$certification_date" --reason "$certification_reason" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --schemaVersion=1 --from $zb_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"

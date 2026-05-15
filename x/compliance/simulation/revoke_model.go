@@ -17,7 +17,8 @@ func SimulateMsgRevokeModel(
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 		simAccount, _ := simtypes.RandomAcc(r, accs)
 		msg := &types.MsgRevokeModel{
-			Signer: simAccount.Address.String(),
+			Signer:        simAccount.Address.String(),
+			SchemaVersion: 1,
 		}
 
 		// TODO: Handling the RevokeModel simulation

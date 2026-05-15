@@ -40,7 +40,7 @@ sv=$RANDOM
 schema_version_0=0
 
 echo "Certify  Model with VID: $vid PID: $pid  SV: ${sv} with zigbee certification"
-result=$(echo "test1234" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --cdVersionNumber=1 --softwareVersionString=1 --cdCertificateId=12345678910abcdefgh --certificationType=zigbee --specificationVersion=1 --certificationDate="2020-01-01T00:00:01Z" --from $zb_account --yes)
+result=$(echo "test1234" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --cdVersionNumber=1 --softwareVersionString=1 --cdCertificateId=12345678910abcdefgh --certificationType=zigbee --specificationVersion=1 --certificationDate="2020-01-01T00:00:01Z" --schemaVersion=1 --from $zb_account --yes)
 result=$(get_txn_result "$result")
 echo "$result"
 check_response "$result" "\"code\": 0"
