@@ -103,7 +103,7 @@ func CmdProvisionModel() *cobra.Command {
 	cmd.Flags().StringVar(&programTypeVersion, FlagProgramTypeVersion, "", TextProgramTypeVersion)
 	cmd.Flags().StringVar(&transport, FlagTransport, "", TextTransport)
 	cmd.Flags().StringVar(&parentChild, FlagParentChild, "", TextParentChild)
-	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, TextSchemaVersion)
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, types.ComplianceInfoSchemaVersion, TextSchemaVersion)
 	// Deprecated fields
 	cmd.Flags().StringVar(&compliantPlatformUsed, FlagCompliantPlatformUsed, "", TextCompliantPlatformUsed)
 	_ = cmd.Flags().MarkDeprecated(FlagCompliantPlatformUsed, DeprecatedTextCompliantPlatformUsed)
