@@ -82,7 +82,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 
 		complianceInfo.SetCertifiedStatus(msg.CertificationDate, msg.Reason, msg.CDCertificateId)
 		// Preserve the previously stored schema version if SpecificationVersion is not set.
-		//SetComplianceInfo skips the stamp when this guard evaluates false.
+		// SetComplianceInfo skips the stamp when this guard evaluates false.
 		complianceInfoGuard = msg.SpecificationVersion > 0 && complianceInfo.SchemaVersion < complianceInfo.CurrentSchemaVersion()
 	} else {
 		// There is no compliance record yet. So certification will be tracked on ledger.

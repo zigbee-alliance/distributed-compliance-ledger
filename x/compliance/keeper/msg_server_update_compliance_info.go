@@ -111,12 +111,11 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 	}
 
 	// Preserve the previously stored schema version if SpecificationVersion is not set.
-	//SetComplianceInfo skips the stamp when this guard evaluates false.
-	stampComplianceInfo := commontypes.SchemaVersionGuard(
-		msg.SpecificationVersion != 0 && complianceInfo.SchemaVersion < complianceInfo.CurrentSchemaVersion(),
-	)
+	// SetComplianceInfo skips the stamp when this guard evaluates false.
+	var stampComplianceInfo commontypes.SchemaVersionGuard
 	if msg.SpecificationVersion != 0 {
 		complianceInfo.SpecificationVersion = msg.SpecificationVersion
+		stampComplianceInfo = complianceInfo.SchemaVersion < complianceInfo.CurrentSchemaVersion()
 	}
 
 	//nolint:nestif

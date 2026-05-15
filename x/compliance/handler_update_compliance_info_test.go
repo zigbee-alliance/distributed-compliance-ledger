@@ -252,7 +252,7 @@ func TestHandler_UpdateComplianceInfo_AcceptsProgramTypeVersionOnly_WhenExisting
 }
 
 func TestHandler_SchemaVersion_UpdateComplianceInfo_PreservesStored_WhenSpecVersionAbsent(t *testing.T) {
-	setup, vid, pid, softwareVersion, certificationType, _, _, _ := setupUpdateComplianceInfo(t)
+	setup, vid, pid, softwareVersion, certificationType, _, _, _ := setupUpdateComplianceInfo(t) //nolint:dogsled
 	setup.seedStoredSchemaVersion(vid, pid, softwareVersion, certificationType, 0)
 
 	updateMsg := newMsgUpdateComplianceInfo(setup.CertificationCenter, vid, pid, softwareVersion, certificationType)
@@ -267,7 +267,7 @@ func TestHandler_SchemaVersion_UpdateComplianceInfo_PreservesStored_WhenSpecVers
 }
 
 func TestHandler_SchemaVersion_UpdateComplianceInfo_BumpsToCurrent_WhenSpecVersionProvided(t *testing.T) {
-	setup, vid, pid, softwareVersion, certificationType, _, _, _ := setupUpdateComplianceInfo(t)
+	setup, vid, pid, softwareVersion, certificationType, _, _, _ := setupUpdateComplianceInfo(t) //nolint:dogsled
 	setup.seedStoredSchemaVersion(vid, pid, softwareVersion, certificationType, 0)
 
 	updateMsg := newMsgUpdateComplianceInfoWithAllOptionalFlags(setup.CertificationCenter, vid, pid, softwareVersion, certificationType)

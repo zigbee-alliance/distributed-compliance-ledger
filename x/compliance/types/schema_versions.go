@@ -38,7 +38,7 @@ var (
 )
 
 func (*ComplianceInfo) CurrentSchemaVersion() uint32 { return ComplianceInfoSchemaVersion }
-func (m *ComplianceInfo) SetSchemaVersion(v uint32)  { m.SchemaVersion = v }
+func (d *ComplianceInfo) SetSchemaVersion(v uint32)  { d.SchemaVersion = v }
 
 func (*CertifiedModel) CurrentSchemaVersion() uint32 { return CertifiedModelSchemaVersion }
 func (m *CertifiedModel) SetSchemaVersion(v uint32)  { m.SchemaVersion = v }
