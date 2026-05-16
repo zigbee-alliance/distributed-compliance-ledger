@@ -153,7 +153,10 @@ func FormatOID(header, oldKey, newKey string) string {
 			// get value from header
 			value = value[len(value)-hexStringIntegerLength:]
 
-			decoded, _ := hex.DecodeString(value)
+			decoded, err := hex.DecodeString(value)
+			if err != nil {
+				continue
+			}
 
 			subjectValues[index] = fmt.Sprintf("%s=0x%s", newKey, decoded)
 		}
@@ -234,7 +237,7 @@ func ParseAndValidateCertificate(pemCertificate string) (*Certificate, error) {
 		serial := cert.SerialNumber
 		// RFC 5280 requires serial numbers to be positive
 		if serial.Sign() <= 0 {
-			return pkitypes.NewErrInvalidCertificate("serial number must be a positive")
+			return pkitypes.NewErrInvalidCertificate("serial number must be positive")
 		}
 
 		// When crypto/x509 parses a certificate, it reads the DER integer, strips the sign byte if present,

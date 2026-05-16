@@ -329,3 +329,85 @@ func Test_ParseAndValidateCertificate(t *testing.T) {
 		}
 	}
 }
+
+// Test_FormatOID_HexDecodeError reproduces the bug fixed in this PR: previously
+// FormatOID() discarded the error from hex.DecodeString() with `decoded, _ := ...`,
+// causing malformed hex values in certificate subject fields to silently produce
+// corrupt decoded output (e.g. "vid=0x" with empty bytes). In a compliance ledger
+// this is a security concern because an attacker-controlled or accidentally
+// truncated certificate could yield bogus normalized OIDs.
+//
+// After the fix, malformed entries are skipped: the original value remains in
+// the output unchanged.
+func Test_FormatOID_HexDecodeError(t *testing.T) {
+	tests := []struct {
+		name   string
+		header string
+		oldKey string
+		newKey string
+		// Expected output: original entry must be preserved unchanged when
+		// hex.DecodeString cannot parse the trailing 8 chars.
+		expected string
+	}{
+		{
+			name:     "non-hex characters in last 8 chars are skipped",
+			header:   "CN=Matter PAA 1,O=Google,C=US,1.3.6.1.4.1.37244.2.1=#1304ZZNOTHEX",
+			oldKey:   "1.3.6.1.4.1.37244.2.1",
+			newKey:   "vid",
+			expected: "CN=Matter PAA 1,O=Google,C=US,1.3.6.1.4.1.37244.2.1=#1304ZZNOTHEX",
+		},
+		{
+			name:     "odd-length hex (invalid) is skipped",
+			header:   "CN=Matter PAA 1,1.3.6.1.4.1.37244.2.1=#13043600060",
+			oldKey:   "1.3.6.1.4.1.37244.2.1",
+			newKey:   "vid",
+			expected: "CN=Matter PAA 1,1.3.6.1.4.1.37244.2.1=#13043600060",
+		},
+		{
+			name:     "value containing whitespace yields decode error",
+			header:   "CN=Matter PAA 1,1.3.6.1.4.1.37244.2.1=# 1304600",
+			oldKey:   "1.3.6.1.4.1.37244.2.1",
+			newKey:   "vid",
+			expected: "CN=Matter PAA 1,1.3.6.1.4.1.37244.2.1=# 1304600",
+		},
+		{
+			name:     "valid hex still works (regression guard for positive path)",
+			header:   "CN=Matter PAA 1,O=Google,C=US,1.3.6.1.4.1.37244.2.1=#130436303036",
+			oldKey:   "1.3.6.1.4.1.37244.2.1",
+			newKey:   "vid",
+			expected: "CN=Matter PAA 1,O=Google,C=US,vid=0x6006",
+		},
+		{
+			name:     "multiple OIDs - one valid, one invalid",
+			header:   "CN=Test,1.3.6.1.4.1.37244.2.1=#130436303036,1.3.6.1.4.1.37244.2.2=#1304ZZZZZZ",
+			oldKey:   "1.3.6.1.4.1.37244.2.2",
+			newKey:   "pid",
+			expected: "CN=Test,1.3.6.1.4.1.37244.2.1=#130436303036,1.3.6.1.4.1.37244.2.2=#1304ZZZZZZ",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := FormatOID(tt.header, tt.oldKey, tt.newKey)
+			require.Equal(t, tt.expected, result,
+				"FormatOID must NOT silently emit corrupted output when hex.DecodeString fails")
+		})
+	}
+}
+
+// Test_FormatOID_NoCorruptOutput is an explicit assertion that the post-fix
+// behaviour cannot produce the buggy output pattern "newKey=0x" (empty hex)
+// which the pre-fix code could emit when hex.DecodeString returned an error.
+func Test_FormatOID_NoCorruptOutput(t *testing.T) {
+	// Crafted input where the last 8 chars contain a non-hex sentinel.
+	header := "CN=Test,1.3.6.1.4.1.37244.2.1=#1304NOTHEXX"
+	result := FormatOID(header, "1.3.6.1.4.1.37244.2.1", "vid")
+
+	require.NotContains(t, result, "vid=0x ",
+		"output must not contain 'vid=0x' followed by empty/whitespace bytes")
+	require.NotContains(t, result, "vid=0x\x00",
+		"output must not contain a null-byte after the hex prefix")
+	// Original entry must survive untouched.
+	require.Contains(t, result, "1.3.6.1.4.1.37244.2.1=#1304NOTHEXX",
+		"malformed entry must be preserved verbatim, not silently rewritten")
+}
