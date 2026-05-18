@@ -229,6 +229,15 @@ func QueryX509Cert(subject, subjectKeyID string) ([]byte, error) {
 	)
 }
 
+// QueryCert queries any certificate type (DA or NOC) by subject and subjectKeyID.
+func QueryCert(subject, subjectKeyID string) ([]byte, error) {
+	return utils.ExecuteCLI("query", "pki", "cert",
+		"--subject", subject,
+		"--subject-key-id", subjectKeyID,
+		"-o", "json",
+	)
+}
+
 // QueryAllX509Certs queries all approved x509 certificates.
 func QueryAllX509Certs(extra ...string) ([]byte, error) {
 	args := []string{"query", "pki", "all-x509-certs", "-o", "json"}
@@ -360,6 +369,19 @@ func QueryAllRevokedNocX509IcaCerts() ([]byte, error) {
 // QueryAllX509RootCerts queries all approved root certificates.
 func QueryAllX509RootCerts() ([]byte, error) {
 	return utils.ExecuteCLI("query", "pki", "all-x509-root-certs", "-o", "json")
+}
+
+// QueryAllRevokedX509RootCerts queries all revoked root certificates.
+func QueryAllRevokedX509RootCerts() ([]byte, error) {
+	return utils.ExecuteCLI("query", "pki", "all-revoked-x509-root-certs", "-o", "json")
+}
+
+// QueryX509CertBySKID queries an x509 certificate by subject-key-id only (no subject required).
+func QueryX509CertBySKID(skid string) ([]byte, error) {
+	return utils.ExecuteCLI("query", "pki", "x509-cert",
+		"--subject-key-id", skid,
+		"-o", "json",
+	)
 }
 
 // QueryChildX509Certs queries all child certificates by subject and subjectKeyID.

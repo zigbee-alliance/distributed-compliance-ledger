@@ -54,6 +54,20 @@ func ProvisionModel(vid, pid, sv int, svs, certType, provisionalDate, cdCertID, 
 	return utils.ExecuteTx(args...)
 }
 
+// UpdateComplianceInfo executes the update-compliance-info transaction.
+func UpdateComplianceInfo(vid, pid, sv int, certType, from string, extra ...string) (*utils.TxResult, error) {
+	args := []string{
+		"tx", "compliance", "update-compliance-info",
+		"--vid", itoa(vid),
+		"--pid", itoa(pid),
+		"--softwareVersion", itoa(sv),
+		"--certificationType", certType,
+		"--from", from,
+	}
+	args = append(args, extra...)
+	return utils.ExecuteTx(args...)
+}
+
 // DeleteComplianceInfo executes the delete-compliance-info transaction.
 func DeleteComplianceInfo(vid, pid, sv int, certType, from string) (*utils.TxResult, error) {
 	return utils.ExecuteTx("tx", "compliance", "delete-compliance-info",

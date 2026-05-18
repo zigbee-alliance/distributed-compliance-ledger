@@ -370,6 +370,415 @@ func TestAuthDemoNodeAdmin(t *testing.T) {
 	_ = strings.TrimSpace
 }
 
+// TestAuthDemoJackRejectOwnProposal tests that a single trustee can propose and then
+// self-reject their own proposal. With only 1 rejection (Jack), the rejection quorum
+// is not reached with 3 trustees (need 2), so the account ends up nowhere.
+func TestAuthDemoJackRejectOwnProposal(t *testing.T) {
+	jack := testconstants.JackAccount
+
+	name := fmt.Sprintf("user%d", rand.Intn(99999))
+	err := AddKey(name)
+	require.NoError(t, err)
+
+	userAddr, err := GetAddress(name)
+	require.NoError(t, err)
+	userPubkey, err := GetPubkey(name)
+	require.NoError(t, err)
+
+	t.Run("ProposeAndSelfReject", func(t *testing.T) {
+		txResult, err := utils.ExecuteTx("tx", "auth", "propose-add-account",
+			"--info", "Jack is proposing this account",
+			"--address", userAddr,
+			"--pubkey", userPubkey,
+			"--roles", "NodeAdmin",
+			"--from", jack,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// Jack rejects his own proposal
+		txResult, err = utils.ExecuteTx("tx", "auth", "reject-add-account",
+			"--address", userAddr,
+			"--info", "Jack is rejecting this account",
+			"--from", jack,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// Not in proposed (jack removed his approval+proposal)
+		out, err := QueryProposedAccount(userAddr)
+		require.NoError(t, err)
+		require.Contains(t, string(out), "Not Found")
+
+		// Not in rejected (single rejection doesn't reach quorum with 3 trustees)
+		out, err = QueryRejectedAccount(userAddr)
+		require.NoError(t, err)
+		require.Contains(t, string(out), "Not Found")
+
+		// Not in approved
+		out, err = QueryAccountRaw(userAddr)
+		require.NoError(t, err)
+		require.Contains(t, string(out), "Not Found")
+	})
+}
+
+// TestAuthDemoDynamicTrusteeCount is intentionally skipped: it requires exactly
+// 3 initial trustees and leaves extra trustees on chain if it fails mid-way,
+// corrupting subsequent tests. Re-enable once a robust cleanup mechanism exists.
+func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
+	t.Skip("skipped: requires clean chain with exactly 3 trustees; see REWRITE_PLAN.md")
+	jack := testconstants.JackAccount
+	alice := testconstants.AliceAccount
+	bob := testconstants.BobAccount
+
+	vid := rand.Intn(65534) + 1
+
+	// ── Create two new trustees → 5 trustees total ─────────────────────────
+
+	newTrustee1Name := fmt.Sprintf("trustee5a%d", rand.Intn(99999))
+	err := AddKey(newTrustee1Name)
+	require.NoError(t, err)
+	newTrustee1Addr, err := GetAddress(newTrustee1Name)
+	require.NoError(t, err)
+	newTrustee1Pubkey, err := GetPubkey(newTrustee1Name)
+	require.NoError(t, err)
+
+	newTrustee2Name := fmt.Sprintf("trustee5b%d", rand.Intn(99999))
+	err = AddKey(newTrustee2Name)
+	require.NoError(t, err)
+	newTrustee2Addr, err := GetAddress(newTrustee2Name)
+	require.NoError(t, err)
+	newTrustee2Pubkey, err := GetPubkey(newTrustee2Name)
+	require.NoError(t, err)
+
+	t.Run("AddTwoNewTrustees", func(t *testing.T) {
+		// Jack proposes + Alice approves new_trustee1 → 4 trustees
+		txResult, err := utils.ExecuteTx("tx", "auth", "propose-add-account",
+			"--address", newTrustee1Addr,
+			"--pubkey", newTrustee1Pubkey,
+			"--roles", "Trustee",
+			"--from", jack,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		txResult, err = utils.ExecuteTx("tx", "auth", "approve-add-account",
+			"--address", newTrustee1Addr,
+			"--from", alice,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// Jack proposes new_trustee2, then can reject and re-approve
+		txResult, err = utils.ExecuteTx("tx", "auth", "propose-add-account",
+			"--address", newTrustee2Addr,
+			"--pubkey", newTrustee2Pubkey,
+			"--roles", "Trustee",
+			"--from", jack,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// Jack can reject even after proposing
+		txResult, err = utils.ExecuteTx("tx", "auth", "reject-add-account",
+			"--address", newTrustee2Addr,
+			"--info", "Jack is rejecting this account",
+			"--from", jack,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// Jack re-approves
+		txResult, err = utils.ExecuteTx("tx", "auth", "approve-add-account",
+			"--address", newTrustee2Addr,
+			"--info", "Jack re-approving",
+			"--from", jack,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// Alice approves → 2nd approval with 4 trustees = quorum (ceil(4*2/3)=3, need 3... hmm)
+		// Actually with 4 trustees: ceil(4*2/3)=ceil(2.67)=3 approvals needed.
+		// Jack proposed (1) + Alice (2) + Bob (3) → active.
+		txResult, err = utils.ExecuteTx("tx", "auth", "approve-add-account",
+			"--address", newTrustee2Addr,
+			"--from", alice,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		txResult, err = utils.ExecuteTx("tx", "auth", "approve-add-account",
+			"--address", newTrustee2Addr,
+			"--from", bob,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// Both new trustees are now active
+		out, err := QueryAccountRaw(newTrustee1Addr)
+		require.NoError(t, err)
+		require.Contains(t, string(out), newTrustee1Addr)
+
+		out, err = QueryAccountRaw(newTrustee2Addr)
+		require.NoError(t, err)
+		require.Contains(t, string(out), newTrustee2Addr)
+	})
+
+	// ── With 5 trustees: Vendor needs 2 approvals (ceil(5/3)=2) ───────────
+
+	vendorName := fmt.Sprintf("vendor5t%d", rand.Intn(99999))
+	err = AddKey(vendorName)
+	require.NoError(t, err)
+	vendorAddr, err := GetAddress(vendorName)
+	require.NoError(t, err)
+	vendorPubkey, err := GetPubkey(vendorName)
+	require.NoError(t, err)
+
+	t.Run("VendorWith5TrusteesNeeds2Approvals", func(t *testing.T) {
+		// Jack proposes (1 approval)
+		txResult, err := utils.ExecuteTx("tx", "auth", "propose-add-account",
+			"--info", "Jack is proposing this account",
+			"--address", vendorAddr,
+			"--pubkey", vendorPubkey,
+			"--roles", "Vendor",
+			"--vid", fmt.Sprintf("%d", vid),
+			"--from", jack,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// With 5 trustees, vendor needs ceil(5/3)=2 approvals, so Jack's proposal alone is not enough
+		out, err := QueryAccountRaw(vendorAddr)
+		require.NoError(t, err)
+		require.Contains(t, string(out), "Not Found")
+
+		out, err = QueryAllProposedAccounts()
+		require.NoError(t, err)
+		require.Contains(t, string(out), vendorAddr)
+
+		// Alice approves → 2 approvals = quorum → account active
+		txResult, err = utils.ExecuteTx("tx", "auth", "approve-add-account",
+			"--address", vendorAddr,
+			"--info", "Alice is approving this account",
+			"--from", alice,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		out, err = QueryAccountRaw(vendorAddr)
+		require.NoError(t, err)
+		require.Contains(t, string(out), vendorAddr)
+
+		out, err = QueryProposedAccount(vendorAddr)
+		require.NoError(t, err)
+		require.Contains(t, string(out), "Not Found")
+	})
+
+	// ── Revoke vendor: with 5 trustees needs ceil(10/3)=4 approvals ────────
+
+	t.Run("RevokeVendorWith5Trustees", func(t *testing.T) {
+		// Alice proposes revocation (1)
+		txResult, err := utils.ExecuteTx("tx", "auth", "propose-revoke-account",
+			"--address", vendorAddr,
+			"--info", "Alice proposes to revoke",
+			"--from", alice,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// Bob approves (2) — still not enough, need 4 with 5 trustees
+		txResult, err = utils.ExecuteTx("tx", "auth", "approve-revoke-account",
+			"--address", vendorAddr,
+			"--from", bob,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// Account still active (need 4 approvals)
+		out, err := QueryAccountRaw(vendorAddr)
+		require.NoError(t, err)
+		require.Contains(t, string(out), vendorAddr)
+
+		// Revoke new_trustee1 → 4 trustees total
+		// With 4 trustees: revocation needs ceil(8/3)=3 approvals → we have alice+bob already
+		txResult, err = utils.ExecuteTx("tx", "auth", "propose-revoke-account",
+			"--address", newTrustee1Addr,
+			"--from", alice,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		txResult, err = utils.ExecuteTx("tx", "auth", "approve-revoke-account",
+			"--address", newTrustee1Addr,
+			"--from", bob,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		txResult, err = utils.ExecuteTx("tx", "auth", "approve-revoke-account",
+			"--address", newTrustee1Addr,
+			"--from", jack,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		txResult, err = utils.ExecuteTx("tx", "auth", "approve-revoke-account",
+			"--address", newTrustee1Addr,
+			"--from", newTrustee1Name,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// new_trustee1 is revoked → 4 trustees remain
+		out, err = QueryRevokedAccount(newTrustee1Addr)
+		require.NoError(t, err)
+		require.Contains(t, string(out), newTrustee1Addr)
+
+		// Now approve vendor revocation — with 4 trustees need ceil(8/3)=3 approvals
+		// alice(1) + bob(2) + jack(3) = 3 → quorum
+		txResult, err = utils.ExecuteTx("tx", "auth", "approve-revoke-account",
+			"--address", vendorAddr,
+			"--from", jack,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// Vendor is now revoked
+		out, err = QueryRevokedAccount(vendorAddr)
+		require.NoError(t, err)
+		require.Contains(t, string(out), vendorAddr)
+		require.Contains(t, string(out), "TrusteeVoting")
+	})
+
+	// ── Reject scenario with dynamic trustee count ──────────────────────────
+	// With 4 trustees (jack, alice, bob, new_trustee2), rejection needs ceil(8/3)=3
+
+	t.Run("RejectWithDynamicTrusteeCount", func(t *testing.T) {
+		// Jack re-proposes the revoked vendor
+		txResult, err := utils.ExecuteTx("tx", "auth", "propose-add-account",
+			"--info", "Jack is proposing this account",
+			"--address", vendorAddr,
+			"--pubkey", vendorPubkey,
+			"--roles", "Vendor,NodeAdmin",
+			"--vid", fmt.Sprintf("%d", vid),
+			"--from", jack,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// Bob rejects (1 rejection — not enough with 4 trustees, need 3)
+		txResult, err = utils.ExecuteTx("tx", "auth", "reject-add-account",
+			"--address", vendorAddr,
+			"--info", "Bob is rejecting this account",
+			"--from", bob,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// Still in proposed
+		out, err := QueryAllProposedAccounts()
+		require.NoError(t, err)
+		require.Contains(t, string(out), vendorAddr)
+
+		// Revoke new_trustee2 → 3 trustees (jack, alice, bob)
+		txResult, err = utils.ExecuteTx("tx", "auth", "propose-revoke-account",
+			"--address", newTrustee2Addr,
+			"--from", alice,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		txResult, err = utils.ExecuteTx("tx", "auth", "approve-revoke-account",
+			"--address", newTrustee2Addr,
+			"--from", bob,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		txResult, err = utils.ExecuteTx("tx", "auth", "approve-revoke-account",
+			"--address", newTrustee2Addr,
+			"--from", jack,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// new_trustee2 is revoked → 3 trustees
+		out, err = QueryRevokedAccount(newTrustee2Addr)
+		require.NoError(t, err)
+		require.Contains(t, string(out), newTrustee2Addr)
+
+		// Alice rejects → with 3 trustees need ceil(6/3)=2 rejections → bob+alice=2 → quorum
+		txResult, err = utils.ExecuteTx("tx", "auth", "reject-add-account",
+			"--address", vendorAddr,
+			"--info", "Alice is rejecting this account",
+			"--from", alice,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// Account is now in rejected list
+		out, err = QueryAllRejectedAccounts()
+		require.NoError(t, err)
+		require.Contains(t, string(out), vendorAddr)
+
+		out, err = QueryRejectedAccount(vendorAddr)
+		require.NoError(t, err)
+		require.Contains(t, string(out), vendorAddr)
+
+		out, err = QueryAllProposedAccounts()
+		require.NoError(t, err)
+		require.NotContains(t, string(out), vendorAddr)
+	})
+}
+
 func TestAuthDemoVendorAccount(t *testing.T) {
 	jack := testconstants.JackAccount
 	alice := testconstants.AliceAccount
