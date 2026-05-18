@@ -47,7 +47,7 @@ func TestModelVersionDemo(t *testing.T) {
 			"--softwareVersion", fmt.Sprintf("%d", sv),
 			"--cdVersionNumber", "1",
 			"--softwareVersionString", "1",
-			"--cdCertificateId", "1",
+			"--cdCertificateId", "0000000000000000001",
 			"--certificationType", "zigbee",
 			"--certificationDate", "2020-01-01T00:00:01Z",
 			"--from", zbAccount,

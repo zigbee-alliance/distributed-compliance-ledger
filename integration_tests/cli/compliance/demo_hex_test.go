@@ -29,7 +29,7 @@ func TestComplianceDemoHex(t *testing.T) {
 	certificationDate := "2020-01-01T00:00:01Z"
 	zigbeeCertType := "zigbee"
 	matterCertType := "matter"
-	cdCertID := fmt.Sprintf("cert-%d", rand.Intn(1<<30))
+	cdCertID := fmt.Sprintf("cert-%014d", rand.Intn(1<<30))
 
 	t.Run("AddModelAndVersion", func(t *testing.T) {
 		txResult, err := utils.ExecuteTx("tx", "model", "add-model",

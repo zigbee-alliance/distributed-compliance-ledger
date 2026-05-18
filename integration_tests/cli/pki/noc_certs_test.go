@@ -171,10 +171,10 @@ func TestPKINocCerts(t *testing.T) {
 		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocCert1CopySerialNumber))
 		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocCert2Subject))
 
-		// Approved x509 certs should be empty
+		// NOC certs must NOT appear in the DA (approved x509) cert list.
+		// (Other tests may have added DA certs, so the list need not be empty.)
 		out, err = QueryAllX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), "[]")
 		require.NotContains(t, string(out), nocRootCert1Subject)
 
 		// All NOC certs should include both root and ICA

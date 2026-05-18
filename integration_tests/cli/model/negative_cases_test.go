@@ -141,7 +141,7 @@ func TestModelNegativeCases(t *testing.T) {
 			"--certificationType", "zigbee",
 			"--certificationDate", certificationDate,
 			"--softwareVersionString", softwareVersionString,
-			"--cdCertificateId", "123",
+			"--cdCertificateId", "1230000000000000000",
 			"--from", zbAccount,
 		)
 		require.NoError(t, err)

@@ -71,10 +71,10 @@ func TestPKIRemoveX509Certificates(t *testing.T) {
 
 		out, err = QueryAllX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), removeX509RootCert1SerialNum)
-		require.Contains(t, string(out), removeX509IntermCert1SerialNum)
-		require.Contains(t, string(out), removeX509IntermCert2SerialNum)
-		require.Contains(t, string(out), removeX509LeafCertSerialNum)
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, removeX509RootCert1SerialNum))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, removeX509IntermCert1SerialNum))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, removeX509IntermCert2SerialNum))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, removeX509LeafCertSerialNum))
 	})
 
 	t.Run("RevokeAndRemoveIntermCert", func(t *testing.T) {
@@ -120,8 +120,8 @@ func TestPKIRemoveX509Certificates(t *testing.T) {
 		// Only second intermediate cert should remain
 		out, err := QueryX509Cert(removeX509IntermCertSubject, removeX509IntermCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), removeX509IntermCert2SerialNum)
-		require.NotContains(t, string(out), removeX509IntermCert1SerialNum)
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, removeX509IntermCert2SerialNum))
+		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, removeX509IntermCert1SerialNum))
 
 		// Remove remaining intermediate cert by subject+subjectKeyID
 		txResult, err = RemoveX509Cert(removeX509IntermCertSubject, removeX509IntermCertSubjectKeyID, vendorAccount65521)
@@ -134,18 +134,19 @@ func TestPKIRemoveX509Certificates(t *testing.T) {
 		require.NoError(t, err)
 		require.Contains(t, string(out), "Not Found")
 
-		// Revoked list should be empty
+		// This test's intermediate certs should not be in the revoked list.
+		// (TestPKIDemo may have left other certs revoked, so we cannot assert "[]".)
 		out, err = QueryAllRevokedX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), "[]")
+		require.NotContains(t, string(out), removeX509IntermCertSubject)
 
 		// Only root and leaf should remain
 		out, err = QueryAllX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), removeX509RootCert1SerialNum)
-		require.Contains(t, string(out), removeX509LeafCertSerialNum)
-		require.NotContains(t, string(out), removeX509IntermCert1SerialNum)
-		require.NotContains(t, string(out), removeX509IntermCert2SerialNum)
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, removeX509RootCert1SerialNum))
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, removeX509LeafCertSerialNum))
+		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, removeX509IntermCert1SerialNum))
+		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, removeX509IntermCert2SerialNum))
 	})
 
 	t.Run("RemoveLeafCert", func(t *testing.T) {
@@ -162,7 +163,7 @@ func TestPKIRemoveX509Certificates(t *testing.T) {
 		// Only root should remain
 		out, err = QueryAllX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), removeX509RootCert1SerialNum)
-		require.NotContains(t, string(out), removeX509LeafCertSerialNum)
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, removeX509RootCert1SerialNum))
+		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, removeX509LeafCertSerialNum))
 	})
 }

@@ -25,7 +25,7 @@ func TestComplianceRevocation(t *testing.T) {
 	pid := rand.Intn(65534) + 1
 	sv := rand.Intn(65534) + 1
 	svs := fmt.Sprintf("%d", rand.Intn(65534)+1)
-	cdCertID := fmt.Sprintf("cert-%d", rand.Intn(1<<30))
+	cdCertID := fmt.Sprintf("cert-%014d", rand.Intn(1<<30))
 
 	t.Run("CreateModelAndVersion", func(t *testing.T) {
 		cliputils.CreateModelAndVersion(t, vid, pid, sv, svs, vendorAccount)

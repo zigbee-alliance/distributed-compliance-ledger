@@ -26,7 +26,7 @@ func TestComplianceProvisioning(t *testing.T) {
 	certTypeMatter := "matter"
 	provisionDate := "2020-02-02T02:20:20Z"
 	provisionReason := "some reason"
-	cdCertID := fmt.Sprintf("cert-%d", rand.Intn(1<<30))
+	cdCertID := fmt.Sprintf("cert-%014d", rand.Intn(1<<30))
 
 	t.Run("ProvisionUnknownModel_Succeeds", func(t *testing.T) {
 		txResult, err := ProvisionModel(vid, pid, sv, svs, certTypeZb, provisionDate, cdCertID, zbAccount,

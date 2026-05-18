@@ -25,7 +25,7 @@ func TestComplianceDemo(t *testing.T) {
 	certificationDate := "2020-01-01T00:00:01Z"
 	zigbeeCertType := "zigbee"
 	matterCertType := "matter"
-	cdCertID := fmt.Sprintf("cert-%d", rand.Intn(1<<30))
+	cdCertID := fmt.Sprintf("cert-%014d", rand.Intn(1<<30))
 	cdVersionNumber := 1
 
 	t.Run("CertifyUnknownModel_Succeeds", func(t *testing.T) {

@@ -71,6 +71,9 @@ const (
 	revPointDataURL         = "https://url.data.dclmodel"
 	revPointDataURLNonScoped = "https://url.data.dclmodel2"
 	revPointIssuerSKID      = "5A880E6C3653D07FB08971A3F473790930E62BDB"
+	// SKID of google_root_cert_gsr4 (no colons) — used for non-VID-scoped PAI revocation point.
+	// intermediate_cert_gsr4 (no VID) chains to this root, which is on the ledger after TestPKIAddVendorX509Certificates.
+	revPointGsr4IssuerSKID = "54B07BAD45B8E2407FFB0A6EFBBE33C93CA384D5"
 )
 
 // TestPKIRevocationPoints translates pki-revocation-points.sh.
@@ -346,13 +349,17 @@ func TestPKIRevocationPoints(t *testing.T) {
 	})
 
 	t.Run("AddRevocationPointForNonVidScopedPAI", func(t *testing.T) {
+		// Use intermediate_cert_gsr4 (no VID) instead of intermediate_cert: root_cert (issuer of
+		// intermediate_cert) is revoked by TestPKIDemo, so its chain cannot be verified.
+		// google_root_cert_gsr4 (issuer of intermediate_cert_gsr4) is already on the ledger
+		// from TestPKIAddVendorX509Certificates.
 		txResult, err := AddRevocationPoint(vendorAccount,
 			"--vid", fmt.Sprintf("%d", revPointVid),
 			"--is-paa=false",
-			"--certificate", intermediateCertPath,
+			"--certificate", addVendorIntermCertPath,
 			"--label", revPointLabelIntermediate,
 			"--data-url", revPointDataURLNonScoped,
-			"--issuer-subject-key-id", revPointIssuerSKID,
+			"--issuer-subject-key-id", revPointGsr4IssuerSKID,
 			"--revocation-type", "1",
 		)
 		require.NoError(t, err)
@@ -382,21 +389,21 @@ func TestPKIRevocationPoints(t *testing.T) {
 		require.NoError(t, err)
 		require.Contains(t, string(out), fmt.Sprintf(`"dataURL":"%s"`, dataURLNew))
 
-		// Update non-VID-scoped PAI
+		// Update non-VID-scoped PAI (uses addVendorIntermCertPath / revPointGsr4IssuerSKID)
 		dataURLNonScopedNew := revPointDataURLNonScoped + "_new"
 		txResult, err = UpdateRevocationPoint(vendorAccount,
 			"--vid", fmt.Sprintf("%d", revPointVid),
 			"--label", revPointLabelIntermediate,
-			"--certificate", intermediateCertPath,
+			"--certificate", addVendorIntermCertPath,
 			"--data-url", dataURLNonScopedNew,
-			"--issuer-subject-key-id", revPointIssuerSKID,
+			"--issuer-subject-key-id", revPointGsr4IssuerSKID,
 		)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err = QueryPkiRevocationDistributionPoint(revPointVid, revPointLabelIntermediate, revPointIssuerSKID)
+		out, err = QueryPkiRevocationDistributionPoint(revPointVid, revPointLabelIntermediate, revPointGsr4IssuerSKID)
 		require.NoError(t, err)
 		require.Contains(t, string(out), fmt.Sprintf(`"dataURL":"%s"`, dataURLNonScopedNew))
 

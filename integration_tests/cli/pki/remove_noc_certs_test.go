@@ -40,6 +40,15 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 	vendorAccount65522 := fmt.Sprintf("vendor_account_%d", removeNocOtherVid)
 	cliputils.CreateVendorAccount(t, vendorAccount65522, removeNocOtherVid)
 
+	// Prior NOC tests add noc_root_cert_1, noc_cert_1, and noc_leaf_cert_1 under VID 24582 (nocVid)
+	// and leave them in the revoked state. The unique-cert store retains their serial entries,
+	// preventing re-addition by VID 65521. Remove them via the owning VID 24582 account first.
+	vendorAccount24582 := fmt.Sprintf("vendor_account_%d", nocVid)
+	cliputils.CreateVendorAccount(t, vendorAccount24582, nocVid)
+	RemoveNocRootCert(nocRootCert1Subject, nocRootCert1SubjectKeyID, vendorAccount24582) //nolint:errcheck
+	RemoveNocCert(nocCert1Subject, nocCert1SubjectKeyID, vendorAccount24582)             //nolint:errcheck
+	RemoveNocCert(nocLeafCert1Subject, nocLeafCert1SubjectKeyID, vendorAccount24582)     //nolint:errcheck
+
 	t.Run("SetupCerts", func(t *testing.T) {
 		// Add root cert
 		txResult, err := AddNocRootCert(nocRootCert1Path, vendorAccount65521)
@@ -100,12 +109,12 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, uint32(4), txResult.Code)
 
-		// Try to remove with different VID vendor
+		// Try to remove with different VID vendor (returns 439 ErrCertVidNotEqualAccountVid, not 4)
 		txResult, err = RemoveNocCert(removeNocIntermCertSubject, removeNocIntermCertSubjectKeyID, vendorAccount65522,
 			"--serial-number", removeNocIntermCert1Serial,
 		)
 		require.NoError(t, err)
-		require.Equal(t, uint32(4), txResult.Code)
+		require.Equal(t, uint32(439), txResult.Code)
 
 		// Remove revoked ICA cert by serial
 		txResult, err = RemoveNocCert(removeNocIntermCertSubject, removeNocIntermCertSubjectKeyID, vendorAccount65521,
@@ -133,10 +142,11 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 		require.NoError(t, err)
 		require.Contains(t, string(out), "Not Found")
 
-		// Revoked certs should be empty (removal clears revoked too)
+		// This test's ICA certs (subject = removeNocIntermCertSubject) should not be in the revoked list.
+		// (Prior NOC tests may have left other subjects in the revoked list, so we cannot assert "[]".)
 		out, err = QueryAllRevokedNocX509IcaCerts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), "[]")
+		require.NotContains(t, string(out), removeNocIntermCertSubject)
 	})
 
 	t.Run("RemoveLeafCert", func(t *testing.T) {
@@ -180,12 +190,12 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, uint32(4), txResult.Code)
 
-		// Try to remove with different VID vendor
+		// Try to remove with different VID vendor (returns 439 ErrCertVidNotEqualAccountVid, not 4)
 		txResult, err = RemoveNocRootCert(removeNocRootCertSubject, removeNocRootCertSubjectKeyID, vendorAccount65522,
 			"--serial-number", removeNocRootCert1SerialNumber,
 		)
 		require.NoError(t, err)
-		require.Equal(t, uint32(4), txResult.Code)
+		require.Equal(t, uint32(439), txResult.Code)
 
 		// Revoke root cert
 		txResult, err = RevokeNocRootCert(removeNocRootCertSubject, removeNocRootCertSubjectKeyID, vendorAccount65521,

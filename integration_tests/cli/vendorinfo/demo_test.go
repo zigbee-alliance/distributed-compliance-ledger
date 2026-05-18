@@ -45,9 +45,10 @@ func TestVendorInfoDemo(t *testing.T) {
 	})
 
 	t.Run("QueryAllEmpty", func(t *testing.T) {
-		out, err := QueryAllVendors()
+		// This test's specific vendor must not exist yet (other tests may have added different VIDs).
+		out, err := QueryVendor(fmt.Sprintf("%d", vid))
 		require.NoError(t, err)
-		require.Contains(t, string(out), "[]")
+		require.Contains(t, string(out), "Not Found")
 	})
 
 	const (

@@ -96,14 +96,18 @@ func TestPKINocRevocationWithRevokingChild(t *testing.T) {
 		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocCert1Subject))
 		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocLeafCert1Subject))
 
-		// NOC certs by VID should be empty
+		// Root cert 1 (both serials) should no longer be in the approved root list for VID.
+		// (Root cert 2 from TestPKINocCerts may still be approved — don't assert "Not Found".)
 		out, err = QueryNocRootCerts(nocVid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.NotContains(t, string(out), nocRootCert1SerialNumber)
+		require.NotContains(t, string(out), nocRootCert1CopySerialNumber)
 
+		// cert1 should be revoked after revoking root cert 1 with child flag.
+		// noc_cert_2 (child of root cert 2) from TestPKINocCerts is still approved — don't assert "Not Found".
 		out, err = QueryNocX509IcaCerts(nocVid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.NotContains(t, string(out), nocCert1SerialNumber)
 
 		// NOC certs must not appear in the DA (all-x509-certs) list.
 		out, err = QueryAllX509Certs()
@@ -114,21 +118,17 @@ func TestPKINocRevocationWithRevokingChild(t *testing.T) {
 	})
 
 	t.Run("RevokeNocIcaCertWithChildFlag", func(t *testing.T) {
-		// Add root cert
-		txResult, err := AddNocRootCert(nocRootCert2Path, vendorAccount)
+		// noc_root_cert_2 and noc_cert_2 were already added by TestPKINocCerts — verify they are on-chain.
+		out, err := QueryNocRootCerts(nocVid)
 		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		require.Contains(t, string(out), nocRootCert2SerialNumber)
 
-		// Add ICA certs
-		txResult, err = AddNocX509IcaCert(nocCert2Path, vendorAccount)
+		out, err = QueryNocX509IcaCerts(nocVid)
 		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		require.Contains(t, string(out), nocCert2SerialNumber)
 
-		txResult, err = AddNocX509IcaCert(nocRevChildCert2CopyPath, vendorAccount)
+		// Add cert2copy and leaf2 (not yet on-chain)
+		txResult, err := AddNocX509IcaCert(nocRevChildCert2CopyPath, vendorAccount)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -150,7 +150,7 @@ func TestPKINocRevocationWithRevokingChild(t *testing.T) {
 		require.NoError(t, err)
 
 		// Both ICA and leaf should be revoked
-		out, err := QueryAllRevokedNocX509IcaCerts()
+		out, err = QueryAllRevokedNocX509IcaCerts()
 		require.NoError(t, err)
 		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocCert2Subject))
 		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocLeafCert2Subject))

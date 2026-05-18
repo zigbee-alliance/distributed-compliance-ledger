@@ -122,9 +122,9 @@ func TestPKIRevocationWithRevokingChild(t *testing.T) {
 		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revChildRootCert1SerialNumber))
 		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revChildRootCert2SerialNumber))
 		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revChildIntermCertSubject))
-		require.NotContains(t, string(out), revChildIntermCert1SerialNumber)
-		require.NotContains(t, string(out), revChildIntermCert2SerialNumber)
-		require.NotContains(t, string(out), revChildLeafCertSerialNumber)
+		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revChildIntermCert1SerialNumber))
+		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revChildIntermCert2SerialNumber))
+		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revChildLeafCertSerialNumber))
 	})
 
 	t.Run("ReAddCertsAfterRevocation", func(t *testing.T) {

@@ -102,14 +102,21 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 		require.Contains(t, string(out), validatorAddress)
 		require.Contains(t, string(out), aliceAddr)
 
-		// Bob approves — reaches threshold, validator becomes disabled
+		// Bob approves — 2nd approval
 		txResult, err = ApproveDisableNode(validatorAddress, bob)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Bob cannot reject after already approving
+		// Jack approves — reaches threshold (ceil(2/3 * N_trustees)), validator becomes disabled
+		txResult, err = ApproveDisableNode(validatorAddress, jack)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// Bob cannot reject — proposal is gone (threshold was reached)
 		txBad, errBad := RejectDisableNode(validatorAddress, bob)
 		if errBad == nil {
 			require.NotEqual(t, uint32(0), txBad.Code)
@@ -147,14 +154,21 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Bob approves
+		// Bob approves — 2nd approval
 		txResult, err = ApproveDisableNode(validatorAddress, bob)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Bob cannot reject again — already approved and threshold reached
+		// Jack approves — reaches threshold, validator becomes disabled
+		txResult, err = ApproveDisableNode(validatorAddress, jack)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// Bob cannot reject — proposal is gone (threshold was reached)
 		txBad, errBad := RejectDisableNode(validatorAddress, bob)
 		if errBad == nil {
 			require.NotEqual(t, uint32(0), txBad.Code)
@@ -273,16 +287,19 @@ func resolveFirstValidator(t *testing.T) (ownerAccountName, validatorAddress str
 	require.NoError(t, err)
 	outStr := string(out)
 
-	// Try each well-known node admin account from the localnet
-	knownAccounts := []string{"node0", "node1", "node2", "node3"}
+	// The validator "owner" field in all-nodes is a cosmosvaloper... address.
+	// Use --bech val to get the cosmosvaloper address for each well-known key and
+	// match against the all-nodes JSON. Prefer anna then jack so the validator under
+	// test is not owned by alice or bob (the propose/approve signers).
+	knownAccounts := []string{"anna", "jack", "alice", "bob"}
 	for _, acc := range knownAccounts {
-		addrOut, err := utils.ExecuteCLI("keys", "show", acc, "-a", "--keyring-backend", "test")
+		valAddrOut, err := utils.ExecuteCLI("keys", "show", acc, "--bech", "val", "-a", "--keyring-backend", "test")
 		if err != nil {
 			continue
 		}
-		addr := strings.TrimSpace(string(addrOut))
-		if addr != "" && strings.Contains(outStr, addr) {
-			return acc, addr
+		valAddr := strings.TrimSpace(string(valAddrOut))
+		if valAddr != "" && strings.Contains(outStr, valAddr) {
+			return acc, valAddr
 		}
 	}
 

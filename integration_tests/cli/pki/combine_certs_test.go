@@ -24,7 +24,7 @@ func TestPKICombineCerts(t *testing.T) {
 	jack := testconstants.JackAccount
 	alice := testconstants.AliceAccount
 
-	vid := 65524
+	vid := 65521
 
 	vendorAccount := fmt.Sprintf("vendor_account_%d", vid)
 	cliputils.CreateVendorAccount(t, vendorAccount, vid)
