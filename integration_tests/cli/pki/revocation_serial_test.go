@@ -206,7 +206,7 @@ func TestPKIRevocationWithSerialNumber(t *testing.T) {
 	})
 
 	t.Run("ProposeAndApproveRevokeRootSerial1Only", func(t *testing.T) {
-		// Propose revoke root with serial 1 (child certs should remain)
+		// Propose revoke root with serial 1 (child certs should remain).
 		txResult, err := ProposeRevokeX509RootCert(revSerialRootCertSubject, revSerialRootCertSubjectKeyID, jack,
 			"--serial-number", revSerialRootCert1SerialNumber,
 		)
@@ -234,23 +234,25 @@ func TestPKIRevocationWithSerialNumber(t *testing.T) {
 		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialIntermCert2SerialNumber))
 		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialLeafCertSerialNumber))
 
-		// Approved certs should still contain root 2, intermediates and leaf
+		// Verify root cert 1 was revoked by querying the specific cert (avoids substring matches in all-certs).
+		// Root cert 2 should remain; root cert 1 (serial "1") should be gone from approved.
+		out, err = QueryX509Cert(revSerialRootCertSubject, revSerialRootCertSubjectKeyID)
+		require.NoError(t, err)
+		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialRootCert2SerialNumber))
+		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialRootCert1SerialNumber))
+
+		// Intermediates and leaf should still be approved.
 		out, err = QueryAllX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revSerialRootCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revSerialIntermCertSubject))
-		require.Contains(t, string(out), revSerialRootCertSubjectKeyID)
-		require.Contains(t, string(out), revSerialIntermCertSubjectKeyID)
+		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, revSerialIntermCertSubjectKeyID))
 		require.Contains(t, string(out), revSerialLeafCertSubjectKeyID)
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialRootCert2SerialNumber))
 		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialIntermCert1SerialNumber))
 		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialIntermCert2SerialNumber))
 		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialLeafCertSerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revSerialRootCert1SerialNumber))
 	})
 
 	t.Run("ProposeAndApproveRevokeRootSerial2WithChild", func(t *testing.T) {
-		// Propose revoke root with serial 2 and its children
+		// Propose revoke root with serial 2 and its children.
 		txResult, err := ProposeRevokeX509RootCert(revSerialRootCertSubject, revSerialRootCertSubjectKeyID, jack,
 			"--serial-number", revSerialRootCert2SerialNumber,
 			"--revoke-child=true",
