@@ -131,10 +131,13 @@ ts-client-gen:
 	ignite generate ts-client
 	./scripts/patch-ts-client-encoding.sh
 
+ts-client-test:
+	node --test scripts/test-ts-client-encoding.test.js
+
 ${TEST_TARGETS}:
 	make -f ${MK_TEST} $@
 
 .PHONY: all build install test lint clean \
-		ts-client-gen \
+		ts-client-gen ts-client-test \
 		license license-check \
 		${TEST_TARGETS}
