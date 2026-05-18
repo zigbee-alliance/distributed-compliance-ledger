@@ -1273,8 +1273,9 @@ export class HttpClient<SecurityDataType = unknown> {
       ...axiosConfig,
       baseURL: axiosConfig.baseURL || "",
       // RFC 3986 encode every value so base64 pagination keys (+, /, =) survive transit.
-      paramsSerializer,
+      paramsSerializer: paramsSerializer,
     });
+
     this.secure = secure;
     this.format = format;
     this.securityWorker = securityWorker;

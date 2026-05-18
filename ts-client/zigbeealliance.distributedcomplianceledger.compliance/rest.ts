@@ -305,7 +305,7 @@ export interface V1Beta1PageResponse {
 }
 
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, ResponseType } from "axios";
-import {paramsSerializer} from "../utils";
+import { paramsSerializer } from "../utils";
 
 export type QueryParamsType = Record<string | number, any>;
 
@@ -354,6 +354,7 @@ export class HttpClient<SecurityDataType = unknown> {
       // RFC 3986 encode every value so base64 pagination keys (+, /, =) survive transit.
       paramsSerializer: paramsSerializer,
     });
+
     this.secure = secure;
     this.format = format;
     this.securityWorker = securityWorker;
