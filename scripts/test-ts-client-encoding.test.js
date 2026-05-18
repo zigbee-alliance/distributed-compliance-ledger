@@ -1,26 +1,28 @@
-// CI guard for the RFC 3986 paramsSerializer injected into ts-client/*/rest.ts
-// by scripts/patch-ts-client-encoding.sh. Run with: node --test (Node >= 20).
+// CI guard for the RFC 3986 paramsSerializer in ts-client/utils.ts and the
+// import injected into ts-client/*/rest.ts by scripts/patch-ts-client-encoding.sh.
+// Run with: node --test (Node >= 20).
 
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 
-// Keep in sync with scripts/patch-ts-client-encoding.sh
-const paramsSerializer = (params) => {
-  const parts = [];
-  for (const key of Object.keys(params)) {
-    const value = params[key];
-    if (value === undefined || value === null) continue;
-    const ek = encodeURIComponent(key);
-    if (Array.isArray(value)) {
-      for (const item of value) parts.push(`${ek}=${encodeURIComponent(String(item))}`);
-    } else {
-      parts.push(`${ek}=${encodeURIComponent(String(value))}`);
-    }
-  }
-  return parts.join("&");
-};
+const tsClientDir = path.resolve(__dirname, "..", "ts-client");
+const utilsPath = path.join(tsClientDir, "utils.ts");
+
+// Extract and execute the actual function from utils.ts so the algorithm tests
+// run against the shipped code, not a copy. Strips the few TS annotations
+// inside the function so node can compile it as JS.
+function loadParamsSerializer() {
+  const src = fs.readFileSync(utilsPath, "utf8");
+  const match = src.match(/export function paramsSerializer\(([^)]*)\):\s*string\s*\{([\s\S]*?)\n\}/);
+  if (!match) throw new Error("paramsSerializer not found in ts-client/utils.ts");
+  const params = match[1].replace(/:\s*Record<string,\s*any>/g, "");
+  const body = match[2].replace(/:\s*string\[\]/g, "");
+  return new Function(params, body);
+}
+
+const paramsSerializer = loadParamsSerializer();
 
 test("base64 pagination key with '+' is percent-encoded to %2B", () => {
   assert.equal(
@@ -62,8 +64,13 @@ test("booleans and numbers stringify", () => {
   );
 });
 
-test("every ts-client/*/rest.ts has the paramsSerializer patch applied", () => {
-  const tsClientDir = path.resolve(__dirname, "..", "ts-client");
+test("ts-client/utils.ts exists and exports paramsSerializer", () => {
+  assert.ok(fs.existsSync(utilsPath), "ts-client/utils.ts is missing -- run scripts/patch-ts-client-encoding.sh");
+  const src = fs.readFileSync(utilsPath, "utf8");
+  assert.match(src, /export function paramsSerializer/);
+});
+
+test("every ts-client/*/rest.ts imports paramsSerializer and uses it on axios.create", () => {
   const restFiles = [];
   for (const name of fs.readdirSync(tsClientDir)) {
     const candidate = path.join(tsClientDir, name, "rest.ts");
@@ -72,9 +79,8 @@ test("every ts-client/*/rest.ts has the paramsSerializer patch applied", () => {
   assert.ok(restFiles.length >= 16, `expected >=16 rest.ts files, found ${restFiles.length}`);
   for (const f of restFiles) {
     const src = fs.readFileSync(f, "utf8");
-    assert.ok(
-      src.includes("paramsSerializer") && src.includes("encodeURIComponent"),
-      `${path.relative(tsClientDir, f)} is missing the patch -- run scripts/patch-ts-client-encoding.sh`,
-    );
+    const rel = path.relative(tsClientDir, f);
+    assert.match(src, /from "\.\.\/utils"/, `${rel} missing utils import -- run scripts/patch-ts-client-encoding.sh`);
+    assert.match(src, /paramsSerializer,\s*\n\s*\}\);/, `${rel} not using paramsSerializer in axios.create`);
   }
 });

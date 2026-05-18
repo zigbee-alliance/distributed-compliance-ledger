@@ -454,6 +454,7 @@ export interface V1Beta1QueryParamsResponse {
 }
 
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, ResponseType } from "axios";
+import { paramsSerializer } from "../utils";
 
 export type QueryParamsType = Record<string | number, any>;
 
@@ -500,21 +501,9 @@ export class HttpClient<SecurityDataType = unknown> {
       ...axiosConfig,
       baseURL: axiosConfig.baseURL || "",
       // RFC 3986 encode every value so base64 pagination keys (+, /, =) survive transit.
-      paramsSerializer: (params: Record<string, any>) => {
-        const parts: string[] = [];
-        for (const key of Object.keys(params)) {
-          const value = params[key];
-          if (value === undefined || value === null) continue;
-          const ek = encodeURIComponent(key);
-          if (Array.isArray(value)) {
-            for (const item of value) parts.push(`${ek}=${encodeURIComponent(String(item))}`);
-          } else {
-            parts.push(`${ek}=${encodeURIComponent(String(value))}`);
-          }
-        }
-        return parts.join("&");
-      },
+      paramsSerializer: paramsSerializer,
     });
+
     this.secure = secure;
     this.format = format;
     this.securityWorker = securityWorker;
