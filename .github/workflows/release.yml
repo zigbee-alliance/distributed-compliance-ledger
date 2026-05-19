@@ -183,7 +183,7 @@ jobs:
         shell: bash
 
       - name: build application and cosmovisor binary | ubuntu
-        if: ${{ startsWith(matrix.os, 'ubuntu-') && (!matrix.bin || !matrix.tgz || !matrix.cosmovisor) }}
+        if: ${{ startsWith(matrix.os, 'ubuntu-') && (!matrix.bin || !matrix.tgz || !matrix.cosmovisor) }} # TODO: When archive is not present, but bin (dcld) and/or cosmovisor are already available in the release makes sense to not rebuild the existing artifacts but rather download them
         run: |
           UBUNTU_VERSION=$(echo "${{ matrix.os }}" | cut -d'-' -f2)
           UBUNTU_VERSION=$UBUNTU_VERSION bash .github/workflows/ubuntu-build.sh
