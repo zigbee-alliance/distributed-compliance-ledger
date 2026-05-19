@@ -39,7 +39,7 @@ locals {
 data "google_compute_image" "ubuntu" {
   most_recent = true
   project     = "ubuntu-os-cloud"
-  family      = var.os_family
+  filter      = "(family = \"${var.os_family}\") AND (architecture = \"X86_64\")"
 }
 
 
