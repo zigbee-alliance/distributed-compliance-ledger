@@ -233,6 +233,7 @@ func WaitForHeight(t *testing.T, target int64, timeoutSec int) {
 			require.Failf(t, "WaitForHeight timed out",
 				"height %d not reached within %d seconds (current: %d, err: %v)",
 				target, timeoutSec, h, err)
+
 			return
 		}
 		time.Sleep(1 * time.Second)
@@ -245,5 +246,6 @@ func stripNewline(b []byte) string {
 	for len(s) > 0 && (s[len(s)-1] == '\n' || s[len(s)-1] == '\r' || s[len(s)-1] == ' ') {
 		s = s[:len(s)-1]
 	}
+
 	return s
 }

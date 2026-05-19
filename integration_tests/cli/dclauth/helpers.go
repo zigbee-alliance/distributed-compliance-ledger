@@ -40,6 +40,7 @@ func QueryAccounts() (*dclauthtypes.QueryAllAccountResponse, error) {
 	if err := json.Unmarshal(out, &res); err != nil {
 		return nil, err
 	}
+
 	return &res, nil
 }
 
