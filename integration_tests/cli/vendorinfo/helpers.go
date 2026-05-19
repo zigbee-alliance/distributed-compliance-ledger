@@ -22,6 +22,7 @@ import (
 func AddVendor(from string, extra ...string) (*utils.TxResult, error) {
 	args := []string{"tx", "vendorinfo", "add-vendor", "--from", from}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -29,6 +30,7 @@ func AddVendor(from string, extra ...string) (*utils.TxResult, error) {
 func UpdateVendor(from string, extra ...string) (*utils.TxResult, error) {
 	args := []string{"tx", "vendorinfo", "update-vendor", "--from", from}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 

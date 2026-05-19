@@ -60,8 +60,10 @@ func QueryAccount(address string) (*dclauthtypes.Account, error) {
 		if err2 := json.Unmarshal(out, &acc); err2 == nil {
 			return &acc, nil
 		}
+
 		return nil, err
 	}
+
 	return &res.Account, nil
 }
 
@@ -72,6 +74,7 @@ func AccountIsInList(address string, accounts []dclauthtypes.Account) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -182,6 +185,7 @@ func GetAddress(name string) (string, error) {
 	for len(s) > 0 && (s[len(s)-1] == '\n' || s[len(s)-1] == '\r' || s[len(s)-1] == ' ') {
 		s = s[:len(s)-1]
 	}
+
 	return s, nil
 }
 
@@ -195,6 +199,7 @@ func GetPubkey(name string) (string, error) {
 	for len(s) > 0 && (s[len(s)-1] == '\n' || s[len(s)-1] == '\r' || s[len(s)-1] == ' ') {
 		s = s[:len(s)-1]
 	}
+
 	return s, nil
 }
 
@@ -221,7 +226,9 @@ func QueryAccountResponse(address string) (*dclauthtypes.Account, error) {
 		if err2 := json.Unmarshal(out, &acc); err2 == nil {
 			return &acc, nil
 		}
+
 		return nil, err
 	}
+
 	return &res.Account, nil
 }

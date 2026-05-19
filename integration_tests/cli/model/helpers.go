@@ -19,6 +19,7 @@ func AddModel(vid, pid int, from string, extra ...string) (*utils.TxResult, erro
 		"--from", from,
 	}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -31,6 +32,7 @@ func UpdateModel(vid, pid int, from string, extra ...string) (*utils.TxResult, e
 		"--from", from,
 	}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -57,6 +59,7 @@ func AddModelVersion(vid, pid, sv int, svs string, from string, extra ...string)
 		"--from", from,
 	}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -70,6 +73,7 @@ func UpdateModelVersion(vid, pid, sv int, from string, extra ...string) (*utils.
 		"--from", from,
 	}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -153,5 +157,6 @@ func itoa(n int) string {
 		pos--
 		buf[pos] = '-'
 	}
+
 	return string(buf[pos:])
 }

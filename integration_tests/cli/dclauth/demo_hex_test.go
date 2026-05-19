@@ -106,6 +106,7 @@ func TestAuthDemoHex(t *testing.T) {
 		// With broadcast-mode sync, rejection might come at CLI level or on-chain.
 		if err != nil {
 			require.Contains(t, err.Error(), "vendorID")
+
 			return
 		}
 		// Await on-chain result to drain tx from mempool before next subtest.
@@ -168,5 +169,6 @@ func itoa(n int) string {
 		pos--
 		buf[pos] = '-'
 	}
+
 	return string(buf[pos:])
 }

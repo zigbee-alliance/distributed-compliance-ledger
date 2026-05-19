@@ -304,6 +304,7 @@ func resolveFirstValidator(t *testing.T) (ownerAccountName, validatorAddress str
 	}
 
 	require.Fail(t, "could not find a known validator node admin account in the localnet")
+
 	return "", ""
 }
 
@@ -313,5 +314,6 @@ func getAddress(name string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return strings.TrimSpace(string(out)), nil
 }

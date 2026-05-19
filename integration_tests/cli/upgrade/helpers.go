@@ -27,6 +27,7 @@ func ProposeUpgrade(name, height, from string, extra ...string) (*utils.TxResult
 		"--from", from,
 	}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 

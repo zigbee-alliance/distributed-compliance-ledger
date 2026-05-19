@@ -18,6 +18,7 @@ func CertifyModel(vid, pid, sv int, svs, certType, certDate, cdCertID, from stri
 		"--from", from,
 	}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -34,6 +35,7 @@ func RevokeModel(vid, pid, sv int, svs, certType, revocationDate, from string, e
 		"--from", from,
 	}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -51,6 +53,7 @@ func ProvisionModel(vid, pid, sv int, svs, certType, provisionalDate, cdCertID, 
 		"--from", from,
 	}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -65,6 +68,7 @@ func UpdateComplianceInfo(vid, pid, sv int, certType, from string, extra ...stri
 		"--from", from,
 	}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -176,5 +180,6 @@ func itoa(n int) string {
 		pos--
 		buf[pos] = '-'
 	}
+
 	return string(buf[pos:])
 }

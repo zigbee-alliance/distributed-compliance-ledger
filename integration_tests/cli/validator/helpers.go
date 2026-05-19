@@ -27,6 +27,7 @@ func AddNode(pubkey, moniker, from string, extra ...string) (*utils.TxResult, er
 		"--from", from,
 	}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 

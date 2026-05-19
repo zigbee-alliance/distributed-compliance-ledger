@@ -12,6 +12,7 @@ func ProposeAddX509RootCert(certFile, from string, extra ...string) (*utils.TxRe
 		"--from", from,
 	}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -24,6 +25,7 @@ func ApproveAddX509RootCert(subject, subjectKeyID, from string, extra ...string)
 		"--from", from,
 	}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -36,6 +38,7 @@ func RejectAddX509RootCert(subject, subjectKeyID, from string, extra ...string) 
 		"--from", from,
 	}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -47,6 +50,7 @@ func AddX509Cert(certFile, from string, extra ...string) (*utils.TxResult, error
 		"--from", from,
 	}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -59,6 +63,7 @@ func ProposeRevokeX509RootCert(subject, subjectKeyID, from string, extra ...stri
 		"--from", from,
 	}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -71,6 +76,7 @@ func ApproveRevokeX509RootCert(subject, subjectKeyID, from string, extra ...stri
 		"--from", from,
 	}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -83,6 +89,7 @@ func RevokeX509Cert(subject, subjectKeyID, from string, extra ...string) (*utils
 		"--from", from,
 	}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -94,6 +101,7 @@ func AddNocRootCert(certFile, from string, extra ...string) (*utils.TxResult, er
 		"--from", from,
 	}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -105,6 +113,7 @@ func AddNocX509IcaCert(certFile, from string, extra ...string) (*utils.TxResult,
 		"--from", from,
 	}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -117,6 +126,7 @@ func RevokeNocRootCert(subject, subjectKeyID, from string, extra ...string) (*ut
 		"--from", from,
 	}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -129,6 +139,7 @@ func RevokeNocX509IcaCert(subject, subjectKeyID, from string, extra ...string) (
 		"--from", from,
 	}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -141,6 +152,7 @@ func RemoveX509Cert(subject, subjectKeyID, from string, extra ...string) (*utils
 		"--from", from,
 	}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -153,6 +165,7 @@ func RemoveNocCert(subject, subjectKeyID, from string, extra ...string) (*utils.
 		"--from", from,
 	}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -165,6 +178,7 @@ func RemoveNocRootCert(subject, subjectKeyID, from string, extra ...string) (*ut
 		"--from", from,
 	}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -172,6 +186,7 @@ func RemoveNocRootCert(subject, subjectKeyID, from string, extra ...string) (*ut
 func AddRevocationPoint(from string, extra ...string) (*utils.TxResult, error) {
 	args := []string{"tx", "pki", "add-revocation-point", "--from", from}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -179,6 +194,7 @@ func AddRevocationPoint(from string, extra ...string) (*utils.TxResult, error) {
 func UpdateRevocationPoint(from string, extra ...string) (*utils.TxResult, error) {
 	args := []string{"tx", "pki", "update-revocation-point", "--from", from}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -186,6 +202,7 @@ func UpdateRevocationPoint(from string, extra ...string) (*utils.TxResult, error
 func DeleteRevocationPoint(from string, extra ...string) (*utils.TxResult, error) {
 	args := []string{"tx", "pki", "delete-revocation-point", "--from", from}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -203,6 +220,7 @@ func AssignVid(subject, subjectKeyID string, vid int, from string) (*utils.TxRes
 func AddPkiRevocationDistributionPoint(from string, extra ...string) (*utils.TxResult, error) {
 	args := []string{"tx", "pki", "add-pki-revocation-distribution-point", "--from", from}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -210,6 +228,7 @@ func AddPkiRevocationDistributionPoint(from string, extra ...string) (*utils.TxR
 func UpdatePkiRevocationDistributionPoint(from string, extra ...string) (*utils.TxResult, error) {
 	args := []string{"tx", "pki", "update-pki-revocation-distribution-point", "--from", from}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -217,6 +236,7 @@ func UpdatePkiRevocationDistributionPoint(from string, extra ...string) (*utils.
 func DeletePkiRevocationDistributionPoint(from string, extra ...string) (*utils.TxResult, error) {
 	args := []string{"tx", "pki", "delete-pki-revocation-distribution-point", "--from", from}
 	args = append(args, extra...)
+
 	return utils.ExecuteTx(args...)
 }
 
@@ -242,6 +262,7 @@ func QueryCert(subject, subjectKeyID string) ([]byte, error) {
 func QueryAllX509Certs(extra ...string) ([]byte, error) {
 	args := []string{"query", "pki", "all-x509-certs", "-o", "json"}
 	args = append(args, extra...)
+
 	return utils.ExecuteCLI(args...)
 }
 
@@ -336,6 +357,7 @@ func QueryAllNocX509Certs() ([]byte, error) {
 func QueryNocCert(extra ...string) ([]byte, error) {
 	args := []string{"query", "pki", "noc-x509-cert", "-o", "json"}
 	args = append(args, extra...)
+
 	return utils.ExecuteCLI(args...)
 }
 
@@ -444,5 +466,6 @@ func itoa(n int) string {
 		pos--
 		buf[pos] = '-'
 	}
+
 	return string(buf[pos:])
 }
