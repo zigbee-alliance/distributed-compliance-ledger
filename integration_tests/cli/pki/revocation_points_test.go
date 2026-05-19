@@ -11,36 +11,24 @@ import (
 )
 
 const (
-	paaCertWithNumericVidPath      = "../../constants/paa_cert_numeric_vid"
-	paaCertWithNumericVidSubject   = "MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBEZGRjE="
+	paaCertWithNumericVidPath         = "../../constants/paa_cert_numeric_vid"
+	paaCertWithNumericVidSubject      = "MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBEZGRjE="
 	paaCertWithNumericVidSubjectKeyID = "6A:FD:22:77:1F:51:1F:EC:BF:16:41:97:67:10:DC:DC:31:A1:71:7E"
 
-	paaCertNoVidPath      = "../../constants/paa_cert_no_vid"
-	paaCertNoVidSubject   = "MBoxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQQ=="
+	paaCertNoVidPath         = "../../constants/paa_cert_no_vid"
+	paaCertNoVidSubject      = "MBoxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQQ=="
 	paaCertNoVidSubjectKeyID = "78:5C:E7:05:B8:6B:8F:4E:6F:C7:93:AA:60:CB:43:EA:69:68:82:D5"
 
-	paaCertNoVidMainnetPath         = "../../constants/paa_cert_no_vid_mainnet"
-	paaCertNoVidMainnetSubject      = "MEsxCzAJBgNVBAYTAlVTMQ8wDQYDVQQKDAZHb29nbGUxFTATBgNVBAMMDE1hdHRlciBQQUEgMjEUMBIGCisGAQQBgqJ8AgEMBDYwMDY="
-	paaCertNoVidMainnetSubjectKeyID = "7A:B9:ED:A7:6F:E9:CB:64:62:75:32:6D:D1:45:08:B8:00:F8:E1:C8"
+	paaCertWithNumericVid1Path = "../../constants/paa_cert_numeric_vid_1"
 
-	paaCertWithNumericVid1Path         = "../../constants/paa_cert_numeric_vid_1"
-	paaCertWithNumericVid1SubjectKeyID = "7F:1D:AA:F2:44:98:B9:86:68:0E:A0:8F:C1:89:21:E8:48:48:9D:17"
-
-	paiCertVidPath            = "../../constants/pai_cert_vid"
-	paiCertWithNumericVidPath = "../../constants/pai_cert_numeric_vid"
+	paiCertWithNumericVidPath    = "../../constants/pai_cert_numeric_vid"
 	paiCertWithNumericVidPidPath = "../../constants/pai_cert_numeric_vid_pid"
-
-	delegatedCRLSignerCertPath        = "../../constants/delegated_CRL_signer_certificate"
-	paiCertCertificateDelegatorPath   = "../../constants/pai_cert_certificate_delegator"
-	delegatedCRLSignerCertSubjectKeyID = "E981D0E419765AB12F6D03A734CF003307870F0A"
 
 	delegatorCertWithVid65521Path     = "../../constants/intermediate_cert_with_vid_1"
 	delegatorCertWithVid65521CopyPath = "../../constants/intermediate_cert_with_vid_1_copy"
 	delegatorCertSubjectKeyID         = "0E8CE8C8B8AA50BC258556B9B19CC2C7D9C52F17"
 
 	crlSignerDelegatedByPAI1Path = "../../constants/leaf_cert_with_vid_65521"
-	crlSignerDelegatedByPAI2Path = "../../constants/leaf_cert_with_vid_65522"
-	crlSignerDelegatedByPAAPath  = "../../constants/leaf_cert_without_vid"
 
 	// Use google_root_cert_r1 instead of root_cert to avoid conflict: TestPKIDemo revokes root_cert
 	// and the unique-cert store retains the entry, permanently blocking re-addition.
@@ -61,16 +49,15 @@ const (
 	revPointVid24582     = 24582
 	revPointVidNonScoped = 4701
 
-	revPointLabel          = "label"
-	revPointLabelPAI       = "label_pai"
-	revPointLabelLeaf      = "label_leaf"
-	revPointLabelLeafDel   = "label_leaf_with_delegator"
+	revPointLabel             = "label"
+	revPointLabelPAI          = "label_pai"
+	revPointLabelLeafDel      = "label_leaf_with_delegator"
 	revPointLabelIntermediate = "label_intermediate"
-	revPointLabelNonScoped = "label2"
+	revPointLabelNonScoped    = "label2"
 
-	revPointDataURL         = "https://url.data.dclmodel"
+	revPointDataURL          = "https://url.data.dclmodel"
 	revPointDataURLNonScoped = "https://url.data.dclmodel2"
-	revPointIssuerSKID      = "5A880E6C3653D07FB08971A3F473790930E62BDB"
+	revPointIssuerSKID       = "5A880E6C3653D07FB08971A3F473790930E62BDB"
 	// SKID of google_root_cert_gsr4 (no colons) — used for non-VID-scoped PAI revocation point.
 	// intermediate_cert_gsr4 (no VID) chains to this root, which is on the ledger after TestPKIAddVendorX509Certificates.
 	revPointGsr4IssuerSKID = "54B07BAD45B8E2407FFB0A6EFBBE33C93CA384D5"

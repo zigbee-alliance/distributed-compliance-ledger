@@ -19,6 +19,7 @@ func isAccountActive(addr string) bool {
 	if err != nil {
 		return false
 	}
+
 	return !strings.Contains(string(out), "Not Found")
 }
 
@@ -207,12 +208,12 @@ func GetHeight() (int64, error) {
 		} `json:"SyncInfo"`
 	}
 	if err := json.Unmarshal(out, &status); err != nil {
-		return 0, fmt.Errorf("failed to parse status: %v, output: %s", err, string(out))
+		return 0, fmt.Errorf("failed to parse status: %w, output: %s", err, string(out))
 	}
 
 	h, err := strconv.ParseInt(status.SyncInfo.LatestBlockHeight, 10, 64)
 	if err != nil {
-		return 0, fmt.Errorf("failed to parse latest_block_height: %v", err)
+		return 0, fmt.Errorf("failed to parse latest_block_height: %w", err)
 	}
 
 	return h, nil

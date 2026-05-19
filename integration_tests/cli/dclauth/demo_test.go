@@ -910,7 +910,7 @@ func TestAuthDemoVendorAccount(t *testing.T) {
 		// Expect error about invalid PID range
 		combined := string(out)
 		if err != nil {
-			combined = combined + err.Error()
+			combined += err.Error()
 		}
 		require.Contains(t, combined, "invalid PID Range is provided")
 

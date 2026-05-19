@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	removeNocRootCertVid  = 65521
-	removeNocOtherVid     = 65522
+	removeNocRootCertVid = 65521
+	removeNocOtherVid    = 65522
 
 	removeNocRootCert1SerialNumber = "47211865327720222621302679792296833381734533449"
 	removeNocRootCert1CopySerial   = "460647353168152946606945669687905527879095841977"

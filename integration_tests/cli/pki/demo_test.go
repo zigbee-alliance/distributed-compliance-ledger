@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
@@ -31,12 +31,12 @@ const (
 	leafCertSerialNumber = "143290473708569835418599774898811724528308722063"
 	leafCertSubjectText  = "O=leaf,ST=some-state,C=AU"
 
-	googleCertPath          = "../../constants/google_root_cert"
-	googleCertSubject       = "MEsxCzAJBgNVBAYTAlVTMQ8wDQYDVQQKDAZHb29nbGUxFTATBgNVBAMMDE1hdHRlciBQQUEgMTEUMBIGCisGAQQBgqJ8AgEMBDYwMDY="
-	googleCertSubjectKeyID  = "B0:00:56:81:B8:88:62:89:62:80:E1:21:18:A1:A8:BE:09:DE:93:21"
-	googleCertSerialNumber  = "1"
-	googleCertSubjectText   = "CN=Matter PAA 1,O=Google,C=US,vid=0x6006"
-	googleCertVid           = 24582
+	googleCertPath         = "../../constants/google_root_cert"
+	googleCertSubject      = "MEsxCzAJBgNVBAYTAlVTMQ8wDQYDVQQKDAZHb29nbGUxFTATBgNVBAMMDE1hdHRlciBQQUEgMTEUMBIGCisGAQQBgqJ8AgEMBDYwMDY="
+	googleCertSubjectKeyID = "B0:00:56:81:B8:88:62:89:62:80:E1:21:18:A1:A8:BE:09:DE:93:21"
+	googleCertSerialNumber = "1"
+	googleCertSubjectText  = "CN=Matter PAA 1,O=Google,C=US,vid=0x6006"
+	googleCertVid          = 24582
 
 	testCertPath         = "../../constants/test_root_cert"
 	testCertSubject      = "MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBDEyNUQ="

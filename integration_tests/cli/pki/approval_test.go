@@ -100,8 +100,8 @@ func TestPKIApproval(t *testing.T) {
 		// 5th cleanup runs 2nd (5 trustees remain, threshold=4): Jack proposes, Alice+Bob+fourth approve.
 		res, _ := dclauth.ProposeRevokeAccount(fifthAddr, jack)
 		if res != nil && res.Code == 0 {
-			dclauth.ApproveRevokeAccount(fifthAddr, alice)    //nolint:errcheck
-			dclauth.ApproveRevokeAccount(fifthAddr, bob)      //nolint:errcheck
+			dclauth.ApproveRevokeAccount(fifthAddr, alice)     //nolint:errcheck
+			dclauth.ApproveRevokeAccount(fifthAddr, bob)       //nolint:errcheck
 			dclauth.ApproveRevokeAccount(fifthAddr, fourthKey) //nolint:errcheck
 		}
 	})
@@ -109,8 +109,8 @@ func TestPKIApproval(t *testing.T) {
 		// 6th cleanup runs first (6 trustees, threshold=4): Jack proposes, Alice+Bob+fourth approve.
 		res, _ := dclauth.ProposeRevokeAccount(sixthAddr, jack)
 		if res != nil && res.Code == 0 {
-			dclauth.ApproveRevokeAccount(sixthAddr, alice)    //nolint:errcheck
-			dclauth.ApproveRevokeAccount(sixthAddr, bob)      //nolint:errcheck
+			dclauth.ApproveRevokeAccount(sixthAddr, alice)     //nolint:errcheck
+			dclauth.ApproveRevokeAccount(sixthAddr, bob)       //nolint:errcheck
 			dclauth.ApproveRevokeAccount(sixthAddr, fourthKey) //nolint:errcheck
 		}
 	})

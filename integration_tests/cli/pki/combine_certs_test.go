@@ -5,14 +5,14 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
 const (
-	rootWithSameSubjectAndSkid1Path        = "../../constants/root_with_same_subject_and_skid_1"
-	rootWithSameSubjectAndSkid2Path        = "../../constants/root_with_same_subject_and_skid_2"
+	rootWithSameSubjectAndSkid1Path = "../../constants/root_with_same_subject_and_skid_1"
+	rootWithSameSubjectAndSkid2Path = "../../constants/root_with_same_subject_and_skid_2"
 	// Subject and SKID match the actual "Example Company" cert files (not Amazon Root CA).
 	rootWithSameSubjectAndSkidSubject      = "MIGCMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbQ=="
 	rootWithSameSubjectAndSkidSubjectKeyID = "33:5E:0C:07:44:F8:B5:9C:CD:55:01:9B:6D:71:23:83:6F:D0:D4:BE"

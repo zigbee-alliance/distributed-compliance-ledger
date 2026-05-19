@@ -49,7 +49,7 @@ func QueryAccount(address string) (*dclauthtypes.Account, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// CLI generally wraps the account inside a response map or directly outputs the model.
 	var res struct {
 		Account dclauthtypes.Account `json:"account"`
@@ -200,8 +200,9 @@ func GetPubkey(name string) (string, error) {
 // AddKey generates a new key in the test keyring with the given name.
 // Any pre-existing key with the same name is deleted first.
 func AddKey(name string) error {
-	utils.ExecuteCLI("keys", "delete", name, "--keyring-backend", "test", "-y")
+	_, _ = utils.ExecuteCLI("keys", "delete", name, "--keyring-backend", "test", "-y")
 	_, err := utils.ExecuteCLI("keys", "add", name, "--keyring-backend", "test", "--no-backup")
+
 	return err
 }
 

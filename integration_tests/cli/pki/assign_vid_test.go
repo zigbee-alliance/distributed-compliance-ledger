@@ -5,16 +5,13 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
 const (
-	rootCertWithVidPath         = "../../constants/root_cert_with_vid"
-	paaNoVidPath                = "../../constants/paa_cert_no_vid"
-	rootCertWithVid             = 65521
-	paaNoVidVid                 = 65521
+	rootCertWithVid = 65521
 
 	// Use google_root_cert_r2 (no embedded Matter VID) to avoid conflicting with root_cert used by TestPKIDemo.
 	assignVidTestRootCertPath         = "../../constants/google_root_cert_r2"

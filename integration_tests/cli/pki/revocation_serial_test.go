@@ -27,9 +27,7 @@ import (
 // Constants for pki-revocation-with-serial-number.sh — reuses same cert paths as revocation_child_test.go.
 // We alias them here to keep this file self-contained.
 const (
-	revSerialRootCert1Path         = revChildRootCert1Path
 	revSerialRootCert1SerialNumber = revChildRootCert1SerialNumber
-	revSerialRootCert2Path         = revChildRootCert2Path
 	revSerialRootCert2SerialNumber = revChildRootCert2SerialNumber
 	revSerialRootCertVid           = revChildRootCertVid
 

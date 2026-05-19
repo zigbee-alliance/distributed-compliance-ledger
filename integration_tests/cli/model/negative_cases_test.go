@@ -252,6 +252,7 @@ func containsAny(s string, subs ...string) bool {
 			for i := 0; i <= len(s)-len(sub); i++ {
 				if s[i:i+len(sub)] == sub {
 					idx = 1
+
 					break
 				}
 			}
@@ -260,5 +261,6 @@ func containsAny(s string, subs ...string) bool {
 			}
 		}
 	}
+
 	return false
 }

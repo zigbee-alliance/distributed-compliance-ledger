@@ -10,25 +10,25 @@ import (
 )
 
 const (
-	nocRootCert1Path         = "../../constants/noc_root_cert_1"
-	nocRootCert1Subject      = "MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIDApTb21lIFN0YXRlMREwDwYDVQQHDAhUYXNoa2VudDEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDDAVOT0MtMQ=="
-	nocRootCert1SubjectKeyID = "44:EB:4C:62:6B:25:48:CD:A2:B3:1C:87:41:5A:08:E7:2B:B9:83:26"
-	nocRootCert1SerialNumber = "47211865327720222621302679792296833381734533449"
+	nocRootCert1Path          = "../../constants/noc_root_cert_1"
+	nocRootCert1Subject       = "MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIDApTb21lIFN0YXRlMREwDwYDVQQHDAhUYXNoa2VudDEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDDAVOT0MtMQ=="
+	nocRootCert1SubjectKeyID  = "44:EB:4C:62:6B:25:48:CD:A2:B3:1C:87:41:5A:08:E7:2B:B9:83:26"
+	nocRootCert1SerialNumber  = "47211865327720222621302679792296833381734533449"
 	nocRootCert1SubjectAsText = "CN=NOC-1,OU=Testing Division,O=Example Company,L=Tashkent,ST=Some State,C=UZ"
 
 	nocRootCert1CopyPath         = "../../constants/noc_root_cert_1_copy"
 	nocRootCert1CopySerialNumber = "460647353168152946606945669687905527879095841977"
 
-	nocRootCert2Path         = "../../constants/noc_root_cert_2"
-	nocRootCert2Subject      = "MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIDApTb21lIFN0YXRlMREwDwYDVQQHDAhUYXNoa2VudDEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDDAVOT0MtMg=="
-	nocRootCert2SubjectKeyID = "CF:E6:DD:37:2B:4C:B2:B9:A9:F2:75:30:1C:AA:B1:37:1B:11:7F:1B"
-	nocRootCert2SerialNumber = "332802481233145945539125204504842614737181725760"
+	nocRootCert2Path          = "../../constants/noc_root_cert_2"
+	nocRootCert2Subject       = "MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIDApTb21lIFN0YXRlMREwDwYDVQQHDAhUYXNoa2VudDEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDDAVOT0MtMg=="
+	nocRootCert2SubjectKeyID  = "CF:E6:DD:37:2B:4C:B2:B9:A9:F2:75:30:1C:AA:B1:37:1B:11:7F:1B"
+	nocRootCert2SerialNumber  = "332802481233145945539125204504842614737181725760"
 	nocRootCert2SubjectAsText = "CN=NOC-2,OU=Testing Division,O=Example Company,L=Tashkent,ST=Some State,C=UZ"
 
-	nocRootCert3Path         = "../../constants/noc_root_cert_3"
-	nocRootCert3Subject      = "MFUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQxDjAMBgNVBAMMBU5PQy0z"
-	nocRootCert3SubjectKeyID = "88:0D:06:D9:64:22:29:34:78:7F:8C:3B:AE:F5:08:93:86:8F:0D:20"
-	nocRootCert3SerialNumber = "38457288443253426021793906708335409501754677187"
+	nocRootCert3Path          = "../../constants/noc_root_cert_3"
+	nocRootCert3Subject       = "MFUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQxDjAMBgNVBAMMBU5PQy0z"
+	nocRootCert3SubjectKeyID  = "88:0D:06:D9:64:22:29:34:78:7F:8C:3B:AE:F5:08:93:86:8F:0D:20"
+	nocRootCert3SerialNumber  = "38457288443253426021793906708335409501754677187"
 	nocRootCert3SubjectAsText = "CN=NOC-3,O=Internet Widgits Pty Ltd,ST=Some-State,C=AU"
 
 	nocCert1Path         = "../../constants/noc_cert_1"

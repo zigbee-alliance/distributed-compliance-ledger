@@ -26,7 +26,7 @@ func ExecuteCLI(args ...string) ([]byte, error) {
 	cmd.Stdin = bytes.NewBufferString("\n\n")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		return out, fmt.Errorf("cmd execution failed: %v, output: %s", err, string(out))
+		return out, fmt.Errorf("cmd execution failed: %w, output: %s", err, string(out))
 	}
 	// Many cosmos CLI commands output warnings before JSON.
 	// Strip out everything before the first `{` to ensure clean parsing.
@@ -35,6 +35,7 @@ func ExecuteCLI(args ...string) ([]byte, error) {
 	if idx > 0 {
 		strOut = strOut[idx:]
 	}
+
 	return []byte(strOut), nil
 }
 
@@ -52,7 +53,7 @@ func ExecuteTx(args ...string) (*TxResult, error) {
 
 	var broadcast TxResult
 	if err := json.Unmarshal(out, &broadcast); err != nil {
-		return nil, fmt.Errorf("failed to parse TxResult: %v, output: %s", err, string(out))
+		return nil, fmt.Errorf("failed to parse TxResult: %w, output: %s", err, string(out))
 	}
 
 	// Non-zero broadcast code means the tx was rejected before entering a block
@@ -69,7 +70,8 @@ func ExecuteTx(args ...string) (*TxResult, error) {
 
 	var confirmed TxResult
 	if err := json.Unmarshal(txData, &confirmed); err != nil {
-		return &broadcast, nil // can't parse confirmed result; return broadcast
+		// can't parse confirmed result; fall back to broadcast result
+		return &broadcast, nil //nolint:nilerr
 	}
 
 	return &confirmed, nil
@@ -86,8 +88,9 @@ func QueryTx(txHash string) ([]byte, error) {
 func OnChainCode(txData []byte) (uint32, string, error) {
 	var res TxResult
 	if err := json.Unmarshal(txData, &res); err != nil {
-		return 0, "", fmt.Errorf("failed to parse on-chain tx result: %v", err)
+		return 0, "", fmt.Errorf("failed to parse on-chain tx result: %w", err)
 	}
+
 	return res.Code, res.RawLog, nil
 }
 
@@ -104,5 +107,5 @@ func AwaitTxConfirmation(txHash string) ([]byte, error) {
 		time.Sleep(2 * time.Second)
 	}
 
-	return result, fmt.Errorf("transaction %s not confirmed after 40 seconds. Last error: %v", txHash, err)
+	return result, fmt.Errorf("transaction %s not confirmed after 40 seconds. Last error: %w", txHash, err)
 }

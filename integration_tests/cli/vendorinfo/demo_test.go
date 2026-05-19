@@ -52,9 +52,9 @@ func TestVendorInfoDemo(t *testing.T) {
 	})
 
 	const (
-		companyLegalName    = "XYZ IOT Devices Inc"
-		vendorName          = "XYZ Devices"
-		schemaVersion0      = "0"
+		companyLegalName = "XYZ IOT Devices Inc"
+		vendorName       = "XYZ Devices"
+		schemaVersion0   = "0"
 	)
 
 	t.Run("AddVendorInfo", func(t *testing.T) {

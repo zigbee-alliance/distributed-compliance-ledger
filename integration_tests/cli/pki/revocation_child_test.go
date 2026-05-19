@@ -24,9 +24,7 @@ import (
 )
 
 const (
-	revChildRootCert1Path         = "../../constants/root_with_same_subject_and_skid_1"
 	revChildRootCert1SerialNumber = "1"
-	revChildRootCert2Path         = "../../constants/root_with_same_subject_and_skid_2"
 	revChildRootCert2SerialNumber = "2"
 	revChildRootCertVid           = 65521
 
@@ -162,5 +160,4 @@ func TestPKIRevocationWithRevokingChild(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 	})
-
 }

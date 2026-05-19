@@ -30,7 +30,6 @@ const (
 
 	hexVidDecimal  = 2579
 	hexVid2Decimal = 2580
-	hexVid3Decimal = 2581
 )
 
 // TestVendorInfoDemoHex translates vendorinfo-demo-hex.sh.
