@@ -176,6 +176,7 @@ Please take into account the following when sending a PR:
     - Note3: for `uint32` type: use `int32` during ignite scaffolding, then replace it by `uint32` in .proto files, re-generate the code and fix compilation errors.
   - build proto (for example `ignite chain build`). Fix compilation errors if any.
   - generate openapi docs from proto using (`scripts/dcl-swagger-gen.sh`). It's recommended to run from container built from [Dockerfile](scripts/Dockerfile)
+  - regenerate the TypeScript client via `make ts-client-gen` (see [Regenerate the TypeScript Client](#regenerate-the-typescript-client)).
 
   - **Note1**: colons (`:`) are part of subject-id in PKI module, but colons are not allowed in gRPC REST URLs by default.
     `allow_colon_final_segments=true` should be used as a workaround.
@@ -205,6 +206,8 @@ Please take into account the following when sending a PR:
 - **Never change `.pb` files manually**. Do the changes in `.proto` files.
 - Every time `.proto` files change, re-generate the code (for example `ignite chain build`) and fix compilation errors if any.
 - Update openapi docs from proto using (`scripts/dcl-swagger-gen.sh`). It's recommended to run from container built from [Dockerfile](scripts/Dockerfile).
+- Regenerate the TypeScript client via `make ts-client-gen` (see [Regenerate the TypeScript Client](#regenerate-the-typescript-client)).
+
 - **Note1**: colons (`:`) are part of subject-id in PKI module, but colons are not allowed in gRPC REST URLs by default.
   `allow_colon_final_segments=true` should be used as a workaround.
   So, make sure that `runtime.AssumeColonVerbOpt(false)` in `/x/pki/types/query.pb.gw.go`.
