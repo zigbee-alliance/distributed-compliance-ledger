@@ -1,4 +1,4 @@
-region_1 = "us-east2"
+region_1 = "us-east1"
 region_2 = "us-west1"
 
 ssh_public_key_path  = "~/.ssh/id_rsa.pub"

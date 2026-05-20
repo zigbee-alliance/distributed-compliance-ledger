@@ -1,4 +1,3 @@
-# TODO
 # - tags for root_block_device (boot disk in GCP)
 # - disk type configuration variable (AWS/GCP)
 
@@ -8,7 +7,7 @@ data "aws_ami" "ubuntu" {
 
   filter {
     name   = "name"
-    values = ["ubuntu-minimal/images/hvm-ssd/ubuntu-focal-20.04-amd64-minimal-*"]
+    values = ["ubuntu-minimal/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-minimal-*"]
   }
 
   filter {

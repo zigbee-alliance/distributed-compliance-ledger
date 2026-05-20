@@ -7,7 +7,7 @@
 If you are interested in how to build and run the project locally, please look at [README-DEV](README-DEV.md)
 
 Please note, that the only officially supported platform now is Linux.
-It's recommended to develop and deploy the App on Ubuntu 18.04 or Ubuntu 20.04.
+It's recommended to develop and deploy the App on Ubuntu 24.04. It also works on other versions of Ubuntu(20.04,22.04)
 
 
 ## Overview
@@ -233,3 +233,4 @@ the following instructions from [how-to.md](docs/how-to.md) can be used for ever
 - [Cosmos SDK](https://cosmos.network/sdk)
 - [Ledger Nano Support](docs/ledger-nano.md)
 - [Mapping DCL Entities to Matter Specification](docs/mapping_against_matter_spec.md)
+- [Upgrading OS(Ubuntu) on running nodes](docs/upgrading-ubuntu-on-running-nodes.md)
