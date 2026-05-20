@@ -214,6 +214,30 @@ Please take into account the following when sending a PR:
 - **Note3**: `ignite chain build` needs to be called only if you made manual changes in `.proto` files.
   There is no need to call `ignite chain build` again once all errors and adjustments above are done. It's sufficient just to build the project via usual ways (such as `make build`)
 
+## Regenerate the TypeScript Client
+
+The TypeScript client under `ts-client/` is generated from the `.proto` files via `ignite generate ts-client`.
+After regeneration, the RFC 3986 query-encoding patch must be re-applied so base64 pagination keys
+(which contain `+`, `/`, `=`) survive transit — otherwise the cosmos-sdk gRPC-gateway decodes `+` as
+space and rejects `next_key` follow-up requests with `illegal base64 data`.
+
+Run the below command to regenerate the ts-client and patch it:
+
+```bash
+make ts-client-gen
+```
+
+The patch script re-creates `ts-client/utils.ts` (which exports the shared `paramsSerializer`) and 
+rewrites each `ts-client/*/rest.ts` to wire that serializer into the axios instance. 
+Always run `make ts-client-gen` (never `ignite generate ts-client` on its own) when regenerating, 
+and commit both the generated files and the patched ones together.
+
+To verify the patch is in place:
+
+```bash
+make ts-client-test
+```
+
 ## Update Cosmos-sdk Version
 
 Re-generate cosmos base openapi (service API from cosmos exposed in DCL) using [cosmos-swagger-gen.sh](scripts/cosmos-swagger-gen.sh) from the project root:
