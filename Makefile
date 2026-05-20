@@ -1,4 +1,5 @@
 PACKAGES = $(shell go list ./... | grep -v '/integration_tests')
+TESTS_WITH_DEV_TAG_DISABLED = $(shell grep -rl '//go:build !dev' --include='*_test.go' .)
 
 ifndef DCL_VERSION
 DCL_VERSION := $(shell echo $(shell git describe --tags --always) | sed 's/^v//')
@@ -115,7 +116,10 @@ go.sum: go.mod
 
 test:
 	go test -tags=dev -v $(PACKAGES)
-	go test -v utils/cli/url_liveness.go  utils/cli/url_liveness_test.go
+	@for f in $(TESTS_WITH_DEV_TAG_DISABLED); do \
+		d=$$(dirname $$f); \
+		go test -v $$(ls $$d/*.go | grep -v _test.go) $$f || exit 1; \
+	done
 
 lint:
 	golangci-lint run ./... --timeout 5m0s
