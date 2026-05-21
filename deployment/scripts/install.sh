@@ -69,12 +69,12 @@ function main {
         if [ "$(uname)" == "Linux" ]; then
             # shellcheck disable=SC1091
             source /etc/os-release || source /usr/lib/os-release
-            distro="${ID,,}"
+            distro="${ID,,}-${VERSION_ID}"
         fi
 
         info "Downloading the DCL binary for $distro..."
         mkdir -p "$dest"
-        url="https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v$version/dcld.$distro.tar.gz"
+        url="https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v$version/$distro.tar.gz"
         if command -v wget > /dev/null; then
             wget -q -c "$url" -O - | sudo tar -xz -C "$dest"
         elif command -v curl > /dev/null; then
