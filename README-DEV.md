@@ -176,6 +176,7 @@ Please take into account the following when sending a PR:
     - Note3: for `uint32` type: use `int32` during ignite scaffolding, then replace it by `uint32` in .proto files, re-generate the code and fix compilation errors.
   - build proto (for example `ignite chain build`). Fix compilation errors if any.
   - generate openapi docs from proto using (`scripts/dcl-swagger-gen.sh`). It's recommended to run from container built from [Dockerfile](scripts/Dockerfile)
+  - regenerate the TypeScript client via `make ts-client-gen` (see [Regenerate the TypeScript Client](#regenerate-the-typescript-client)).
 
   - **Note1**: colons (`:`) are part of subject-id in PKI module, but colons are not allowed in gRPC REST URLs by default.
     `allow_colon_final_segments=true` should be used as a workaround.
@@ -205,6 +206,8 @@ Please take into account the following when sending a PR:
 - **Never change `.pb` files manually**. Do the changes in `.proto` files.
 - Every time `.proto` files change, re-generate the code (for example `ignite chain build`) and fix compilation errors if any.
 - Update openapi docs from proto using (`scripts/dcl-swagger-gen.sh`). It's recommended to run from container built from [Dockerfile](scripts/Dockerfile).
+- Regenerate the TypeScript client via `make ts-client-gen` (see [Regenerate the TypeScript Client](#regenerate-the-typescript-client)).
+
 - **Note1**: colons (`:`) are part of subject-id in PKI module, but colons are not allowed in gRPC REST URLs by default.
   `allow_colon_final_segments=true` should be used as a workaround.
   So, make sure that `runtime.AssumeColonVerbOpt(false)` in `/x/pki/types/query.pb.gw.go`.
@@ -213,6 +216,30 @@ Please take into account the following when sending a PR:
   It may be easier just to revert changes in all  `*.pb.go` files not affected by your changes in `.proto`
 - **Note3**: `ignite chain build` needs to be called only if you made manual changes in `.proto` files.
   There is no need to call `ignite chain build` again once all errors and adjustments above are done. It's sufficient just to build the project via usual ways (such as `make build`)
+
+## Regenerate the TypeScript Client
+
+The TypeScript client under `ts-client/` is generated from the `.proto` files via `ignite generate ts-client`.
+After regeneration, the RFC 3986 query-encoding patch must be re-applied so base64 pagination keys
+(which contain `+`, `/`, `=`) survive transit — otherwise the cosmos-sdk gRPC-gateway decodes `+` as
+space and rejects `next_key` follow-up requests with `illegal base64 data`.
+
+Run the below command to regenerate the ts-client and patch it:
+
+```bash
+make ts-client-gen
+```
+
+The patch script re-creates `ts-client/utils.ts` (which exports the shared `paramsSerializer`) and 
+rewrites each `ts-client/*/rest.ts` to wire that serializer into the axios instance. 
+Always run `make ts-client-gen` (never `ignite generate ts-client` on its own) when regenerating, 
+and commit both the generated files and the patched ones together.
+
+To verify the patch is in place:
+
+```bash
+make ts-client-test
+```
 
 ## Update Cosmos-sdk Version
 
