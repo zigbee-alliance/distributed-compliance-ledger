@@ -17,7 +17,8 @@
 # The resulting image is used only for getting the build artifact from
 # a container based on it. Containers based on this image are never run.
 ################################################################################
-FROM ubuntu:20.04 AS builder
+ARG UBUNTU_VERSION=24.04
+FROM ubuntu:${UBUNTU_VERSION} AS builder
 
 ARG TARGETARCH=amd64
 ARG GO_VERSION

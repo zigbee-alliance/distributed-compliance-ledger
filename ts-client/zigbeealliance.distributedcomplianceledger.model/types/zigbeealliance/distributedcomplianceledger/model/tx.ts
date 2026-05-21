@@ -119,6 +119,7 @@ export interface MsgUpdateModelVersion {
   otaFileSize: number;
   otaChecksum: string;
   schemaVersion: number;
+  otaChecksumType: number;
 }
 
 export interface MsgUpdateModelVersionResponse {
@@ -1330,6 +1331,7 @@ function createBaseMsgUpdateModelVersion(): MsgUpdateModelVersion {
     otaFileSize: 0,
     otaChecksum: "",
     schemaVersion: 0,
+    otaChecksumType: 0,
   };
 }
 
@@ -1370,6 +1372,9 @@ export const MsgUpdateModelVersion = {
     }
     if (message.schemaVersion !== 0) {
       writer.uint32(96).uint32(message.schemaVersion);
+    }
+    if (message.otaChecksumType !== 0) {
+      writer.uint32(104).int32(message.otaChecksumType);
     }
     return writer;
   },
@@ -1417,6 +1422,9 @@ export const MsgUpdateModelVersion = {
         case 12:
           message.schemaVersion = reader.uint32();
           break;
+        case 13:
+          message.otaChecksumType = reader.int32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1443,6 +1451,7 @@ export const MsgUpdateModelVersion = {
       otaFileSize: isSet(object.otaFileSize) ? Number(object.otaFileSize) : 0,
       otaChecksum: isSet(object.otaChecksum) ? String(object.otaChecksum) : "",
       schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
+      otaChecksumType: isSet(object.otaChecksumType) ? Number(object.otaChecksumType) : 0,
     };
   },
 
@@ -1462,6 +1471,7 @@ export const MsgUpdateModelVersion = {
     message.otaFileSize !== undefined && (obj.otaFileSize = Math.round(message.otaFileSize));
     message.otaChecksum !== undefined && (obj.otaChecksum = message.otaChecksum);
     message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
+    message.otaChecksumType !== undefined && (obj.otaChecksumType = Math.round(message.otaChecksumType));
     return obj;
   },
 
@@ -1479,6 +1489,7 @@ export const MsgUpdateModelVersion = {
     message.otaFileSize = object.otaFileSize ?? 0;
     message.otaChecksum = object.otaChecksum ?? "";
     message.schemaVersion = object.schemaVersion ?? 0;
+    message.otaChecksumType = object.otaChecksumType ?? 0;
     return message;
   },
 };

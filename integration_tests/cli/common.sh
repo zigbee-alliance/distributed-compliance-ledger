@@ -262,7 +262,7 @@ execute_with_retry() {
       sleep 2
       _result=$($_command)
     else
-      break  
+      break
     fi
   done
 

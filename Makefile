@@ -11,6 +11,7 @@ endif
 NAME ?= dcl
 APPNAME ?= $(NAME)d
 LEDGER_ENABLED ?= true
+CGO_ENABLED ?= 0
 
 OUTPUT_DIR ?= build
 
@@ -23,6 +24,7 @@ ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=DcLedger \
 
 # DB backend selection
 ifeq (cleveldb,$(findstring cleveldb,$(COSMOS_BUILD_OPTIONS)))
+  CGO_ENABLED = 1
   ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=cleveldb
 endif
 
@@ -100,10 +102,10 @@ TEST_TARGETS= ${LOCALNET_TARGETS} ${TEST_DEPLOY_TARGETS}
 all: install
 
 build: go.sum
-	go build -mod=readonly $(DCLD_BUILD_FLAGS) -o $(OUTPUT_DIR)/dcld ./cmd/dcld
+	CGO_ENABLED=${CGO_ENABLED} go build -mod=readonly $(DCLD_BUILD_FLAGS) -o $(OUTPUT_DIR)/dcld ./cmd/dcld
 
 install: go.sum
-	go install -mod=readonly $(DCLD_BUILD_FLAGS) ./cmd/dcld
+	CGO_ENABLED=${CGO_ENABLED} go install -mod=readonly $(DCLD_BUILD_FLAGS) ./cmd/dcld
 
 go.sum: go.mod
 	@echo "--> Ensure dependencies have not been modified"
@@ -143,9 +145,20 @@ license-check:
 clean:
 	rm -rf $(OUTPUT_DIR)
 
+# Regenerate the TypeScript client and apply the RFC 3986 query-encoding patch.
+# The patch is required so base64 pagination keys (+, /, =) survive transit;
+# without it the cosmos-sdk gRPC-gateway decodes '+' as space and rejects next_key.
+ts-client-gen:
+	ignite generate ts-client
+	./scripts/patch-ts-client-encoding.sh
+
+ts-client-test:
+	node --test scripts/test-ts-client-encoding.test.js
+
 ${TEST_TARGETS}:
 	make -f ${MK_TEST} $@
 
 .PHONY: all build install test test_cli_go lint clean \
+		ts-client-gen ts-client-test \
 		license license-check \
 		${TEST_TARGETS}

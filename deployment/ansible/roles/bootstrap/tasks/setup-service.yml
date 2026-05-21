@@ -58,6 +58,7 @@
   file:
     state: directory
     recurse: true
+    follow: no
     path: "{{ item }}"
   loop:
     - "{{ dcld.path | dirname }}"

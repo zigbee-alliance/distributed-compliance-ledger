@@ -13,6 +13,7 @@ LOCALNET_DIR ?= .localnet
 LOCALNET_DOCKER_NETWORK = "distributed-compliance-ledger_localnet"
 
 IMAGE_NAME = "dcledger"
+UBUNTU_VERSION ?= 24.04
 
 remove_containers = $(if $(1),docker rm -f $(1),true)
 localnet_containers = $(shell docker ps --format '{{.ID}}' --filter network=$(LOCALNET_DOCKER_NETWORK))
@@ -25,12 +26,11 @@ TEST_DEPLOY_GVN = "test_deploy_gvn"
 TEST_DEPLOY_VN = "test_deploy_vn"
 TEST_DEPLOY_ON = "test_deploy_on"
 
-HOST_ARCH := $(shell uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
-
 image:
-	docker build --platform "linux/${HOST_ARCH}" -t ${IMAGE_NAME} --build-arg TEST_UID=${UID} \
+	docker build -t ${IMAGE_NAME}-${UBUNTU_VERSION} --build-arg TEST_UID=${UID} \
 		--build-arg DCL_VERSION=${DCL_VERSION} --build-arg DCL_COMMIT=${DCL_COMMIT} \
-		--build-arg TARGETARCH=${HOST_ARCH} .
+		--build-arg UBUNTU_VERSION=${UBUNTU_VERSION} .
+	docker tag ${IMAGE_NAME}-${UBUNTU_VERSION} ${IMAGE_NAME}:latest
 
 localnet_init:
 	/bin/bash ./genlocalnetconfig.sh
@@ -48,7 +48,7 @@ localnet_start:
 	fi
 
 localnet_stop:
-	docker compose down -v || ($(call clean_network) && docker compose down -v)
+	docker compose down || ($(call clean_network) && docker compose down)
 
 localnet_export: localnet_stop
 	docker compose run node0 dcld export --for-zero-height  >genesis.export.node0.json
@@ -69,7 +69,8 @@ localnet_reset: localnet_stop
 	fi
 
 localnet_clean: localnet_stop
-	rm -rf $(LOCALNET_DIR)
+	# Try removing without sudo first, fall back to sudo if needed
+	rm -rf $(LOCALNET_DIR) 2>/dev/null || sudo rm -rf $(LOCALNET_DIR)
 	rm -rf $(HOME)/.dcl
 
 
