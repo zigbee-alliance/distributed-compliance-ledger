@@ -28,7 +28,7 @@ on:
 jobs:
   changes:
     name: Check for changes
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       go: ${{ steps.filter.outputs.go }}
       src: ${{ steps.filter.outputs.src }}
@@ -56,7 +56,7 @@ jobs:
   gh-actions:
     if: needs.changes.outputs.workflows == 'true'
     name: Run actionlint tool to verify lint issues in GitHub actions
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs:
       - changes
     steps:
@@ -65,7 +65,7 @@ jobs:
   links:
     if: needs.changes.outputs.docs == 'true'
     name: Run markdown-link-check tool to verify link issues
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs:
       - changes
     steps:
@@ -77,7 +77,7 @@ jobs:
   spell:
     if: needs.changes.outputs.docs == 'true'
     name: Run PySpelling tool to verify spelling issues
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs:
       - changes
     steps:
@@ -85,7 +85,7 @@ jobs:
       - uses: rojopolis/spellcheck-github-actions@0.35.0
   unit-tests:
     name: Check unit tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs:
       - lint
     steps:
@@ -120,7 +120,7 @@ jobs:
   integration-tests:
     if: needs.changes.outputs.src == 'true'
     name: Integration tests
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs:
       - changes
     steps:
@@ -141,6 +141,7 @@ jobs:
         run: integration_tests/run-all.sh all cover
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          UBUNTU_VERSION: ${{ 24.04 }}
           GOCOVER_MODE: set  # Ensure integration tests use the same mode as unit tests
           URL_LIVENESS_CHECK_ENABLED: false # Disable network calls to check URLs for integration tests
       - name: Generate test coverage
@@ -154,7 +155,7 @@ jobs:
   lint:
     if: needs.changes.outputs.go == 'true'
     name: Check linter issues with golangci-lint tool
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs:
       - changes
     steps:
@@ -174,7 +175,7 @@ jobs:
       - changes
       - unit-tests
       - integration-tests
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -222,7 +223,7 @@ jobs:
       - spell
       - gh-actions
       - cover
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Decide whether the needed jobs succeeded or failed
         uses: re-actors/alls-green@release/v1

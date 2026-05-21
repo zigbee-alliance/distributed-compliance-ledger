@@ -17,7 +17,8 @@
 # The resulting image is used only for getting the build artifact from
 # a container based on it. Containers based on this image are never run.
 ################################################################################
-FROM ubuntu:20.04 AS builder
+ARG UBUNTU_VERSION=24.04
+FROM ubuntu:${UBUNTU_VERSION} AS builder
 
 ARG GO_VERSION
 ENV GO_VERSION=1.20
@@ -40,4 +41,4 @@ WORKDIR /go/src/distributed-compliance-ledger
 COPY integration_tests/upgrade/test-upgrade.patch ./integration_tests/upgrade/test-upgrade.patch
 RUN sed -i "s/TESTUPGRADE/$(git rev-parse --short HEAD)/" ./integration_tests/upgrade/test-upgrade.patch
 RUN git apply ./integration_tests/upgrade/test-upgrade.patch
-RUN DCL_VERSION=$(git rev-parse --short HEAD) LEDGER_ENABLED=false make
+RUN DCL_VERSION=$(git rev-parse --short HEAD) CGO_ENABLED=0 LEDGER_ENABLED=false make

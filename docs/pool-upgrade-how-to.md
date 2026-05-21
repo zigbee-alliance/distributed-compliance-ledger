@@ -58,8 +58,7 @@ One of the trustees proposes the upgrade using the following steps:
       ```bash
       sha256sum ./dcld
       ```
-      Please note, that it must be called against the `dcld` binary, not the platform archive itself. So, for Ubuntu, either take a `dcld` binary from the root folder of the release, or extract it from ` dcld.ubuntu.tar.gz`.
-
+      Please note, that it must be called against the `dcld` binary, not the platform archive itself. So, for Ubuntu, either take a `dcld` binary from the root folder of the release, or extract it from `ubuntu-24.04.tar.gz`.
    2. Sends [`ProposeUpgrade`](transactions.md#propose_upgrade) transaction
       with the name of the new upgrade handler, the chosen ledger height and the
       info containing URLs of the new application version binaries for supported
@@ -90,7 +89,7 @@ Each of them uses the following steps to accomplish this:
          ```bash
          sha256sum ./dcld
          ```
-       Please note, that it must be called against the `dcld` binary, not the platform archive itself. So, for Ubuntu, either take a `dcld` binary from the root folder of the release, or extract it from ` dcld.ubuntu.tar.gz`.
+       Please note, that it must be called against the `dcld` binary, not the platform archive itself. So, for Ubuntu, either take a `dcld` binary from the root folder of the release, or extract it from `ubuntu-24.04.tar.gz`.
 
 2. Sends [`ApproveUpgrade`](transactions.md#approve_upgrade) transaction
     with the name of the proposed upgrade.

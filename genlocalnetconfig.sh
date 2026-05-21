@@ -31,8 +31,10 @@ CHAIN_ID=dclchain
 DCL_BINARY=dcld
 
 rm -rf "$DCL_DIR"
-
-rm -rf "$LOCALNET_DIR"
+# Try removing without sudo first, fall back to sudo if needed
+if [ -d "$LOCALNET_DIR" ]; then
+    rm -rf "$LOCALNET_DIR" 2>/dev/null || sudo rm -rf "$LOCALNET_DIR"
+fi
 mkdir "$LOCALNET_DIR" "$LOCALNET_DIR"/{client,node0,node1,node2,node3}
 
 if [[ -n "$DCL_OBSERVERS" ]]; then
