@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Possible values: all (default) | cli | light | rest | upgrade | deploy | cli,light | cli,rest | light, rest | cli,light,rest | etc.
+# Possible values: all (default) | cli | cli_go | light | rest | upgrade | deploy | cli,light | cli,rest | light, rest | cli,light,rest | etc.
 TESTS_TO_RUN=${1:-all}
 
 SCRIPT_PATH="$(readlink -f "$0")"
@@ -179,6 +179,31 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
       collect_cover
     fi
 
+    cleanup_pool
+  done
+fi
+
+# Cli Go tests (per-package, fresh pool each, coverage merged via collect_cover)
+if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli_go" ]]; then
+  CLI_GO_TEST_PACKAGES=$(find integration_tests/cli -mindepth 1 -maxdepth 1 -type d -not -name utils | sort)
+
+  for CLI_GO_TEST_PACKAGE in ${CLI_GO_TEST_PACKAGES}; do
+    init_pool
+
+    log "*****************************************************************************************"
+    log "Running go test ./$CLI_GO_TEST_PACKAGE/..."
+    log "*****************************************************************************************"
+
+    dcld config keyring-backend test
+
+    if go test -count=1 -timeout 30m -v "./$CLI_GO_TEST_PACKAGE/..." &>${DETAILED_OUTPUT_TARGET}; then
+      log "$CLI_GO_TEST_PACKAGE finished successfully"
+    else
+      log "$CLI_GO_TEST_PACKAGE failed"
+      exit 1
+    fi
+
+    collect_cover
     cleanup_pool
   done
 fi

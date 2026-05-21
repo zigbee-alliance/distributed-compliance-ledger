@@ -155,6 +155,57 @@ jobs:
         with:
           name: integration_cover
           path: cover.out
+  cli-coverage-diff:
+    # Non-blocking: reports CLI bash->Go test migration gaps.
+    # Deliberately omitted from `check.needs` so a gap does not fail the build.
+    if: needs.changes.outputs.src == 'true'
+    name: CLI migration coverage diff (bash vs Go)
+    runs-on: ubuntu-24.04
+    needs:
+      - changes
+    steps:
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 1.20.14
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Run bash CLI suite with coverage
+        shell: bash
+        run: |
+          integration_tests/run-all.sh cli cover
+          go tool covdata textfmt -i=integration_tests/gocover -o cover_bash.out
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          UBUNTU_VERSION: ${{ 24.04 }}
+          GOCOVER_MODE: set
+      - name: Run Go CLI suite with coverage
+        shell: bash
+        run: |
+          integration_tests/run-all.sh cli_go cover
+          go tool covdata textfmt -i=integration_tests/gocover -o cover_go.out
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          UBUNTU_VERSION: ${{ 24.04 }}
+          GOCOVER_MODE: set
+      - name: Compute coverage diff
+        shell: bash
+        run: scripts/coverage-diff.sh --no-run
+      - name: Upload coverage diff artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cli_coverage_gap
+          path: |
+            cover_bash.out
+            cover_go.out
+            coverage_gap.txt
   ts-client-tests:
     if: needs.changes.outputs.ts_client == 'true'
     name: Verify ts-client query-encoding patch
