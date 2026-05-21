@@ -112,7 +112,8 @@ jobs:
         run: |
           set -euo pipefail
           # shellcheck disable=SC2046
-          go test -json -v $(go list ./... | grep -v '/integration_tests') -coverprofile=./cover.out -covermode=set -coverpkg=./... 2>&1 | tee /tmp/gotest.log | gotestfmt
+          go test -tags=dev -json -v $(go list ./... | grep -v '/integration_tests') -coverprofile=./cover.out -covermode=set -coverpkg=./... 2>&1 | tee /tmp/gotest.log | gotestfmt
+          go test -v utils/cli/url_liveness.go  utils/cli/url_liveness_test.go
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GOCOVER_MODE: set
@@ -147,6 +148,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           UBUNTU_VERSION: ${{ 24.04 }}
           GOCOVER_MODE: set  # Ensure integration tests use the same mode as unit tests
+          URL_LIVENESS_CHECK_ENABLED: false # Disable network calls to check URLs for integration tests
       - name: Generate test coverage
         shell: bash
         run: go tool covdata textfmt -i=integration_tests/gocover -o cover.out

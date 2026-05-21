@@ -1,4 +1,5 @@
 PACKAGES = $(shell go list ./... | grep -v '/integration_tests')
+TESTS_WITH_DEV_TAG_DISABLED = $(shell grep -rl '//go:build !dev' --include='*_test.go' .)
 
 ifndef DCL_VERSION
 DCL_VERSION := $(shell echo $(shell git describe --tags --always) | sed 's/^v//')
@@ -11,6 +12,7 @@ endif
 NAME ?= dcl
 APPNAME ?= $(NAME)d
 LEDGER_ENABLED ?= true
+URL_LIVENESS_CHECK_ENABLED ?= true
 CGO_ENABLED ?= 0
 
 OUTPUT_DIR ?= build
@@ -56,6 +58,10 @@ endif
 
 ifeq (cleveldb,$(findstring cleveldb,$(COSMOS_BUILD_OPTIONS)))
   build_tags += gcc
+endif
+
+ifeq ($(URL_LIVENESS_CHECK_ENABLED),false)
+  build_tags += dev
 endif
 
 whitespace :=
@@ -112,7 +118,11 @@ go.sum: go.mod
 	GO111MODULE=on go mod verify
 
 test:
-	go test -v $(PACKAGES)
+	go test -tags=dev -v $(PACKAGES)
+	@for f in $(TESTS_WITH_DEV_TAG_DISABLED); do \
+		d=$$(dirname $$f); \
+		go test -v $$(ls $$d/*.go | grep -v _test.go) $$f || exit 1; \
+	done
 
 lint:
 	golangci-lint run ./... --timeout 5m0s
