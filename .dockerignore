@@ -3,6 +3,7 @@
 !cmd
 !testutil
 !utils
+!internal
 !x
 !types
 !go.mod
