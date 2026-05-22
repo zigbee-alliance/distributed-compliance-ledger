@@ -141,8 +141,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
       - name: Run integration tests
+        # CLI bash + Go tests run in the cli-coverage-diff job; here we cover the rest.
         shell: bash
-        run: integration_tests/run-all.sh all cover
+        run: integration_tests/run-all.sh upgrade,deploy,light,rest cover
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           UBUNTU_VERSION: ${{ 24.04 }}
@@ -156,8 +157,11 @@ jobs:
           name: integration_cover
           path: cover.out
   cli-coverage-diff:
-    # Non-blocking: reports CLI bash->Go test migration gaps.
-    # Deliberately omitted from `check.needs` so a gap does not fail the build.
+    # Enforces the CLI bash->Go test migration baseline.
+    # The script exits 0 when no baseline file exists (informational mode),
+    # and exits 1 only when current bash-only coverage has blocks NOT in
+    # integration_tests/cli/.coverage_baseline.txt. Existing accepted gaps in
+    # the baseline do not fail CI; only regressions or newly-uncovered code do.
     if: needs.changes.outputs.src == 'true'
     name: CLI migration coverage diff (bash vs Go)
     runs-on: ubuntu-24.04
@@ -194,9 +198,12 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           UBUNTU_VERSION: ${{ 24.04 }}
           GOCOVER_MODE: set
-      - name: Compute coverage diff
+      - name: Compute coverage diff and enforce baseline
+        # Fails (exit 1) if any new bash-only block appears that isn't already in
+        # integration_tests/cli/.coverage_baseline.txt. If the baseline file is
+        # absent, this step is informational (exit 0) until one is committed.
         shell: bash
-        run: scripts/coverage-diff.sh --no-run
+        run: scripts/coverage-diff.sh --no-run --strict
       - name: Upload coverage diff artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -206,6 +213,7 @@ jobs:
             cover_bash.out
             cover_go.out
             coverage_gap.txt
+            integration_tests/cli/.coverage_baseline.txt
   ts-client-tests:
     if: needs.changes.outputs.ts_client == 'true'
     name: Verify ts-client query-encoding patch
@@ -285,6 +293,7 @@ jobs:
     needs:
       - unit-tests
       - integration-tests
+      - cli-coverage-diff
       - lint
       - links
       - spell
@@ -296,5 +305,5 @@ jobs:
       - name: Decide whether the needed jobs succeeded or failed
         uses: re-actors/alls-green@release/v1
         with:
-          allowed-skips: lint, unit-tests, integration-tests, links, spell, gh-actions, cover, ts-client-tests
+          allowed-skips: lint, unit-tests, integration-tests, cli-coverage-diff, links, spell, gh-actions, cover, ts-client-tests
           jobs: ${{ toJSON(needs) }}
