@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -39,6 +41,10 @@ func CmdCreateVendorInfo() *cobra.Command {
 				vendorLandingPageURL,
 				schemaVersion,
 			)
+
+			if vendorLandingPageURL != "" && !cli.IsLiveURL(vendorLandingPageURL) {
+				return fmt.Errorf("%s is not reachable", vendorLandingPageURL)
+			}
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
 			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
@@ -100,6 +106,10 @@ func CmdUpdateVendorInfo() *cobra.Command {
 				vendorLandingPageURL,
 				schemaVersion,
 			)
+
+			if vendorLandingPageURL != "" && !cli.IsLiveURL(vendorLandingPageURL) {
+				return fmt.Errorf("%s is not reachable", vendorLandingPageURL)
+			}
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
 			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)

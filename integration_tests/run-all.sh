@@ -109,8 +109,8 @@ set -euo pipefail
 log "Verifying the environment"
 check_env
 
-log "Compiling local binaries"
-make install &>${DETAILED_OUTPUT_TARGET}
+log "Compiling local binaries. URL liveness check is DISABLED"
+URL_LIVENESS_CHECK_ENABLED=false make install &>${DETAILED_OUTPUT_TARGET}
 
 log "Building docker image"
 make image &>${DETAILED_OUTPUT_TARGET}
