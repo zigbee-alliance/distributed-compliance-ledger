@@ -94,6 +94,7 @@ func TestModelValidationCases(t *testing.T) {
 			"--productLabel", "Test Product",
 			"--partNumber", "1",
 			"--enhancedSetupFlowOptions", "0",
+			"--commissioningCustomFlow", "0",
 			"--schemaVersion", "0",
 			"--from", vendorAccount1,
 		)
