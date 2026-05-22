@@ -182,20 +182,20 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
-      - name: Run bash CLI suite with coverage
-        shell: bash
-        run: |
-          integration_tests/run-all.sh cli cover
-          go tool covdata textfmt -i=integration_tests/gocover -o cover_bash.out
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          UBUNTU_VERSION: ${{ 24.04 }}
-          GOCOVER_MODE: set
       - name: Run Go CLI suite with coverage
         shell: bash
         run: |
           integration_tests/run-all.sh cli_go cover
           go tool covdata textfmt -i=integration_tests/gocover -o cover_go.out
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          UBUNTU_VERSION: ${{ 24.04 }}
+          GOCOVER_MODE: set
+      - name: Run bash CLI suite with coverage
+        shell: bash
+        run: |
+          integration_tests/run-all.sh cli cover
+          go tool covdata textfmt -i=integration_tests/gocover -o cover_bash.out
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           UBUNTU_VERSION: ${{ 24.04 }}
