@@ -308,13 +308,13 @@ func TestModelValidationCases(t *testing.T) {
 		require.Contains(t, s, `"softwareVersionString":"1"`)
 		require.Contains(t, s, `"cdVersionNumber":1`)
 		require.Contains(t, s, `"softwareVersionValid":true`)
-		require.Contains(t, s, `"minApplicableSoftwareVersion":"10"`)
-		require.Contains(t, s, `"maxApplicableSoftwareVersion":"20"`)
+		require.Contains(t, s, `"minApplicableSoftwareVersion":10`)
+		require.Contains(t, s, `"maxApplicableSoftwareVersion":20`)
 	})
 
 	t.Run("UpdateModelVersion_OnlyValidity_Basic", func(t *testing.T) {
 		txResult, err := UpdateModelVersion(vid1, pid1, svBasic, vendorAccount1,
-			"--softwareVersionValid", "false",
+			"--softwareVersionValid=false",
 		)
 		requireTxOK(t, txResult, err)
 
@@ -325,7 +325,7 @@ func TestModelValidationCases(t *testing.T) {
 
 	t.Run("UpdateModelVersion_FewFields_Basic", func(t *testing.T) {
 		txResult, err := UpdateModelVersion(vid1, pid1, svBasic, vendorAccount1,
-			"--softwareVersionValid", "true",
+			"--softwareVersionValid=true",
 			"--releaseNotesURL", "https://release.url.info",
 			"--otaURL", "https://ota.url.com",
 			"--otaFileSize", "123",
@@ -343,8 +343,8 @@ func TestModelValidationCases(t *testing.T) {
 		require.Contains(t, s, `"otaUrl":"https://ota.url.com"`)
 		require.Contains(t, s, `"otaFileSize":"123"`)
 		require.Contains(t, s, `"otaChecksumType":1`)
-		require.Contains(t, s, `"minApplicableSoftwareVersion":"2"`)
-		require.Contains(t, s, `"maxApplicableSoftwareVersion":"20"`)
+		require.Contains(t, s, `"minApplicableSoftwareVersion":2`)
+		require.Contains(t, s, `"maxApplicableSoftwareVersion":20`)
 		require.Contains(t, s, `"releaseNotesUrl":"https://release.url.info"`)
 	})
 
@@ -360,7 +360,7 @@ func TestModelValidationCases(t *testing.T) {
 			"--softwareVersionString", "1.0",
 			"--cdVersionNumber", "21334",
 			"--firmwareInformation", "123456789012345678901234567890123456789012345678901234567890123",
-			"--softwareVersionValid", "true",
+			"--softwareVersionValid=true",
 			"--otaURL", "https://ota.url.info",
 			"--otaFileSize", "123456789",
 			"--specificationVersion", "4",
@@ -384,8 +384,8 @@ func TestModelValidationCases(t *testing.T) {
 		require.Contains(t, s, `"otaChecksum":"MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk="`)
 		require.Contains(t, s, `"otaChecksumType":1`)
 		require.Contains(t, s, `"releaseNotesUrl":"https://release.notes.url.info"`)
-		require.Contains(t, s, `"maxApplicableSoftwareVersion":"32"`)
-		require.Contains(t, s, `"minApplicableSoftwareVersion":"5"`)
+		require.Contains(t, s, `"maxApplicableSoftwareVersion":32`)
+		require.Contains(t, s, `"minApplicableSoftwareVersion":5`)
 		require.Contains(t, s, `"specificationVersion":4`)
 	})
 
@@ -399,12 +399,12 @@ func TestModelValidationCases(t *testing.T) {
 		s := string(out)
 		require.Contains(t, s, `"cdVersionNumber":21334`)
 		require.Contains(t, s, `"otaUrl":"https://ota.url.info"`)
-		require.Contains(t, s, `"maxApplicableSoftwareVersion":"32"`)
+		require.Contains(t, s, `"maxApplicableSoftwareVersion":32`)
 	})
 
 	t.Run("UpdateModelVersion_OnlyValidity_Full", func(t *testing.T) {
 		txResult, err := UpdateModelVersion(vid1, pid1, svFull, vendorAccount1,
-			"--softwareVersionValid", "false",
+			"--softwareVersionValid=false",
 		)
 		requireTxOK(t, txResult, err)
 
@@ -417,7 +417,7 @@ func TestModelValidationCases(t *testing.T) {
 
 	t.Run("UpdateModelVersion_AllMutable_Full", func(t *testing.T) {
 		txResult, err := UpdateModelVersion(vid1, pid1, svFull, vendorAccount1,
-			"--softwareVersionValid", "true",
+			"--softwareVersionValid=true",
 			"--otaURL", "https://updated.ota.url.info",
 			"--releaseNotesURL", "https://updated.release.notes.url.info",
 			"--maxApplicableSoftwareVersion", "25",
@@ -431,8 +431,8 @@ func TestModelValidationCases(t *testing.T) {
 		require.Contains(t, s, `"softwareVersionValid":true`)
 		require.Contains(t, s, `"otaUrl":"https://updated.ota.url.info"`)
 		require.Contains(t, s, `"releaseNotesUrl":"https://updated.release.notes.url.info"`)
-		require.Contains(t, s, `"maxApplicableSoftwareVersion":"25"`)
-		require.Contains(t, s, `"minApplicableSoftwareVersion":"15"`)
+		require.Contains(t, s, `"maxApplicableSoftwareVersion":25`)
+		require.Contains(t, s, `"minApplicableSoftwareVersion":15`)
 	})
 
 	t.Run("UpdateModelVersion_OtaFieldsWithoutUrl_Fails", func(t *testing.T) {
@@ -456,7 +456,7 @@ func TestModelValidationCases(t *testing.T) {
 			"--softwareVersionString", "1.0",
 			"--cdVersionNumber", "21334",
 			"--firmwareInformation", "123456789012345678901234567890123456789012345678901234567890123",
-			"--softwareVersionValid", "true",
+			"--softwareVersionValid=true",
 			"--otaURL", "https://ota.url.info",
 			"--otaFileSize", "123456789",
 			"--specificationVersion", "6",
@@ -527,7 +527,7 @@ func TestModelValidationCases(t *testing.T) {
 			"--softwareVersionString", "1.0",
 			"--cdVersionNumber", "21334",
 			"--firmwareInformation", "123456789012345678901234567890123456789012345678901234567890123",
-			"--softwareVersionValid", "true",
+			"--softwareVersionValid=true",
 			"--otaURL", "https://ota.url.info",
 			"--otaFileSize", "123456789",
 			"--otaChecksum", "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=",
@@ -556,7 +556,7 @@ func TestModelValidationCases(t *testing.T) {
 			"--softwareVersionString", "1.0",
 			"--cdVersionNumber", "21334",
 			"--firmwareInformation", "123456789012345678901234567890123456789012345678901234567890123",
-			"--softwareVersionValid", "true",
+			"--softwareVersionValid=true",
 			"--otaURL", "https://ota.url.info",
 			"--otaFileSize", "123456789",
 			"--specificationVersion", "33",
