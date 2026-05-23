@@ -13,7 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Possible values: all (default) | cli | cli_go | light | rest | upgrade | deploy | cli,light | cli,rest | light, rest | cli,light,rest | etc.
+# Possible values: all (default) | cli | light | rest | upgrade | deploy | cli,light | cli,rest | light, rest | cli,light,rest | etc.
+# `cli` and `upgrade` are now Go-driven — the bash scripts under
+# integration_tests/cli/*.sh and integration_tests/upgrade/*.sh were deleted
+# after the migration proved coverage parity (see scripts/coverage-diff.sh).
 TESTS_TO_RUN=${1:-all}
 
 SCRIPT_PATH="$(readlink -f "$0")"
@@ -155,36 +158,11 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "deploy" ]]; then
   fi
 fi
 
-# Cli shell tests
+# Cli tests — Go-only since the migration completed. One pool per package,
+# coverage merged via collect_cover. The deleted bash suite at
+# integration_tests/cli/*.sh was proven redundant by scripts/coverage-diff.sh
+# (Go coverage was a strict superset of bash coverage).
 if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
-  CLI_SHELL_TESTS=$(find integration_tests/cli -type f -name '*.sh' -not -name "common.sh")
-
-  for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
-    init_pool
-
-    log "*****************************************************************************************"
-    log "Running $CLI_SHELL_TEST"
-    log "*****************************************************************************************"
-
-    if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-      log "$CLI_SHELL_TEST finished successfully"
-    else
-      log "$CLI_SHELL_TEST failed"
-      exit 1
-    fi
-
-    if [[ "$CLI_SHELL_TEST" == *"validator-demo.sh"* ]]; then
-      collect_validator_demo_cover
-    else
-      collect_cover
-    fi
-
-    cleanup_pool
-  done
-fi
-
-# Cli Go tests (per-package, fresh pool each, coverage merged via collect_cover)
-if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli_go" ]]; then
   CLI_GO_TEST_PACKAGES=$(find integration_tests/cli -mindepth 1 -maxdepth 1 -type d -not -name utils | sort)
 
   for CLI_GO_TEST_PACKAGE in ${CLI_GO_TEST_PACKAGES}; do

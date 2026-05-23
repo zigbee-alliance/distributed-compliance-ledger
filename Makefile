@@ -128,14 +128,6 @@ test_cli_go:
 	@bash -c '\
 		source integration_tests/cli/common.sh; \
 		source integration_tests/pool.sh; \
-		for f in $$(find integration_tests/cli -maxdepth 1 -type f -name "*.sh" ! -name "common.sh" | sort); do \
-			echo "[test_cli_go] Running $$f"; \
-			init_pool; \
-			bash "$$f"; RC=$$?; \
-			cleanup_pool; \
-			if [ $$RC -ne 0 ]; then echo "[test_cli_go] $$f FAILED"; exit 1; fi; \
-		done; \
-		echo "[test_cli_go] Running Go CLI tests"; \
 		init_pool; \
 		go test -v -count=1 -timeout 30m -p 1 ./integration_tests/cli/...; \
 		EXIT_CODE=$$?; \

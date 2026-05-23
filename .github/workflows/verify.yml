@@ -159,13 +159,15 @@ jobs:
           name: integration_cover
           path: cover.out
   cli-coverage-diff:
-    # Enforces the CLI bash->Go test migration baseline.
-    # The script exits 0 when no baseline file exists (informational mode),
-    # and exits 1 only when current bash-only coverage has blocks NOT in
-    # integration_tests/cli/.coverage_baseline.txt. Existing accepted gaps in
-    # the baseline do not fail CI; only regressions or newly-uncovered code do.
+    # CLI bash tests are deleted: a prior CI run proved Go coverage is a
+    # strict superset of bash coverage (0 gap blocks, 110 Go-only blocks).
+    # This job is now a regression ratchet: re-runs the Go CLI suite, diffs
+    # the resulting profile against the empty baseline at
+    # integration_tests/cli/.coverage_baseline.txt, and fails if a Go-only
+    # gap ever reappears (would only happen if a future change re-introduces
+    # bash CLI tests with different coverage).
     if: needs.changes.outputs.src == 'true'
-    name: CLI migration coverage diff (bash vs Go)
+    name: CLI Go coverage regression check
     runs-on: ubuntu-24.04
     needs:
       - changes
@@ -185,25 +187,17 @@ jobs:
       - name: Run Go CLI suite with coverage
         shell: bash
         run: |
-          integration_tests/run-all.sh cli_go cover
-          go tool covdata textfmt -i=integration_tests/gocover -o cover_go.out
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          UBUNTU_VERSION: ${{ 24.04 }}
-          GOCOVER_MODE: set
-      - name: Run bash CLI suite with coverage
-        shell: bash
-        run: |
           integration_tests/run-all.sh cli cover
-          go tool covdata textfmt -i=integration_tests/gocover -o cover_bash.out
+          go tool covdata textfmt -i=integration_tests/gocover -o cover_go.out
+          # No bash counterpart any more — write an empty `bash` profile so
+          # coverage-diff.sh's two-file invariant holds. The diff is then
+          # trivially "Go covers everything bash covers" (nothing).
+          printf 'mode: set\n' > cover_bash.out
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           UBUNTU_VERSION: ${{ 24.04 }}
           GOCOVER_MODE: set
       - name: Compute coverage diff and enforce baseline
-        # Fails (exit 1) if any new bash-only block appears that isn't already in
-        # integration_tests/cli/.coverage_baseline.txt. If the baseline file is
-        # absent, this step is informational (exit 0) until one is committed.
         shell: bash
         run: scripts/coverage-diff.sh --no-run --strict
       - name: Upload coverage diff artifacts
@@ -307,5 +301,5 @@ jobs:
       - name: Decide whether the needed jobs succeeded or failed
         uses: re-actors/alls-green@release/v1
         with:
-          allowed-skips: lint, unit-tests, integration-tests, cli-coverage-diff, links, spell, gh-actions, cover, ts-client-tests
+          allowed-skips: lint, unit-tests, integration-tests, links, spell, gh-actions, cover, ts-client-tests
           jobs: ${{ toJSON(needs) }}

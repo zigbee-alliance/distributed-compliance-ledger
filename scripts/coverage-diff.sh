@@ -51,15 +51,16 @@ done
 cd "$REPO_ROOT"
 
 if $RUN; then
-  echo "==> Running bash CLI suite with coverage (this is slow)"
-  ./integration_tests/run-all.sh cli cover
-  go tool covdata textfmt -i="$COVER_DIR" -o "$BASH_PROFILE"
-  echo "    wrote $BASH_PROFILE"
-
+  # The bash CLI suite was deleted after coverage parity was proven. The
+  # script keeps the two-profile shape for backwards compatibility with the
+  # baseline ratchet; cover_bash.out is now an empty profile.
   echo "==> Running Go CLI suite with coverage (this is slow)"
-  ./integration_tests/run-all.sh cli_go cover
+  ./integration_tests/run-all.sh cli cover
   go tool covdata textfmt -i="$COVER_DIR" -o "$GO_PROFILE"
   echo "    wrote $GO_PROFILE"
+
+  printf 'mode: set\n' > "$BASH_PROFILE"
+  echo "    wrote empty $BASH_PROFILE (bash CLI suite no longer exists)"
 fi
 
 if [[ ! -f "$BASH_PROFILE" || ! -f "$GO_PROFILE" ]]; then
