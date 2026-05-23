@@ -102,15 +102,9 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 		require.Contains(t, string(out), validatorAddress)
 		require.Contains(t, string(out), aliceAddr)
 
-		// Bob approves — 2nd approval
+		// Bob approves — reaches threshold (ceil(2/3 * 3 trustees) = 2, proposer counts as 1),
+		// validator becomes disabled and the proposal is removed.
 		txResult, err = ApproveDisableNode(validatorAddress, bob)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
-
-		// Jack approves — reaches threshold (ceil(2/3 * N_trustees)), validator becomes disabled
-		txResult, err = ApproveDisableNode(validatorAddress, jack)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -154,15 +148,8 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Bob approves — 2nd approval
+		// Bob approves — reaches threshold, validator becomes disabled and proposal is removed.
 		txResult, err = ApproveDisableNode(validatorAddress, bob)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
-
-		// Jack approves — reaches threshold, validator becomes disabled
-		txResult, err = ApproveDisableNode(validatorAddress, jack)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
