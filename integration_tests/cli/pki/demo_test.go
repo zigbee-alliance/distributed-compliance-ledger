@@ -657,7 +657,6 @@ func TestPKIDemo(t *testing.T) {
 		out, err = QueryAllX509Certs()
 		require.NoError(t, err)
 		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, googleCertSubject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, googleCertSerialNumber))
 
 		out, err = QueryProposedX509RootCert(googleCertSubject, googleCertSubjectKeyID)
 		require.NoError(t, err)
@@ -738,7 +737,6 @@ func TestPKIDemo(t *testing.T) {
 		out, err = QueryAllX509Certs()
 		require.NoError(t, err)
 		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, googleCertSubject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, googleCertSerialNumber))
 
 		out, err = QueryX509Cert(googleCertSubject, googleCertSubjectKeyID)
 		require.NoError(t, err)

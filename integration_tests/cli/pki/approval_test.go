@@ -12,10 +12,11 @@ import (
 )
 
 const (
-	// Use google_root_cert (Matter PAA 1, VID=24582) to avoid conflicting with root_cert used by TestPKIDemo.
-	approvalTestRootCertPath         = "../../constants/google_root_cert"
-	approvalTestRootCertSubject      = "MEsxCzAJBgNVBAYTAlVTMQ8wDQYDVQQKDAZHb29nbGUxFTATBgNVBAMMDE1hdHRlciBQQUEgMTEUMBIGCisGAQQBgqJ8AgEMBDYwMDY="
-	approvalTestRootCertSubjectKeyID = "B0:00:56:81:B8:88:62:89:62:80:E1:21:18:A1:A8:BE:09:DE:93:21"
+	// Use paa_cert_no_vid_mainnet (Matter PAA 2, VID=24582). google_root_cert is used by
+	// TestPKIDemo's Google sections, so we avoid it here to keep tests state-independent.
+	approvalTestRootCertPath         = "../../constants/paa_cert_no_vid_mainnet"
+	approvalTestRootCertSubject      = "MEsxCzAJBgNVBAYTAlVTMQ8wDQYDVQQKDAZHb29nbGUxFTATBgNVBAMMDE1hdHRlciBQQUEgMjEUMBIGCisGAQQBgqJ8AgEMBDYwMDY="
+	approvalTestRootCertSubjectKeyID = "7A:B9:ED:A7:6F:E9:CB:64:62:75:32:6D:D1:45:08:B8:00:F8:E1:C8"
 	approvalTestVid                  = 24582
 )
 
