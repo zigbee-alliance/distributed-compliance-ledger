@@ -129,7 +129,7 @@ test_cli_go:
 		source integration_tests/cli/common.sh; \
 		source integration_tests/pool.sh; \
 		init_pool; \
-		go test -v -count=1 -timeout 30m -p 1 ./integration_tests/cli/...; \
+		go test -tags=dev -v -count=1 -timeout 30m -p 1 ./integration_tests/cli/...; \
 		EXIT_CODE=$$?; \
 		cleanup_pool; \
 		exit $$EXIT_CODE \

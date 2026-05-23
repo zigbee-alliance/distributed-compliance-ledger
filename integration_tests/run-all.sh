@@ -16,7 +16,7 @@
 # Possible values: all (default) | cli | light | rest | upgrade | deploy | cli,light | cli,rest | light, rest | cli,light,rest | etc.
 # `cli` and `upgrade` are now Go-driven — the bash scripts under
 # integration_tests/cli/*.sh and integration_tests/upgrade/*.sh were deleted
-# after the migration proved coverage parity (see scripts/coverage-diff.sh).
+# after the migration proved coverage parity (CI-verified before deletion).
 TESTS_TO_RUN=${1:-all}
 
 SCRIPT_PATH="$(readlink -f "$0")"
@@ -160,7 +160,7 @@ fi
 
 # Cli tests — Go-only since the migration completed. One pool per package,
 # coverage merged via collect_cover. The deleted bash suite at
-# integration_tests/cli/*.sh was proven redundant by scripts/coverage-diff.sh
+# integration_tests/cli/*.sh was proven redundant by CI coverage diff
 # (Go coverage was a strict superset of bash coverage).
 if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
   CLI_GO_TEST_PACKAGES=$(find integration_tests/cli -mindepth 1 -maxdepth 1 -type d -not -name utils | sort)

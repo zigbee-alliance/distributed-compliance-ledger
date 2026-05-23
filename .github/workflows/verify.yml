@@ -142,9 +142,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
       - name: Run integration tests
-        # CLI bash + Go tests run in the cli-coverage-diff job; here we cover the rest.
+        # All integration phases (cli, upgrade, deploy, light, rest) run here
+        # via a single pool-managing entry point. The CLI bash suite was
+        # deleted after coverage parity was proven; `cli` now invokes the Go
+        # CLI tests directly.
         shell: bash
-        run: integration_tests/run-all.sh upgrade,deploy,light,rest cover
+        run: integration_tests/run-all.sh cli,upgrade,deploy,light,rest cover
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           UBUNTU_VERSION: ${{ 24.04 }}
@@ -158,58 +161,6 @@ jobs:
         with:
           name: integration_cover
           path: cover.out
-  cli-coverage-diff:
-    # CLI bash tests are deleted: a prior CI run proved Go coverage is a
-    # strict superset of bash coverage (0 gap blocks, 110 Go-only blocks).
-    # This job is now a regression ratchet: re-runs the Go CLI suite, diffs
-    # the resulting profile against the empty baseline at
-    # integration_tests/cli/.coverage_baseline.txt, and fails if a Go-only
-    # gap ever reappears (would only happen if a future change re-introduces
-    # bash CLI tests with different coverage).
-    if: needs.changes.outputs.src == 'true'
-    name: CLI Go coverage regression check
-    runs-on: ubuntu-24.04
-    needs:
-      - changes
-    steps:
-      - uses: actions/setup-go@v5
-        with:
-          go-version: 1.20.14
-      - uses: actions/checkout@v4
-      - uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-      - name: Run Go CLI suite with coverage
-        shell: bash
-        run: |
-          integration_tests/run-all.sh cli cover
-          go tool covdata textfmt -i=integration_tests/gocover -o cover_go.out
-          # No bash counterpart any more — write an empty `bash` profile so
-          # coverage-diff.sh's two-file invariant holds. The diff is then
-          # trivially "Go covers everything bash covers" (nothing).
-          printf 'mode: set\n' > cover_bash.out
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          UBUNTU_VERSION: ${{ 24.04 }}
-          GOCOVER_MODE: set
-      - name: Compute coverage diff and enforce baseline
-        shell: bash
-        run: scripts/coverage-diff.sh --no-run --strict
-      - name: Upload coverage diff artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cli_coverage_gap
-          path: |
-            cover_bash.out
-            cover_go.out
-            coverage_gap.txt
-            integration_tests/cli/.coverage_baseline.txt
   ts-client-tests:
     if: needs.changes.outputs.ts_client == 'true'
     name: Verify ts-client query-encoding patch
@@ -289,7 +240,6 @@ jobs:
     needs:
       - unit-tests
       - integration-tests
-      - cli-coverage-diff
       - lint
       - links
       - spell
