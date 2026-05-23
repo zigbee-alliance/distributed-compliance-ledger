@@ -142,7 +142,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
       - name: Run integration tests
-        # CLI bash + Go tests run in the cli-coverage-diff job; here we cover the rest.
+        # CLI bash + Go tests run in the cli-coverage-diff job; here we cover
+        # everything else. `upgrade` now invokes the Go-migrated suite —
+        # the bash scripts under integration_tests/upgrade/ were deleted.
         shell: bash
         run: integration_tests/run-all.sh upgrade,deploy,light,rest cover
         env:
@@ -216,6 +218,33 @@ jobs:
             cover_go.out
             coverage_gap.txt
             integration_tests/cli/.coverage_baseline.txt
+  upgrade-command-diff:
+    # Static check: for each bash script under integration_tests/upgrade/,
+    # verify the migrated Go counterpart invokes the same set of `dcld tx`/
+    # `dcld query` subcommands. Compares against a checked-in baseline so the
+    # job only fails when *new* bash-only subcommands appear (regression) or
+    # the baseline ratchets down (informational).
+    #
+    # Unlike the CLI coverage-diff job this runs without docker — pure source
+    # parsing — so it's cheap. Non-blocking until the baseline is empty.
+    if: needs.changes.outputs.src == 'true'
+    name: Upgrade migration command diff
+    runs-on: ubuntu-24.04
+    needs:
+      - changes
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compute subcommand diff and enforce baseline
+        shell: bash
+        run: scripts/upgrade-command-diff.sh --strict
+      - name: Upload diff artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: upgrade_command_gap
+          path: |
+            upgrade_command_gap.txt
+            integration_tests/upgrade/.command_baseline.txt
   ts-client-tests:
     if: needs.changes.outputs.ts_client == 'true'
     name: Verify ts-client query-encoding patch

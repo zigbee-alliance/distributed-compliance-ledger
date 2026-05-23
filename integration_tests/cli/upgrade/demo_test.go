@@ -27,10 +27,14 @@ import (
 const (
 	upgradeInfoV120 = `{"binaries":{"linux/amd64":"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.2.0/dcld?checksum=sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958"}}`
 	upgradeInfoV121 = `{"binaries":{"linux/amd64":"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.2.1/dcld?checksum=sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958"}}`
+	upgradeInfoV122 = `{"binaries":{"linux/amd64":"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.2.2/dcld?checksum=sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958"}}`
+	upgradeInfoV140 = `{"binaries":{"linux/amd64":"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.4.0/dcld?checksum=sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958"}}`
 	upgradeInfoV141 = `{"binaries":{"linux/amd64":"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.4.1/dcld?checksum=sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958"}}`
 
 	upgradeNameV120 = "v1.2.0"
 	upgradeNameV121 = "v1.2.1"
+	upgradeNameV122 = "v1.2.2"
+	upgradeNameV140 = "v1.4.0"
 	upgradeNameV141 = "v1.4.1"
 
 	// A very large height so the upgrade is never actually executed during tests
@@ -251,6 +255,91 @@ func TestUpgradeDemo(t *testing.T) {
 		out, err = QueryApprovedUpgrade(upgradeNameV121)
 		require.NoError(t, err)
 		require.Contains(t, string(out), "Not Found")
+	})
+
+	// Bash counterpart: model-validation-cases.sh lines 232-275.
+	// Propose at current+30, wait until plan_height+5, then approve must fail
+	// with "upgrade cannot be scheduled in the past". Re-propose with a fresh
+	// plan height succeeds.
+	t.Run("ApproveAfterPlanHeightPasses_ReProposeWithFreshHeightSucceeds_v1_2_2", func(t *testing.T) {
+		currentHeight, err := cliputils.GetHeight()
+		require.NoError(t, err)
+		planHeight := currentHeight + 30
+
+		txResult, err := ProposeUpgrade(upgradeNameV122, fmt.Sprintf("%d", planHeight), jack,
+			"--upgrade-info", upgradeInfoV122,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		out, err := QueryProposedUpgrade(upgradeNameV122)
+		require.NoError(t, err)
+		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV122))
+		require.Contains(t, string(out), fmt.Sprintf(`"height":"%d"`, planHeight))
+
+		// Wait for the chain to pass plan_height
+		cliputils.WaitForHeight(t, planHeight+5, 300)
+
+		// Approving now must fail: the upgrade's height is in the past.
+		txResult, err = ApproveUpgrade(upgradeNameV122, alice)
+		require.NoError(t, err)
+		require.NotEqual(t, uint32(0), txResult.Code) // upgrade cannot be scheduled in the past
+
+		// Re-propose with a fresh plan height — must succeed.
+		currentHeight, err = cliputils.GetHeight()
+		require.NoError(t, err)
+		newPlanHeight := currentHeight + 30
+
+		txResult, err = ProposeUpgrade(upgradeNameV122, fmt.Sprintf("%d", newPlanHeight), jack,
+			"--upgrade-info", upgradeInfoV122,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		out, err = QueryProposedUpgrade(upgradeNameV122)
+		require.NoError(t, err)
+		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV122))
+		require.Contains(t, string(out), fmt.Sprintf(`"height":"%d"`, newPlanHeight))
+	})
+
+	// Bash counterpart: model-validation-cases.sh lines 280-313.
+	// Same setup as above, but re-propose uses the STALE plan_height (now in
+	// the past). Must fail with "upgrade cannot be scheduled in the past".
+	t.Run("ApproveAfterPlanHeightPasses_ReProposeWithStaleHeightFails_v1_4_0", func(t *testing.T) {
+		currentHeight, err := cliputils.GetHeight()
+		require.NoError(t, err)
+		planHeight := currentHeight + 30
+
+		txResult, err := ProposeUpgrade(upgradeNameV140, fmt.Sprintf("%d", planHeight), jack,
+			"--upgrade-info", upgradeInfoV140,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		out, err := QueryProposedUpgrade(upgradeNameV140)
+		require.NoError(t, err)
+		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV140))
+		require.Contains(t, string(out), fmt.Sprintf(`"height":"%d"`, planHeight))
+
+		cliputils.WaitForHeight(t, planHeight+5, 300)
+
+		// Approve must fail — plan height now in the past.
+		txResult, err = ApproveUpgrade(upgradeNameV140, alice)
+		require.NoError(t, err)
+		require.NotEqual(t, uint32(0), txResult.Code)
+
+		// Re-propose with the stale (now-past) plan height — must also fail.
+		txResult, err = ProposeUpgrade(upgradeNameV140, fmt.Sprintf("%d", planHeight), jack,
+			"--upgrade-info", upgradeInfoV140,
+		)
+		require.NoError(t, err)
+		require.NotEqual(t, uint32(0), txResult.Code) // upgrade cannot be scheduled in the past
 	})
 
 	t.Run("ProposeAndRejectByProposer_v1_4_1", func(t *testing.T) {

@@ -1,0 +1,147 @@
+// Copyright 2020 DSR Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package upgrade
+
+import (
+	"fmt"
+	"testing"
+	"time"
+
+	"github.com/stretchr/testify/require"
+)
+
+// runAddNewNodeAfterUpgrade is the Go translation of
+// integration_tests/upgrade/11-test-add-new-node-after-upgrade.sh.
+//
+// Spins up a fresh observer container at IP 192.167.10.28 installed with dcld
+// v0.12.0. Seeds cosmovisor with the master binary under the master plan
+// name. Starts the node and polls until:
+//
+//  1. dcld version reports v0.12.0 (old binary running)
+//  2. catching_up=true (catch-up procedure started)
+//  3. catching_up=false (catch-up procedure finished)
+//  4. dcld version reports MasterPlanName (cosmovisor swapped the binary)
+//
+//nolint:funlen
+func runAddNewNodeAfterUpgrade(t *testing.T, state *UpgradeTestState) {
+	t.Helper()
+
+	require.NotEmpty(t, state.MasterPlanName,
+		"MasterPlanName must be populated by script 10 first")
+
+	dcldOld, err := EnsureBinary(DCLDVersionV012)
+	require.NoError(t, err)
+
+	t.Cleanup(func() { DockerCleanup(NewObserverContainerName) })
+	DockerCleanup(NewObserverContainerName)
+
+	// Step 1: run the new observer container on the localnet network.
+	t.Run("StartNewObserverContainer", func(t *testing.T) {
+		portMap := fmt.Sprintf("%d-%d:26656-26657",
+			NewObserverNodeP2PPort, NewObserverNodeClientPort)
+		_, runErr := DockerRun(
+			"-d",
+			"--name", NewObserverContainerName,
+			"--ip", NewObserverIP,
+			"-p", portMap,
+			"--network", DockerNetwork,
+			"-i", "dcledger",
+		)
+		require.NoError(t, runErr, "docker run new observer")
+	})
+
+	// Step 2: install dcld v0.12.0 into the container.
+	t.Run("InstallOldDcld", func(t *testing.T) {
+		_, err := DockerCp(dcldOld, NewObserverContainerName+":"+DCLUserHome+"/dcld")
+		require.NoError(t, err, "docker cp v0.12.0 into observer")
+	})
+
+	// Step 3: configure node identity + peers + listen address.
+	t.Run("ConfigureNodeFiles", func(t *testing.T) {
+		_, err := DockerExec(NewObserverContainerName,
+			"./dcld", "init", NewObserverContainerName, "--chain-id", ChainID)
+		require.NoError(t, err)
+
+		_, err = DockerCp(
+			LocalnetDir+"/node0/config/genesis.json",
+			NewObserverContainerName+":"+DCLDir+"/config",
+		)
+		require.NoError(t, err)
+
+		peers, err := readPersistentPeersFromHost(LocalnetDir + "/node0/config/config.toml")
+		require.NoError(t, err)
+
+		// Replace persistent_peers and laddr inside the container's config.toml.
+		_, err = DockerExecShell(NewObserverContainerName,
+			fmt.Sprintf(`sed -i 's|persistent_peers = ""|persistent_peers = "%s"|g' %s/config/config.toml`,
+				peers, DCLDir))
+		require.NoError(t, err)
+
+		_, err = DockerExecShell(NewObserverContainerName,
+			fmt.Sprintf(`sed -i 's|laddr = "tcp://127.0.0.1:26657"|laddr = "tcp://0.0.0.0:26657"|g' %s/config/config.toml`, DCLDir))
+		require.NoError(t, err)
+	})
+
+	// Step 4: seed cosmovisor/genesis/bin with the old binary.
+	t.Run("SeedCosmovisorGenesis", func(t *testing.T) {
+		require.NoError(t, SeedCosmovisorGenesis(NewObserverContainerName))
+	})
+
+	// Step 5: register the master upgrade in cosmovisor.
+	t.Run("RegisterMasterUpgradeOnObserver", func(t *testing.T) {
+		_, err := DockerCp(DcldMasterBinaryPath,
+			NewObserverContainerName+":"+DCLDir+"/dcld")
+		require.NoError(t, err, "docker cp dcld_master into observer")
+
+		require.NoError(t,
+			CosmovisorAddUpgrade(NewObserverContainerName, state.MasterPlanName, DCLDir+"/dcld"),
+		)
+	})
+
+	// Step 6: start the cosmovisor-managed node helper.
+	t.Run("StartNodeHelper", func(t *testing.T) {
+		_, err := dockerCmd("exec", "-d", NewObserverContainerName,
+			"sh", "-c",
+			"/var/lib/dcl/./node_helper.sh | tee /proc/1/fd/1",
+		)
+		require.NoError(t, err)
+	})
+
+	// Step 7: verify pre-upgrade dcld reports v0.12.0 inside the container.
+	t.Run("ObserverReportsOldVersion", func(t *testing.T) {
+		require.NoError(t, WaitForObserverVersion(
+			NewObserverContainerName, DCLDVersionV012, 10*time.Second,
+		))
+	})
+
+	// Step 8 + 9: catch-up starts and then finishes. Polling window is 15min
+	// per status — bash uses 900s for each.
+	t.Run("ObserverCatchUpLifecycle", func(t *testing.T) {
+		require.NoError(t, WaitForCatchingUpStatus(
+			NewObserverContainerName, true, 15*time.Minute,
+		), "expected catching_up=true (start of catch-up)")
+
+		require.NoError(t, WaitForCatchingUpStatus(
+			NewObserverContainerName, false, 15*time.Minute,
+		), "expected catching_up=false (catch-up complete)")
+	})
+
+	// Step 10: post-catch-up the binary should be the master plan name.
+	t.Run("ObserverReportsMasterVersion", func(t *testing.T) {
+		require.NoError(t, WaitForObserverVersion(
+			NewObserverContainerName, state.MasterPlanName, 30*time.Second,
+		), "observer should have been upgraded to master plan binary")
+	})
+}

@@ -1,0 +1,386 @@
+// Copyright 2020 DSR Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package upgrade
+
+import (
+	"fmt"
+	"testing"
+
+	"github.com/stretchr/testify/require"
+)
+
+// runUpgrade151To152 is the Go translation of
+// integration_tests/upgrade/08-test-upgrade-1.5.1-to-1.5.2.sh.
+//
+// It assumes the chain is currently running v1.5.1 with state seeded by
+// scripts 01-07 (captured in `state`). The Phase 1 caller skips this until
+// those scripts are themselves migrated to Go.
+//
+//nolint:funlen
+func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
+	t.Helper()
+
+	dcldOld, err := EnsureBinary("1.5.1")
+	require.NoError(t, err, "fetch dcld v1.5.1")
+	dcldNew, err := EnsureBinary("1.5.2")
+	require.NoError(t, err, "fetch dcld v1.5.2")
+
+	// Mirror `$DCLD_BIN_NEW config broadcast-mode sync` from the bash.
+	_, _ = ExecuteCLIWithBin(dcldNew, "config", "broadcast-mode", "sync")
+
+	step := SoftwareUpgradeStep{
+		PlanName:         PlanNameV1_5_2,
+		BinaryVersionNew: "v" + BinaryVersionV1_5_2,
+		Checksum:         UpgradeChecksumV1_5_2,
+		DcldOldBin:       dcldOld,
+		DcldNewBin:       dcldNew,
+		Trustees: []string{
+			state.Trustee1, state.Trustee2, state.Trustee3, state.Trustee4,
+		},
+	}
+	step.Run(t)
+
+	// ------------------------------------------------------------------
+	// Verify carry-over data is intact under the new binary.
+	// ------------------------------------------------------------------
+
+	t.Run("VerifyPreservedModels", func(t *testing.T) {
+		out, err := ExecuteCLIWithBin(dcldNew,
+			"query", "model", "get-model",
+			"--vid", fmt.Sprintf("%d", state.VIDFor1_5_1),
+			"--pid", fmt.Sprintf("%d", state.PID1For1_5_1),
+		)
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VIDFor1_5_1)
+		requireFieldEquals(t, out, "pid", state.PID1For1_5_1)
+		checkResponseContains(t, out, state.ProductLabelFor1_5_1)
+		requireFieldEquals(t, out, "commissioningModeSecondaryStepsHint",
+			state.CommissioningModeSecondaryStepsHintFor1_5_1)
+
+		out, err = ExecuteCLIWithBin(dcldNew,
+			"query", "model", "get-model",
+			"--vid", fmt.Sprintf("%d", state.VIDFor1_5_1),
+			"--pid", fmt.Sprintf("%d", state.PID2For1_5_1),
+		)
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VIDFor1_5_1)
+		requireFieldEquals(t, out, "pid", state.PID2For1_5_1)
+		checkResponseContains(t, out, state.ProductLabelFor1_5_1)
+		// Migration default for this field is 4 (bash line 104).
+		requireFieldEquals(t, out, "commissioningModeSecondaryStepsHint", 4)
+	})
+
+	t.Run("VerifyUpdatedModelFromScript1", func(t *testing.T) {
+		out, err := ExecuteCLIWithBin(dcldNew,
+			"query", "model", "get-model",
+			"--vid", fmt.Sprintf("%d", state.VID),
+			"--pid", fmt.Sprintf("%d", state.PID2),
+		)
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VID)
+		requireFieldEquals(t, out, "pid", state.PID2)
+		checkResponseContains(t, out, state.ProductLabelFor1_5_1)
+		checkResponseContains(t, out, state.PartNumberFor1_5_1)
+	})
+
+	t.Run("VerifyModelVersionPreserved", func(t *testing.T) {
+		out, err := ExecuteCLIWithBin(dcldNew,
+			"query", "model", "model-version",
+			"--vid", fmt.Sprintf("%d", state.VID),
+			"--pid", fmt.Sprintf("%d", state.PID2),
+			"--softwareVersion", fmt.Sprintf("%d", state.SoftwareVersion),
+		)
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VID)
+		requireFieldEquals(t, out, "pid", state.PID2)
+		requireFieldEquals(t, out, "minApplicableSoftwareVersion",
+			state.MinApplicableSoftwareVersionFor1_5_1)
+		requireFieldEquals(t, out, "maxApplicableSoftwareVersion",
+			state.MaxApplicableSoftwareVersionFor1_5_1)
+	})
+
+	t.Run("VerifyAllModelsListings", func(t *testing.T) {
+		out, err := ExecuteCLIWithBin(dcldNew, "query", "model", "all-models")
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VIDFor1_5_1)
+		requireFieldEquals(t, out, "pid", state.PID1For1_5_1)
+		requireFieldEquals(t, out, "pid", state.PID2For1_5_1)
+
+		out, err = ExecuteCLIWithBin(dcldNew,
+			"query", "model", "all-model-versions",
+			"--vid", fmt.Sprintf("%d", state.VIDFor1_5_1),
+			"--pid", fmt.Sprintf("%d", state.PID1For1_5_1),
+		)
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VIDFor1_5_1)
+		requireFieldEquals(t, out, "pid", state.PID1For1_5_1)
+
+		out, err = ExecuteCLIWithBin(dcldNew,
+			"query", "model", "vendor-models",
+			"--vid", fmt.Sprintf("%d", state.VIDFor1_5_1),
+		)
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "pid", state.PID1For1_5_1)
+		requireFieldEquals(t, out, "pid", state.PID2For1_5_1)
+
+		out, err = ExecuteCLIWithBin(dcldNew,
+			"query", "model", "model-version",
+			"--vid", fmt.Sprintf("%d", state.VIDFor1_5_1),
+			"--pid", fmt.Sprintf("%d", state.PID1For1_5_1),
+			"--softwareVersion", fmt.Sprintf("%d", state.SoftwareVersionFor1_5_1),
+		)
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VIDFor1_5_1)
+		requireFieldEquals(t, out, "pid", state.PID1For1_5_1)
+		requireFieldEquals(t, out, "softwareVersion", state.SoftwareVersionFor1_5_1)
+	})
+
+	// ------------------------------------------------------------------
+	// Post-upgrade: create a new vendor + several models against v1.5.2.
+	// ------------------------------------------------------------------
+
+	t.Run("CreateVendor_1_5_2", func(t *testing.T) {
+		createVendorWithApprovals(t, dcldNew, state,
+			VendorAccountFor1_5_2, VIDFor1_5_2)
+	})
+
+	t.Run("AddModelsAndVersions_1_5_2", func(t *testing.T) {
+		// Add model (pid_1) with all new ICD/factory-reset fields.
+		txResult, err := ExecuteTxWithBin(dcldNew,
+			"tx", "model", "add-model",
+			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),
+			"--pid", fmt.Sprintf("%d", PID1For1_5_2),
+			"--deviceTypeID", fmt.Sprintf("%d", DeviceTypeIDFor1_5_2),
+			"--productName", ProductNameFor1_5_2,
+			"--productLabel", ProductLabelFor1_5_2,
+			"--partNumber", PartNumberFor1_5_2,
+			"--icdUserActiveModeTriggerHint", fmt.Sprintf("%d", ICDUserActiveModeTriggerHintFor1_5_2),
+			"--icdUserActiveModeTriggerInstruction", ICDUserActiveModeTriggerInstructionFor1_5_2,
+			"--factoryResetStepsHint", fmt.Sprintf("%d", FactoryResetStepsHintFor1_5_2),
+			"--factoryResetStepsInstruction", FactoryResetStepsInstructionFor1_5_2,
+			"--commissioningModeSecondaryStepsHint", fmt.Sprintf("%d", CommissioningModeSecondaryStepsHintFor1_5_2),
+			"--from", VendorAccountFor1_5_2,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
+
+		// Add model-version for pid_1 (with specificationVersion).
+		txResult, err = ExecuteTxWithBin(dcldNew,
+			"tx", "model", "add-model-version",
+			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),
+			"--pid", fmt.Sprintf("%d", PID1For1_5_2),
+			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_5_2),
+			"--softwareVersionString", SoftwareVersionStringFor1_5_2,
+			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_5_2),
+			"--minApplicableSoftwareVersion", fmt.Sprintf("%d", MinApplicableSoftwareVersionFor1_5_2),
+			"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", MaxApplicableSoftwareVersionFor1_5_2),
+			"--specificationVersion", fmt.Sprintf("%d", SpecificationVersionFor1_5_2),
+			"--from", VendorAccountFor1_5_2,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
+
+		// Add model pid_2 (no ICD fields, no factory reset).
+		txResult, err = ExecuteTxWithBin(dcldNew,
+			"tx", "model", "add-model",
+			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),
+			"--pid", fmt.Sprintf("%d", PID2For1_5_2),
+			"--deviceTypeID", fmt.Sprintf("%d", DeviceTypeIDFor1_5_2),
+			"--productName", ProductNameFor1_5_2,
+			"--productLabel", ProductLabelFor1_5_2,
+			"--partNumber", PartNumberFor1_5_2,
+			"--from", VendorAccountFor1_5_2,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
+
+		txResult, err = ExecuteTxWithBin(dcldNew,
+			"tx", "model", "add-model-version",
+			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),
+			"--pid", fmt.Sprintf("%d", PID2For1_5_2),
+			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_5_2),
+			"--softwareVersionString", SoftwareVersionStringFor1_5_2,
+			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_5_2),
+			"--minApplicableSoftwareVersion", fmt.Sprintf("%d", MinApplicableSoftwareVersionFor1_5_2),
+			"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", MaxApplicableSoftwareVersionFor1_5_2),
+			"--from", VendorAccountFor1_5_2,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
+
+		// Add + immediately delete model for pid_3.
+		txResult, err = ExecuteTxWithBin(dcldNew,
+			"tx", "model", "add-model",
+			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),
+			"--pid", fmt.Sprintf("%d", PID3For1_5_2),
+			"--deviceTypeID", fmt.Sprintf("%d", DeviceTypeIDFor1_5_2),
+			"--productName", ProductNameFor1_5_2,
+			"--productLabel", ProductLabelFor1_5_2,
+			"--partNumber", PartNumberFor1_5_2,
+			"--from", VendorAccountFor1_5_2,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
+
+		txResult, err = ExecuteTxWithBin(dcldNew,
+			"tx", "model", "add-model-version",
+			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),
+			"--pid", fmt.Sprintf("%d", PID3For1_5_2),
+			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_5_2),
+			"--softwareVersionString", SoftwareVersionStringFor1_5_2,
+			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_5_2),
+			"--minApplicableSoftwareVersion", fmt.Sprintf("%d", MinApplicableSoftwareVersionFor1_5_2),
+			"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", MaxApplicableSoftwareVersionFor1_5_2),
+			"--from", VendorAccountFor1_5_2,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
+
+		txResult, err = ExecuteTxWithBin(dcldNew,
+			"tx", "model", "delete-model",
+			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),
+			"--pid", fmt.Sprintf("%d", PID3For1_5_2),
+			"--from", VendorAccountFor1_5_2,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
+
+		// Update the carry-over model from script 1.
+		txResult, err = ExecuteTxWithBin(dcldNew,
+			"tx", "model", "update-model",
+			"--vid", fmt.Sprintf("%d", state.VID),
+			"--pid", fmt.Sprintf("%d", state.PID2),
+			"--productName", state.ProductName,
+			"--productLabel", ProductLabelFor1_5_2,
+			"--partNumber", PartNumberFor1_5_2,
+			"--from", state.VendorAccount,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
+
+		txResult, err = ExecuteTxWithBin(dcldNew,
+			"tx", "model", "update-model-version",
+			"--vid", fmt.Sprintf("%d", state.VID),
+			"--pid", fmt.Sprintf("%d", state.PID2),
+			"--softwareVersion", fmt.Sprintf("%d", state.SoftwareVersion),
+			"--minApplicableSoftwareVersion", fmt.Sprintf("%d", MinApplicableSoftwareVersionFor1_5_2),
+			"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", MaxApplicableSoftwareVersionFor1_5_2),
+			"--from", state.VendorAccount,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
+	})
+
+	t.Run("VerifyNewModels_1_5_2", func(t *testing.T) {
+		out, err := ExecuteCLIWithBin(dcldNew,
+			"query", "model", "get-model",
+			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),
+			"--pid", fmt.Sprintf("%d", PID1For1_5_2),
+		)
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", VIDFor1_5_2)
+		requireFieldEquals(t, out, "pid", PID1For1_5_2)
+		checkResponseContains(t, out, ProductLabelFor1_5_2)
+		requireFieldEquals(t, out, "icdUserActiveModeTriggerHint", ICDUserActiveModeTriggerHintFor1_5_2)
+		checkResponseContains(t, out, ICDUserActiveModeTriggerInstructionFor1_5_2)
+		requireFieldEquals(t, out, "factoryResetStepsHint", FactoryResetStepsHintFor1_5_2)
+		checkResponseContains(t, out, FactoryResetStepsInstructionFor1_5_2)
+		requireFieldEquals(t, out, "commissioningModeSecondaryStepsHint", CommissioningModeSecondaryStepsHintFor1_5_2)
+
+		out, err = ExecuteCLIWithBin(dcldNew,
+			"query", "model", "get-model",
+			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),
+			"--pid", fmt.Sprintf("%d", PID2For1_5_2),
+		)
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", VIDFor1_5_2)
+		requireFieldEquals(t, out, "pid", PID2For1_5_2)
+		checkResponseContains(t, out, ProductLabelFor1_5_2)
+		// Migration default for this field is 4 (bash line 318).
+		requireFieldEquals(t, out, "commissioningModeSecondaryStepsHint", 4)
+
+		// Updated carry-over model.
+		out, err = ExecuteCLIWithBin(dcldNew,
+			"query", "model", "get-model",
+			"--vid", fmt.Sprintf("%d", state.VID),
+			"--pid", fmt.Sprintf("%d", state.PID2),
+		)
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VID)
+		requireFieldEquals(t, out, "pid", state.PID2)
+		checkResponseContains(t, out, ProductLabelFor1_5_2)
+		checkResponseContains(t, out, PartNumberFor1_5_2)
+
+		// Model version specificationVersion check.
+		out, err = ExecuteCLIWithBin(dcldNew,
+			"query", "model", "model-version",
+			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),
+			"--pid", fmt.Sprintf("%d", PID1For1_5_2),
+			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_5_2),
+		)
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", VIDFor1_5_2)
+		requireFieldEquals(t, out, "pid", PID1For1_5_2)
+		requireFieldEquals(t, out, "softwareVersion", SoftwareVersionFor1_5_2)
+		requireFieldEquals(t, out, "specificationVersion", SpecificationVersionFor1_5_2)
+	})
+}
+
+// createVendorWithApprovals proposes a Vendor account and obtains the required
+// trustee approvals. Mirrors the propose/approve-add-account sequence repeated
+// across the post-upgrade portions of 08 and 09.
+func createVendorWithApprovals(t *testing.T, dcldBin string, state *UpgradeTestState, accountName string, vid int) {
+	t.Helper()
+
+	// Generate a new key locally on the host keyring.
+	_, err := ExecuteCLIWithBin(dcldBin, "keys", "add", accountName,
+		"--keyring-backend", "test",
+	)
+	require.NoError(t, err, "keys add %s", accountName)
+
+	addrOut, err := ExecuteCLIWithBin(dcldBin, "keys", "show", accountName, "-a",
+		"--keyring-backend", "test",
+	)
+	require.NoError(t, err, "keys show -a %s", accountName)
+	address := TrimTrailingWS(string(addrOut))
+
+	pubOut, err := ExecuteCLIWithBin(dcldBin, "keys", "show", accountName, "-p",
+		"--keyring-backend", "test",
+	)
+	require.NoError(t, err, "keys show -p %s", accountName)
+	pubkey := TrimTrailingWS(string(pubOut))
+
+	// Trustee1 proposes; Trustee2..4 approve.
+	tx, err := ExecuteTxWithBin(dcldBin,
+		"tx", "auth", "propose-add-account",
+		"--address", address,
+		"--pubkey", pubkey,
+		"--vid", fmt.Sprintf("%d", vid),
+		"--roles", "Vendor",
+		"--from", state.Trustee1,
+	)
+	require.NoError(t, err)
+	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+
+	for _, t2 := range []string{state.Trustee2, state.Trustee3, state.Trustee4} {
+		tx, err = ExecuteTxWithBin(dcldBin,
+			"tx", "auth", "approve-add-account",
+			"--address", address,
+			"--from", t2,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	}
+}

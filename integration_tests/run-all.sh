@@ -14,6 +14,8 @@
 # limitations under the License.
 
 # Possible values: all (default) | cli | cli_go | light | rest | upgrade | deploy | cli,light | cli,rest | light, rest | cli,light,rest | etc.
+# `upgrade` invokes the Go-migrated integration_tests/upgrade package, which
+# now fully replaces the deleted bash scripts under integration_tests/upgrade/.
 TESTS_TO_RUN=${1:-all}
 
 SCRIPT_PATH="$(readlink -f "$0")"
@@ -117,31 +119,22 @@ make image &>${DETAILED_OUTPUT_TARGET}
 
 cleanup_pool
 
-# Upgrade procedure tests
+# Upgrade procedure tests — now fully Go-migrated. The test sequence owns its
+# own pool lifecycle (EnsureAllBinaries + InitPool at TestUpgradeSequence
+# start, CleanupPool via t.Cleanup), so no init_pool wrapper is needed here.
 if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
-  UPGRADE_SHELL_TEST="./integration_tests/upgrade/test-upgrade.sh"
-
   log "*****************************************************************************************"
-  log "Running ./integration_tests/prepare-dcld-versions.sh"
+  log "Running go test ./integration_tests/upgrade/..."
   log "*****************************************************************************************"
 
-  bash ./integration_tests/prepare-dcld-versions.sh
-
-  init_pool yes localnet_init_latest_stable_release "/tmp/dcld_bins/dcld_v0.12.0"
-
-  log "*****************************************************************************************"
-  log "Running $UPGRADE_SHELL_TEST"
-  log "*****************************************************************************************"
-
-  if bash "$UPGRADE_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-    log "$UPGRADE_SHELL_TEST finished successfully"
+  if RUN_UPGRADE_GO=1 go test -count=1 -timeout 2h -v ./integration_tests/upgrade/... &>${DETAILED_OUTPUT_TARGET}; then
+    log "integration_tests/upgrade finished successfully"
   else
-    log "$UPGRADE_SHELL_TEST failed"
+    log "integration_tests/upgrade failed"
     exit 1
   fi
 
   collect_cover
-  cleanup_pool
 fi
 
 # Deploy tests
@@ -156,7 +149,7 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "deploy" ]]; then
 fi
 
 # Cli shell tests
-if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
+if [[ $TESTS_TO_RUN =~ "all" || ( $TESTS_TO_RUN =~ "cli" && ! $TESTS_TO_RUN =~ "cli_go" ) ]]; then
   CLI_SHELL_TESTS=$(find integration_tests/cli -type f -name '*.sh' -not -name "common.sh")
 
   for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
