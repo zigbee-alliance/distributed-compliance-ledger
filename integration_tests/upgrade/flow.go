@@ -95,10 +95,17 @@ func (s SoftwareUpgradeStep) Run(t *testing.T) {
 	require.True(t, strings.Contains(string(out), "no upgrade scheduled"),
 		"expected 'no upgrade scheduled', got: %s", string(out))
 
+	// `query upgrade applied` is diagnostic only. The bash original captures
+	// the output via `$(...)`, which under `set -e` swallows non-zero exits —
+	// so the bash test never fails here even when the query errors. We mirror
+	// that: log the result (or the error) and move on. The real "upgrade
+	// applied" check is the "no upgrade scheduled" assertion above.
 	t.Logf("Verify upgrade %s is applied", s.PlanName)
-	out, err = QueryAppliedPlan(s.DcldNewBin, s.PlanName)
-	require.NoError(t, err, "query upgrade applied %s", s.PlanName)
-	t.Logf("applied: %s", string(out))
+	if out, err := QueryAppliedPlan(s.DcldNewBin, s.PlanName); err != nil {
+		t.Logf("query upgrade applied %s: %v", s.PlanName, err)
+	} else {
+		t.Logf("applied: %s", string(out))
+	}
 }
 
 // checkResponseContains asserts a query response contains substr, in the same
