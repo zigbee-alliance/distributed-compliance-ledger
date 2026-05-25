@@ -103,7 +103,7 @@ func CmdCreateModel() *cobra.Command {
 			)
 
 			unreachable := cli.CheckURLsForLiveness(commissioningCustomFlowURL, userManualURL, supportURL, productURL, lsfURL,
-				enhancedSetupFlowTCURL, enhancedSetupFlowMaintenanceURL, commissioningFallbackURL)
+				enhancedSetupFlowTCURL, maintenanceURL, commissioningFallbackURL)
 			if len(unreachable) > 0 {
 				return fmt.Errorf("URLs not reachable: %s", strings.Join(unreachable, ", "))
 			}
@@ -294,7 +294,7 @@ func CmdUpdateModel() *cobra.Command {
 			)
 
 			unreachable := cli.CheckURLsForLiveness(commissioningCustomFlowURL, userManualURL, supportURL, productURL, lsfURL,
-				enhancedSetupFlowTCURL, enhancedSetupFlowMaintenanceURL, commissioningFallbackURL)
+				enhancedSetupFlowTCURL, maintenanceURL, commissioningFallbackURL)
 			if len(unreachable) > 0 {
 				return fmt.Errorf("URLs not reachable: %s", strings.Join(unreachable, ", "))
 			}
