@@ -241,13 +241,12 @@ func ApproveDisableValidatorNode(dcldBin, validatorAddress, from string) (*utils
 //
 // `approvers` controls how many trustees approve before the final
 // re-enable. Scripts 01/02/04 use 2; scripts 03+ use 3 (also Trustee4).
-//
-//nolint:errcheck — wraps several non-critical container ops.
 func RunValidatorDisableEnableFlow(t *testing.T, state *UpgradeTestState, dcldBin string, approvers []string) {
 	t.Helper()
 
 	if state.ValidatorAddress == "" || state.ValidatorAccountName == "" {
 		t.Log("RunValidatorDisableEnableFlow: validator-demo not initialized; skipping")
+
 		return
 	}
 

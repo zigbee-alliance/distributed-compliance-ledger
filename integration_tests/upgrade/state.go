@@ -42,10 +42,10 @@ type UpgradeTestState struct {
 
 	// Constants set by 05 (lines 22-29) — referenced by 09's "ISSUE #593"
 	// block BEFORE 09 redefines them at line 174+.
-	VIDFor1_6_0_FromScript5              int
-	PID3For1_6_0_FromScript5             int
-	SoftwareVersion1For1_6_0_FromScript5 int
-	SoftwareVersion2For1_6_0_FromScript5 int
+	VIDFor1_6_0FromScript5              int
+	PID3For1_6_0FromScript5             int
+	SoftwareVersion1For1_6_0FromScript5 int
+	SoftwareVersion2For1_6_0FromScript5 int
 
 	// User accounts created in 01 — referenced by later scripts' pre-upgrade
 	// verifications. Names are randomized; addresses + pubkeys are propagated
@@ -123,10 +123,10 @@ func DefaultBashState() *UpgradeTestState {
 		VendorAccountFor1_2: "vendor_account_4701",
 
 		// 05-test-upgrade-1.2-to-1.4.3.sh lines 22-29 (used early in 09)
-		VIDFor1_6_0_FromScript5:              4701, // = $vid_for_1_2
-		PID3For1_6_0_FromScript5:             160,
-		SoftwareVersion1For1_6_0_FromScript5: 100001,
-		SoftwareVersion2For1_6_0_FromScript5: 200002,
+		VIDFor1_6_0FromScript5:              4701, // = $vid_for_1_2
+		PID3For1_6_0FromScript5:             160,
+		SoftwareVersion1For1_6_0FromScript5: 100001,
+		SoftwareVersion2For1_6_0FromScript5: 200002,
 
 		// 07-test-upgrade-1.4.4-to-1.5.1.sh lines 489-507
 		VIDFor1_5_1:          65529,
@@ -178,31 +178,31 @@ const (
 // Constants used by the rollback portion of script 04
 // (04-test-upgrade-1.2-rollback.sh).
 const (
-	VIDFor1_2_R2                          = 4703
-	PID1For1_2_R2                         = 16
-	PID2For1_2_R2                         = 27
-	PID3For1_2_R2                         = 38
-	DeviceTypeIDFor1_2_R2                 = 1239
-	ProductNameFor1_2_R2                  = "ProductName1.2_r2"
-	ProductLabelFor1_2_R2                 = "ProductLabe1.2_r2"
-	PartNumberFor1_2_R2                   = "RCU2205F"
-	SoftwareVersionFor1_2_R2              = 2
-	SoftwareVersionStringFor1_2_R2        = "2.0"
-	CDVersionNumberFor1_2_R2              = 313
-	MinApplicableSoftwareVersionFor1_2_R2 = 2
-	MaxApplicableSoftwareVersionFor1_2_R2 = 2000
+	VIDFor1_2R2                          = 4703
+	PID1For1_2R2                         = 16
+	PID2For1_2R2                         = 27
+	PID3For1_2R2                         = 38
+	DeviceTypeIDFor1_2R2                 = 1239
+	ProductNameFor1_2R2                  = "ProductName1.2_r2"
+	ProductLabelFor1_2R2                 = "ProductLabe1.2_r2"
+	PartNumberFor1_2R2                   = "RCU2205F"
+	SoftwareVersionFor1_2R2              = 2
+	SoftwareVersionStringFor1_2R2        = "2.0"
+	CDVersionNumberFor1_2R2              = 313
+	MinApplicableSoftwareVersionFor1_2R2 = 2
+	MaxApplicableSoftwareVersionFor1_2R2 = 2000
 
-	CertificationTypeFor1_2_R2 = "matter"
-	CertificationDateFor1_2_R2 = "2021-01-03T00:00:00Z"
-	ProvisionalDateFor1_2_R2   = "2010-12-11T00:00:00Z"
-	CDCertificateIDFor1_2_R2   = "12345678910abcdefgh"
+	CertificationTypeFor1_2R2 = "matter"
+	CertificationDateFor1_2R2 = "2021-01-03T00:00:00Z"
+	ProvisionalDateFor1_2R2   = "2010-12-11T00:00:00Z"
+	CDCertificateIDFor1_2R2   = "12345678910abcdefgh"
 
-	VendorNameFor1_2_R2           = "VendorName4705"
-	CompanyLegalNameFor1_2_R2     = "LegalCompanyName4705"
-	CompanyPreferredNameFor1_2_R2 = "CompanyPreferredName4705"
-	VendorLandingPageURLFor1_2_R2 = "https://www.newexample_R2.com"
+	VendorNameFor1_2R2           = "VendorName4705"
+	CompanyLegalNameFor1_2R2     = "LegalCompanyName4705"
+	CompanyPreferredNameFor1_2R2 = "CompanyPreferredName4705"
+	VendorLandingPageURLFor1_2R2 = "https://www.newexample_R2.com"
 
-	VendorAccountFor1_2_R2 = "vendor_account_4705"
+	VendorAccountFor1_2R2 = "vendor_account_4705"
 
 	WrongPlanName2        = "wrong_plan_name_2"
 	WrongPlanChecksumV143 = "sha256:a007f58d61632af107a09c89b7392eedd05d8127d0df67ace50f318948c62001"

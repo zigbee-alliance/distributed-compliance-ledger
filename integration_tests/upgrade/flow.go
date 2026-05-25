@@ -109,16 +109,6 @@ func checkResponseContains(t *testing.T, out []byte, substr string) {
 		"response missing %q, got: %s", substr, string(out))
 }
 
-// checkResponseFor asserts the query result for a vid/pid pair contains all
-// of the given substrings. Reduces repetition across migration tests.
-func checkResponseFor(t *testing.T, label string, out []byte, substrs ...string) {
-	t.Helper()
-	for _, s := range substrs {
-		require.True(t, strings.Contains(string(out), s),
-			"%s: response missing %q, got: %s", label, s, string(out))
-	}
-}
-
 // quoteField is a convenience for the recurring `"key": value` assertions
 // against the legacy bash-era JSON shape (which had a space after the colon).
 // Historical binaries emit JSON with `"key": value` while the master binary

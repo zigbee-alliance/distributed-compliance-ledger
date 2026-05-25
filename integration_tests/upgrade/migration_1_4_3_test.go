@@ -43,10 +43,10 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 	// hardcodes vid_for_1_2 = 4701 and pid_3_for_1_6_0 = 160).
 	// ------------------------------------------------------------------
 	t.Run("Issue593PreUpgradeGhostSetup", func(t *testing.T) {
-		vid := state.VIDFor1_6_0_FromScript5
-		pid := state.PID3For1_6_0_FromScript5
-		sv1 := state.SoftwareVersion1For1_6_0_FromScript5
-		sv2 := state.SoftwareVersion2For1_6_0_FromScript5
+		vid := state.VIDFor1_6_0FromScript5
+		pid := state.PID3For1_6_0FromScript5
+		sv1 := state.SoftwareVersion1For1_6_0FromScript5
+		sv2 := state.SoftwareVersion2For1_6_0FromScript5
 
 		// Add the model (1.6.0-era values reused as defaults).
 		tx, err := ExecuteTxWithBin(dcldOld,

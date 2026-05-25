@@ -44,7 +44,7 @@ func shouldRunUpgradeFlow() bool {
 // run-all.sh.
 func TestMain(m *testing.M) {
 	if err := chdirToRepoRoot(); err != nil {
-		fmt.Fprintf(os.Stderr, "chdir to repo root: %v\n", err) //nolint:errcheck
+		fmt.Fprintf(os.Stderr, "chdir to repo root: %v\n", err)
 		os.Exit(1)
 	}
 	os.Exit(m.Run())

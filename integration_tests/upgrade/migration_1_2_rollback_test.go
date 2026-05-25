@@ -109,8 +109,8 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	t.Run("CreateR2Accounts", func(t *testing.T) {
 		approvers := []string{state.Trustee2, state.Trustee3, state.Trustee4}
-		_ = CreateAndApproveAccount(t, dcld, VendorAccountFor1_2_R2, "Vendor",
-			VIDFor1_2_R2, state.Trustee1, approvers)
+		_ = CreateAndApproveAccount(t, dcld, VendorAccountFor1_2R2, "Vendor",
+			VIDFor1_2R2, state.Trustee1, approvers)
 	})
 
 	t.Run("AddR2UserKeys", func(t *testing.T) {
@@ -128,42 +128,42 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 	t.Run("VendorInfoForR2", func(t *testing.T) {
 		tx, err := ExecuteTxWithBin(dcld,
 			"tx", "vendorinfo", "add-vendor",
-			"--vid", fmt.Sprintf("%d", VIDFor1_2_R2),
-			"--vendorName", VendorNameFor1_2_R2,
-			"--companyLegalName", CompanyLegalNameFor1_2_R2,
-			"--companyPreferredName", CompanyPreferredNameFor1_2_R2,
-			"--vendorLandingPageURL", VendorLandingPageURLFor1_2_R2,
-			"--from", VendorAccountFor1_2_R2,
+			"--vid", fmt.Sprintf("%d", VIDFor1_2R2),
+			"--vendorName", VendorNameFor1_2R2,
+			"--companyLegalName", CompanyLegalNameFor1_2R2,
+			"--companyPreferredName", CompanyPreferredNameFor1_2R2,
+			"--vendorLandingPageURL", VendorLandingPageURLFor1_2R2,
+			"--from", VendorAccountFor1_2R2,
 		)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 	})
 
 	t.Run("ModelsForR2", func(t *testing.T) {
-		for _, pid := range []int{PID1For1_2_R2, PID2For1_2_R2, PID3For1_2_R2} {
+		for _, pid := range []int{PID1For1_2R2, PID2For1_2R2, PID3For1_2R2} {
 			tx, err := ExecuteTxWithBin(dcld,
 				"tx", "model", "add-model",
-				"--vid", fmt.Sprintf("%d", VIDFor1_2_R2),
+				"--vid", fmt.Sprintf("%d", VIDFor1_2R2),
 				"--pid", fmt.Sprintf("%d", pid),
-				"--deviceTypeID", fmt.Sprintf("%d", DeviceTypeIDFor1_2_R2),
-				"--productName", ProductNameFor1_2_R2,
-				"--productLabel", ProductLabelFor1_2_R2,
-				"--partNumber", PartNumberFor1_2_R2,
-				"--from", VendorAccountFor1_2_R2,
+				"--deviceTypeID", fmt.Sprintf("%d", DeviceTypeIDFor1_2R2),
+				"--productName", ProductNameFor1_2R2,
+				"--productLabel", ProductLabelFor1_2R2,
+				"--partNumber", PartNumberFor1_2R2,
+				"--from", VendorAccountFor1_2R2,
 			)
 			require.NoError(t, err)
 			require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 
 			tx, err = ExecuteTxWithBin(dcld,
 				"tx", "model", "add-model-version",
-				"--vid", fmt.Sprintf("%d", VIDFor1_2_R2),
+				"--vid", fmt.Sprintf("%d", VIDFor1_2R2),
 				"--pid", fmt.Sprintf("%d", pid),
-				"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_2_R2),
-				"--softwareVersionString", SoftwareVersionStringFor1_2_R2,
-				"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_2_R2),
-				"--minApplicableSoftwareVersion", fmt.Sprintf("%d", MinApplicableSoftwareVersionFor1_2_R2),
-				"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", MaxApplicableSoftwareVersionFor1_2_R2),
-				"--from", VendorAccountFor1_2_R2,
+				"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_2R2),
+				"--softwareVersionString", SoftwareVersionStringFor1_2R2,
+				"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_2R2),
+				"--minApplicableSoftwareVersion", fmt.Sprintf("%d", MinApplicableSoftwareVersionFor1_2R2),
+				"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", MaxApplicableSoftwareVersionFor1_2R2),
+				"--from", VendorAccountFor1_2R2,
 			)
 			require.NoError(t, err)
 			require.Equal(t, uint32(0), tx.Code, tx.RawLog)
@@ -172,9 +172,9 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 		// Delete pid_3.
 		tx, err := ExecuteTxWithBin(dcld,
 			"tx", "model", "delete-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_2_R2),
-			"--pid", fmt.Sprintf("%d", PID3For1_2_R2),
-			"--from", VendorAccountFor1_2_R2,
+			"--vid", fmt.Sprintf("%d", VIDFor1_2R2),
+			"--pid", fmt.Sprintf("%d", PID3For1_2R2),
+			"--from", VendorAccountFor1_2R2,
 		)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
@@ -184,14 +184,14 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 		// certify pid_1.
 		tx, err := ExecuteTxWithBin(dcld,
 			"tx", "compliance", "certify-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_2_R2),
-			"--pid", fmt.Sprintf("%d", PID1For1_2_R2),
-			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_2_R2),
-			"--softwareVersionString", SoftwareVersionStringFor1_2_R2,
-			"--certificationType", CertificationTypeFor1_2_R2,
-			"--certificationDate", CertificationDateFor1_2_R2,
-			"--cdCertificateId", CDCertificateIDFor1_2_R2,
-			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_2_R2),
+			"--vid", fmt.Sprintf("%d", VIDFor1_2R2),
+			"--pid", fmt.Sprintf("%d", PID1For1_2R2),
+			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_2R2),
+			"--softwareVersionString", SoftwareVersionStringFor1_2R2,
+			"--certificationType", CertificationTypeFor1_2R2,
+			"--certificationDate", CertificationDateFor1_2R2,
+			"--cdCertificateId", CDCertificateIDFor1_2R2,
+			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_2R2),
 			"--from", CertificationCenterAccountFor1_2,
 		)
 		require.NoError(t, err)
@@ -201,20 +201,20 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 		for _, action := range []struct {
 			cmd, dateFlag, dateVal string
 		}{
-			{"provision-model", "--provisionalDate", ProvisionalDateFor1_2_R2},
-			{"certify-model", "--certificationDate", CertificationDateFor1_2_R2},
-			{"revoke-model", "--revocationDate", CertificationDateFor1_2_R2},
+			{"provision-model", "--provisionalDate", ProvisionalDateFor1_2R2},
+			{"certify-model", "--certificationDate", CertificationDateFor1_2R2},
+			{"revoke-model", "--revocationDate", CertificationDateFor1_2R2},
 		} {
 			tx, err = ExecuteTxWithBin(dcld,
 				"tx", "compliance", action.cmd,
-				"--vid", fmt.Sprintf("%d", VIDFor1_2_R2),
-				"--pid", fmt.Sprintf("%d", PID2For1_2_R2),
-				"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_2_R2),
-				"--softwareVersionString", SoftwareVersionStringFor1_2_R2,
-				"--certificationType", CertificationTypeFor1_2_R2,
+				"--vid", fmt.Sprintf("%d", VIDFor1_2R2),
+				"--pid", fmt.Sprintf("%d", PID2For1_2R2),
+				"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_2R2),
+				"--softwareVersionString", SoftwareVersionStringFor1_2R2,
+				"--certificationType", CertificationTypeFor1_2R2,
 				action.dateFlag, action.dateVal,
-				"--cdCertificateId", CDCertificateIDFor1_2_R2,
-				"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_2_R2),
+				"--cdCertificateId", CDCertificateIDFor1_2R2,
+				"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_2R2),
 				"--from", CertificationCenterAccountFor1_2,
 			)
 			require.NoError(t, err)

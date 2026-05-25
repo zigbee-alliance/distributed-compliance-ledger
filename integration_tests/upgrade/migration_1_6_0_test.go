@@ -43,9 +43,9 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 	t.Run("Issue593_PreUpgradeDelete", func(t *testing.T) {
 		tx, err := ExecuteTxWithBin(dcldOld,
 			"tx", "model", "delete-model-version",
-			"--vid", fmt.Sprintf("%d", state.VIDFor1_6_0_FromScript5),
-			"--pid", fmt.Sprintf("%d", state.PID3For1_6_0_FromScript5),
-			"--softwareVersion", fmt.Sprintf("%d", state.SoftwareVersion2For1_6_0_FromScript5),
+			"--vid", fmt.Sprintf("%d", state.VIDFor1_6_0FromScript5),
+			"--pid", fmt.Sprintf("%d", state.PID3For1_6_0FromScript5),
+			"--softwareVersion", fmt.Sprintf("%d", state.SoftwareVersion2For1_6_0FromScript5),
 			"--from", state.VendorAccountFor1_2,
 		)
 		require.NoError(t, err)
@@ -53,17 +53,17 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 
 		out, err := ExecuteCLIWithBin(dcldOld,
 			"query", "model", "all-model-versions",
-			"--vid", fmt.Sprintf("%d", state.VIDFor1_6_0_FromScript5),
-			"--pid", fmt.Sprintf("%d", state.PID3For1_6_0_FromScript5),
+			"--vid", fmt.Sprintf("%d", state.VIDFor1_6_0FromScript5),
+			"--pid", fmt.Sprintf("%d", state.PID3For1_6_0FromScript5),
 		)
 		require.NoError(t, err)
-		requireFieldEquals(t, out, "vid", state.VIDFor1_6_0_FromScript5)
-		requireFieldEquals(t, out, "pid", state.PID3For1_6_0_FromScript5)
+		requireFieldEquals(t, out, "vid", state.VIDFor1_6_0FromScript5)
+		requireFieldEquals(t, out, "pid", state.PID3For1_6_0FromScript5)
 		require.True(t, strings.Contains(string(out),
-			fmt.Sprintf("%d", state.SoftwareVersion1For1_6_0_FromScript5)),
+			fmt.Sprintf("%d", state.SoftwareVersion1For1_6_0FromScript5)),
 			"expected sv1 still present, got: %s", string(out))
 		require.False(t, strings.Contains(string(out),
-			fmt.Sprintf("%d", state.SoftwareVersion2For1_6_0_FromScript5)),
+			fmt.Sprintf("%d", state.SoftwareVersion2For1_6_0FromScript5)),
 			"expected sv2 absent post-delete, got: %s", string(out))
 	})
 
@@ -88,8 +88,8 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 	t.Run("Issue593_GhostModelVersionsRemoved", func(t *testing.T) {
 		out, err := ExecuteCLIWithBin(dcldNew,
 			"query", "model", "all-model-versions",
-			"--vid", fmt.Sprintf("%d", state.VIDFor1_6_0_FromScript5),
-			"--pid", fmt.Sprintf("%d", state.PID3For1_6_0_FromScript5),
+			"--vid", fmt.Sprintf("%d", state.VIDFor1_6_0FromScript5),
+			"--pid", fmt.Sprintf("%d", state.PID3For1_6_0FromScript5),
 		)
 		require.NoError(t, err)
 		require.True(t, strings.Contains(string(out), "Not Found"),
@@ -98,8 +98,8 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 		// And we can now delete the model itself.
 		tx, err := ExecuteTxWithBin(dcldNew,
 			"tx", "model", "delete-model",
-			"--vid", fmt.Sprintf("%d", state.VIDFor1_6_0_FromScript5),
-			"--pid", fmt.Sprintf("%d", state.PID3For1_6_0_FromScript5),
+			"--vid", fmt.Sprintf("%d", state.VIDFor1_6_0FromScript5),
+			"--pid", fmt.Sprintf("%d", state.PID3For1_6_0FromScript5),
 			"--from", state.VendorAccountFor1_2,
 		)
 		require.NoError(t, err)
