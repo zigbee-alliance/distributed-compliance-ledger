@@ -14,9 +14,6 @@
 # limitations under the License.
 
 # Possible values: all (default) | cli | light | rest | upgrade | deploy | cli,light | cli,rest | light, rest | cli,light,rest | etc.
-# `cli` and `upgrade` are now Go-driven — the bash scripts under
-# integration_tests/cli/*.sh and integration_tests/upgrade/*.sh were deleted
-# after the migration proved coverage parity (CI-verified before deletion).
 TESTS_TO_RUN=${1:-all}
 
 SCRIPT_PATH="$(readlink -f "$0")"
@@ -88,20 +85,6 @@ collect_cover() {
       go tool covdata merge -i="$cover_dirs" -o="$DCL_TMP_GOCOVERDIR"
       rm -rf "$GOCOVERDIR"/*
       cp "$DCL_TMP_GOCOVERDIR"/* "$GOCOVERDIR"/
-    fi
-  fi
-}
-
-collect_validator_demo_cover() {
-  if "$GOCOVER_ENABLED"; then
-    if [ -d "$DCL_TMP_VALIDATOR_DEMO_GOCOVERDIR" ]; then
-      log "Collecting coverage from validator-demo"
-      rm -rf "$DCL_TMP_GOCOVERDIR"
-      mkdir -p "$DCL_TMP_GOCOVERDIR"
-      go tool covdata merge -i="$DCL_TMP_VALIDATOR_DEMO_GOCOVERDIR,$GOCOVERDIR" -o="$DCL_TMP_GOCOVERDIR"
-      rm -rf "$GOCOVERDIR"/*
-      cp "$DCL_TMP_GOCOVERDIR"/* "$GOCOVERDIR"/
-      rm -rf "$DCL_TMP_VALIDATOR_DEMO_GOCOVERDIR"
     fi
   fi
 }

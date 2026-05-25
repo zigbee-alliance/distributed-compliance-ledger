@@ -142,12 +142,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
       - name: Run integration tests
-        # All integration phases (cli, upgrade, deploy, light, rest) run here
-        # via a single pool-managing entry point. The CLI bash suite was
-        # deleted after coverage parity was proven; `cli` now invokes the Go
-        # CLI tests directly.
         shell: bash
-        run: integration_tests/run-all.sh cli,upgrade,deploy,light,rest cover
+        run: integration_tests/run-all.sh all cover
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           UBUNTU_VERSION: ${{ 24.04 }}
