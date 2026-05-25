@@ -15,7 +15,10 @@
 package upgrade
 
 import (
+	"fmt"
 	"os"
+	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -31,6 +34,33 @@ const runUpgradeFlowEnv = "RUN_UPGRADE_GO"
 // a clear message so `go test ./...` stays fast.
 func shouldRunUpgradeFlow() bool {
 	return os.Getenv(runUpgradeFlowEnv) == "1"
+}
+
+// TestMain runs once per package. The bash helpers (pool.sh, common.sh) and
+// the fixture paths under integration_tests/constants/... are all
+// repo-root-relative, matching how run-all.sh invokes everything. `go test`
+// runs with the package directory as CWD, so we chdir to the repo root here
+// so every downstream relative path resolves the same as it does under
+// run-all.sh.
+func TestMain(m *testing.M) {
+	if err := chdirToRepoRoot(); err != nil {
+		fmt.Fprintf(os.Stderr, "chdir to repo root: %v\n", err) //nolint:errcheck
+		os.Exit(1)
+	}
+	os.Exit(m.Run())
+}
+
+func chdirToRepoRoot() error {
+	_, thisFile, _, ok := runtime.Caller(0)
+	if !ok {
+		return fmt.Errorf("runtime.Caller failed")
+	}
+	root, err := filepath.Abs(filepath.Join(filepath.Dir(thisFile), "..", ".."))
+	if err != nil {
+		return err
+	}
+
+	return os.Chdir(root)
 }
 
 // TestUpgradeSequence is the single entry point for the upgrade migration.
