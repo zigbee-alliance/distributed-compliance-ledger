@@ -42,7 +42,7 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 	// State fields populated here come from DefaultBashState() (script-05
 	// hardcodes vid_for_1_2 = 4701 and pid_3_for_1_6_0 = 160).
 	// ------------------------------------------------------------------
-	t.Run("Issue593PreUpgradeGhostSetup", func(t *testing.T) {
+	MustRun(t, "Issue593PreUpgradeGhostSetup", func(t *testing.T) {
 		vid := state.VIDFor1_6_0FromScript5
 		pid := state.PID3For1_6_0FromScript5
 		sv1 := state.SoftwareVersion1For1_6_0FromScript5
@@ -107,7 +107,7 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	// Verify carry-over data is intact under v1.4.3.
 	// ------------------------------------------------------------------
-	t.Run("VerifyPreservedVendorInfoAndModels", func(t *testing.T) {
+	MustRun(t, "VerifyPreservedVendorInfoAndModels", func(t *testing.T) {
 		// VendorInfo for the v0.12 vendor — script 03 updated companyPreferredName/landing URL to 1.2 values.
 		out, err := ExecuteCLIWithBin(dcldNew,
 			"query", "vendorinfo", "vendor",
@@ -163,7 +163,7 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 		requireFieldEquals(t, out, "maxApplicableSoftwareVersion", MaxApplicableSoftwareVersionFor1_2)
 	})
 
-	t.Run("VerifyPreservedCompliance", func(t *testing.T) {
+	MustRun(t, "VerifyPreservedCompliance", func(t *testing.T) {
 		// Certified 0.12 pid_1.
 		out, err := ExecuteCLIWithBin(dcldNew,
 			"query", "compliance", "certified-model",
@@ -210,7 +210,7 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 		requireFieldEquals(t, out, "vid", VIDFor1_2)
 	})
 
-	t.Run("VerifyPreservedAccounts", func(t *testing.T) {
+	MustRun(t, "VerifyPreservedAccounts", func(t *testing.T) {
 		out, err := ExecuteCLIWithBin(dcldNew, "query", "auth", "all-accounts")
 		require.NoError(t, err)
 		checkResponseContains(t, out, state.User2Address) // active from 01
@@ -235,13 +235,13 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	// Post-upgrade: seed 1.4.3-era state.
 	// ------------------------------------------------------------------
-	t.Run("CreateVendor_1_4_3", func(t *testing.T) {
+	MustRun(t, "CreateVendor_1_4_3", func(t *testing.T) {
 		_ = CreateAndApproveAccount(t, dcldNew, VendorAccountFor1_4_3, "Vendor",
 			VIDFor1_4_3, state.Trustee1,
 			[]string{state.Trustee2, state.Trustee3, state.Trustee4})
 	})
 
-	t.Run("AddPostUpgradeUserKeys", func(t *testing.T) {
+	MustRun(t, "AddPostUpgradeUserKeys", func(t *testing.T) {
 		u7, err := newUserKey(dcldNew)
 		require.NoError(t, err)
 		u8, err := newUserKey(dcldNew)
@@ -253,7 +253,7 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 		state.User9Address, state.User9Pubkey = u9.address, u9.pubkey
 	})
 
-	t.Run("VendorInfoFor1_4_3", func(t *testing.T) {
+	MustRun(t, "VendorInfoFor1_4_3", func(t *testing.T) {
 		tx, err := ExecuteTxWithBin(dcldNew,
 			"tx", "vendorinfo", "add-vendor",
 			"--vid", fmt.Sprintf("%d", VIDFor1_4_3),
@@ -279,7 +279,7 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 	})
 
-	t.Run("ModelsAndVersionsFor1_4_3", func(t *testing.T) {
+	MustRun(t, "ModelsAndVersionsFor1_4_3", func(t *testing.T) {
 		for _, pid := range []int{PID1For1_4_3, PID2For1_4_3, PID3For1_4_3} {
 			tx, err := ExecuteTxWithBin(dcldNew,
 				"tx", "model", "add-model",
@@ -345,7 +345,7 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 	})
 
-	t.Run("ComplianceFor1_4_3", func(t *testing.T) {
+	MustRun(t, "ComplianceFor1_4_3", func(t *testing.T) {
 		// certify pid_1
 		tx, err := ExecuteTxWithBin(dcldNew,
 			"tx", "compliance", "certify-model",
@@ -410,7 +410,7 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 	})
 
-	t.Run("PKIFor1_4_3", func(t *testing.T) {
+	MustRun(t, "PKIFor1_4_3", func(t *testing.T) {
 		// root_cert_with_vid: propose by t1, approve/reject by t2/t3, approve by t4.
 		// (Bash also approves with trustee_5 — trustee_5 isn't propagated.)
 		tx, err := ExecuteTxWithBin(dcldNew,
@@ -530,7 +530,7 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 	})
 
-	t.Run("NOCCertsAddRemove", func(t *testing.T) {
+	MustRun(t, "NOCCertsAddRemove", func(t *testing.T) {
 		// 1.4 introduces the NOC certificate flow. Add then immediately remove.
 		tx, err := ExecuteTxWithBin(dcldNew,
 			"tx", "pki", "add-noc-x509-root-cert",
@@ -567,7 +567,7 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 	})
 
-	t.Run("RevocationPointsFor1_4_3", func(t *testing.T) {
+	MustRun(t, "RevocationPointsFor1_4_3", func(t *testing.T) {
 		// add → update → delete → add.
 		addPAA := func(label, dataURL string) {
 			tx, err := ExecuteTxWithBin(dcldNew,
@@ -641,7 +641,7 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 	})
 
-	t.Run("AccountFlowsFor1_4_3", func(t *testing.T) {
+	MustRun(t, "AccountFlowsFor1_4_3", func(t *testing.T) {
 		approvers := []string{state.Trustee2, state.Trustee3, state.Trustee4}
 
 		proposeUserAccount(t, dcldNew, state.Trustee1, approvers,
@@ -658,7 +658,7 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 	// Validator disable/enable (lines 1007-1056) — depends on the Docker
 	// validator-demo container that script 01's `add_validator_node` would
 	// create. Stubbed alongside the other validator work.
-	t.Run("ValidatorDisableEnableFlow", func(t *testing.T) {
+	MustRun(t, "ValidatorDisableEnableFlow", func(t *testing.T) {
 		// Scripts 05+ approve disable-node with 3 trustees (trustee_4 active).
 		RunValidatorDisableEnableFlow(t, state, dcldNew,
 			[]string{state.Trustee2, state.Trustee3, state.Trustee4})
@@ -667,7 +667,7 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	// Verify post-upgrade-seeded NEW data.
 	// ------------------------------------------------------------------
-	t.Run("VerifyNewVendorAndModels", func(t *testing.T) {
+	MustRun(t, "VerifyNewVendorAndModels", func(t *testing.T) {
 		out, err := ExecuteCLIWithBin(dcldNew,
 			"query", "vendorinfo", "vendor",
 			"--vid", fmt.Sprintf("%d", VIDFor1_4_3),
@@ -697,7 +697,7 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 		checkResponseContains(t, out, PartNumberFor1_4_3)
 	})
 
-	t.Run("VerifyNOCCertsEmptyAfterRemove", func(t *testing.T) {
+	MustRun(t, "VerifyNOCCertsEmptyAfterRemove", func(t *testing.T) {
 		// After add+remove on the NOC certs, queries should return Not Found
 		// and must NOT contain the removed subject key IDs.
 		out, err := ExecuteCLIWithBin(dcldNew,

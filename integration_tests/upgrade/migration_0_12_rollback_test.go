@@ -41,7 +41,7 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	// Wrong-plan-name upgrade: propose + approve, then verify NOT applied.
 	// ------------------------------------------------------------------
-	t.Run("WrongPlanNameUpgrade", func(t *testing.T) {
+	MustRun(t, "WrongPlanNameUpgrade", func(t *testing.T) {
 		currentHeight, err := cliputils.GetHeight()
 		require.NoError(t, err)
 		planHeight := currentHeight + 20
@@ -78,7 +78,7 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	// Verify carry-over data from script 01 is intact.
 	// ------------------------------------------------------------------
-	t.Run("VerifyPreservedV0_12", func(t *testing.T) {
+	MustRun(t, "VerifyPreservedV0_12", func(t *testing.T) {
 		out, err := ExecuteCLIWithBin(dcld,
 			"query", "vendorinfo", "vendor",
 			"--vid", fmt.Sprintf("%d", state.VID),
@@ -106,7 +106,7 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	// Post-upgrade seed (chain is still v0.12 since rollback no-op'd).
 	// ------------------------------------------------------------------
-	t.Run("CreateRollbackAccounts", func(t *testing.T) {
+	MustRun(t, "CreateRollbackAccounts", func(t *testing.T) {
 		approvers := []string{state.Trustee2, state.Trustee3, state.Trustee4}
 
 		_ = CreateAndApproveAccount(t, dcld, VendorAccountForRollback, "Vendor",
@@ -115,7 +115,7 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 			"CertificationCenter", -1, state.Trustee1, approvers)
 	})
 
-	t.Run("AddRollbackUserKeys", func(t *testing.T) {
+	MustRun(t, "AddRollbackUserKeys", func(t *testing.T) {
 		u4, err := newUserKey(dcld)
 		require.NoError(t, err)
 		u5, err := newUserKey(dcld)
@@ -127,7 +127,7 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 		state.User6Address, state.User6Pubkey = u6.address, u6.pubkey
 	})
 
-	t.Run("VendorInfoForRollback", func(t *testing.T) {
+	MustRun(t, "VendorInfoForRollback", func(t *testing.T) {
 		tx, err := ExecuteTxWithBin(dcld,
 			"tx", "vendorinfo", "add-vendor",
 			"--vid", fmt.Sprintf("%d", VIDForRollback),
@@ -154,7 +154,7 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 	})
 
-	t.Run("ModelsForRollback", func(t *testing.T) {
+	MustRun(t, "ModelsForRollback", func(t *testing.T) {
 		for _, pid := range []int{PID1ForRollback, PID2ForRollback, PID3ForRollback} {
 			tx, err := ExecuteTxWithBin(dcld,
 				"tx", "model", "add-model",
@@ -220,7 +220,7 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 	})
 
-	t.Run("ComplianceForRollback", func(t *testing.T) {
+	MustRun(t, "ComplianceForRollback", func(t *testing.T) {
 		// certify pid_1
 		tx, err := ExecuteTxWithBin(dcld,
 			"tx", "compliance", "certify-model",
@@ -262,7 +262,7 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 		}
 	})
 
-	t.Run("AccountFlowsForRollback", func(t *testing.T) {
+	MustRun(t, "AccountFlowsForRollback", func(t *testing.T) {
 		// Note: bash only uses 2-trustee approvals here, but with the rollback
 		// users being created post-trustee_4 (already 4 trustees on-chain),
 		// the threshold for revoke-account is still satisfied by 2 approvals.
@@ -279,7 +279,7 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 		revokeUserAccount(t, dcld, state.Trustee1, nil, state.User5Address, false)
 	})
 
-	t.Run("ValidatorDisableEnableFlow", func(t *testing.T) {
+	MustRun(t, "ValidatorDisableEnableFlow", func(t *testing.T) {
 		// Script 02 mirrors script 01's 2-trustee disable approval pattern.
 		RunValidatorDisableEnableFlow(t, state, dcld,
 			[]string{state.Trustee2, state.Trustee3})

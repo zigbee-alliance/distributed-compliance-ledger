@@ -56,7 +56,7 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 	// Verify carry-over data is intact under the new binary.
 	// ------------------------------------------------------------------
 
-	t.Run("VerifyPreservedModels", func(t *testing.T) {
+	MustRun(t, "VerifyPreservedModels", func(t *testing.T) {
 		out, err := ExecuteCLIWithBin(dcldNew,
 			"query", "model", "get-model",
 			"--vid", fmt.Sprintf("%d", state.VIDFor1_5_1),
@@ -82,7 +82,7 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 		requireFieldEquals(t, out, "commissioningModeSecondaryStepsHint", 4)
 	})
 
-	t.Run("VerifyUpdatedModelFromScript1", func(t *testing.T) {
+	MustRun(t, "VerifyUpdatedModelFromScript1", func(t *testing.T) {
 		out, err := ExecuteCLIWithBin(dcldNew,
 			"query", "model", "get-model",
 			"--vid", fmt.Sprintf("%d", state.VID),
@@ -95,7 +95,7 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 		checkResponseContains(t, out, state.PartNumberFor1_5_1)
 	})
 
-	t.Run("VerifyModelVersionPreserved", func(t *testing.T) {
+	MustRun(t, "VerifyModelVersionPreserved", func(t *testing.T) {
 		out, err := ExecuteCLIWithBin(dcldNew,
 			"query", "model", "model-version",
 			"--vid", fmt.Sprintf("%d", state.VID),
@@ -111,7 +111,7 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 			state.MaxApplicableSoftwareVersionFor1_5_1)
 	})
 
-	t.Run("VerifyAllModelsListings", func(t *testing.T) {
+	MustRun(t, "VerifyAllModelsListings", func(t *testing.T) {
 		out, err := ExecuteCLIWithBin(dcldNew, "query", "model", "all-models")
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", state.VIDFor1_5_1)
@@ -151,12 +151,12 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 	// Post-upgrade: create a new vendor + several models against v1.5.2.
 	// ------------------------------------------------------------------
 
-	t.Run("CreateVendor_1_5_2", func(t *testing.T) {
+	MustRun(t, "CreateVendor_1_5_2", func(t *testing.T) {
 		createVendorWithApprovals(t, dcldNew, state,
 			VendorAccountFor1_5_2, VIDFor1_5_2)
 	})
 
-	t.Run("AddModelsAndVersions_1_5_2", func(t *testing.T) {
+	MustRun(t, "AddModelsAndVersions_1_5_2", func(t *testing.T) {
 		// Add model (pid_1) with all new ICD/factory-reset fields.
 		txResult, err := ExecuteTxWithBin(dcldNew,
 			"tx", "model", "add-model",
@@ -283,7 +283,7 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
 	})
 
-	t.Run("VerifyNewModels_1_5_2", func(t *testing.T) {
+	MustRun(t, "VerifyNewModels_1_5_2", func(t *testing.T) {
 		out, err := ExecuteCLIWithBin(dcldNew,
 			"query", "model", "get-model",
 			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),

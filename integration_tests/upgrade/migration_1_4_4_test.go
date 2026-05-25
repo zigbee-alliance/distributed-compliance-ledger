@@ -46,7 +46,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	// Verify carry-over data is intact under v1.4.4.
 	// ------------------------------------------------------------------
-	t.Run("VerifyPreservedAcrossThreeEras", func(t *testing.T) {
+	MustRun(t, "VerifyPreservedAcrossThreeEras", func(t *testing.T) {
 		// Spot-check the three vendor-info records.
 		for _, vid := range []int{state.VID, VIDFor1_2, VIDFor1_4_3} {
 			out, qerr := ExecuteCLIWithBin(dcldNew,
@@ -85,7 +85,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		requireFieldEquals(t, out, "maxApplicableSoftwareVersion", MaxApplicableSoftwareVersionFor1_4_3)
 	})
 
-	t.Run("VerifyPreservedAccounts", func(t *testing.T) {
+	MustRun(t, "VerifyPreservedAccounts", func(t *testing.T) {
 		out, err := ExecuteCLIWithBin(dcldNew, "query", "auth", "all-accounts")
 		require.NoError(t, err)
 		// Active accounts from all prior scripts.
@@ -103,13 +103,13 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	// Post-upgrade: seed 1.4.4-era state.
 	// ------------------------------------------------------------------
-	t.Run("CreateVendor_1_4_4", func(t *testing.T) {
+	MustRun(t, "CreateVendor_1_4_4", func(t *testing.T) {
 		_ = CreateAndApproveAccount(t, dcldNew, VendorAccountFor1_4_4, "Vendor",
 			VIDFor1_4_4, state.Trustee1,
 			[]string{state.Trustee2, state.Trustee3, state.Trustee4})
 	})
 
-	t.Run("AddPostUpgradeUserKeys", func(t *testing.T) {
+	MustRun(t, "AddPostUpgradeUserKeys", func(t *testing.T) {
 		u10, err := newUserKey(dcldNew)
 		require.NoError(t, err)
 		u11, err := newUserKey(dcldNew)
@@ -121,7 +121,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		state.User12Address, state.User12Pubkey = u12.address, u12.pubkey
 	})
 
-	t.Run("VendorInfoFor1_4_4", func(t *testing.T) {
+	MustRun(t, "VendorInfoFor1_4_4", func(t *testing.T) {
 		tx, err := ExecuteTxWithBin(dcldNew,
 			"tx", "vendorinfo", "add-vendor",
 			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
@@ -147,7 +147,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 	})
 
-	t.Run("ModelsAndVersionsFor1_4_4", func(t *testing.T) {
+	MustRun(t, "ModelsAndVersionsFor1_4_4", func(t *testing.T) {
 		for _, pid := range []int{PID1For1_4_4, PID2For1_4_4, PID3For1_4_4} {
 			tx, err := ExecuteTxWithBin(dcldNew,
 				"tx", "model", "add-model",
@@ -213,7 +213,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 	})
 
-	t.Run("ComplianceFor1_4_4", func(t *testing.T) {
+	MustRun(t, "ComplianceFor1_4_4", func(t *testing.T) {
 		// certify pid_1
 		tx, err := ExecuteTxWithBin(dcldNew,
 			"tx", "compliance", "certify-model",
@@ -278,7 +278,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 	})
 
-	t.Run("PKIFor1_4_4_DARootCerts", func(t *testing.T) {
+	MustRun(t, "PKIFor1_4_4_DARootCerts", func(t *testing.T) {
 		// da_root_cert_1: propose by t1, approve by t2, reject by t3,
 		// approve by t4. Bash also approves with trustee_5 — collapsed since
 		// trustee_5 doesn't survive into state.
@@ -393,7 +393,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 	})
 
-	t.Run("NOCCertsAddRevoke", func(t *testing.T) {
+	MustRun(t, "NOCCertsAddRevoke", func(t *testing.T) {
 		// 1.4.4 introduces `revoke-noc-x509-{root,ica}-cert` (vs 1.4.3's
 		// `remove-noc-x509-*`). Add 2 root/ICA pairs, then revoke pair #1
 		// only — pair #2 stays active.
@@ -438,7 +438,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 	})
 
-	t.Run("RevocationPointsFor1_4_4", func(t *testing.T) {
+	MustRun(t, "RevocationPointsFor1_4_4", func(t *testing.T) {
 		// add → update → delete → add (one active PAA revocation point at end).
 		addPAA := func(dataURL string) {
 			tx, err := ExecuteTxWithBin(dcldNew,
@@ -483,7 +483,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		addPAA(TestDataURLFor1_4_4)
 	})
 
-	t.Run("AccountFlowsFor1_4_4", func(t *testing.T) {
+	MustRun(t, "AccountFlowsFor1_4_4", func(t *testing.T) {
 		approvers := []string{state.Trustee2, state.Trustee3, state.Trustee4}
 
 		proposeUserAccount(t, dcldNew, state.Trustee1, approvers,
@@ -498,7 +498,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 	})
 
 	// Validator disable/enable (lines 1189-1238) — Docker-dependent, stubbed.
-	t.Run("ValidatorDisableEnableFlow", func(t *testing.T) {
+	MustRun(t, "ValidatorDisableEnableFlow", func(t *testing.T) {
 		RunValidatorDisableEnableFlow(t, state, dcldNew,
 			[]string{state.Trustee2, state.Trustee3, state.Trustee4})
 	})
@@ -506,7 +506,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	// Verify post-upgrade-seeded NEW data.
 	// ------------------------------------------------------------------
-	t.Run("VerifyNew_1_4_4_Data", func(t *testing.T) {
+	MustRun(t, "VerifyNew_1_4_4_Data", func(t *testing.T) {
 		out, err := ExecuteCLIWithBin(dcldNew,
 			"query", "vendorinfo", "vendor",
 			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),

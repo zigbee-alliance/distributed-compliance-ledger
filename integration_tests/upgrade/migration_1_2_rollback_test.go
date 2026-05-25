@@ -40,7 +40,7 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	// Wrong-plan-name upgrade attempt.
 	// ------------------------------------------------------------------
-	t.Run("WrongPlanName2Upgrade", func(t *testing.T) {
+	MustRun(t, "WrongPlanName2Upgrade", func(t *testing.T) {
 		currentHeight, err := cliputils.GetHeight()
 		require.NoError(t, err)
 		planHeight := currentHeight + 20
@@ -73,7 +73,7 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	// Verify carry-over from scripts 01/02/03 is intact.
 	// ------------------------------------------------------------------
-	t.Run("VerifyPreservedAfterRollback1_2", func(t *testing.T) {
+	MustRun(t, "VerifyPreservedAfterRollback1_2", func(t *testing.T) {
 		// VendorInfo from 03 update of 0.12 vendor.
 		out, err := ExecuteCLIWithBin(dcld,
 			"query", "vendorinfo", "vendor",
@@ -107,13 +107,13 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	// Seed _for_1_2_r2 state (still on v1.2).
 	// ------------------------------------------------------------------
-	t.Run("CreateR2Accounts", func(t *testing.T) {
+	MustRun(t, "CreateR2Accounts", func(t *testing.T) {
 		approvers := []string{state.Trustee2, state.Trustee3, state.Trustee4}
 		_ = CreateAndApproveAccount(t, dcld, VendorAccountFor1_2R2, "Vendor",
 			VIDFor1_2R2, state.Trustee1, approvers)
 	})
 
-	t.Run("AddR2UserKeys", func(t *testing.T) {
+	MustRun(t, "AddR2UserKeys", func(t *testing.T) {
 		u4, err := newUserKey(dcld)
 		require.NoError(t, err)
 		u5, err := newUserKey(dcld)
@@ -125,7 +125,7 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 		state.User6Address, state.User6Pubkey = u6.address, u6.pubkey
 	})
 
-	t.Run("VendorInfoForR2", func(t *testing.T) {
+	MustRun(t, "VendorInfoForR2", func(t *testing.T) {
 		tx, err := ExecuteTxWithBin(dcld,
 			"tx", "vendorinfo", "add-vendor",
 			"--vid", fmt.Sprintf("%d", VIDFor1_2R2),
@@ -139,7 +139,7 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 	})
 
-	t.Run("ModelsForR2", func(t *testing.T) {
+	MustRun(t, "ModelsForR2", func(t *testing.T) {
 		for _, pid := range []int{PID1For1_2R2, PID2For1_2R2, PID3For1_2R2} {
 			tx, err := ExecuteTxWithBin(dcld,
 				"tx", "model", "add-model",
@@ -180,7 +180,7 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 	})
 
-	t.Run("ComplianceForR2", func(t *testing.T) {
+	MustRun(t, "ComplianceForR2", func(t *testing.T) {
 		// certify pid_1.
 		tx, err := ExecuteTxWithBin(dcld,
 			"tx", "compliance", "certify-model",
@@ -222,7 +222,7 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 		}
 	})
 
-	t.Run("AccountFlowsForR2", func(t *testing.T) {
+	MustRun(t, "AccountFlowsForR2", func(t *testing.T) {
 		approvers := []string{state.Trustee2, state.Trustee3, state.Trustee4}
 
 		proposeUserAccount(t, dcld, state.Trustee1, approvers,
@@ -236,7 +236,7 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 		revokeUserAccount(t, dcld, state.Trustee1, nil, state.User5Address, false)
 	})
 
-	t.Run("ValidatorDisableEnableFlow", func(t *testing.T) {
+	MustRun(t, "ValidatorDisableEnableFlow", func(t *testing.T) {
 		RunValidatorDisableEnableFlow(t, state, dcld,
 			[]string{state.Trustee2, state.Trustee3, state.Trustee4})
 	})

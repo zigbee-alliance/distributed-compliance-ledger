@@ -51,7 +51,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 	// Verify carry-over data is intact under v1.2.
 	// ------------------------------------------------------------------
 
-	t.Run("VerifyPreservedVendorInfo", func(t *testing.T) {
+	MustRun(t, "VerifyPreservedVendorInfo", func(t *testing.T) {
 		out, err := ExecuteCLIWithBin(dcldNew,
 			"query", "vendorinfo", "vendor",
 			"--vid", fmt.Sprintf("%d", state.VID),
@@ -68,7 +68,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 		requireFieldEquals(t, out, "vendorID", state.VID)
 	})
 
-	t.Run("VerifyPreservedModels", func(t *testing.T) {
+	MustRun(t, "VerifyPreservedModels", func(t *testing.T) {
 		out, err := ExecuteCLIWithBin(dcldNew,
 			"query", "model", "get-model",
 			"--vid", fmt.Sprintf("%d", state.VID),
@@ -119,7 +119,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 		}
 	})
 
-	t.Run("VerifyPreservedCompliance", func(t *testing.T) {
+	MustRun(t, "VerifyPreservedCompliance", func(t *testing.T) {
 		out, err := ExecuteCLIWithBin(dcldNew,
 			"query", "compliance", "certified-model",
 			"--vid", fmt.Sprintf("%d", state.VID),
@@ -177,7 +177,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 		requireFieldEquals(t, out, "pid", pid1V012)
 	})
 
-	t.Run("VerifyPreservedAccounts", func(t *testing.T) {
+	MustRun(t, "VerifyPreservedAccounts", func(t *testing.T) {
 		out, err := ExecuteCLIWithBin(dcldNew, "query", "auth", "all-accounts")
 		require.NoError(t, err)
 		checkResponseContains(t, out, state.User2Address)
@@ -200,7 +200,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 	// PKI, revocation points, additional users.
 	// ------------------------------------------------------------------
 
-	t.Run("CreatePostUpgradeAccounts", func(t *testing.T) {
+	MustRun(t, "CreatePostUpgradeAccounts", func(t *testing.T) {
 		approvers := []string{state.Trustee2, state.Trustee3, state.Trustee4}
 
 		_ = CreateAndApproveAccount(t, dcldNew, state.VendorAccountFor1_2, "Vendor",
@@ -213,7 +213,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 			-1, state.Trustee1, approvers)
 	})
 
-	t.Run("AddPostUpgradeUserKeys", func(t *testing.T) {
+	MustRun(t, "AddPostUpgradeUserKeys", func(t *testing.T) {
 		u4, err := newUserKey(dcldNew)
 		require.NoError(t, err)
 		u5, err := newUserKey(dcldNew)
@@ -225,7 +225,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 		state.User6Address, state.User6Pubkey = u6.address, u6.pubkey
 	})
 
-	t.Run("VendorInfoAddAndUpdate", func(t *testing.T) {
+	MustRun(t, "VendorInfoAddAndUpdate", func(t *testing.T) {
 		tx, err := ExecuteTxWithBin(dcldNew,
 			"tx", "vendorinfo", "add-vendor",
 			"--vid", fmt.Sprintf("%d", VIDFor1_2),
@@ -252,7 +252,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 	})
 
-	t.Run("ModelsAndVersionsFor1_2", func(t *testing.T) {
+	MustRun(t, "ModelsAndVersionsFor1_2", func(t *testing.T) {
 		for _, pid := range []int{PID1For1_2, PID2For1_2, PID3For1_2} {
 			tx, err := ExecuteTxWithBin(dcldNew,
 				"tx", "model", "add-model",
@@ -318,7 +318,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 	})
 
-	t.Run("ComplianceFor1_2", func(t *testing.T) {
+	MustRun(t, "ComplianceFor1_2", func(t *testing.T) {
 		// certify pid_1 (1.2-era)
 		tx, err := ExecuteTxWithBin(dcldNew,
 			"tx", "compliance", "certify-model",
@@ -383,7 +383,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 	})
 
-	t.Run("AssignVidToTestRoot", func(t *testing.T) {
+	MustRun(t, "AssignVidToTestRoot", func(t *testing.T) {
 		// 1.2 introduces `assign-vid` for the v0.12-era test_root cert.
 		tx, err := ExecuteTxWithBin(dcldNew,
 			"tx", "pki", "assign-vid",
@@ -396,7 +396,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 	})
 
-	t.Run("PKIFor1_2", func(t *testing.T) {
+	MustRun(t, "PKIFor1_2", func(t *testing.T) {
 		// 1.2-era root_cert ladder: propose + (approve + reject + approve x3 by remaining trustees).
 		// Bash uses 4 trustees here, plus trustee_5 which is also in genesis quorum.
 		tx, err := ExecuteTxWithBin(dcldNew,
@@ -511,7 +511,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 	})
 
-	t.Run("RevocationPoints", func(t *testing.T) {
+	MustRun(t, "RevocationPoints", func(t *testing.T) {
 		// Add → update → delete → add again (final state: one active revocation point).
 		add := func(label, dataURL string) {
 			tx, err := ExecuteTxWithBin(dcldNew,
@@ -556,7 +556,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 		add(ProductLabelFor1_2, TestDataURL)
 	})
 
-	t.Run("AccountFlowsFor1_2", func(t *testing.T) {
+	MustRun(t, "AccountFlowsFor1_2", func(t *testing.T) {
 		approvers := []string{state.Trustee2, state.Trustee3, state.Trustee4}
 
 		// user_4: propose + 3 approvals.
@@ -578,7 +578,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 		revokeUserAccount(t, dcldNew, state.Trustee1, nil, state.User5Address, false)
 	})
 
-	t.Run("ValidatorDisableEnableFlow", func(t *testing.T) {
+	MustRun(t, "ValidatorDisableEnableFlow", func(t *testing.T) {
 		// Script 03 uses 2 trustee approvals (the per-script pattern from 01).
 		RunValidatorDisableEnableFlow(t, state, dcldNew,
 			[]string{state.Trustee2, state.Trustee3})

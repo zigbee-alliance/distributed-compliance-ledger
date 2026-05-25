@@ -41,7 +41,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 	// Build master image, extract binary, compute plan name, push to nodes.
 	// ------------------------------------------------------------------
 	var planName string
-	t.Run("BuildAndDistributeMasterBinary", func(t *testing.T) {
+	MustRun(t, "BuildAndDistributeMasterBinary", func(t *testing.T) {
 		DockerCleanup(MasterUpgradeContainerName)
 
 		require.NoError(t, BuildMasterImage(), "docker build dcld-build-master")
@@ -65,7 +65,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	// Upgrade flow.
 	// ------------------------------------------------------------------
-	t.Run("ProposeApproveMasterUpgrade", func(t *testing.T) {
+	MustRun(t, "ProposeApproveMasterUpgrade", func(t *testing.T) {
 		currentHeight, err := cliputils.GetHeight()
 		require.NoError(t, err)
 		planHeight := currentHeight + 20
@@ -102,7 +102,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	// Verify carry-over across all prior eras.
 	// ------------------------------------------------------------------
-	t.Run("VerifyPreservedAcrossAllEras", func(t *testing.T) {
+	MustRun(t, "VerifyPreservedAcrossAllEras", func(t *testing.T) {
 		for _, vid := range []int{state.VID, VIDFor1_2, VIDFor1_4_3, VIDFor1_4_4, state.VIDFor1_5_1, VIDFor1_5_2, VIDFor1_6_0} {
 			out, qerr := ExecuteCLIWithBin(DcldMasterBinaryPath,
 				"query", "vendorinfo", "vendor",
@@ -126,13 +126,13 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	// Seed master-era state.
 	// ------------------------------------------------------------------
-	t.Run("CreateVendor_Master", func(t *testing.T) {
+	MustRun(t, "CreateVendor_Master", func(t *testing.T) {
 		_ = CreateAndApproveAccount(t, DcldMasterBinaryPath, VendorAccountForMaster, "Vendor",
 			VIDForMaster, state.Trustee1,
 			[]string{state.Trustee2, state.Trustee3, state.Trustee4})
 	})
 
-	t.Run("AddMasterUserKeys", func(t *testing.T) {
+	MustRun(t, "AddMasterUserKeys", func(t *testing.T) {
 		u13, err := newUserKey(DcldMasterBinaryPath)
 		require.NoError(t, err)
 		u14, err := newUserKey(DcldMasterBinaryPath)
@@ -144,7 +144,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 		state.User15Address, state.User15Pubkey = u15.address, u15.pubkey
 	})
 
-	t.Run("VendorInfoFor_Master", func(t *testing.T) {
+	MustRun(t, "VendorInfoFor_Master", func(t *testing.T) {
 		tx, err := ExecuteTxWithBin(DcldMasterBinaryPath,
 			"tx", "vendorinfo", "add-vendor",
 			"--vid", fmt.Sprintf("%d", VIDForMaster),
@@ -170,7 +170,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 	})
 
-	t.Run("ModelsAndVersionsFor_Master", func(t *testing.T) {
+	MustRun(t, "ModelsAndVersionsFor_Master", func(t *testing.T) {
 		for _, pid := range []int{PID1ForMaster, PID2ForMaster, PID3ForMaster} {
 			tx, err := ExecuteTxWithBin(DcldMasterBinaryPath,
 				"tx", "model", "add-model",
@@ -236,7 +236,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 	})
 
-	t.Run("ComplianceFor_Master", func(t *testing.T) {
+	MustRun(t, "ComplianceFor_Master", func(t *testing.T) {
 		// certify pid_1.
 		tx, err := ExecuteTxWithBin(DcldMasterBinaryPath,
 			"tx", "compliance", "certify-model",
@@ -276,7 +276,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 		}
 	})
 
-	t.Run("AccountFlowsFor_Master", func(t *testing.T) {
+	MustRun(t, "AccountFlowsFor_Master", func(t *testing.T) {
 		approvers := []string{state.Trustee2, state.Trustee3, state.Trustee4}
 
 		proposeUserAccount(t, DcldMasterBinaryPath, state.Trustee1, approvers,
@@ -290,7 +290,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 		revokeUserAccount(t, DcldMasterBinaryPath, state.Trustee1, nil, state.User14Address, false)
 	})
 
-	t.Run("ValidatorDisableEnableFlow", func(t *testing.T) {
+	MustRun(t, "ValidatorDisableEnableFlow", func(t *testing.T) {
 		RunValidatorDisableEnableFlow(t, state, DcldMasterBinaryPath,
 			[]string{state.Trustee2, state.Trustee3, state.Trustee4})
 	})
@@ -299,7 +299,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 	// Verify post-upgrade data is in place. Phase 4's add-new-node script
 	// inherits this state.
 	// ------------------------------------------------------------------
-	t.Run("VerifyNew_Master_Data", func(t *testing.T) {
+	MustRun(t, "VerifyNew_Master_Data", func(t *testing.T) {
 		out, err := ExecuteCLIWithBin(DcldMasterBinaryPath,
 			"query", "vendorinfo", "vendor",
 			"--vid", fmt.Sprintf("%d", VIDForMaster),

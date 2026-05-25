@@ -141,3 +141,15 @@ func requireFieldEquals(t *testing.T, out []byte, key string, value any) {
 		t.Fatalf("expected field %s=%v, got: %s", key, value, string(out))
 	}
 }
+
+// MustRun is like t.Run but halts the parent test as soon as the subtest
+// fails. Migration sequences chain stateful steps (account → vendor → models
+// → compliance → …); once an earlier step fails the chain's preconditions are
+// gone, so continuing only produces a cascade of misleading errors. Mirrors
+// the `set -e` behavior of the original bash scripts.
+func MustRun(t *testing.T, name string, f func(t *testing.T)) {
+	t.Helper()
+	if !t.Run(name, f) {
+		t.FailNow()
+	}
+}

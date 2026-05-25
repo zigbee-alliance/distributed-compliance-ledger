@@ -412,11 +412,11 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 
 	// --- VALIDATOR_NODE --------------------------------------------
-	t.Run("AddValidatorNode", func(t *testing.T) {
+	MustRun(t, "AddValidatorNode", func(t *testing.T) {
 		AddValidatorNode(t, state, dcld)
 	})
 
-	t.Run("ValidatorDisableEnableFlow", func(t *testing.T) {
+	MustRun(t, "ValidatorDisableEnableFlow", func(t *testing.T) {
 		// Script 01 uses 2 trustee approvals for disable-node (trustee_4 not
 		// yet active in pool quorum until later sections).
 		RunValidatorDisableEnableFlow(t, state, dcld,
