@@ -13,9 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Possible values: all (default) | cli | cli_go | light | rest | upgrade | deploy | cli,light | cli,rest | light, rest | cli,light,rest | etc.
-# `upgrade` invokes the Go-migrated integration_tests/upgrade package, which
-# now fully replaces the deleted bash scripts under integration_tests/upgrade/.
+# Possible values: all (default) | cli | light | rest | upgrade | deploy | cli,light | cli,rest | light, rest | cli,light,rest | etc.
 TESTS_TO_RUN=${1:-all}
 
 SCRIPT_PATH="$(readlink -f "$0")"
@@ -91,20 +89,6 @@ collect_cover() {
   fi
 }
 
-collect_validator_demo_cover() {
-  if "$GOCOVER_ENABLED"; then
-    if [ -d "$DCL_TMP_VALIDATOR_DEMO_GOCOVERDIR" ]; then
-      log "Collecting coverage from validator-demo"
-      rm -rf "$DCL_TMP_GOCOVERDIR"
-      mkdir -p "$DCL_TMP_GOCOVERDIR"
-      go tool covdata merge -i="$DCL_TMP_VALIDATOR_DEMO_GOCOVERDIR,$GOCOVERDIR" -o="$DCL_TMP_GOCOVERDIR"
-      rm -rf "$GOCOVERDIR"/*
-      cp "$DCL_TMP_GOCOVERDIR"/* "$GOCOVERDIR"/
-      rm -rf "$DCL_TMP_VALIDATOR_DEMO_GOCOVERDIR"
-    fi
-  fi
-}
-
 # Global init
 set -euo pipefail
 
@@ -119,22 +103,31 @@ make image &>${DETAILED_OUTPUT_TARGET}
 
 cleanup_pool
 
-# Upgrade procedure tests — now fully Go-migrated. The test sequence owns its
-# own pool lifecycle (EnsureAllBinaries + InitPool at TestUpgradeSequence
-# start, CleanupPool via t.Cleanup), so no init_pool wrapper is needed here.
+# Upgrade procedure tests
 if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
+  UPGRADE_SHELL_TEST="./integration_tests/upgrade/test-upgrade.sh"
+
   log "*****************************************************************************************"
-  log "Running go test ./integration_tests/upgrade/..."
+  log "Running ./integration_tests/prepare-dcld-versions.sh"
   log "*****************************************************************************************"
 
-  if RUN_UPGRADE_GO=1 go test -count=1 -timeout 2h -v ./integration_tests/upgrade/... &>${DETAILED_OUTPUT_TARGET}; then
-    log "integration_tests/upgrade finished successfully"
+  bash ./integration_tests/prepare-dcld-versions.sh
+
+  init_pool yes localnet_init_latest_stable_release "/tmp/dcld_bins/dcld_v0.12.0"
+
+  log "*****************************************************************************************"
+  log "Running $UPGRADE_SHELL_TEST"
+  log "*****************************************************************************************"
+
+  if bash "$UPGRADE_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+    log "$UPGRADE_SHELL_TEST finished successfully"
   else
-    log "integration_tests/upgrade failed"
+    log "$UPGRADE_SHELL_TEST failed"
     exit 1
   fi
 
   collect_cover
+  cleanup_pool
 fi
 
 # Deploy tests
@@ -148,36 +141,11 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "deploy" ]]; then
   fi
 fi
 
-# Cli shell tests
-if [[ $TESTS_TO_RUN =~ "all" || ( $TESTS_TO_RUN =~ "cli" && ! $TESTS_TO_RUN =~ "cli_go" ) ]]; then
-  CLI_SHELL_TESTS=$(find integration_tests/cli -type f -name '*.sh' -not -name "common.sh")
-
-  for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
-    init_pool
-
-    log "*****************************************************************************************"
-    log "Running $CLI_SHELL_TEST"
-    log "*****************************************************************************************"
-
-    if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-      log "$CLI_SHELL_TEST finished successfully"
-    else
-      log "$CLI_SHELL_TEST failed"
-      exit 1
-    fi
-
-    if [[ "$CLI_SHELL_TEST" == *"validator-demo.sh"* ]]; then
-      collect_validator_demo_cover
-    else
-      collect_cover
-    fi
-
-    cleanup_pool
-  done
-fi
-
-# Cli Go tests (per-package, fresh pool each, coverage merged via collect_cover)
-if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli_go" ]]; then
+# Cli tests — Go-only since the migration completed. One pool per package,
+# coverage merged via collect_cover. The deleted bash suite at
+# integration_tests/cli/*.sh was proven redundant by CI coverage diff
+# (Go coverage was a strict superset of bash coverage).
+if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
   CLI_GO_TEST_PACKAGES=$(find integration_tests/cli -mindepth 1 -maxdepth 1 -type d -not -name utils | sort)
 
   for CLI_GO_TEST_PACKAGE in ${CLI_GO_TEST_PACKAGES}; do

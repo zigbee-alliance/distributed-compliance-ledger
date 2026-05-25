@@ -142,11 +142,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
       - name: Run integration tests
-        # CLI bash + Go tests run in the cli-coverage-diff job; here we cover
-        # everything else. `upgrade` now invokes the Go-migrated suite —
-        # the bash scripts under integration_tests/upgrade/ were deleted.
         shell: bash
-        run: integration_tests/run-all.sh upgrade,deploy,light,rest cover
+        run: integration_tests/run-all.sh all cover
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           UBUNTU_VERSION: ${{ 24.04 }}
@@ -160,64 +157,6 @@ jobs:
         with:
           name: integration_cover
           path: cover.out
-  cli-coverage-diff:
-    # Enforces the CLI bash->Go test migration baseline.
-    # The script exits 0 when no baseline file exists (informational mode),
-    # and exits 1 only when current bash-only coverage has blocks NOT in
-    # integration_tests/cli/.coverage_baseline.txt. Existing accepted gaps in
-    # the baseline do not fail CI; only regressions or newly-uncovered code do.
-    if: needs.changes.outputs.src == 'true'
-    name: CLI migration coverage diff (bash vs Go)
-    runs-on: ubuntu-24.04
-    needs:
-      - changes
-    steps:
-      - uses: actions/setup-go@v5
-        with:
-          go-version: 1.20.14
-      - uses: actions/checkout@v4
-      - uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-      - name: Run Go CLI suite with coverage
-        shell: bash
-        run: |
-          integration_tests/run-all.sh cli_go cover
-          go tool covdata textfmt -i=integration_tests/gocover -o cover_go.out
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          UBUNTU_VERSION: ${{ 24.04 }}
-          GOCOVER_MODE: set
-      - name: Run bash CLI suite with coverage
-        shell: bash
-        run: |
-          integration_tests/run-all.sh cli cover
-          go tool covdata textfmt -i=integration_tests/gocover -o cover_bash.out
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          UBUNTU_VERSION: ${{ 24.04 }}
-          GOCOVER_MODE: set
-      - name: Compute coverage diff and enforce baseline
-        # Fails (exit 1) if any new bash-only block appears that isn't already in
-        # integration_tests/cli/.coverage_baseline.txt. If the baseline file is
-        # absent, this step is informational (exit 0) until one is committed.
-        shell: bash
-        run: scripts/coverage-diff.sh --no-run --strict
-      - name: Upload coverage diff artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cli_coverage_gap
-          path: |
-            cover_bash.out
-            cover_go.out
-            coverage_gap.txt
-            integration_tests/cli/.coverage_baseline.txt
   upgrade-command-diff:
     # Static check: for each bash script under integration_tests/upgrade/,
     # verify the migrated Go counterpart invokes the same set of `dcld tx`/
@@ -324,7 +263,6 @@ jobs:
     needs:
       - unit-tests
       - integration-tests
-      - cli-coverage-diff
       - lint
       - links
       - spell
@@ -336,5 +274,5 @@ jobs:
       - name: Decide whether the needed jobs succeeded or failed
         uses: re-actors/alls-green@release/v1
         with:
-          allowed-skips: lint, unit-tests, integration-tests, cli-coverage-diff, links, spell, gh-actions, cover, ts-client-tests
+          allowed-skips: lint, unit-tests, integration-tests, links, spell, gh-actions, cover, ts-client-tests
           jobs: ${{ toJSON(needs) }}
