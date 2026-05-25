@@ -61,11 +61,16 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 		checkResponseContains(t, out, companyLegalNameV012)
 		checkResponseContains(t, out, vendorNameV012)
 
-		// `all-vendors` would also check vid_for_rollback when script 02 has
-		// run. Phase 2 skips 02, so we only assert the vid set up by 01.
+		// `all-vendors` carries both vid (script 01) and vid_for_rollback
+		// (added by script 02), along with their respective legal/vendor names.
 		out, err = ExecuteCLIWithBin(dcldNew, "query", "vendorinfo", "all-vendors")
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vendorID", state.VID)
+		requireFieldEquals(t, out, "vendorID", VIDForRollback)
+		checkResponseContains(t, out, companyLegalNameV012)
+		checkResponseContains(t, out, CompanyLegalNameForRollback)
+		checkResponseContains(t, out, vendorNameV012)
+		checkResponseContains(t, out, VendorNameForRollback)
 	})
 
 	MustRun(t, "VerifyPreservedModels", func(t *testing.T) {
@@ -87,9 +92,10 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", state.VID)
 		requireFieldEquals(t, out, "pid", state.PID2)
-		// Bash script 02 (rollback) would have replaced productLabel/partNumber
-		// with `_for_rollback` values; Phase 2 skips 02 so we keep the 01 values.
-		checkResponseContains(t, out, state.ProductLabel)
+		// Script 02 (rollback) updated pid_2's productLabel/partNumber with
+		// the `_for_rollback` values; assert those overwrites are intact.
+		checkResponseContains(t, out, ProductLabelForRollback)
+		checkResponseContains(t, out, PartNumberForRollback)
 
 		out, err = ExecuteCLIWithBin(dcldNew, "query", "model", "all-models")
 		require.NoError(t, err)
