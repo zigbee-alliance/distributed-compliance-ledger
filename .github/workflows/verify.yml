@@ -184,6 +184,49 @@ jobs:
           path: |
             upgrade_command_gap.txt
             integration_tests/upgrade/.command_baseline.txt
+  upgrade-go-dry-run:
+    # Temporary parallel run of the migrated Go upgrade suite. The bash suite
+    # (driven by integration-tests / run-all.sh `upgrade`) is still the source
+    # of truth until this job is green across several runs. Deliberately
+    # excluded from the `check` job's `needs` so failures here do not block
+    # PRs during the cutover — once stable, run-all.sh flips `upgrade` mode to
+    # Go, the bash scripts go away, and this job either becomes required or
+    # is folded into integration-tests.
+    if: needs.changes.outputs.src == 'true'
+    name: Upgrade Go suite dry-run
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    needs:
+      - changes
+    steps:
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 1.20.14
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Build dcld and docker image
+        shell: bash
+        run: |
+          make install
+          make image
+        env:
+          UBUNTU_VERSION: ${{ 24.04 }}
+          URL_LIVENESS_CHECK_ENABLED: false
+      - name: Run upgrade Go suite
+        shell: bash
+        run: |
+          go test -count=1 -timeout 90m -v ./integration_tests/upgrade/...
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          RUN_UPGRADE_GO: "1"
+          URL_LIVENESS_CHECK_ENABLED: false
   ts-client-tests:
     if: needs.changes.outputs.ts_client == 'true'
     name: Verify ts-client query-encoding patch
