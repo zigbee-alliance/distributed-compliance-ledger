@@ -238,6 +238,8 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 
 		// provision pid_2, certify pid_2, revoke pid_2.
+		// revoke-model does not accept --cdCertificateId, so it is appended
+		// only for the provision/certify actions.
 		for _, action := range []struct {
 			cmd, dateFlag, dateVal string
 		}{
@@ -245,7 +247,7 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 			{"certify-model", "--certificationDate", CertificationDateForRollback},
 			{"revoke-model", "--revocationDate", CertificationDateForRollback},
 		} {
-			tx, err = ExecuteTxWithBin(dcld,
+			args := []string{
 				"tx", "compliance", action.cmd,
 				"--vid", fmt.Sprintf("%d", VIDForRollback),
 				"--pid", fmt.Sprintf("%d", PID2ForRollback),
@@ -253,10 +255,13 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 				"--softwareVersionString", SoftwareVersionStringForRollback,
 				"--certificationType", CertificationTypeForRollback,
 				action.dateFlag, action.dateVal,
-				"--cdCertificateId", CDCertificateIDForRollback,
 				"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberForRollback),
 				"--from", CertificationCenterAccountForRollback,
-			)
+			}
+			if action.cmd != "revoke-model" {
+				args = append(args, "--cdCertificateId", CDCertificateIDForRollback)
+			}
+			tx, err = ExecuteTxWithBin(dcld, args...)
 			require.NoError(t, err)
 			require.Equal(t, uint32(0), tx.Code, "%s pid_2: %s", action.cmd, tx.RawLog)
 		}

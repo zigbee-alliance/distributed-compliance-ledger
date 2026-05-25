@@ -254,12 +254,14 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 
 		// provision pid_2, certify pid_2, revoke pid_2.
+		// revoke-model does not accept --cdCertificateId, so it is appended
+		// only for the provision/certify actions.
 		for _, action := range []struct{ cmd, dateFlag, dateVal string }{
 			{"provision-model", "--provisionalDate", ProvisionalDateForMaster},
 			{"certify-model", "--certificationDate", CertificationDateForMaster},
 			{"revoke-model", "--revocationDate", CertificationDateForMaster},
 		} {
-			tx, err = ExecuteTxWithBin(DcldMasterBinaryPath,
+			args := []string{
 				"tx", "compliance", action.cmd,
 				"--vid", fmt.Sprintf("%d", VIDForMaster),
 				"--pid", fmt.Sprintf("%d", PID2ForMaster),
@@ -267,10 +269,13 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 				"--softwareVersionString", SoftwareVersionStringForMaster,
 				"--certificationType", CertificationTypeForMaster,
 				action.dateFlag, action.dateVal,
-				"--cdCertificateId", CDCertificateIDForMaster,
 				"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberForMaster),
 				"--from", CertificationCenterAccountFor1_2,
-			)
+			}
+			if action.cmd != "revoke-model" {
+				args = append(args, "--cdCertificateId", CDCertificateIDForMaster)
+			}
+			tx, err = ExecuteTxWithBin(DcldMasterBinaryPath, args...)
 			require.NoError(t, err)
 			require.Equal(t, uint32(0), tx.Code, "%s pid_2: %s", action.cmd, tx.RawLog)
 		}
