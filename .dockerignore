@@ -1,11 +1,17 @@
-- !app
-  !cmd
-  !testutil
-  !utils
-  !x
-  !types
-  !go.mod
-  !go.sum
-  !Makefile
-  !docs/docs.go
-  !docs/static
+*
+!app
+!cmd
+!testutil
+!utils
+!internal
+!x
+!types
+!go.mod
+!go.sum
+!Makefile
+!docs/docs.go
+!docs/static
+!integration_tests/node_helper.sh
+!integration_tests/upgrade/test-upgrade.patch
+!deployment/ansible/roles/bootstrap/files/cosmovisor_start.sh
+!deployment/ansible/roles/bootstrap/files/cosmovisor_preupgrade.sh

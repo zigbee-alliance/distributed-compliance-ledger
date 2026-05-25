@@ -41,4 +41,4 @@ WORKDIR /go/src/distributed-compliance-ledger
 COPY integration_tests/upgrade/test-upgrade.patch ./integration_tests/upgrade/test-upgrade.patch
 RUN sed -i "s/TESTUPGRADE/$(git rev-parse --short HEAD)/" ./integration_tests/upgrade/test-upgrade.patch
 RUN git apply ./integration_tests/upgrade/test-upgrade.patch
-RUN DCL_VERSION=$(git rev-parse --short HEAD) CGO_ENABLED=0 LEDGER_ENABLED=false make
+RUN DCL_VERSION=$(git rev-parse --short HEAD) CGO_ENABLED=0 LEDGER_ENABLED=false URL_LIVENESS_CHECK_ENABLED=false make
