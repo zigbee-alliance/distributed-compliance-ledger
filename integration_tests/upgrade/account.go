@@ -109,8 +109,14 @@ func ApproveAddAccount(binPath, address, from string) (*utils.TxResult, error) {
 }
 
 // CreateAndApproveAccount creates a new key at `name`, proposes it with
-// `proposer`, and obtains approvals from each of `approvers`. Returns the
-// on-chain address. Pass vid=-1 to omit the --vid flag.
+// `proposer`, and obtains approvals from each of `approvers` until the account
+// becomes active. Returns the on-chain address. Pass vid=-1 to omit the --vid
+// flag.
+//
+// The approval loop short-circuits as soon as the account moves from pending
+// to active: the underlying threshold depends on trustee count and role (e.g.
+// vendor activates after one approval with 3 trustees), and extra approvals
+// against an already-active account return "pending account not found".
 //
 // Fatals via the supplied *testing.T on any tx code != 0 (RawLog is logged).
 func CreateAndApproveAccount(t TestingHelper, binPath, name, role string, vid int, proposer string, approvers []string) string {
@@ -131,6 +137,10 @@ func CreateAndApproveAccount(t TestingHelper, binPath, name, role string, vid in
 		t.Fatalf("propose-add-account %s: code=%d log=%s", name, tx.Code, tx.RawLog)
 	}
 
+	if isAccountActive(binPath, addr) {
+		return addr
+	}
+
 	for _, who := range approvers {
 		tx, err = ApproveAddAccount(binPath, addr, who)
 		if err != nil {
@@ -140,9 +150,26 @@ func CreateAndApproveAccount(t TestingHelper, binPath, name, role string, vid in
 			t.Fatalf("approve-add-account %s from %s: code=%d log=%s",
 				name, who, tx.Code, tx.RawLog)
 		}
+
+		if isAccountActive(binPath, addr) {
+			return addr
+		}
 	}
 
 	return addr
+}
+
+// isAccountActive reports whether an account address has cleared its pending
+// state and is queryable via `query auth account`. Errors are treated as
+// "not active" — callers either keep approving or fail with the original
+// approve error.
+func isAccountActive(binPath, addr string) bool {
+	out, err := ExecuteCLIWithBin(binPath, "query", "auth", "account", "--address", addr, "-o", "json")
+	if err != nil {
+		return false
+	}
+
+	return !strings.Contains(string(out), "Not Found")
 }
 
 // TestingHelper is the subset of *testing.T used by package-level helpers, so
