@@ -228,13 +228,30 @@ func ApproveDisableValidatorNode(dcldBin, validatorAddress, from string) (*utils
 	)
 }
 
+// HasProposedDisable reports whether a pending propose-disable-node proposal
+// exists for the validator address. Used to decide whether the per-script
+// flow should propose first or jump straight to approvals.
+func HasProposedDisable(dcldBin, validatorAddress string) bool {
+	out, err := ExecuteCLIWithBin(dcldBin,
+		"query", "validator", "proposed-disable-node",
+		"--address", validatorAddress,
+	)
+	if err != nil {
+		return false
+	}
+
+	return !strings.Contains(string(out), "Not Found")
+}
+
 // RunValidatorDisableEnableFlow is the per-script docker exec disable/enable
 // sequence common to scripts 01/03/05/06/07/10. The exact step ordering
 // matches the bash:
 //
 //	docker exec disable-node           (from validator-demo's account)
 //	docker exec enable-node
-//	host propose-disable-node          (from trustee_1) — script 01 only
+//	host propose-disable-node          (from trustee_1) — only if no pending
+//	                                    proposal exists; script 02+ inherits
+//	                                    the previous script's tail-propose.
 //	host approve-disable-node × N      (from trustee_2 … trustee_(approvers+1))
 //	docker exec enable-node
 //	host propose-disable-node          (from trustee_1) — leaves it proposed
@@ -253,14 +270,18 @@ func RunValidatorDisableEnableFlow(t *testing.T, state *UpgradeTestState, dcldBi
 	require.NoError(t, DisableValidatorNode(state.ValidatorAccountName), "disable-node")
 	require.NoError(t, EnableValidatorNode(state.ValidatorAccountName), "enable-node")
 
-	// First propose-disable-node from trustee_1.
-	tx, err := ProposeDisableValidatorNode(dcldBin, state.ValidatorAddress, state.Trustee1)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, "propose-disable-node: %s", tx.RawLog)
+	// Propose only if no pending proposal carried over from the previous
+	// script's tail-propose. Bash scripts 02+ skip this initial propose for
+	// the same reason — the proposal is already on-chain.
+	if !HasProposedDisable(dcldBin, state.ValidatorAddress) {
+		tx, err := ProposeDisableValidatorNode(dcldBin, state.ValidatorAddress, state.Trustee1)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), tx.Code, "propose-disable-node: %s", tx.RawLog)
+	}
 
 	// Approvals.
 	for _, who := range approvers {
-		tx, err = ApproveDisableValidatorNode(dcldBin, state.ValidatorAddress, who)
+		tx, err := ApproveDisableValidatorNode(dcldBin, state.ValidatorAddress, who)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), tx.Code, "approve-disable-node %s: %s", who, tx.RawLog)
 	}
@@ -268,8 +289,9 @@ func RunValidatorDisableEnableFlow(t *testing.T, state *UpgradeTestState, dcldBi
 	// Final re-enable inside the container.
 	require.NoError(t, EnableValidatorNode(state.ValidatorAccountName), "final enable-node")
 
-	// Closing propose-disable-node (leaves the node in proposed-disable state).
-	tx, err = ProposeDisableValidatorNode(dcldBin, state.ValidatorAddress, state.Trustee1)
+	// Closing propose-disable-node (leaves the node in proposed-disable state
+	// for the next script to inherit).
+	tx, err := ProposeDisableValidatorNode(dcldBin, state.ValidatorAddress, state.Trustee1)
 	require.NoError(t, err)
 	require.Equal(t, uint32(0), tx.Code, "trailing propose-disable-node: %s", tx.RawLog)
 }
