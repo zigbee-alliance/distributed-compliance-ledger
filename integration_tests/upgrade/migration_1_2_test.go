@@ -37,7 +37,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 
 	step := SoftwareUpgradeStep{
 		PlanName:         PlanNameV1_2,
-		BinaryVersionNew: "v" + BinaryVersionV1_2,
+		BinaryVersionNew: BinaryVersionV1_2,
 		Checksum:         UpgradeChecksumV1_2,
 		DcldOldBin:       dcldOld,
 		DcldNewBin:       dcldNew,

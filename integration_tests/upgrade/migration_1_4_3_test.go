@@ -96,7 +96,7 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	step := SoftwareUpgradeStep{
 		PlanName:         PlanNameV1_4,
-		BinaryVersionNew: "v" + BinaryVersionV1_4_3,
+		BinaryVersionNew: BinaryVersionV1_4_3,
 		Checksum:         UpgradeChecksumV1_4,
 		DcldOldBin:       dcldOld,
 		DcldNewBin:       dcldNew,
