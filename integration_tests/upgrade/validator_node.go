@@ -290,10 +290,19 @@ func RunValidatorDisableEnableFlow(t *testing.T, state *UpgradeTestState, dcldBi
 	require.NoError(t, EnableValidatorNode(state.ValidatorAccountName), "final enable-node")
 
 	// Closing propose-disable-node (leaves the node in proposed-disable state
-	// for the next script to inherit).
-	tx, err := ProposeDisableValidatorNode(dcldBin, state.ValidatorAddress, state.Trustee1)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, "trailing propose-disable-node: %s", tx.RawLog)
+	// for the next script to inherit). Skip when a proposal is still open —
+	// the approval count above may not have reached the disable threshold
+	// (e.g. 5-trustee genesis where ceil(2/3*5)=4 approvals are required but
+	// the per-script flow only contributes 3 incl. the implicit proposer
+	// vote), or the inherited proposal carried over the v0.12→v1.2 binary
+	// boundary with a different approvals shape. In either case there's
+	// already an open proposal for the next script to inherit, so a redundant
+	// propose would fail with "Disable proposal already exists".
+	if !HasProposedDisable(dcldBin, state.ValidatorAddress) {
+		tx, err := ProposeDisableValidatorNode(dcldBin, state.ValidatorAddress, state.Trustee1)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), tx.Code, "trailing propose-disable-node: %s", tx.RawLog)
+	}
 }
 
 // QueryAllValidatorNodes runs `dcld query validator all-nodes` from inside the
