@@ -279,10 +279,17 @@ func RunValidatorDisableEnableFlow(t *testing.T, state *UpgradeTestState, dcldBi
 		require.Equal(t, uint32(0), tx.Code, "propose-disable-node: %s", tx.RawLog)
 	}
 
-	// Approvals.
+	// Approvals. If a trustee has already approved this inherited proposal in
+	// a previous script (because the disable threshold wasn't met and the
+	// proposal carried forward open), the chain returns "already has approval
+	// from=...". Treat that as a no-op — the approval is already counted, so
+	// re-approving isn't needed and isn't an error in spirit.
 	for _, who := range approvers {
 		tx, err := ApproveDisableValidatorNode(dcldBin, state.ValidatorAddress, who)
 		require.NoError(t, err)
+		if tx.Code != 0 && strings.Contains(tx.RawLog, "already has approval") {
+			continue
+		}
 		require.Equal(t, uint32(0), tx.Code, "approve-disable-node %s: %s", who, tx.RawLog)
 	}
 
