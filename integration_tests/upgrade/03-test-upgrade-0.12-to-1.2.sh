@@ -357,9 +357,14 @@ result="$(echo $passphrase | $DCLD_BIN_NEW keys add "$vendor_admin_account")"
 _address=$(echo $passphrase | $DCLD_BIN_NEW keys show $vendor_admin_account -a)
 _pubkey=$(echo $passphrase | $DCLD_BIN_NEW keys show $vendor_admin_account -p)
 result="$(echo $passphrase | $DCLD_BIN_NEW tx auth propose-add-account --address="$_address" --pubkey="$_pubkey" --roles="VendorAdmin" --from "$trustee_account_1" --yes)"
+echo "$result"
+check_response "$result" "\"code\": 0"
+
 result="$(echo $passphrase | $DCLD_BIN_NEW tx auth approve-add-account --address="$_address" --from "$trustee_account_2" --yes)"
 result="$(echo $passphrase | $DCLD_BIN_NEW tx auth approve-add-account --address="$_address" --from "$trustee_account_3" --yes)"
 result="$(echo $passphrase | $DCLD_BIN_NEW tx auth approve-add-account --address="$_address" --from "$trustee_account_4" --yes)"
+echo "$result"
+check_response "$result" "\"code\": 0"
 
 random_string user_4
 echo "$user_4 generates keys"
