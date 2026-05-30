@@ -426,9 +426,8 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 			require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 		}
 
-		// trustee_3 and trustee_4 approve (bash also approves with trustee_5 —
-		// skipped here since trustee_5 isn't propagated through state).
-		for _, who := range []string{state.Trustee3, state.Trustee4} {
+		// trustee_3, trustee_4, trustee_5 approve.
+		for _, who := range []string{state.Trustee3, state.Trustee4, state.Trustee5} {
 			tx, err = ExecuteTxWithBin(dcldNew,
 				"tx", "pki", "approve-add-x509-root-cert",
 				"--subject", RootCertSubjectFor1_2,

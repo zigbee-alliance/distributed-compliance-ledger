@@ -122,13 +122,13 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 	require.NoError(t, err)
 	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 
-	// Trustee4 + Trustee5 (random names; trustee_5 isn't propagated).
+	// Trustee4 + Trustee5 (random names).
 	state.Trustee4 = RandomString()
-	trustee5 := RandomString()
+	state.Trustee5 = RandomString()
 
 	trustee4Addr, trustee4Pub, err := CreateKey(dcld, state.Trustee4)
 	require.NoError(t, err)
-	trustee5Addr, trustee5Pub, err := CreateKey(dcld, trustee5)
+	trustee5Addr, trustee5Pub, err := CreateKey(dcld, state.Trustee5)
 	require.NoError(t, err)
 
 	// Trustee4: jack proposes, alice approves (genesis threshold = 2 trustees).

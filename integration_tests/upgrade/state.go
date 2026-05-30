@@ -26,7 +26,8 @@ type UpgradeTestState struct {
 	Trustee1 string // "jack"   — hardcoded in 01.sh
 	Trustee2 string // "alice"  — hardcoded in 01.sh
 	Trustee3 string // "bob"    — hardcoded in 01.sh
-	Trustee4 string // randomized in 01.sh; phase 2 will lock to a stable name.
+	Trustee4 string // randomized
+	Trustee5 string // randomized
 
 	// Vendor + model identifiers seeded by 01.
 	VendorAccount   string
