@@ -46,7 +46,7 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 		require.NoError(t, err)
 		planHeight := currentHeight + 20
 
-		upgradeInfo := UpgradeInfoForVersion("v"+BinaryVersionV1_2, WrongPlanChecksumV12)
+		upgradeInfo := UpgradeInfoForVersion(BinaryVersionV1_2, WrongPlanChecksumV12)
 
 		tx, err := ProposeUpgrade(dcld, WrongPlanName, planHeight, upgradeInfo, state.Trustee1)
 		require.NoError(t, err)
