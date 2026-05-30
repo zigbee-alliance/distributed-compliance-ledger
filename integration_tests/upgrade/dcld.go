@@ -46,6 +46,18 @@ func ExecuteCLIWithBin(binPath string, args ...string) ([]byte, error) {
 	return []byte(strOut), nil
 }
 
+// currentBroadcastMode is the broadcast-mode value most recently written to
+// the shared `~/.dcl/config/client.toml` by ConfigureClient. All dcld
+// binaries (regardless of version) read the same client.toml when invoked
+// without --home, so the last ConfigureClient call dictates how every
+// subsequent tx is broadcast — including invocations against older binaries
+// like dcld_v1.2.2 after v1.4+ has flipped the global config to sync.
+//
+// ExecuteTxWithBin reads this var to decide whether to poll for on-chain
+// confirmation. Inferring from binPath version is wrong because an old
+// binary running with config=sync still broadcasts in sync mode.
+var currentBroadcastMode = "block"
+
 // ExecuteTxWithBin runs a `dcld tx ...` command via the binary at binPath.
 //
 // Broadcast mode is taken from the binary's persistent client config (set by
@@ -72,9 +84,9 @@ func ExecuteTxWithBin(binPath string, args ...string) (*utils.TxResult, error) {
 		return nil, fmt.Errorf("parse tx result: %w, output: %s", jerr, string(out))
 	}
 
-	// Poll for on-chain confirmation when the binary is in sync mode. Block
-	// mode already returns the confirmed result, so polling there is skipped.
-	if binPathSupportsOnlySyncMode(binPath) && result.Code == 0 && result.TxHash != "" {
+	// Poll for on-chain confirmation when the shared client config is sync.
+	// Block mode already returns the confirmed result, so polling is skipped.
+	if currentBroadcastMode == "sync" && result.Code == 0 && result.TxHash != "" {
 		confirmedOut, awaitErr := utils.AwaitTxConfirmation(result.TxHash)
 		if awaitErr != nil {
 			return &result, awaitErr
@@ -100,6 +112,9 @@ func ExecuteTxWithBin(binPath string, args ...string) (*utils.TxResult, error) {
 // upgrade test downloads binaries in version order, and the v1.4+ download
 // flips the global config to sync. v0.12/v1.2 binaries used after that point
 // still work because they also support sync mode.
+//
+// `currentBroadcastMode` is updated so ExecuteTxWithBin knows whether to
+// poll for on-chain confirmation regardless of which binary is invoked.
 func ConfigureClient(binPath string) error {
 	mode := "block"
 	if binPathSupportsOnlySyncMode(binPath) {
@@ -118,6 +133,8 @@ func ConfigureClient(binPath string) error {
 			return err
 		}
 	}
+
+	currentBroadcastMode = mode
 
 	return nil
 }
