@@ -32,7 +32,11 @@ func BinaryPath(version string) string {
 }
 
 // EnsureBinary downloads the dcld binary for `version` if it is not already
-// present and executable on disk. Idempotent — safe to call repeatedly.
+// present and executable on disk and applies the standard client config
+// (chain-id, node, keyring-backend, broadcast-mode). The broadcast-mode
+// matches the binary version — block for v0.12.x/v1.2.x, sync for v1.4+ —
+// mirroring the `$DCLD_BIN config broadcast-mode ...` lines bash runs at the
+// top of each upgrade script. Idempotent — safe to call repeatedly.
 // Returns the absolute path to the binary.
 func EnsureBinary(version string) (string, error) {
 	if err := os.MkdirAll(BinariesDir, 0o755); err != nil {
@@ -42,6 +46,10 @@ func EnsureBinary(version string) (string, error) {
 	path := BinaryPath(version)
 
 	if info, err := os.Stat(path); err == nil && info.Mode()&0o111 != 0 && info.Size() > 0 {
+		if cerr := ConfigureClient(path); cerr != nil {
+			return path, fmt.Errorf("configure client for %s: %w", path, cerr)
+		}
+
 		return path, nil
 	}
 
@@ -64,6 +72,10 @@ func EnsureBinary(version string) (string, error) {
 
 	if _, err := io.Copy(f, resp.Body); err != nil {
 		return "", fmt.Errorf("write %s: %w", path, err)
+	}
+
+	if cerr := ConfigureClient(path); cerr != nil {
+		return path, fmt.Errorf("configure client for %s: %w", path, cerr)
 	}
 
 	return path, nil

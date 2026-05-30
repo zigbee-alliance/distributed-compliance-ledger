@@ -75,9 +75,8 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 
 	dcld, err := EnsureBinary("0.12.0")
 	require.NoError(t, err, "fetch dcld v0.12.0")
-
-	// Mirror bash line 28: the script flips into broadcast-mode block.
-	require.NoError(t, ConfigureClient(dcld), "configure dcld v0.12.0 client")
+	// EnsureBinary now applies ConfigureClient automatically (sets chain-id,
+	// node, keyring-backend, broadcast-mode based on the binary version).
 
 	// Genesis-provisioned trustees are already on-chain.
 	state.Trustee1, state.Trustee2, state.Trustee3 = "jack", "alice", "bob"

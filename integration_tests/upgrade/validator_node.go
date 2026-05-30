@@ -267,6 +267,18 @@ func RunValidatorDisableEnableFlow(t *testing.T, state *UpgradeTestState, dcldBi
 		return
 	}
 
+	// Cosmos-SDK in dcld v1.4.3+ removed broadcast-mode=block. The container
+	// was configured with `block` at AddValidatorNode time (against the v0.12
+	// binary), but once cosmovisor inside it has crossed v1.4.3 the persisted
+	// `block` config makes `dcld tx ...` fail with "unsupported return type
+	// block". Mirror the bash scripts 05+/06+/07+/10+ that re-run
+	// `dcld config broadcast-mode sync` inside the validator-demo container.
+	if binPathSupportsOnlySyncMode(dcldBin) {
+		_, _ = DockerExecShell(ValidatorDemoContainerName,
+			"echo test1234 | dcld config broadcast-mode sync",
+		)
+	}
+
 	require.NoError(t, DisableValidatorNode(state.ValidatorAccountName), "disable-node")
 	require.NoError(t, EnableValidatorNode(state.ValidatorAccountName), "enable-node")
 
