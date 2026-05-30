@@ -445,7 +445,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 				"tx", "pki", "add-revocation-point",
 				"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
 				"--revocation-type", "1",
-				"--is-paa", "true",
+				"--is-paa=true",
 				"--certificate", DARootCert2PathFor1_4_4,
 				"--label", ProductLabelFor1_4_4,
 				"--data-url", dataURL,

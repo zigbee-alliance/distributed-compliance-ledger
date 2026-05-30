@@ -523,7 +523,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 				"tx", "pki", "add-revocation-point",
 				"--vid", fmt.Sprintf("%d", VIDFor1_2),
 				"--revocation-type", "1",
-				"--is-paa", "true",
+				"--is-paa=true",
 				"--certificate", testRootCertPath,
 				"--label", label,
 				"--data-url", dataURL,
