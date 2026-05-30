@@ -256,7 +256,7 @@ const (
 	TestRootCertSubjectFor1_2      = "MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBEZGRjE="
 	TestRootCertSubjectKeyIDFor1_2 = "6A:FD:22:77:1F:51:1F:EC:BF:16:41:97:67:10:DC:DC:31:A1:71:7E"
 	TestRootCertVIDFor1_2          = "65521"
-	TestRootCertVIDForAssign       = "65521" // = test_root_cert_vid in 01.sh's --vid flag
+	TestRootCertVIDForAssign       = "4701"
 
 	GoogleRootCertPathFor1_2         = "integration_tests/constants/google_root_cert_r2"
 	GoogleRootCertSubjectFor1_2      = "MEcxCzAJBgNVBAYTAlVTMSIwIAYDVQQKExlHb29nbGUgVHJ1c3QgU2VydmljZXMgTExDMRQwEgYDVQQDEwtHVFMgUm9vdCBSMg=="
