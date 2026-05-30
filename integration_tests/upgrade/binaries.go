@@ -68,10 +68,19 @@ func EnsureBinary(version string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("create %s: %w", path, err)
 	}
-	defer f.Close()
 
 	if _, err := io.Copy(f, resp.Body); err != nil {
+		f.Close()
+
 		return "", fmt.Errorf("write %s: %w", path, err)
+	}
+
+	// Close before exec'ing — Linux refuses to execute a file that still has
+	// an open writable fd ("text file busy"), and ConfigureClient invokes the
+	// binary immediately below. A bare `defer f.Close()` would fire only
+	// after this function returns, which is too late.
+	if cerr := f.Close(); cerr != nil {
+		return "", fmt.Errorf("close %s: %w", path, cerr)
 	}
 
 	if cerr := ConfigureClient(path); cerr != nil {
