@@ -279,9 +279,6 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "PKIFor1_4_4_DARootCerts", func(t *testing.T) {
-		// da_root_cert_1: propose by t1, approve by t2, reject by t3,
-		// approve by t4. Bash also approves with trustee_5 — collapsed since
-		// trustee_5 doesn't survive into state.
 		tx, err := ExecuteTxWithBin(dcldNew,
 			"tx", "pki", "propose-add-x509-root-cert",
 			"--certificate", DARootCert1PathFor1_4_4,
@@ -314,6 +311,15 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 			"--subject", DARootCert1SubjectFor1_4_4,
 			"--subject-key-id", DARootCert1SubjectKeyIDFor1_4_4,
 			"--from", state.Trustee4,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+
+		tx, err = ExecuteTxWithBin(dcldNew,
+			"tx", "pki", "approve-add-x509-root-cert",
+			"--subject", DARootCert1SubjectFor1_4_4,
+			"--subject-key-id", DARootCert1SubjectKeyIDFor1_4_4,
+			"--from", state.Trustee5,
 		)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
