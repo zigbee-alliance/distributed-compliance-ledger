@@ -25,7 +25,14 @@ import (
 // the dcld-build-master image. Equivalent to bash:
 //
 //	docker build -f "$MASTER_UPGRADE_DOCKERFILE" -t "$MASTER_UPGRADE_IMAGE" .
+//
+// The master build downloads a fresh Go module cache inside the container
+// (~2 GB), which trips "no space left on device" on the GitHub runner unless
+// we reclaim space first. Historical dcld binaries (already used by phases
+// 01-09) and dangling Docker artifacts are removed before the build.
 func BuildMasterImage() error {
+	freeDiskBeforeMasterBuild()
+
 	_, err := dockerCmd("build",
 		"-f", MasterUpgradeDockerfile,
 		"-t", MasterUpgradeImage,
@@ -33,6 +40,20 @@ func BuildMasterImage() error {
 	)
 
 	return err
+}
+
+// freeDiskBeforeMasterBuild reclaims disk space before the master container is
+// built. All steps are best-effort — failures are ignored because the build
+// itself will surface a clearer error if anything is actually broken.
+func freeDiskBeforeMasterBuild() {
+	// Historical dcld binaries downloaded by EnsureAllBinaries are no longer
+	// needed after we've reached the master upgrade phase (~80-100 MB each).
+	_ = os.RemoveAll(BinariesDir)
+
+	// Reclaim Docker layer / build / volume cache. -af keeps no questions; the
+	// localnet containers are still running and pinned, so their images stay.
+	_, _ = dockerCmd("system", "prune", "-af")
+	_, _ = dockerCmd("builder", "prune", "-af")
 }
 
 // CreateMasterContainer creates (but does not start) a container from the
