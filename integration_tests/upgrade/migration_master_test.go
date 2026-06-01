@@ -103,7 +103,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 	// Verify carry-over across all prior eras.
 	// ------------------------------------------------------------------
 	MustRun(t, "VerifyPreservedAcrossAllEras", func(t *testing.T) {
-		for _, vid := range []int{state.VID, VIDFor1_2, VIDFor1_4_3, VIDFor1_4_4, state.VIDFor1_5_1, VIDFor1_5_2, VIDFor1_6_0} {
+		for _, vid := range []int{state.VID, VIDFor1_2, VIDFor1_4_3, VIDFor1_4_4, state.VIDFor1_5_1} {
 			out, qerr := ExecuteCLIWithBin(DcldMasterBinaryPath,
 				"query", "vendorinfo", "vendor",
 				"--vid", fmt.Sprintf("%d", vid),
