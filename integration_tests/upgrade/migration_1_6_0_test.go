@@ -158,7 +158,9 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 	// Post-upgrade: create a v1.6.0-era vendor and models.
 	// ------------------------------------------------------------------
 	MustRun(t, "CreateVendor_1_6_0", func(t *testing.T) {
-		createVendorWithApprovals(t, dcldNew, state, VendorAccountFor1_6_0, VIDFor1_6_0)
+		_ = CreateAndApproveAccount(t, dcldNew, VendorAccountFor1_6_0, "Vendor",
+			VIDFor1_6_0, state.Trustee1,
+			[]string{state.Trustee2, state.Trustee3, state.Trustee4})
 	})
 
 	MustRun(t, "AddModelsAndVersions_1_6_0", func(t *testing.T) {

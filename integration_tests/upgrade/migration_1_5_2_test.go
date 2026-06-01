@@ -152,8 +152,9 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 
 	MustRun(t, "CreateVendor_1_5_2", func(t *testing.T) {
-		createVendorWithApprovals(t, dcldNew, state,
-			VendorAccountFor1_5_2, VIDFor1_5_2)
+		_ = CreateAndApproveAccount(t, dcldNew, VendorAccountFor1_5_2, "Vendor",
+			VIDFor1_5_2, state.Trustee1,
+			[]string{state.Trustee2, state.Trustee3, state.Trustee4})
 	})
 
 	MustRun(t, "AddModelsAndVersions_1_5_2", func(t *testing.T) {
@@ -336,51 +337,4 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 		requireFieldEquals(t, out, "softwareVersion", SoftwareVersionFor1_5_2)
 		requireFieldEquals(t, out, "specificationVersion", SpecificationVersionFor1_5_2)
 	})
-}
-
-// createVendorWithApprovals proposes a Vendor account and obtains the required
-// trustee approvals. Mirrors the propose/approve-add-account sequence repeated
-// across the post-upgrade portions of 08 and 09.
-func createVendorWithApprovals(t *testing.T, dcldBin string, state *UpgradeTestState, accountName string, vid int) {
-	t.Helper()
-
-	// Generate a new key locally on the host keyring.
-	_, err := ExecuteCLIWithBin(dcldBin, "keys", "add", accountName,
-		"--keyring-backend", "test",
-	)
-	require.NoError(t, err, "keys add %s", accountName)
-
-	addrOut, err := ExecuteCLIWithBin(dcldBin, "keys", "show", accountName, "-a",
-		"--keyring-backend", "test",
-	)
-	require.NoError(t, err, "keys show -a %s", accountName)
-	address := TrimTrailingWS(string(addrOut))
-
-	pubOut, err := ExecuteCLIWithBin(dcldBin, "keys", "show", accountName, "-p",
-		"--keyring-backend", "test",
-	)
-	require.NoError(t, err, "keys show -p %s", accountName)
-	pubkey := TrimTrailingWS(string(pubOut))
-
-	// Trustee1 proposes; Trustee2..4 approve.
-	tx, err := ExecuteTxWithBin(dcldBin,
-		"tx", "auth", "propose-add-account",
-		"--address", address,
-		"--pubkey", pubkey,
-		"--vid", fmt.Sprintf("%d", vid),
-		"--roles", "Vendor",
-		"--from", state.Trustee1,
-	)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
-
-	for _, t2 := range []string{state.Trustee2, state.Trustee3, state.Trustee4} {
-		tx, err = ExecuteTxWithBin(dcldBin,
-			"tx", "auth", "approve-add-account",
-			"--address", address,
-			"--from", t2,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
-	}
 }
