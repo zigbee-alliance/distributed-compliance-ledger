@@ -411,8 +411,6 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "PKIFor1_4_3", func(t *testing.T) {
-		// root_cert_with_vid: propose by t1, approve/reject by t2/t3, approve by t4.
-		// (Bash also approves with trustee_5 — trustee_5 isn't propagated.)
 		tx, err := ExecuteTxWithBin(dcldNew,
 			"tx", "pki", "propose-add-x509-root-cert",
 			"--certificate", RootCertWithVIDPathFor1_4_3,
@@ -446,6 +444,15 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 			"--subject", RootCertWithVIDSubjectFor1_4_3,
 			"--subject-key-id", RootCertWithVIDSubjectKeyIDFor1_4_3,
 			"--from", state.Trustee4,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+
+		tx, err = ExecuteTxWithBin(dcldNew,
+			"tx", "pki", "approve-add-x509-root-cert",
+			"--subject", RootCertWithVIDSubjectFor1_4_3,
+			"--subject-key-id", RootCertWithVIDSubjectKeyIDFor1_4_3,
+			"--from", state.Trustee5,
 		)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
