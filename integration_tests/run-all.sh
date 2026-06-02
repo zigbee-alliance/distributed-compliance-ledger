@@ -169,27 +169,29 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
   done
 fi
 
-# Light Client Proxy Cli shell tests
+# Light Client Proxy tests — Go-only since the migration completed. One pool
+# for the package; the five test funcs share the keyring and rely on
+# random-suffixed account names to avoid collisions. The bash suite at
+# integration_tests/light_client_proxy/*.sh is kept on disk for ad-hoc
+# inspection but no longer wired into CI.
 if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "light" ]]; then
-  CLI_SHELL_TESTS=$(find integration_tests/light_client_proxy -type f -name '*.sh' -not -name "common.sh")
+  init_pool
 
-  for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
-    init_pool
+  log "*****************************************************************************************"
+  log "Running go test ./integration_tests/light_client_proxy/..."
+  log "*****************************************************************************************"
 
-    log "*****************************************************************************************"
-    log "Running $CLI_SHELL_TEST"
-    log "*****************************************************************************************"
+  dcld config keyring-backend test
 
-    if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-      log "$CLI_SHELL_TEST finished successfully"
-    else
-      log "$CLI_SHELL_TEST failed"
-      exit 1
-    fi
+  if RUN_LIGHT_GO=1 go test -count=1 -timeout 30m -v ./integration_tests/light_client_proxy/... &>${DETAILED_OUTPUT_TARGET}; then
+    log "light_client_proxy finished successfully"
+  else
+    log "light_client_proxy failed"
+    exit 1
+  fi
 
-    collect_cover
-    cleanup_pool
-  done
+  collect_cover
+  cleanup_pool
 fi
 
 # Go rest tests
