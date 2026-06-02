@@ -45,14 +45,16 @@ func BuildMasterImage() error {
 // freeDiskBeforeMasterBuild reclaims disk space before the master container is
 // built. All steps are best-effort — failures are ignored because the build
 // itself will surface a clearer error if anything is actually broken.
+//
+// The binary for the last entry in HistoricalVersions (currently 1.6.0-0.dev.2)
+// is preserved because phase 10 still calls `propose-upgrade` through it.
 func freeDiskBeforeMasterBuild() {
-	// Historical dcld binaries downloaded by EnsureAllBinaries are no longer
-	// needed after we've reached the master upgrade phase (~80-100 MB each).
-	// The directory itself must stay because ExtractMasterBinary's `docker cp`
-	// uses BinariesDir/dcld_master as its destination and docker cp requires
-	// the parent directory to already exist.
-	_ = os.RemoveAll(BinariesDir)
-	_ = os.MkdirAll(BinariesDir, 0o755)
+	if len(HistoricalVersions) > 1 {
+		// Older dcld binaries (~80-100 MB each) — already used by phases 01-09.
+		for _, v := range HistoricalVersions[:len(HistoricalVersions)-1] {
+			_ = os.Remove(BinaryPath(v))
+		}
+	}
 
 	// Reclaim Docker layer / build / volume cache. -af keeps no questions; the
 	// localnet containers are still running and pinned, so their images stay.
