@@ -180,6 +180,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 				"--productName", ProductNameForMaster,
 				"--productLabel", ProductLabelForMaster,
 				"--partNumber", PartNumberForMaster,
+				"--commissioningCustomFlow", fmt.Sprintf("%d", CommissioningCustomFlow),
 				"--from", VendorAccountForMaster,
 			)
 			require.NoError(t, err)

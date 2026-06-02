@@ -514,6 +514,7 @@ const (
 	ProductNameForMaster                  = "ProductName_master"
 	ProductLabelForMaster                 = "ProductLabel_master"
 	PartNumberForMaster                   = "ZCU2245M"
+	CommissioningCustomFlow               = 0
 	SoftwareVersionForMaster              = 4
 	SoftwareVersionStringForMaster        = "5.3"
 	CDVersionNumberForMaster              = 743
