@@ -48,7 +48,11 @@ func BuildMasterImage() error {
 func freeDiskBeforeMasterBuild() {
 	// Historical dcld binaries downloaded by EnsureAllBinaries are no longer
 	// needed after we've reached the master upgrade phase (~80-100 MB each).
+	// The directory itself must stay because ExtractMasterBinary's `docker cp`
+	// uses BinariesDir/dcld_master as its destination and docker cp requires
+	// the parent directory to already exist.
 	_ = os.RemoveAll(BinariesDir)
+	_ = os.MkdirAll(BinariesDir, 0o755)
 
 	// Reclaim Docker layer / build / volume cache. -af keeps no questions; the
 	// localnet containers are still running and pinned, so their images stay.
