@@ -414,6 +414,7 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 
 	// --- VALIDATOR_NODE --------------------------------------------
 	MustRun(t, "AddValidatorNode", func(t *testing.T) {
+		t.Helper()
 		AddValidatorNode(t, state, dcld)
 
 		// Bash 01 line 85 checks `query validator last-power --address` once
@@ -429,6 +430,7 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "ValidatorDisableEnableFlow", func(t *testing.T) {
+		t.Helper()
 		// Script 01 uses 2 trustee approvals for disable-node (trustee_4 not
 		// yet active in pool quorum until later sections).
 		RunValidatorDisableEnableFlow(t, state, dcld,

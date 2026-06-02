@@ -42,6 +42,7 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 	// Wrong-plan-name upgrade: propose + approve, then verify NOT applied.
 	// ------------------------------------------------------------------
 	MustRun(t, "WrongPlanNameUpgrade", func(t *testing.T) {
+		t.Helper()
 		currentHeight, err := cliputils.GetHeight()
 		require.NoError(t, err)
 		planHeight := currentHeight + 20

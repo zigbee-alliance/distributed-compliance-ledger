@@ -154,13 +154,13 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		requireFieldEquals(t, out, "pid", PID1For1_4_3)
 
 		for _, vid := range []int{state.VID, VIDFor1_2, VIDFor1_4_3} {
-			out, err = ExecuteCLIWithBin(dcldNew,
+			_, err = ExecuteCLIWithBin(dcldNew,
 				"query", "model", "vendor-models",
 				"--vid", fmt.Sprintf("%d", vid),
 			)
 			require.NoError(t, err)
 		}
-		out, err = ExecuteCLIWithBin(dcldNew,
+		_, err = ExecuteCLIWithBin(dcldNew,
 			"query", "model", "all-model-versions",
 			"--vid", fmt.Sprintf("%d", VIDFor1_4_3),
 			"--pid", fmt.Sprintf("%d", PID1For1_4_3),
