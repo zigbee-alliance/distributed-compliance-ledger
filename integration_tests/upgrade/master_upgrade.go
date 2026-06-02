@@ -56,9 +56,22 @@ func freeDiskBeforeMasterBuild() {
 		}
 	}
 
-	// Reclaim Docker layer / build / volume cache. -af keeps no questions; the
-	// localnet containers are still running and pinned, so their images stay.
-	_, _ = dockerCmd("system", "prune", "-af")
+	// Reclaim docker cache before the master build pulls ~2 GB of Go modules.
+	//
+	// We deliberately don't pass -a to `system prune`: the -a flag also
+	// removes tagged images that aren't in use by a running container, which
+	// includes dcledger-{20,22,24}.04. The localnet image is in use *now*
+	// (containers are still up), but once upgrade's t.Cleanup tears them
+	// down, the tag becomes unused — and run-all.sh's next bucket (cli or
+	// light) calls `docker compose up -d` against a missing image. The
+	// rebuild then pulls a fresh ubuntu:24.04 base that ships a default
+	// `ubuntu` user at UID 1000, which collides with our Dockerfile's
+	// `adduser --uid 1000 dcl` step and fails the whole pipeline.
+	//
+	// Without -a, `system prune` only removes dangling images, stopped
+	// containers, unused networks, and build cache — plenty of headroom for
+	// the master module pull without breaking the localnet image tag.
+	_, _ = dockerCmd("system", "prune", "-f")
 	_, _ = dockerCmd("builder", "prune", "-af")
 }
 
