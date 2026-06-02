@@ -42,6 +42,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	var planName string
 	MustRun(t, "BuildAndDistributeMasterBinary", func(t *testing.T) {
+		t.Helper()
 		DockerCleanup(MasterUpgradeContainerName)
 
 		require.NoError(t, BuildMasterImage(), "docker build dcld-build-master")
@@ -66,6 +67,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 	// Upgrade flow.
 	// ------------------------------------------------------------------
 	MustRun(t, "ProposeApproveMasterUpgrade", func(t *testing.T) {
+		t.Helper()
 		currentHeight, err := cliputils.GetHeight()
 		require.NoError(t, err)
 		planHeight := currentHeight + 20
@@ -103,6 +105,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 	// Verify carry-over across all prior eras.
 	// ------------------------------------------------------------------
 	MustRun(t, "VerifyPreservedAcrossAllEras", func(t *testing.T) {
+		t.Helper()
 		for _, vid := range []int{state.VID, VIDFor1_2, VIDFor1_4_3, VIDFor1_4_4, state.VIDFor1_5_1} {
 			out, qerr := ExecuteCLIWithBin(DcldMasterBinaryPath,
 				"query", "vendorinfo", "vendor",
@@ -127,6 +130,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 	// compliance (single+all), model bulk, pki (global/DA/NOC + revocation),
 	// vendorinfo all-vendors, and validator all-nodes.
 	MustRun(t, "VerifyPreservedListings_Master", func(t *testing.T) {
+		t.Helper()
 		out, err := ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "vendorinfo", "all-vendors")
 		require.NoError(t, err)
 		for _, vid := range []int{state.VID, VIDFor1_2, VIDFor1_4_3, VIDFor1_4_4, state.VIDFor1_5_1} {
@@ -390,12 +394,14 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 	// Seed master-era state.
 	// ------------------------------------------------------------------
 	MustRun(t, "CreateVendor_Master", func(t *testing.T) {
+		t.Helper()
 		_ = CreateAndApproveAccount(t, DcldMasterBinaryPath, VendorAccountForMaster, "Vendor",
 			VIDForMaster, state.Trustee1,
 			[]string{state.Trustee2, state.Trustee3, state.Trustee4})
 	})
 
 	MustRun(t, "AddMasterUserKeys", func(t *testing.T) {
+		t.Helper()
 		u13, err := newUserKey(DcldMasterBinaryPath)
 		require.NoError(t, err)
 		u14, err := newUserKey(DcldMasterBinaryPath)
@@ -408,6 +414,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "VendorInfoFor_Master", func(t *testing.T) {
+		t.Helper()
 		tx, err := ExecuteTxWithBin(DcldMasterBinaryPath,
 			"tx", "vendorinfo", "add-vendor",
 			"--vid", fmt.Sprintf("%d", VIDForMaster),
@@ -434,6 +441,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "ModelsAndVersionsFor_Master", func(t *testing.T) {
+		t.Helper()
 		for _, pid := range []int{PID1ForMaster, PID2ForMaster, PID3ForMaster} {
 			tx, err := ExecuteTxWithBin(DcldMasterBinaryPath,
 				"tx", "model", "add-model",
@@ -501,6 +509,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "ComplianceFor_Master", func(t *testing.T) {
+		t.Helper()
 		// certify pid_1.
 		tx, err := ExecuteTxWithBin(DcldMasterBinaryPath,
 			"tx", "compliance", "certify-model",
@@ -546,6 +555,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "AccountFlowsFor_Master", func(t *testing.T) {
+		t.Helper()
 		approvers := []string{state.Trustee2, state.Trustee3, state.Trustee4}
 
 		proposeUserAccount(t, DcldMasterBinaryPath, state.Trustee1, approvers,
@@ -560,6 +570,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "ValidatorDisableEnableFlow", func(t *testing.T) {
+		t.Helper()
 		RunValidatorDisableEnableFlow(t, state, DcldMasterBinaryPath,
 			[]string{state.Trustee2, state.Trustee3, state.Trustee4})
 	})
@@ -569,6 +580,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 	// inherits this state.
 	// ------------------------------------------------------------------
 	MustRun(t, "VerifyNew_Master_Data", func(t *testing.T) {
+		t.Helper()
 		out, err := ExecuteCLIWithBin(DcldMasterBinaryPath,
 			"query", "vendorinfo", "vendor",
 			"--vid", fmt.Sprintf("%d", VIDForMaster),

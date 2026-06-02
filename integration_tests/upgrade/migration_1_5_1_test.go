@@ -50,6 +50,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 	// Verify carry-over data is intact under v1.5.1.
 	// ------------------------------------------------------------------
 	MustRun(t, "VerifyPreservedAcrossFourEras", func(t *testing.T) {
+		t.Helper()
 		for _, vid := range []int{state.VID, VIDFor1_2, VIDFor1_4_3, VIDFor1_4_4} {
 			out, qerr := ExecuteCLIWithBin(dcldNew,
 				"query", "vendorinfo", "vendor",
@@ -81,6 +82,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "VerifyPreservedAccounts", func(t *testing.T) {
+		t.Helper()
 		out, err := ExecuteCLIWithBin(dcldNew, "query", "auth", "all-accounts")
 		require.NoError(t, err)
 		// Active accounts across all prior scripts.
@@ -148,6 +150,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 	// Bulk readback from bash 07. Adds gap-fill compliance/model/pki listings
 	// + remaining single-record forms, spanning the four pre-1.5.1 eras.
 	MustRun(t, "VerifyPreservedListings_1_5_1", func(t *testing.T) {
+		t.Helper()
 		out, err := ExecuteCLIWithBin(dcldNew, "query", "vendorinfo", "all-vendors")
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vendorID", state.VID)
@@ -161,13 +164,13 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 		requireFieldEquals(t, out, "vid", VIDFor1_4_4)
 
 		for _, vid := range []int{state.VID, VIDFor1_2, VIDFor1_4_3, VIDFor1_4_4} {
-			out, err = ExecuteCLIWithBin(dcldNew,
+			_, err = ExecuteCLIWithBin(dcldNew,
 				"query", "model", "vendor-models",
 				"--vid", fmt.Sprintf("%d", vid),
 			)
 			require.NoError(t, err)
 		}
-		out, err = ExecuteCLIWithBin(dcldNew,
+		_, err = ExecuteCLIWithBin(dcldNew,
 			"query", "model", "all-model-versions",
 			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
 			"--pid", fmt.Sprintf("%d", PID1For1_4_4),
@@ -185,7 +188,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 		require.NoError(t, err)
 		checkResponseContains(t, out, `"value":true`)
 
-		out, err = ExecuteCLIWithBin(dcldNew,
+		_, err = ExecuteCLIWithBin(dcldNew,
 			"query", "compliance", "revoked-model",
 			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
 			"--pid", fmt.Sprintf("%d", PID2For1_4_4),
@@ -194,7 +197,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 		)
 		require.NoError(t, err)
 
-		out, err = ExecuteCLIWithBin(dcldNew,
+		_, err = ExecuteCLIWithBin(dcldNew,
 			"query", "compliance", "provisional-model",
 			"--vid", fmt.Sprintf("%d", state.VID),
 			"--pid", fmt.Sprintf("%d", pid3V012),
@@ -203,7 +206,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 		)
 		require.NoError(t, err)
 
-		out, err = ExecuteCLIWithBin(dcldNew,
+		_, err = ExecuteCLIWithBin(dcldNew,
 			"query", "compliance", "compliance-info",
 			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
 			"--pid", fmt.Sprintf("%d", PID1For1_4_4),
@@ -336,12 +339,14 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 	// Post-upgrade: seed 1.5.1-era state.
 	// ------------------------------------------------------------------
 	MustRun(t, "CreateVendor_1_5_1", func(t *testing.T) {
+		t.Helper()
 		_ = CreateAndApproveAccount(t, dcldNew, VendorAccountFor1_5_1, "Vendor",
 			state.VIDFor1_5_1, state.Trustee1,
 			[]string{state.Trustee2, state.Trustee3, state.Trustee4})
 	})
 
 	MustRun(t, "AddPostUpgradeUserKeys", func(t *testing.T) {
+		t.Helper()
 		u13, err := newUserKey(dcldNew)
 		require.NoError(t, err)
 		u14, err := newUserKey(dcldNew)
@@ -354,6 +359,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "VendorInfoFor1_5_1", func(t *testing.T) {
+		t.Helper()
 		tx, err := ExecuteTxWithBin(dcldNew,
 			"tx", "vendorinfo", "add-vendor",
 			"--vid", fmt.Sprintf("%d", state.VIDFor1_5_1),
@@ -380,6 +386,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "ModelsAndVersionsFor1_5_1", func(t *testing.T) {
+		t.Helper()
 		// pid_1 with full 1.5-era field set (ICD, factory-reset, commissioning sec hint).
 		tx, err := ExecuteTxWithBin(dcldNew,
 			"tx", "model", "add-model",
@@ -509,6 +516,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "ComplianceFor1_5_1", func(t *testing.T) {
+		t.Helper()
 		// certify pid_1
 		tx, err := ExecuteTxWithBin(dcldNew,
 			"tx", "compliance", "certify-model",
@@ -574,6 +582,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "AccountFlowsFor1_5_1", func(t *testing.T) {
+		t.Helper()
 		approvers := []string{state.Trustee2, state.Trustee3, state.Trustee4}
 
 		proposeUserAccount(t, dcldNew, state.Trustee1, approvers,
@@ -588,6 +597,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "ValidatorDisableEnableFlow", func(t *testing.T) {
+		t.Helper()
 		RunValidatorDisableEnableFlow(t, state, dcldNew,
 			[]string{state.Trustee2, state.Trustee3, state.Trustee4})
 	})
@@ -597,6 +607,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 	// (08/09) rely on this state being present.
 	// ------------------------------------------------------------------
 	MustRun(t, "VerifyNew_1_5_1_Data", func(t *testing.T) {
+		t.Helper()
 		out, err := ExecuteCLIWithBin(dcldNew,
 			"query", "vendorinfo", "vendor",
 			"--vid", fmt.Sprintf("%d", state.VIDFor1_5_1),

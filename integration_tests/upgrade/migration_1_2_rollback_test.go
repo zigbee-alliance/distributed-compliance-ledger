@@ -41,6 +41,7 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 	// Wrong-plan-name upgrade attempt.
 	// ------------------------------------------------------------------
 	MustRun(t, "WrongPlanName2Upgrade", func(t *testing.T) {
+		t.Helper()
 		currentHeight, err := cliputils.GetHeight()
 		require.NoError(t, err)
 		planHeight := currentHeight + 20
@@ -75,6 +76,7 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 	// post-rollback readback in 04-test-upgrade-1.2-rollback.sh lines 83-454.
 	// ------------------------------------------------------------------
 	MustRun(t, "VerifyPreservedAfterRollback1_2", func(t *testing.T) {
+		t.Helper()
 		// ----- VendorInfo -----
 		out, err := ExecuteCLIWithBin(dcld,
 			"query", "vendorinfo", "vendor",
@@ -530,12 +532,14 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 	// Seed _for_1_2_r2 state (still on v1.2).
 	// ------------------------------------------------------------------
 	MustRun(t, "CreateR2Accounts", func(t *testing.T) {
+		t.Helper()
 		approvers := []string{state.Trustee2, state.Trustee3, state.Trustee4}
 		_ = CreateAndApproveAccount(t, dcld, VendorAccountFor1_2R2, "Vendor",
 			VIDFor1_2R2, state.Trustee1, approvers)
 	})
 
 	MustRun(t, "AddR2UserKeys", func(t *testing.T) {
+		t.Helper()
 		u4, err := newUserKey(dcld)
 		require.NoError(t, err)
 		u5, err := newUserKey(dcld)
@@ -548,6 +552,7 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "VendorInfoForR2", func(t *testing.T) {
+		t.Helper()
 		tx, err := ExecuteTxWithBin(dcld,
 			"tx", "vendorinfo", "add-vendor",
 			"--vid", fmt.Sprintf("%d", VIDFor1_2R2),
@@ -562,6 +567,7 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "ModelsForR2", func(t *testing.T) {
+		t.Helper()
 		for _, pid := range []int{PID1For1_2R2, PID2For1_2R2, PID3For1_2R2} {
 			tx, err := ExecuteTxWithBin(dcld,
 				"tx", "model", "add-model",
@@ -603,6 +609,7 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "ComplianceForR2", func(t *testing.T) {
+		t.Helper()
 		// certify pid_1.
 		tx, err := ExecuteTxWithBin(dcld,
 			"tx", "compliance", "certify-model",
@@ -650,6 +657,7 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "AccountFlowsForR2", func(t *testing.T) {
+		t.Helper()
 		approvers := []string{state.Trustee2, state.Trustee3, state.Trustee4}
 
 		proposeUserAccount(t, dcld, state.Trustee1, approvers,
@@ -664,6 +672,7 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "ValidatorDisableEnableFlow", func(t *testing.T) {
+		t.Helper()
 		RunValidatorDisableEnableFlow(t, state, dcld,
 			[]string{state.Trustee2, state.Trustee3, state.Trustee4})
 	})

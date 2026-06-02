@@ -41,6 +41,7 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 	// "ghost" semantics on the old binary.
 	// ------------------------------------------------------------------
 	MustRun(t, "Issue593_PreUpgradeDelete", func(t *testing.T) {
+		t.Helper()
 		tx, err := ExecuteTxWithBin(dcldOld,
 			"tx", "model", "delete-model-version",
 			"--vid", fmt.Sprintf("%d", state.VIDFor1_6_0FromScript5),
@@ -86,6 +87,7 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 	// ISSUE #593: post-upgrade ghost cleanup verification.
 	// ------------------------------------------------------------------
 	MustRun(t, "Issue593_GhostModelVersionsRemoved", func(t *testing.T) {
+		t.Helper()
 		out, err := ExecuteCLIWithBin(dcldNew,
 			"query", "model", "all-model-versions",
 			"--vid", fmt.Sprintf("%d", state.VIDFor1_6_0FromScript5),
@@ -110,6 +112,7 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 	// Verify carry-over data from the v1.5.2 era is intact.
 	// ------------------------------------------------------------------
 	MustRun(t, "VerifyPreserved_1_5_2_Models", func(t *testing.T) {
+		t.Helper()
 		out, err := ExecuteCLIWithBin(dcldNew,
 			"query", "model", "get-model",
 			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),
@@ -173,12 +176,14 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 	// Post-upgrade: create a v1.6.0-era vendor and models.
 	// ------------------------------------------------------------------
 	MustRun(t, "CreateVendor_1_6_0", func(t *testing.T) {
+		t.Helper()
 		_ = CreateAndApproveAccount(t, dcldNew, VendorAccountFor1_6_0, "Vendor",
 			VIDFor1_6_0, state.Trustee1,
 			[]string{state.Trustee2, state.Trustee3, state.Trustee4})
 	})
 
 	MustRun(t, "AddModelsAndVersions_1_6_0", func(t *testing.T) {
+		t.Helper()
 		tx, err := ExecuteTxWithBin(dcldNew,
 			"tx", "model", "add-model",
 			"--vid", fmt.Sprintf("%d", VIDFor1_6_0),
@@ -254,6 +259,7 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "VerifyNewModels_1_6_0", func(t *testing.T) {
+		t.Helper()
 		out, err := ExecuteCLIWithBin(dcldNew,
 			"query", "model", "get-model",
 			"--vid", fmt.Sprintf("%d", VIDFor1_6_0),

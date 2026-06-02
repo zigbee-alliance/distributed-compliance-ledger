@@ -103,56 +103,67 @@ func TestUpgradeSequence(t *testing.T) {
 	// Phase 2: script 01 — initialize the chain at v0.12.0 and seed all
 	// downstream prerequisite state.
 	MustRun(t, "01_InitializeV0_12", func(t *testing.T) {
+		t.Helper()
 		runInitV0_12(t, state)
 	})
 
 	// Phase 3: script 02 — wrong-plan-name upgrade attempt that no-ops.
 	MustRun(t, "02_RollbackV0_12", func(t *testing.T) {
+		t.Helper()
 		runRollback012(t, state)
 	})
 
 	// Phase 2: script 03 — upgrade 0.12 → 1.2, plus 1.2-era seed data.
 	MustRun(t, "03_UpgradeTo1_2", func(t *testing.T) {
+		t.Helper()
 		runUpgrade012To12(t, state)
 	})
 
 	// Phase 3: script 04 — second wrong-plan-name attempt against v1.2.
 	MustRun(t, "04_RollbackV1_2", func(t *testing.T) {
+		t.Helper()
 		runRollback12(t, state)
 	})
 
 	// Phase 2: script 05 — upgrade 1.2 → 1.4.3, plus NOC certs + revocation points.
 	MustRun(t, "05_UpgradeTo1_4_3", func(t *testing.T) {
+		t.Helper()
 		runUpgrade12To143(t, state)
 	})
 
 	// Phase 2: script 06 — upgrade 1.4.3 → 1.4.4, plus DA certs + NOC revoke.
 	MustRun(t, "06_UpgradeTo1_4_4", func(t *testing.T) {
+		t.Helper()
 		runUpgrade143To144(t, state)
 	})
 
 	// Phase 2: script 07 — upgrade 1.4.4 → 1.5.1. Final Phase 2 script.
 	MustRun(t, "07_UpgradeTo1_5_1", func(t *testing.T) {
+		t.Helper()
 		runUpgrade144To151(t, state)
 	})
 
 	// Phase 1: scripts 08 and 09 — chain state from 07 enables these to run.
 	MustRun(t, "08_UpgradeTo1_5_2", func(t *testing.T) {
+		t.Helper()
 		runUpgrade151To152(t, state)
 	})
 
 	MustRun(t, "09_UpgradeTo1_6_0", func(t *testing.T) {
+		t.Helper()
 		runUpgrade152To160(t, state)
 	})
 
 	// Phase 4: script 10 — build master image, upgrade 1.6 → master.
 	MustRun(t, "10_UpgradeTo_Master", func(t *testing.T) {
+		t.Helper()
 		runUpgrade160ToMaster(t, state)
 	})
 
 	// Phase 4: script 11 — fresh observer joins post-upgrade chain and
 	// catches up through cosmovisor.
 	MustRun(t, "11_AddNewNodeAfterUpgrade", func(t *testing.T) {
+		t.Helper()
 		runAddNewNodeAfterUpgrade(t, state)
 	})
 }

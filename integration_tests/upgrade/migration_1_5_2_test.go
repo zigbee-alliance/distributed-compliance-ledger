@@ -57,6 +57,7 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 
 	MustRun(t, "VerifyPreservedModels", func(t *testing.T) {
+		t.Helper()
 		out, err := ExecuteCLIWithBin(dcldNew,
 			"query", "model", "get-model",
 			"--vid", fmt.Sprintf("%d", state.VIDFor1_5_1),
@@ -83,6 +84,7 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "VerifyUpdatedModelFromScript1", func(t *testing.T) {
+		t.Helper()
 		out, err := ExecuteCLIWithBin(dcldNew,
 			"query", "model", "get-model",
 			"--vid", fmt.Sprintf("%d", state.VID),
@@ -96,6 +98,7 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "VerifyModelVersionPreserved", func(t *testing.T) {
+		t.Helper()
 		out, err := ExecuteCLIWithBin(dcldNew,
 			"query", "model", "model-version",
 			"--vid", fmt.Sprintf("%d", state.VID),
@@ -112,6 +115,7 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "VerifyAllModelsListings", func(t *testing.T) {
+		t.Helper()
 		out, err := ExecuteCLIWithBin(dcldNew, "query", "model", "all-models")
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", state.VIDFor1_5_1)
@@ -152,12 +156,14 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 
 	MustRun(t, "CreateVendor_1_5_2", func(t *testing.T) {
+		t.Helper()
 		_ = CreateAndApproveAccount(t, dcldNew, VendorAccountFor1_5_2, "Vendor",
 			VIDFor1_5_2, state.Trustee1,
 			[]string{state.Trustee2, state.Trustee3, state.Trustee4})
 	})
 
 	MustRun(t, "AddModelsAndVersions_1_5_2", func(t *testing.T) {
+		t.Helper()
 		// Add model (pid_1) with all new ICD/factory-reset fields.
 		txResult, err := ExecuteTxWithBin(dcldNew,
 			"tx", "model", "add-model",
@@ -285,6 +291,7 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "VerifyNewModels_1_5_2", func(t *testing.T) {
+		t.Helper()
 		out, err := ExecuteCLIWithBin(dcldNew,
 			"query", "model", "get-model",
 			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),

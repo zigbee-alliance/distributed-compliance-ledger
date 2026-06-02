@@ -48,6 +48,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 	// Verify carry-over data is intact under v1.4.4.
 	// ------------------------------------------------------------------
 	MustRun(t, "VerifyPreservedAcrossThreeEras", func(t *testing.T) {
+		t.Helper()
 		// Spot-check the three vendor-info records.
 		for _, vid := range []int{state.VID, VIDFor1_2, VIDFor1_4_3} {
 			out, qerr := ExecuteCLIWithBin(dcldNew,
@@ -87,6 +88,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "VerifyPreservedAccounts", func(t *testing.T) {
+		t.Helper()
 		out, err := ExecuteCLIWithBin(dcldNew, "query", "auth", "all-accounts")
 		require.NoError(t, err)
 		// Active accounts from all prior scripts.
@@ -140,6 +142,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 	// queries introduced in 1.4.x. NOC-side "Not Found" responses are run for
 	// coverage but not asserted on, since the bash treats them as informational.
 	MustRun(t, "VerifyPreservedListings_1_4_4", func(t *testing.T) {
+		t.Helper()
 		// VendorInfo: all-vendors across three eras.
 		out, err := ExecuteCLIWithBin(dcldNew, "query", "vendorinfo", "all-vendors")
 		require.NoError(t, err)
@@ -178,7 +181,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		require.NoError(t, err)
 		checkResponseContains(t, out, `"value":true`)
 
-		out, err = ExecuteCLIWithBin(dcldNew,
+		_, err = ExecuteCLIWithBin(dcldNew,
 			"query", "compliance", "revoked-model",
 			"--vid", fmt.Sprintf("%d", VIDFor1_4_3),
 			"--pid", fmt.Sprintf("%d", PID2For1_4_3),
@@ -187,7 +190,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		)
 		require.NoError(t, err)
 
-		out, err = ExecuteCLIWithBin(dcldNew,
+		_, err = ExecuteCLIWithBin(dcldNew,
 			"query", "compliance", "provisional-model",
 			"--vid", fmt.Sprintf("%d", state.VID),
 			"--pid", fmt.Sprintf("%d", pid3V012),
@@ -196,7 +199,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		)
 		require.NoError(t, err)
 
-		out, err = ExecuteCLIWithBin(dcldNew,
+		_, err = ExecuteCLIWithBin(dcldNew,
 			"query", "compliance", "compliance-info",
 			"--vid", fmt.Sprintf("%d", VIDFor1_4_3),
 			"--pid", fmt.Sprintf("%d", PID1For1_4_3),
@@ -220,7 +223,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		requireFieldEquals(t, out, "vid", VIDFor1_4_3)
 		requireFieldEquals(t, out, "pid", PID1For1_4_3)
 
-		out, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-provisional-models")
+		_, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-provisional-models")
 		require.NoError(t, err)
 
 		out, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-revoked-models")
@@ -228,7 +231,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		requireFieldEquals(t, out, "vid", VIDFor1_4_3)
 		requireFieldEquals(t, out, "pid", PID2For1_4_3)
 
-		out, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-compliance-info")
+		_, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-compliance-info")
 		require.NoError(t, err)
 
 		out, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-device-software-compliance")
@@ -257,13 +260,13 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 			checkResponseContains(t, out, c.subj)
 			checkResponseContains(t, out, c.kid)
 
-			out, err = ExecuteCLIWithBin(dcldNew,
+			_, err = ExecuteCLIWithBin(dcldNew,
 				"query", "pki", "all-subject-certs",
 				"--subject", c.subj,
 			)
 			require.NoError(t, err)
 
-			out, err = ExecuteCLIWithBin(dcldNew,
+			_, err = ExecuteCLIWithBin(dcldNew,
 				"query", "pki", "all-subject-x509-certs",
 				"--subject", c.subj,
 			)
@@ -335,7 +338,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		require.NoError(t, err)
 		checkResponseContains(t, out, IssuerSubjectKeyID)
 
-		out, err = ExecuteCLIWithBin(dcldNew,
+		_, err = ExecuteCLIWithBin(dcldNew,
 			"query", "pki", "revocation-points",
 			"--issuer-subject-key-id", IssuerSubjectKeyID,
 		)
@@ -386,16 +389,16 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		require.False(t, strings.Contains(string(out), NOCRootCert1SubjectKeyIDFor1_4_3),
 			"NOC root SKID lingered: %s", string(out))
 
-		out, err = ExecuteCLIWithBin(dcldNew,
+		_, err = ExecuteCLIWithBin(dcldNew,
 			"query", "pki", "noc-x509-root-certs",
 			"--vid", fmt.Sprintf("%d", VIDFor1_4_3),
 		)
 		require.NoError(t, err)
 
-		out, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-revoked-noc-x509-root-certs")
+		_, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-revoked-noc-x509-root-certs")
 		require.NoError(t, err)
 
-		out, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-revoked-noc-x509-ica-certs")
+		_, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-revoked-noc-x509-ica-certs")
 		require.NoError(t, err)
 
 		_, _ = ExecuteCLIWithBin(dcldNew,
@@ -416,12 +419,14 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 	// Post-upgrade: seed 1.4.4-era state.
 	// ------------------------------------------------------------------
 	MustRun(t, "CreateVendor_1_4_4", func(t *testing.T) {
+		t.Helper()
 		_ = CreateAndApproveAccount(t, dcldNew, VendorAccountFor1_4_4, "Vendor",
 			VIDFor1_4_4, state.Trustee1,
 			[]string{state.Trustee2, state.Trustee3, state.Trustee4})
 	})
 
 	MustRun(t, "AddPostUpgradeUserKeys", func(t *testing.T) {
+		t.Helper()
 		u10, err := newUserKey(dcldNew)
 		require.NoError(t, err)
 		u11, err := newUserKey(dcldNew)
@@ -434,6 +439,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "VendorInfoFor1_4_4", func(t *testing.T) {
+		t.Helper()
 		tx, err := ExecuteTxWithBin(dcldNew,
 			"tx", "vendorinfo", "add-vendor",
 			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
@@ -460,6 +466,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "ModelsAndVersionsFor1_4_4", func(t *testing.T) {
+		t.Helper()
 		for _, pid := range []int{PID1For1_4_4, PID2For1_4_4, PID3For1_4_4} {
 			tx, err := ExecuteTxWithBin(dcldNew,
 				"tx", "model", "add-model",
@@ -526,6 +533,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "ComplianceFor1_4_4", func(t *testing.T) {
+		t.Helper()
 		// certify pid_1
 		tx, err := ExecuteTxWithBin(dcldNew,
 			"tx", "compliance", "certify-model",
@@ -591,6 +599,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "PKIFor1_4_4_DARootCerts", func(t *testing.T) {
+		t.Helper()
 		tx, err := ExecuteTxWithBin(dcldNew,
 			"tx", "pki", "propose-add-x509-root-cert",
 			"--certificate", DARootCert1PathFor1_4_4,
@@ -712,6 +721,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "NOCCertsAddRevoke", func(t *testing.T) {
+		t.Helper()
 		// 1.4.4 introduces `revoke-noc-x509-{root,ica}-cert` (vs 1.4.3's
 		// `remove-noc-x509-*`). Add 2 root/ICA pairs, then revoke pair #1
 		// only — pair #2 stays active.
@@ -757,6 +767,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "RevocationPointsFor1_4_4", func(t *testing.T) {
+		t.Helper()
 		// add → update → delete → add (one active PAA revocation point at end).
 		addPAA := func(dataURL string) {
 			tx, err := ExecuteTxWithBin(dcldNew,
@@ -802,6 +813,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 	})
 
 	MustRun(t, "AccountFlowsFor1_4_4", func(t *testing.T) {
+		t.Helper()
 		approvers := []string{state.Trustee2, state.Trustee3, state.Trustee4}
 
 		proposeUserAccount(t, dcldNew, state.Trustee1, approvers,
@@ -817,6 +829,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 
 	// Validator disable/enable (lines 1189-1238) — Docker-dependent, stubbed.
 	MustRun(t, "ValidatorDisableEnableFlow", func(t *testing.T) {
+		t.Helper()
 		RunValidatorDisableEnableFlow(t, state, dcldNew,
 			[]string{state.Trustee2, state.Trustee3, state.Trustee4})
 	})
@@ -825,6 +838,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 	// Verify post-upgrade-seeded NEW data.
 	// ------------------------------------------------------------------
 	MustRun(t, "VerifyNew_1_4_4_Data", func(t *testing.T) {
+		t.Helper()
 		out, err := ExecuteCLIWithBin(dcldNew,
 			"query", "vendorinfo", "vendor",
 			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
