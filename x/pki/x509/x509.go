@@ -15,6 +15,7 @@
 package x509
 
 import (
+	"bytes"
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/hex"
@@ -24,7 +25,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"unicode"
 
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 )
@@ -179,16 +179,17 @@ func BytesToHex(bytes []byte) string {
 	return strings.Join(bytesHex, ":")
 }
 
-func RemoveWhitespaces(pem string) string {
-	var builder strings.Builder
-
-	for _, r := range pem {
-		if !unicode.IsSpace(r) {
-			builder.WriteRune(r)
-		}
+// CertificatePEMsEqual reports whether two PEM-encoded certificates contain the
+// same DER bytes. It tolerates differences in whitespace, line wrapping, and PEM
+// block headers, which are not part of the certificate itself.
+func CertificatePEMsEqual(a, b string) bool {
+	blockA, _ := pem.Decode([]byte(a))
+	blockB, _ := pem.Decode([]byte(b))
+	if blockA == nil || blockB == nil {
+		return false
 	}
 
-	return builder.String()
+	return bytes.Equal(blockA.Bytes, blockB.Bytes)
 }
 
 func (c Certificate) Verify(parent *Certificate, blockTime time.Time) error {
