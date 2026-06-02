@@ -284,13 +284,16 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 			checkResponseContains(t, out, cdID)
 		}
 
-		for _, q := range []string{
-			"all-certified-models", "all-provisional-models", "all-revoked-models",
-			"all-compliance-info", "all-device-software-compliance",
-		} {
-			_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "compliance", q)
-			require.NoError(t, err)
-		}
+		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "compliance", "all-certified-models")
+		require.NoError(t, err)
+		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "compliance", "all-provisional-models")
+		require.NoError(t, err)
+		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "compliance", "all-revoked-models")
+		require.NoError(t, err)
+		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "compliance", "all-compliance-info")
+		require.NoError(t, err)
+		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "compliance", "all-device-software-compliance")
+		require.NoError(t, err)
 
 		// ----- PKI single-record forms (global/DA/NOC) -----
 		for _, c := range []struct{ subj, kid string }{
@@ -344,14 +347,22 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 		)
 		require.NoError(t, err)
 
-		for _, q := range []string{
-			"all-certs", "all-x509-certs", "all-revoked-x509-certs", "all-revoked-x509-root-certs",
-			"all-noc-x509-certs", "all-revoked-noc-x509-root-certs", "all-revoked-noc-x509-ica-certs",
-			"all-revocation-points",
-		} {
-			_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "pki", q)
-			require.NoError(t, err)
-		}
+		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "pki", "all-certs")
+		require.NoError(t, err)
+		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "pki", "all-x509-certs")
+		require.NoError(t, err)
+		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "pki", "all-revoked-x509-certs")
+		require.NoError(t, err)
+		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "pki", "all-revoked-x509-root-certs")
+		require.NoError(t, err)
+		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "pki", "all-noc-x509-certs")
+		require.NoError(t, err)
+		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "pki", "all-revoked-noc-x509-root-certs")
+		require.NoError(t, err)
+		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "pki", "all-revoked-noc-x509-ica-certs")
+		require.NoError(t, err)
+		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "pki", "all-revocation-points")
+		require.NoError(t, err)
 
 		for _, subj := range []string{
 			RootCertWithVIDSubjectFor1_4_3, TestRootCertSubjectFor1_2, testRootCertSubject,
@@ -367,11 +378,11 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 			)
 		}
 
-		// ----- Validator -----
+		// ----- Validator (host-side) -----
 		if state.ValidatorAddress != "" {
-			nodesOut, derr := QueryAllValidatorNodes()
-			require.NoError(t, derr)
-			checkResponseContains(t, nodesOut, state.ValidatorAddress)
+			out, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "validator", "all-nodes")
+			require.NoError(t, err)
+			checkResponseContains(t, out, state.ValidatorAddress)
 		}
 	})
 

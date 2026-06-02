@@ -271,19 +271,19 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 		checkResponseContains(t, out, googleRootCertSubject)
 		checkResponseContains(t, out, googleRootCertSubjectKeyID)
 
-		// Validator queries inside validator-demo container — bash 03 lines
-		// 273-280 and 763-764. Gated on the container actually being live.
+		// Validator queries — bash 03 lines 273-280 and 763-764. Run host-side
+		// against the chain. Gated on the container being initialized.
 		if state.ValidatorAddress != "" {
-			proposedOut, derr := DockerExecShell(ValidatorDemoContainerName,
-				fmt.Sprintf(`echo test1234 | dcld query validator proposed-disable-node --address=%s`,
-					state.ValidatorAddress),
+			out, err = ExecuteCLIWithBin(dcldNew,
+				"query", "validator", "proposed-disable-node",
+				"--address", state.ValidatorAddress,
 			)
-			require.NoError(t, derr)
-			checkResponseContains(t, proposedOut, state.ValidatorAddress)
+			require.NoError(t, err)
+			checkResponseContains(t, out, state.ValidatorAddress)
 
-			nodesOut, derr := QueryAllValidatorNodes()
-			require.NoError(t, derr)
-			checkResponseContains(t, nodesOut, state.ValidatorAddress)
+			out, err = ExecuteCLIWithBin(dcldNew, "query", "validator", "all-nodes")
+			require.NoError(t, err)
+			checkResponseContains(t, out, state.ValidatorAddress)
 		}
 	})
 

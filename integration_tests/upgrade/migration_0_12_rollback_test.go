@@ -277,21 +277,20 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 		require.NoError(t, err)
 		checkResponseContains(t, out, state.User1Address)
 
-		// ----- Validator (queried from inside validator-demo container) -----
-		// Mirrors bash lines 271-280: `docker exec ... dcld query validator ...`.
-		// Skip silently if the validator-demo container wasn't initialized in
-		// this test run (state.ValidatorAddress stays empty in that path).
+		// ----- Validator (host-side queries against the chain) -----
+		// Mirrors bash lines 271-280. Skip silently if the validator-demo
+		// container wasn't initialized in this test run.
 		if state.ValidatorAddress != "" {
-			proposedOut, derr := DockerExecShell(ValidatorDemoContainerName,
-				fmt.Sprintf(`echo test1234 | dcld query validator proposed-disable-node --address=%s`,
-					state.ValidatorAddress),
+			out, err = ExecuteCLIWithBin(dcld,
+				"query", "validator", "proposed-disable-node",
+				"--address", state.ValidatorAddress,
 			)
-			require.NoError(t, derr)
-			checkResponseContains(t, proposedOut, state.ValidatorAddress)
+			require.NoError(t, err)
+			checkResponseContains(t, out, state.ValidatorAddress)
 
-			nodesOut, derr := QueryAllValidatorNodes()
-			require.NoError(t, derr)
-			checkResponseContains(t, nodesOut, state.ValidatorAddress)
+			out, err = ExecuteCLIWithBin(dcld, "query", "validator", "all-nodes")
+			require.NoError(t, err)
+			checkResponseContains(t, out, state.ValidatorAddress)
 		}
 	})
 

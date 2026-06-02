@@ -518,11 +518,11 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 			checkResponseContains(t, out, addr)
 		}
 
-		// ----- Validator -----
+		// ----- Validator (host-side) -----
 		if state.ValidatorAddress != "" {
-			nodesOut, derr := QueryAllValidatorNodes()
-			require.NoError(t, derr)
-			checkResponseContains(t, nodesOut, state.ValidatorAddress)
+			out, err = ExecuteCLIWithBin(dcld, "query", "validator", "all-nodes")
+			require.NoError(t, err)
+			checkResponseContains(t, out, state.ValidatorAddress)
 		}
 	})
 

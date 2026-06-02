@@ -415,6 +415,17 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 	// --- VALIDATOR_NODE --------------------------------------------
 	MustRun(t, "AddValidatorNode", func(t *testing.T) {
 		AddValidatorNode(t, state, dcld)
+
+		// Bash 01 line 85 checks `query validator last-power --address` once
+		// the validator has joined the pool — assert the new owner has a
+		// queryable last-power entry.
+		if state.ValidatorAddress != "" {
+			_, err := ExecuteCLIWithBin(dcld,
+				"query", "validator", "last-power",
+				"--address", state.ValidatorAddress,
+			)
+			require.NoError(t, err)
+		}
 	})
 
 	MustRun(t, "ValidatorDisableEnableFlow", func(t *testing.T) {

@@ -404,11 +404,11 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 			"--subject-key-id", NOCRootCert1SubjectKeyIDFor1_4_3,
 		)
 
-		// Validator.
+		// Validator (host-side).
 		if state.ValidatorAddress != "" {
-			nodesOut, derr := QueryAllValidatorNodes()
-			require.NoError(t, derr)
-			checkResponseContains(t, nodesOut, state.ValidatorAddress)
+			out, err = ExecuteCLIWithBin(dcldNew, "query", "validator", "all-nodes")
+			require.NoError(t, err)
+			checkResponseContains(t, out, state.ValidatorAddress)
 		}
 	})
 

@@ -459,11 +459,11 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 		checkResponseContains(t, out, TestRootCertSubjectFor1_2)
 		checkResponseContains(t, out, testRootCertSubject)
 
-		// ----- Validator -----
+		// ----- Validator (host-side) -----
 		if state.ValidatorAddress != "" {
-			nodesOut, derr := QueryAllValidatorNodes()
-			require.NoError(t, derr)
-			checkResponseContains(t, nodesOut, state.ValidatorAddress)
+			out, err = ExecuteCLIWithBin(dcldNew, "query", "validator", "all-nodes")
+			require.NoError(t, err)
+			checkResponseContains(t, out, state.ValidatorAddress)
 		}
 	})
 

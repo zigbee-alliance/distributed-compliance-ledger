@@ -224,13 +224,16 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 		}
 
 		// Compliance all-* listings.
-		for _, q := range []string{
-			"all-certified-models", "all-provisional-models", "all-revoked-models",
-			"all-compliance-info", "all-device-software-compliance",
-		} {
-			_, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", q)
-			require.NoError(t, err)
-		}
+		_, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-certified-models")
+		require.NoError(t, err)
+		_, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-provisional-models")
+		require.NoError(t, err)
+		_, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-revoked-models")
+		require.NoError(t, err)
+		_, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-compliance-info")
+		require.NoError(t, err)
+		_, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-device-software-compliance")
+		require.NoError(t, err)
 
 		// PKI single-record forms.
 		for _, c := range []struct{ subj, kid string }{
@@ -287,14 +290,22 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 		require.NoError(t, err)
 
 		// PKI all-* listings.
-		for _, q := range []string{
-			"all-certs", "all-x509-certs", "all-revoked-x509-certs", "all-revoked-x509-root-certs",
-			"all-noc-x509-certs", "all-revoked-noc-x509-root-certs", "all-revoked-noc-x509-ica-certs",
-			"all-revocation-points",
-		} {
-			_, err = ExecuteCLIWithBin(dcldNew, "query", "pki", q)
-			require.NoError(t, err)
-		}
+		_, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-certs")
+		require.NoError(t, err)
+		_, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-x509-certs")
+		require.NoError(t, err)
+		_, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-revoked-x509-certs")
+		require.NoError(t, err)
+		_, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-revoked-x509-root-certs")
+		require.NoError(t, err)
+		_, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-noc-x509-certs")
+		require.NoError(t, err)
+		_, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-revoked-noc-x509-root-certs")
+		require.NoError(t, err)
+		_, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-revoked-noc-x509-ica-certs")
+		require.NoError(t, err)
+		_, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-revocation-points")
+		require.NoError(t, err)
 
 		// Subject-based listings.
 		for _, c := range []struct{ subj string }{
@@ -313,11 +324,11 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 			)
 		}
 
-		// Validator.
+		// Validator (host-side).
 		if state.ValidatorAddress != "" {
-			nodesOut, derr := QueryAllValidatorNodes()
-			require.NoError(t, derr)
-			checkResponseContains(t, nodesOut, state.ValidatorAddress)
+			out, err = ExecuteCLIWithBin(dcldNew, "query", "validator", "all-nodes")
+			require.NoError(t, err)
+			checkResponseContains(t, out, state.ValidatorAddress)
 		}
 	})
 
