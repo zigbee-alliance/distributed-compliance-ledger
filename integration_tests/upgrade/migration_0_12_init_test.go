@@ -58,7 +58,9 @@ const (
 	googleRootCertSubject      = "MEsxCzAJBgNVBAYTAlVTMQ8wDQYDVQQKDAZHb29nbGUxFTATBgNVBAMMDE1hdHRlciBQQUEgMTEUMBIGCisGAQQBgqJ8AgEMBDYwMDY="
 	googleRootCertSubjectKeyID = "B0:00:56:81:B8:88:62:89:62:80:E1:21:18:A1:A8:BE:09:DE:93:21"
 
-	intermediateCertPath = "integration_tests/constants/intermediate_cert"
+	intermediateCertPath         = "integration_tests/constants/intermediate_cert"
+	intermediateCertSubject      = "MDwxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRgwFgYDVQQKDA9pbnRlcm1lZGlhdGUtY2E="
+	intermediateCertSubjectKeyID = "4E:3B:73:F4:70:4D:C2:98:0D:DB:C8:5A:5F:02:3B:BF:86:25:56:2B"
 )
 
 // runInitV0_12 is the Go translation of

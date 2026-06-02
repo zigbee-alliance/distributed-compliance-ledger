@@ -201,6 +201,92 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 		checkResponseContains(t, out, state.User1Address)
 	})
 
+	// Bulk `all-*` listings and pki / validator readbacks from bash 03 lines
+	// 180-280. These are gap-filling assertions that confirm script 01's
+	// state survives the v0.12 → v1.2 upgrade in aggregate form.
+	MustRun(t, "VerifyPreservedListings_1_2", func(t *testing.T) {
+		out, err := ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-certified-models")
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VID)
+		requireFieldEquals(t, out, "pid", pid1V012)
+
+		out, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-provisional-models")
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VID)
+		requireFieldEquals(t, out, "pid", pid3V012)
+
+		out, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-revoked-models")
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VID)
+		requireFieldEquals(t, out, "pid", state.PID2)
+
+		out, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-compliance-info")
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VID)
+		requireFieldEquals(t, out, "pid", pid1V012)
+		requireFieldEquals(t, out, "pid", state.PID2)
+
+		out, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-device-software-compliance")
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VID)
+		requireFieldEquals(t, out, "pid", pid1V012)
+		checkResponseContains(t, out, cdCertificateIDV012)
+
+		// PKI listings preserved from v0.12.
+		out, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-x509-root-certs")
+		require.NoError(t, err)
+		checkResponseContains(t, out, testRootCertSubject)
+		checkResponseContains(t, out, testRootCertSubjectKeyID)
+
+		out, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-revoked-x509-root-certs")
+		require.NoError(t, err)
+		checkResponseContains(t, out, rootCertSubject)
+		checkResponseContains(t, out, rootCertSubjectKeyID)
+
+		out, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-proposed-x509-root-certs")
+		require.NoError(t, err)
+		checkResponseContains(t, out, googleRootCertSubject)
+		checkResponseContains(t, out, googleRootCertSubjectKeyID)
+
+		out, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-proposed-x509-root-certs-to-revoke")
+		require.NoError(t, err)
+		checkResponseContains(t, out, testRootCertSubject)
+		checkResponseContains(t, out, testRootCertSubjectKeyID)
+
+		out, err = ExecuteCLIWithBin(dcldNew,
+			"query", "pki", "x509-cert",
+			"--subject", testRootCertSubject,
+			"--subject-key-id", testRootCertSubjectKeyID,
+		)
+		require.NoError(t, err)
+		checkResponseContains(t, out, testRootCertSubject)
+		checkResponseContains(t, out, testRootCertSubjectKeyID)
+
+		out, err = ExecuteCLIWithBin(dcldNew,
+			"query", "pki", "proposed-x509-root-cert",
+			"--subject", googleRootCertSubject,
+			"--subject-key-id", googleRootCertSubjectKeyID,
+		)
+		require.NoError(t, err)
+		checkResponseContains(t, out, googleRootCertSubject)
+		checkResponseContains(t, out, googleRootCertSubjectKeyID)
+
+		// Validator queries inside validator-demo container — bash 03 lines
+		// 273-280 and 763-764. Gated on the container actually being live.
+		if state.ValidatorAddress != "" {
+			proposedOut, derr := DockerExecShell(ValidatorDemoContainerName,
+				fmt.Sprintf(`echo test1234 | dcld query validator proposed-disable-node --address=%s`,
+					state.ValidatorAddress),
+			)
+			require.NoError(t, derr)
+			checkResponseContains(t, proposedOut, state.ValidatorAddress)
+
+			nodesOut, derr := QueryAllValidatorNodes()
+			require.NoError(t, derr)
+			checkResponseContains(t, nodesOut, state.ValidatorAddress)
+		}
+	})
+
 	// ------------------------------------------------------------------
 	// Post-upgrade: seed 1.2-era accounts, vendor info, models, compliance,
 	// PKI, revocation points, additional users.

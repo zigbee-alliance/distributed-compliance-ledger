@@ -123,6 +123,258 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 		checkResponseContains(t, out, PartNumberFor1_6_0)
 	})
 
+	// Bulk readback from bash 10. Adds gap-fill queries for auth (single+all),
+	// compliance (single+all), model bulk, pki (global/DA/NOC + revocation),
+	// vendorinfo all-vendors, and validator all-nodes.
+	MustRun(t, "VerifyPreservedListings_Master", func(t *testing.T) {
+		out, err := ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "vendorinfo", "all-vendors")
+		require.NoError(t, err)
+		for _, vid := range []int{state.VID, VIDFor1_2, VIDFor1_4_3, VIDFor1_4_4, state.VIDFor1_5_1} {
+			requireFieldEquals(t, out, "vendorID", vid)
+		}
+
+		// ----- Auth -----
+		out, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "auth", "all-accounts")
+		require.NoError(t, err)
+		for _, addr := range []string{
+			state.User2Address, state.User5Address, state.User8Address,
+			state.User11Address, state.User14Address,
+		} {
+			checkResponseContains(t, out, addr)
+		}
+
+		out, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "auth", "all-proposed-accounts")
+		require.NoError(t, err)
+		for _, addr := range []string{
+			state.User3Address, state.User6Address, state.User9Address,
+			state.User12Address, state.User15Address,
+		} {
+			checkResponseContains(t, out, addr)
+		}
+
+		out, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "auth", "all-proposed-accounts-to-revoke")
+		require.NoError(t, err)
+		for _, addr := range []string{
+			state.User2Address, state.User5Address, state.User8Address,
+			state.User11Address, state.User14Address,
+		} {
+			checkResponseContains(t, out, addr)
+		}
+
+		out, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "auth", "all-revoked-accounts")
+		require.NoError(t, err)
+		for _, addr := range []string{
+			state.User1Address, state.User4Address, state.User7Address,
+			state.User10Address, state.User13Address,
+		} {
+			checkResponseContains(t, out, addr)
+		}
+
+		for _, addr := range []string{
+			state.User2Address, state.User5Address, state.User8Address,
+			state.User11Address, state.User14Address,
+		} {
+			out, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
+				"query", "auth", "account", "--address", addr)
+			require.NoError(t, err)
+			checkResponseContains(t, out, addr)
+		}
+		for _, addr := range []string{
+			state.User3Address, state.User6Address, state.User9Address,
+			state.User12Address, state.User15Address,
+		} {
+			out, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
+				"query", "auth", "proposed-account", "--address", addr)
+			require.NoError(t, err)
+			checkResponseContains(t, out, addr)
+		}
+		for _, addr := range []string{
+			state.User2Address, state.User5Address, state.User8Address,
+			state.User11Address, state.User14Address,
+		} {
+			out, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
+				"query", "auth", "proposed-account-to-revoke", "--address", addr)
+			require.NoError(t, err)
+			checkResponseContains(t, out, addr)
+		}
+		for _, addr := range []string{
+			state.User1Address, state.User4Address, state.User7Address,
+			state.User10Address, state.User13Address,
+		} {
+			out, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
+				"query", "auth", "revoked-account", "--address", addr)
+			require.NoError(t, err)
+			checkResponseContains(t, out, addr)
+		}
+
+		// ----- Model bulk listings -----
+		out, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "model", "all-models")
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", VIDFor1_4_4)
+
+		for _, vid := range []int{state.VID, VIDFor1_2, VIDFor1_4_3, VIDFor1_4_4, state.VIDFor1_5_1, VIDFor1_5_2} {
+			_, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
+				"query", "model", "vendor-models",
+				"--vid", fmt.Sprintf("%d", vid),
+			)
+			require.NoError(t, err)
+		}
+
+		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
+			"query", "model", "all-model-versions",
+			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
+			"--pid", fmt.Sprintf("%d", PID1For1_4_4),
+		)
+		require.NoError(t, err)
+
+		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
+			"query", "model", "model-version",
+			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
+			"--pid", fmt.Sprintf("%d", PID1For1_4_4),
+			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_4_4),
+		)
+		require.NoError(t, err)
+
+		// ----- Compliance single-record + all-* listings -----
+		out, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
+			"query", "compliance", "certified-model",
+			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
+			"--pid", fmt.Sprintf("%d", PID1For1_4_4),
+			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_4_4),
+			"--certificationType", CertificationTypeFor1_4_4,
+		)
+		require.NoError(t, err)
+		checkResponseContains(t, out, `"value":true`)
+
+		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
+			"query", "compliance", "revoked-model",
+			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
+			"--pid", fmt.Sprintf("%d", PID2For1_4_4),
+			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_4_4),
+			"--certificationType", CertificationTypeFor1_4_4,
+		)
+		require.NoError(t, err)
+
+		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
+			"query", "compliance", "provisional-model",
+			"--vid", fmt.Sprintf("%d", state.VID),
+			"--pid", fmt.Sprintf("%d", pid3V012),
+			"--softwareVersion", fmt.Sprintf("%d", state.SoftwareVersion),
+			"--certificationType", certificationTypeV012,
+		)
+		require.NoError(t, err)
+
+		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
+			"query", "compliance", "compliance-info",
+			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
+			"--pid", fmt.Sprintf("%d", PID1For1_4_4),
+			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_4_4),
+			"--certificationType", CertificationTypeFor1_4_4,
+		)
+		require.NoError(t, err)
+
+		for _, cdID := range []string{
+			cdCertificateIDV012, CDCertificateIDFor1_2, CDCertificateIDFor1_4_3, CDCertificateIDFor1_4_4,
+		} {
+			out, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
+				"query", "compliance", "device-software-compliance",
+				"--cdCertificateId", cdID,
+			)
+			require.NoError(t, err)
+			checkResponseContains(t, out, cdID)
+		}
+
+		for _, q := range []string{
+			"all-certified-models", "all-provisional-models", "all-revoked-models",
+			"all-compliance-info", "all-device-software-compliance",
+		} {
+			_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "compliance", q)
+			require.NoError(t, err)
+		}
+
+		// ----- PKI single-record forms (global/DA/NOC) -----
+		for _, c := range []struct{ subj, kid string }{
+			{RootCertWithVIDSubjectFor1_4_3, RootCertWithVIDSubjectKeyIDFor1_4_3},
+			{TestRootCertSubjectFor1_2, TestRootCertSubjectKeyIDFor1_2},
+			{testRootCertSubject, testRootCertSubjectKeyID},
+		} {
+			out, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
+				"query", "pki", "cert",
+				"--subject", c.subj, "--subject-key-id", c.kid,
+			)
+			require.NoError(t, err)
+			checkResponseContains(t, out, c.subj)
+
+			out, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
+				"query", "pki", "x509-cert",
+				"--subject", c.subj, "--subject-key-id", c.kid,
+			)
+			require.NoError(t, err)
+			checkResponseContains(t, out, c.subj)
+
+			_, _ = ExecuteCLIWithBin(DcldMasterBinaryPath,
+				"query", "pki", "noc-x509-cert",
+				"--subject", c.subj, "--subject-key-id", c.kid,
+			)
+		}
+
+		_, _ = ExecuteCLIWithBin(DcldMasterBinaryPath,
+			"query", "pki", "revoked-x509-cert",
+			"--subject", IntermediateCertSubjectFor1_2,
+			"--subject-key-id", IntermediateCertSubjectKeyIDFor1_2,
+		)
+		_, _ = ExecuteCLIWithBin(DcldMasterBinaryPath,
+			"query", "pki", "revoked-noc-x509-root-cert",
+			"--subject", NOCRootCert1SubjectFor1_4_3,
+			"--subject-key-id", NOCRootCert1SubjectKeyIDFor1_4_3,
+		)
+
+		out, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
+			"query", "pki", "revocation-point",
+			"--vid", fmt.Sprintf("%d", VIDFor1_2),
+			"--label", ProductLabelFor1_2,
+			"--issuer-subject-key-id", IssuerSubjectKeyID,
+		)
+		require.NoError(t, err)
+		checkResponseContains(t, out, IssuerSubjectKeyID)
+
+		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
+			"query", "pki", "revocation-points",
+			"--issuer-subject-key-id", IssuerSubjectKeyID,
+		)
+		require.NoError(t, err)
+
+		for _, q := range []string{
+			"all-certs", "all-x509-certs", "all-revoked-x509-certs", "all-revoked-x509-root-certs",
+			"all-noc-x509-certs", "all-revoked-noc-x509-root-certs", "all-revoked-noc-x509-ica-certs",
+			"all-revocation-points",
+		} {
+			_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "pki", q)
+			require.NoError(t, err)
+		}
+
+		for _, subj := range []string{
+			RootCertWithVIDSubjectFor1_4_3, TestRootCertSubjectFor1_2, testRootCertSubject,
+		} {
+			_, _ = ExecuteCLIWithBin(DcldMasterBinaryPath,
+				"query", "pki", "all-subject-certs", "--subject", subj,
+			)
+			_, _ = ExecuteCLIWithBin(DcldMasterBinaryPath,
+				"query", "pki", "all-subject-x509-certs", "--subject", subj,
+			)
+			_, _ = ExecuteCLIWithBin(DcldMasterBinaryPath,
+				"query", "pki", "all-noc-subject-x509-certs", "--subject", subj,
+			)
+		}
+
+		// ----- Validator -----
+		if state.ValidatorAddress != "" {
+			nodesOut, derr := QueryAllValidatorNodes()
+			require.NoError(t, derr)
+			checkResponseContains(t, nodesOut, state.ValidatorAddress)
+		}
+	})
+
 	// ------------------------------------------------------------------
 	// Seed master-era state.
 	// ------------------------------------------------------------------

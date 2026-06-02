@@ -126,11 +126,18 @@ func AddValidatorNode(t *testing.T, state *UpgradeTestState, dcldHost string) {
 		require.Equal(t, uint32(0), tx.Code, "approve %s: %s", who, tx.RawLog)
 	}
 
-	// 9. Pre-add sanity check: pool should not yet know about this address.
+	// 9. Pre-add sanity check: pool should not yet know about this address —
+	// neither the `node` record nor a `last-power` entry should exist yet.
+	// Mirrors bash 01 lines 82-87.
 	out, _ := ExecuteCLIWithBin(dcldHost,
 		"query", "validator", "node", "--address", address)
 	require.True(t, strings.Contains(string(out), "Not Found"),
 		"validator node should not exist pre-add, got: %s", string(out))
+
+	out, _ = ExecuteCLIWithBin(dcldHost,
+		"query", "validator", "last-power", "--address", address)
+	require.True(t, strings.Contains(string(out), "Not Found"),
+		"validator last-power should not exist pre-add, got: %s", string(out))
 
 	// 10. Get the tendermint validator pubkey from inside the container.
 	vpubOut, err := DockerExec(ValidatorDemoContainerName,

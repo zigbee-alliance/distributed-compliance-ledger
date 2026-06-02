@@ -76,9 +76,11 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 	})
 
 	// ------------------------------------------------------------------
-	// Verify carry-over data from script 01 is intact.
+	// Verify carry-over data from script 01 is intact. Mirrors the
+	// post-rollback readback in 02-test-upgrade-0.12-rollback.sh lines 85-280.
 	// ------------------------------------------------------------------
 	MustRun(t, "VerifyPreservedV0_12", func(t *testing.T) {
+		// ----- VendorInfo -----
 		out, err := ExecuteCLIWithBin(dcld,
 			"query", "vendorinfo", "vendor",
 			"--vid", fmt.Sprintf("%d", state.VID),
@@ -86,8 +88,55 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vendorID", state.VID)
 		checkResponseContains(t, out, companyLegalNameV012)
+		checkResponseContains(t, out, vendorNameV012)
 
-		// Spot-check models and compliance.
+		out, err = ExecuteCLIWithBin(dcld, "query", "vendorinfo", "all-vendors")
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vendorID", state.VID)
+		checkResponseContains(t, out, companyLegalNameV012)
+		checkResponseContains(t, out, vendorNameV012)
+
+		// ----- Model -----
+		for _, pid := range []int{pid1V012, state.PID2} {
+			out, err = ExecuteCLIWithBin(dcld,
+				"query", "model", "get-model",
+				"--vid", fmt.Sprintf("%d", state.VID),
+				"--pid", fmt.Sprintf("%d", pid),
+			)
+			require.NoError(t, err)
+			requireFieldEquals(t, out, "vid", state.VID)
+			requireFieldEquals(t, out, "pid", pid)
+			checkResponseContains(t, out, state.ProductLabel)
+		}
+
+		out, err = ExecuteCLIWithBin(dcld, "query", "model", "all-models")
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VID)
+		requireFieldEquals(t, out, "pid", pid1V012)
+		requireFieldEquals(t, out, "pid", state.PID2)
+
+		out, err = ExecuteCLIWithBin(dcld,
+			"query", "model", "vendor-models",
+			"--vid", fmt.Sprintf("%d", state.VID),
+		)
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "pid", pid1V012)
+		requireFieldEquals(t, out, "pid", state.PID2)
+
+		for _, pid := range []int{pid1V012, state.PID2} {
+			out, err = ExecuteCLIWithBin(dcld,
+				"query", "model", "model-version",
+				"--vid", fmt.Sprintf("%d", state.VID),
+				"--pid", fmt.Sprintf("%d", pid),
+				"--softwareVersion", fmt.Sprintf("%d", state.SoftwareVersion),
+			)
+			require.NoError(t, err)
+			requireFieldEquals(t, out, "vid", state.VID)
+			requireFieldEquals(t, out, "pid", pid)
+			requireFieldEquals(t, out, "softwareVersion", state.SoftwareVersion)
+		}
+
+		// ----- Compliance -----
 		out, err = ExecuteCLIWithBin(dcld,
 			"query", "compliance", "certified-model",
 			"--vid", fmt.Sprintf("%d", state.VID),
@@ -97,10 +146,153 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 		)
 		require.NoError(t, err)
 		checkResponseContains(t, out, `"value":true`)
+		requireFieldEquals(t, out, "vid", state.VID)
+		requireFieldEquals(t, out, "pid", pid1V012)
+
+		out, err = ExecuteCLIWithBin(dcld,
+			"query", "compliance", "revoked-model",
+			"--vid", fmt.Sprintf("%d", state.VID),
+			"--pid", fmt.Sprintf("%d", state.PID2),
+			"--softwareVersion", fmt.Sprintf("%d", state.SoftwareVersion),
+			"--certificationType", certificationTypeV012,
+		)
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VID)
+		requireFieldEquals(t, out, "pid", state.PID2)
+
+		out, err = ExecuteCLIWithBin(dcld,
+			"query", "compliance", "provisional-model",
+			"--vid", fmt.Sprintf("%d", state.VID),
+			"--pid", fmt.Sprintf("%d", pid3V012),
+			"--softwareVersion", fmt.Sprintf("%d", state.SoftwareVersion),
+			"--certificationType", certificationTypeV012,
+		)
+		require.NoError(t, err)
+		checkResponseContains(t, out, `"value":true`)
+		requireFieldEquals(t, out, "vid", state.VID)
+		requireFieldEquals(t, out, "pid", pid3V012)
+
+		for _, pid := range []int{pid1V012, state.PID2} {
+			out, err = ExecuteCLIWithBin(dcld,
+				"query", "compliance", "compliance-info",
+				"--vid", fmt.Sprintf("%d", state.VID),
+				"--pid", fmt.Sprintf("%d", pid),
+				"--softwareVersion", fmt.Sprintf("%d", state.SoftwareVersion),
+				"--certificationType", certificationTypeV012,
+			)
+			require.NoError(t, err)
+			requireFieldEquals(t, out, "vid", state.VID)
+			requireFieldEquals(t, out, "pid", pid)
+			requireFieldEquals(t, out, "softwareVersion", state.SoftwareVersion)
+		}
+
+		out, err = ExecuteCLIWithBin(dcld,
+			"query", "compliance", "device-software-compliance",
+			"--cdCertificateId", cdCertificateIDV012,
+		)
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VID)
+		requireFieldEquals(t, out, "pid", pid1V012)
+
+		out, err = ExecuteCLIWithBin(dcld, "query", "compliance", "all-certified-models")
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VID)
+		requireFieldEquals(t, out, "pid", pid1V012)
+
+		out, err = ExecuteCLIWithBin(dcld, "query", "compliance", "all-provisional-models")
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VID)
+		requireFieldEquals(t, out, "pid", pid3V012)
+
+		out, err = ExecuteCLIWithBin(dcld, "query", "compliance", "all-revoked-models")
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VID)
+		requireFieldEquals(t, out, "pid", state.PID2)
+
+		out, err = ExecuteCLIWithBin(dcld, "query", "compliance", "all-compliance-info")
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VID)
+		requireFieldEquals(t, out, "pid", pid1V012)
+		requireFieldEquals(t, out, "pid", state.PID2)
+
+		out, err = ExecuteCLIWithBin(dcld, "query", "compliance", "all-device-software-compliance")
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VID)
+		requireFieldEquals(t, out, "pid", pid1V012)
+		checkResponseContains(t, out, cdCertificateIDV012)
+
+		// ----- PKI -----
+		out, err = ExecuteCLIWithBin(dcld, "query", "pki", "all-x509-root-certs")
+		require.NoError(t, err)
+		checkResponseContains(t, out, testRootCertSubject)
+		checkResponseContains(t, out, testRootCertSubjectKeyID)
+
+		out, err = ExecuteCLIWithBin(dcld, "query", "pki", "all-revoked-x509-root-certs")
+		require.NoError(t, err)
+		checkResponseContains(t, out, rootCertSubject)
+		checkResponseContains(t, out, rootCertSubjectKeyID)
+
+		out, err = ExecuteCLIWithBin(dcld, "query", "pki", "all-proposed-x509-root-certs")
+		require.NoError(t, err)
+		checkResponseContains(t, out, googleRootCertSubject)
+		checkResponseContains(t, out, googleRootCertSubjectKeyID)
+
+		out, err = ExecuteCLIWithBin(dcld, "query", "pki", "all-proposed-x509-root-certs-to-revoke")
+		require.NoError(t, err)
+		checkResponseContains(t, out, testRootCertSubject)
+		checkResponseContains(t, out, testRootCertSubjectKeyID)
+
+		out, err = ExecuteCLIWithBin(dcld,
+			"query", "pki", "x509-cert",
+			"--subject", testRootCertSubject,
+			"--subject-key-id", testRootCertSubjectKeyID,
+		)
+		require.NoError(t, err)
+		checkResponseContains(t, out, testRootCertSubject)
+		checkResponseContains(t, out, testRootCertSubjectKeyID)
+
+		out, err = ExecuteCLIWithBin(dcld,
+			"query", "pki", "proposed-x509-root-cert",
+			"--subject", googleRootCertSubject,
+			"--subject-key-id", googleRootCertSubjectKeyID,
+		)
+		require.NoError(t, err)
+		checkResponseContains(t, out, googleRootCertSubject)
+		checkResponseContains(t, out, googleRootCertSubjectKeyID)
+
+		// ----- Auth -----
+		out, err = ExecuteCLIWithBin(dcld, "query", "auth", "all-accounts")
+		require.NoError(t, err)
+		checkResponseContains(t, out, state.User2Address)
+
+		out, err = ExecuteCLIWithBin(dcld, "query", "auth", "all-proposed-accounts")
+		require.NoError(t, err)
+		checkResponseContains(t, out, state.User3Address)
+
+		out, err = ExecuteCLIWithBin(dcld, "query", "auth", "all-proposed-accounts-to-revoke")
+		require.NoError(t, err)
+		checkResponseContains(t, out, state.User2Address)
 
 		out, err = ExecuteCLIWithBin(dcld, "query", "auth", "all-revoked-accounts")
 		require.NoError(t, err)
-		checkResponseContains(t, out, state.User1Address) // revoked in 01
+		checkResponseContains(t, out, state.User1Address)
+
+		// ----- Validator (queried from inside validator-demo container) -----
+		// Mirrors bash lines 271-280: `docker exec ... dcld query validator ...`.
+		// Skip silently if the validator-demo container wasn't initialized in
+		// this test run (state.ValidatorAddress stays empty in that path).
+		if state.ValidatorAddress != "" {
+			proposedOut, derr := DockerExecShell(ValidatorDemoContainerName,
+				fmt.Sprintf(`echo test1234 | dcld query validator proposed-disable-node --address=%s`,
+					state.ValidatorAddress),
+			)
+			require.NoError(t, derr)
+			checkResponseContains(t, proposedOut, state.ValidatorAddress)
+
+			nodesOut, derr := QueryAllValidatorNodes()
+			require.NoError(t, derr)
+			checkResponseContains(t, nodesOut, state.ValidatorAddress)
+		}
 	})
 
 	// ------------------------------------------------------------------

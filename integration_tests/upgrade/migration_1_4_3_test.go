@@ -230,6 +230,241 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 		require.NoError(t, err)
 		checkResponseContains(t, out, state.User1Address) // revoked in 01
 		checkResponseContains(t, out, state.User4Address) // revoked in 03
+
+		// Single-record account variants from bash 05 lines 449-486.
+		for _, addr := range []string{state.User5Address, state.User2Address} {
+			out, err = ExecuteCLIWithBin(dcldNew, "query", "auth", "account", "--address", addr)
+			require.NoError(t, err)
+			checkResponseContains(t, out, addr)
+		}
+		for _, addr := range []string{state.User6Address, state.User3Address} {
+			out, err = ExecuteCLIWithBin(dcldNew, "query", "auth", "proposed-account", "--address", addr)
+			require.NoError(t, err)
+			checkResponseContains(t, out, addr)
+		}
+		for _, addr := range []string{state.User5Address, state.User2Address} {
+			out, err = ExecuteCLIWithBin(dcldNew, "query", "auth", "proposed-account-to-revoke", "--address", addr)
+			require.NoError(t, err)
+			checkResponseContains(t, out, addr)
+		}
+		for _, addr := range []string{state.User4Address, state.User1Address} {
+			out, err = ExecuteCLIWithBin(dcldNew, "query", "auth", "revoked-account", "--address", addr)
+			require.NoError(t, err)
+			checkResponseContains(t, out, addr)
+		}
+	})
+
+	// Bulk readback from bash 05 lines 219-454. Adds the gap-fill queries
+	// covering compliance/PKI/model listings and the remaining single-record
+	// pki/compliance forms not exercised by the blocks above.
+	MustRun(t, "VerifyPreservedListings_1_4_3", func(t *testing.T) {
+		// ----- Model bulk listings -----
+		out, err := ExecuteCLIWithBin(dcldNew, "query", "model", "all-models")
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VID)
+		requireFieldEquals(t, out, "pid", pid1V012)
+		requireFieldEquals(t, out, "pid", state.PID2)
+		requireFieldEquals(t, out, "vid", VIDFor1_2)
+		requireFieldEquals(t, out, "pid", PID1For1_2)
+		requireFieldEquals(t, out, "pid", PID2For1_2)
+
+		for _, vid := range []int{state.VID, VIDFor1_2} {
+			out, err = ExecuteCLIWithBin(dcldNew,
+				"query", "model", "vendor-models",
+				"--vid", fmt.Sprintf("%d", vid),
+			)
+			require.NoError(t, err)
+		}
+
+		out, err = ExecuteCLIWithBin(dcldNew,
+			"query", "model", "all-model-versions",
+			"--vid", fmt.Sprintf("%d", VIDFor1_2),
+			"--pid", fmt.Sprintf("%d", PID1For1_2),
+		)
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", VIDFor1_2)
+		requireFieldEquals(t, out, "pid", PID1For1_2)
+
+		// ----- Compliance: single-record forms not covered by VerifyPreservedCompliance -----
+		out, err = ExecuteCLIWithBin(dcldNew,
+			"query", "compliance", "provisional-model",
+			"--vid", fmt.Sprintf("%d", state.VID),
+			"--pid", fmt.Sprintf("%d", pid3V012),
+			"--softwareVersion", fmt.Sprintf("%d", state.SoftwareVersion),
+			"--certificationType", certificationTypeV012,
+		)
+		require.NoError(t, err)
+		checkResponseContains(t, out, `"value":true`)
+
+		for _, pid := range []int{pid1V012, state.PID2} {
+			out, err = ExecuteCLIWithBin(dcldNew,
+				"query", "compliance", "compliance-info",
+				"--vid", fmt.Sprintf("%d", state.VID),
+				"--pid", fmt.Sprintf("%d", pid),
+				"--softwareVersion", fmt.Sprintf("%d", state.SoftwareVersion),
+				"--certificationType", certificationTypeV012,
+			)
+			require.NoError(t, err)
+			requireFieldEquals(t, out, "vid", state.VID)
+			requireFieldEquals(t, out, "pid", pid)
+		}
+		for _, pid := range []int{PID1For1_2, PID2For1_2} {
+			out, err = ExecuteCLIWithBin(dcldNew,
+				"query", "compliance", "compliance-info",
+				"--vid", fmt.Sprintf("%d", VIDFor1_2),
+				"--pid", fmt.Sprintf("%d", pid),
+				"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_2),
+				"--certificationType", CertificationTypeFor1_2,
+			)
+			require.NoError(t, err)
+			requireFieldEquals(t, out, "vid", VIDFor1_2)
+			requireFieldEquals(t, out, "pid", pid)
+		}
+
+		for _, cdID := range []string{cdCertificateIDV012, CDCertificateIDFor1_2} {
+			out, err = ExecuteCLIWithBin(dcldNew,
+				"query", "compliance", "device-software-compliance",
+				"--cdCertificateId", cdID,
+			)
+			require.NoError(t, err)
+			checkResponseContains(t, out, cdID)
+		}
+
+		// Compliance all-* listings.
+		out, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-certified-models")
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VID)
+		requireFieldEquals(t, out, "pid", pid1V012)
+		requireFieldEquals(t, out, "vid", VIDFor1_2)
+		requireFieldEquals(t, out, "pid", PID1For1_2)
+
+		out, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-provisional-models")
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VID)
+		requireFieldEquals(t, out, "pid", pid3V012)
+
+		out, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-revoked-models")
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VID)
+		requireFieldEquals(t, out, "pid", state.PID2)
+		requireFieldEquals(t, out, "vid", VIDFor1_2)
+		requireFieldEquals(t, out, "pid", PID2For1_2)
+
+		out, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-compliance-info")
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", state.VID)
+		requireFieldEquals(t, out, "vid", VIDFor1_2)
+
+		out, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-device-software-compliance")
+		require.NoError(t, err)
+		checkResponseContains(t, out, cdCertificateIDV012)
+		checkResponseContains(t, out, CDCertificateIDFor1_2)
+
+		// ----- PKI single-record + listings -----
+		for _, c := range []struct{ subj, kid string }{
+			{TestRootCertSubjectFor1_2, TestRootCertSubjectKeyIDFor1_2},
+			{testRootCertSubject, testRootCertSubjectKeyID},
+		} {
+			out, err = ExecuteCLIWithBin(dcldNew,
+				"query", "pki", "x509-cert",
+				"--subject", c.subj, "--subject-key-id", c.kid,
+			)
+			require.NoError(t, err)
+			checkResponseContains(t, out, c.subj)
+			checkResponseContains(t, out, c.kid)
+
+			out, err = ExecuteCLIWithBin(dcldNew,
+				"query", "pki", "all-subject-x509-certs",
+				"--subject", c.subj,
+			)
+			require.NoError(t, err)
+			checkResponseContains(t, out, c.subj)
+			checkResponseContains(t, out, c.kid)
+
+			out, err = ExecuteCLIWithBin(dcldNew,
+				"query", "pki", "proposed-x509-root-cert-to-revoke",
+				"--subject", c.subj, "--subject-key-id", c.kid,
+			)
+			require.NoError(t, err)
+			checkResponseContains(t, out, c.subj)
+			checkResponseContains(t, out, c.kid)
+		}
+
+		for _, c := range []struct{ subj, kid string }{
+			{GoogleRootCertSubjectFor1_2, GoogleRootCertSubjectKeyIDFor1_2},
+			{googleRootCertSubject, googleRootCertSubjectKeyID},
+		} {
+			out, err = ExecuteCLIWithBin(dcldNew,
+				"query", "pki", "proposed-x509-root-cert",
+				"--subject", c.subj, "--subject-key-id", c.kid,
+			)
+			require.NoError(t, err)
+			checkResponseContains(t, out, c.subj)
+			checkResponseContains(t, out, c.kid)
+		}
+
+		for _, c := range []struct{ subj, kid string }{
+			{IntermediateCertSubjectFor1_2, IntermediateCertSubjectKeyIDFor1_2},
+			{intermediateCertSubject, intermediateCertSubjectKeyID},
+		} {
+			out, err = ExecuteCLIWithBin(dcldNew,
+				"query", "pki", "revoked-x509-cert",
+				"--subject", c.subj, "--subject-key-id", c.kid,
+			)
+			require.NoError(t, err)
+			checkResponseContains(t, out, c.subj)
+			checkResponseContains(t, out, c.kid)
+		}
+
+		// Revocation points (single + by-issuer + all).
+		out, err = ExecuteCLIWithBin(dcldNew,
+			"query", "pki", "revocation-point",
+			"--vid", fmt.Sprintf("%d", VIDFor1_2),
+			"--label", ProductLabelFor1_2,
+			"--issuer-subject-key-id", IssuerSubjectKeyID,
+		)
+		require.NoError(t, err)
+		checkResponseContains(t, out, IssuerSubjectKeyID)
+		checkResponseContains(t, out, ProductLabelFor1_2)
+
+		out, err = ExecuteCLIWithBin(dcldNew,
+			"query", "pki", "revocation-points",
+			"--issuer-subject-key-id", IssuerSubjectKeyID,
+		)
+		require.NoError(t, err)
+		checkResponseContains(t, out, IssuerSubjectKeyID)
+
+		out, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-revocation-points")
+		require.NoError(t, err)
+		checkResponseContains(t, out, IssuerSubjectKeyID)
+
+		// PKI all-* listings.
+		out, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-proposed-x509-root-certs")
+		require.NoError(t, err)
+		checkResponseContains(t, out, GoogleRootCertSubjectFor1_2)
+		checkResponseContains(t, out, googleRootCertSubject)
+
+		out, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-revoked-x509-root-certs")
+		require.NoError(t, err)
+		checkResponseContains(t, out, RootCertSubjectFor1_2)
+		checkResponseContains(t, out, rootCertSubject)
+
+		out, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-proposed-x509-root-certs-to-revoke")
+		require.NoError(t, err)
+		checkResponseContains(t, out, TestRootCertSubjectFor1_2)
+		checkResponseContains(t, out, testRootCertSubject)
+
+		out, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-x509-certs")
+		require.NoError(t, err)
+		checkResponseContains(t, out, TestRootCertSubjectFor1_2)
+		checkResponseContains(t, out, testRootCertSubject)
+
+		// ----- Validator -----
+		if state.ValidatorAddress != "" {
+			nodesOut, derr := QueryAllValidatorNodes()
+			require.NoError(t, derr)
+			checkResponseContains(t, nodesOut, state.ValidatorAddress)
+		}
 	})
 
 	// ------------------------------------------------------------------

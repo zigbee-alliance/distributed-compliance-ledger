@@ -152,6 +152,21 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 		requireFieldEquals(t, out, "pid", state.PID2)
 		requireFieldEquals(t, out, "minApplicableSoftwareVersion", MinApplicableSoftwareVersionFor1_5_2)
 		requireFieldEquals(t, out, "maxApplicableSoftwareVersion", MaxApplicableSoftwareVersionFor1_5_2)
+
+		// Bulk model listings — bash 09 gap-fill (all-models + vendor-models).
+		out, err = ExecuteCLIWithBin(dcldNew, "query", "model", "all-models")
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", VIDFor1_5_2)
+		requireFieldEquals(t, out, "pid", PID1For1_5_2)
+		requireFieldEquals(t, out, "pid", PID2For1_5_2)
+
+		out, err = ExecuteCLIWithBin(dcldNew,
+			"query", "model", "vendor-models",
+			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),
+		)
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "pid", PID1For1_5_2)
+		requireFieldEquals(t, out, "pid", PID2For1_5_2)
 	})
 
 	// ------------------------------------------------------------------
