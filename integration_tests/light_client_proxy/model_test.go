@@ -137,7 +137,12 @@ func TestLightClientProxyModel(t *testing.T) {
 		assertContains(t, out, fmt.Sprintf("%d", vid), "model-version.vid")
 		assertContains(t, out, fmt.Sprintf("%d", pid), "model-version.pid")
 		assertContains(t, out, fmt.Sprintf("%d", sv), "model-version.softwareVersion")
-		assertContains(t, out, `"softwareVersionString": "1"`, "model-version.softwareVersionString")
+		// Accept both legacy spaced and master-binary compact JSON forms.
+		// containsAnyLocal handles the same legacy-vs-compact split we see
+		// across the upgrade suite's mixed-binary queries.
+		require.True(t,
+			containsAnyLocal(out, `"softwareVersionString": "1"`, `"softwareVersionString":"1"`),
+			"expected softwareVersionString=%q, got: %s", "1", string(out))
 		require.True(t,
 			containsAnyLocal(out, `"softwareVersionValid": true`, `"softwareVersionValid":true`),
 			"expected softwareVersionValid=true, got: %s", string(out))
