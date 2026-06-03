@@ -119,22 +119,15 @@ func TestLightClientProxyModel(t *testing.T) {
 	})
 
 	// 4. Proxy now serves the new records. (model.sh lines 104-140)
-	//    First read polls through the proxy's post-write sync window
-	//    (bash sleeps 5; we poll up to 30s); subsequent queries reuse the
-	//    now-synced state.
+	//    The proxy syncs headers monotonically, so we warm up by polling the
+	//    *latest* write (add-model-version) until visible — once that's
+	//    visible, every earlier write (add-model) is guaranteed visible too.
+	//    Polling on the first write (get-model) here would race
+	//    add-model-version which lands in a later block. Bash sleeps 5; we
+	//    poll up to 30s.
 	mustRun(t, "Found_AfterAdd", func(t *testing.T) {
 		t.Helper()
-		out, qerr := queryUntilContains(LightClientProxyAddr, productLabel,
-			"query", "model", "get-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-		)
-		require.NoError(t, qerr)
-		assertContains(t, out, fmt.Sprintf("%d", vid), "get-model.vid")
-		assertContains(t, out, fmt.Sprintf("%d", pid), "get-model.pid")
-		assertContains(t, out, productLabel, "get-model.productLabel")
-
-		out, qerr = queryWithRetry(LightClientProxyAddr,
+		out, qerr := queryUntilContains(LightClientProxyAddr, fmt.Sprintf("%d", sv),
 			"query", "model", "model-version",
 			"--vid", fmt.Sprintf("%d", vid),
 			"--pid", fmt.Sprintf("%d", pid),
@@ -148,6 +141,16 @@ func TestLightClientProxyModel(t *testing.T) {
 		require.True(t,
 			containsAnyLocal(out, `"softwareVersionValid": true`, `"softwareVersionValid":true`),
 			"expected softwareVersionValid=true, got: %s", string(out))
+
+		out, qerr = queryWithRetry(LightClientProxyAddr,
+			"query", "model", "get-model",
+			"--vid", fmt.Sprintf("%d", vid),
+			"--pid", fmt.Sprintf("%d", pid),
+		)
+		require.NoError(t, qerr)
+		assertContains(t, out, fmt.Sprintf("%d", vid), "get-model.vid")
+		assertContains(t, out, fmt.Sprintf("%d", pid), "get-model.pid")
+		assertContains(t, out, productLabel, "get-model.productLabel")
 
 		out, qerr = queryWithRetry(LightClientProxyAddr,
 			"query", "model", "vendor-models",

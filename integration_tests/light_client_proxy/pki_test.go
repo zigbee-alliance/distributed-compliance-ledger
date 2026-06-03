@@ -181,12 +181,20 @@ func TestLightClientProxyPKI(t *testing.T) {
 	})
 
 	// 4. Proxy now serves the cert chain. (pki.sh lines 210-255)
-	//    First read polls through the proxy's post-write sync window
-	//    (bash sleeps 5; we poll up to 30s); subsequent queries reuse the
-	//    now-synced state.
+	//    Warm up by polling the *latest* write (propose-revoke-x509-root-cert,
+	//    visible as proposed-x509-root-cert-to-revoke). Once that's visible
+	//    every earlier write — root cert, intermediate, leaf, leaf revocation —
+	//    is guaranteed visible too. Bash sleeps 5; we poll up to 30s.
 	mustRun(t, "Found_AfterSeed", func(t *testing.T) {
 		t.Helper()
-		out, qerr := queryUntilContains(LightClientProxyAddr, pkiRootCertSerialNumber,
+		_, qerr := queryUntilContains(LightClientProxyAddr, pkiRootCertSubjectKeyID,
+			"query", "pki", "proposed-x509-root-cert-to-revoke",
+			"--subject", pkiRootCertSubject,
+			"--subject-key-id", pkiRootCertSubjectKeyID,
+		)
+		require.NoError(t, qerr)
+
+		out, qerr := queryWithRetry(LightClientProxyAddr,
 			"query", "pki", "x509-cert",
 			"--subject", pkiRootCertSubject,
 			"--subject-key-id", pkiRootCertSubjectKeyID,
