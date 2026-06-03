@@ -175,7 +175,12 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "light" ]]; then
 
   dcld config keyring-backend test
 
-  if RUN_LIGHT_GO=1 go test -count=1 -timeout 30m -v ./integration_tests/light_client_proxy/... &>${DETAILED_OUTPUT_TARGET}; then
+  # -failfast halts the whole `go test` invocation at the first failing
+  # subtest. Each TestLightClientProxy<Module> mirrors the bash one-pool-per-
+  # script isolation contract, so once one test trips up there's no value in
+  # running the remaining four against a likely-broken localnet — and the
+  # extra failures just clutter the log.
+  if RUN_LIGHT_GO=1 go test -count=1 -failfast -timeout 30m -v ./integration_tests/light_client_proxy/... &>${DETAILED_OUTPUT_TARGET}; then
     log "light_client_proxy finished successfully"
   else
     log "light_client_proxy failed"

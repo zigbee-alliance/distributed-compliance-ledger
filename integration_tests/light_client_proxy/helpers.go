@@ -41,10 +41,14 @@ const (
 
 	// Bash light_client_proxy/auth.sh wraps every read in execute_with_retry
 	// "EOF". The proxy hits "EOF" while warming up; the bash retries 10x with
-	// 2s sleeps. queryWithRetry mirrors that.
-	queryRetryAttempts = 10
+	// 2s sleeps. queryWithRetry mirrors that — and additionally retries on the
+	// transport-level errors a cold proxy emits before its `cosmovisor run
+	// light dclchain` command finishes verifying trust headers and binds the
+	// 26620 port: "connection reset by peer", "connection refused", and
+	// "i/o timeout". Without these, the first query of a fresh localnet
+	// races the proxy startup and fails before it ever gets a chance.
+	queryRetryAttempts = 15
 	queryRetryDelay    = 2 * time.Second
-	queryRetryToken    = "EOF"
 
 	// listQueryRejection / writeRejection are the user-facing payloads the
 	// proxy returns when it refuses to serve. Asserting on them ties the
@@ -98,15 +102,27 @@ func queryWithRetry(node string, args ...string) ([]byte, error) {
 	return out, err
 }
 
-// needsRetry reports whether queryWithRetry should try again. The bash logic
-// is "retry while raw response contains EOF"; we also retry on subprocess
-// errors that surface the same token in the wrapped stderr.
+// needsRetry reports whether queryWithRetry should try again. Extends the
+// bash `execute_with_retry "EOF"` contract with the transport-level errors
+// the proxy emits during its cold-start window.
 func needsRetry(out []byte, err error) bool {
-	if err != nil && strings.Contains(err.Error(), queryRetryToken) {
-		return true
+	body := string(out)
+	if err != nil {
+		body += " " + err.Error()
 	}
 
-	return strings.Contains(string(out), queryRetryToken)
+	for _, token := range []string{
+		"EOF",
+		"connection reset by peer",
+		"connection refused",
+		"i/o timeout",
+	} {
+		if strings.Contains(body, token) {
+			return true
+		}
+	}
+
+	return false
 }
 
 // createKey runs `dcld keys add <name> --keyring-backend test`, then `keys
