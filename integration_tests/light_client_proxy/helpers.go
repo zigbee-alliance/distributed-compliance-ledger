@@ -102,6 +102,30 @@ func queryWithRetry(node string, args ...string) ([]byte, error) {
 	return out, err
 }
 
+// queryUntilContains polls the proxy until the response body contains
+// `expected`, or the retry budget is exhausted. Mirrors the `sleep 5` bash
+// inserts between switching to the proxy and the first read-back of a
+// just-written record — after a write to the full node the proxy needs to
+// sync the new block's state before it can serve the new value, and during
+// that window it returns "Not Found" (which queryWithRetry treats as a
+// valid response, since other tests assert "Not Found" as a positive
+// outcome). queryRetryAttempts × queryRetryDelay = 30s of total wait.
+//
+// Returns the final response (which may or may not contain `expected` if
+// the budget runs out — let the caller decide whether to fail loudly).
+func queryUntilContains(node, expected string, args ...string) ([]byte, error) {
+	out, err := queryWithRetry(node, args...)
+	for i := 0; i < queryRetryAttempts; i++ {
+		if err == nil && strings.Contains(string(out), expected) {
+			break
+		}
+		time.Sleep(queryRetryDelay)
+		out, err = queryWithRetry(node, args...)
+	}
+
+	return out, err
+}
+
 // needsRetry reports whether queryWithRetry should try again. Extends the
 // bash `execute_with_retry "EOF"` contract with the transport-level errors
 // the proxy emits during its cold-start window.

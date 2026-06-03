@@ -112,8 +112,20 @@ func TestLightClientProxyCompliance(t *testing.T) {
 
 	// 4. Proxy now serves the new record. certified=true, revoked=false,
 	//    provisional=false. compliance-info reports softwareVersionCertificationStatus=2.
+	//    First do a poll-until-contains read to absorb the proxy's post-write
+	//    sync window (bash sleeps 5; we poll up to 30s); subsequent queries
+	//    in this block reuse the now-synced state.
 	mustRun(t, "Found_AfterCertify", func(t *testing.T) {
 		t.Helper()
+		_, qerr := queryUntilContains(LightClientProxyAddr, fmt.Sprintf("%d", vid),
+			"query", "compliance", "compliance-info",
+			"--vid", fmt.Sprintf("%d", vid),
+			"--pid", fmt.Sprintf("%d", pid),
+			"--softwareVersion", fmt.Sprintf("%d", sv),
+			"--certificationType", certType,
+		)
+		require.NoError(t, qerr)
+
 		out := complianceQuery(t, "compliance-info", vid, pid, sv)
 		assertContains(t, out, fmt.Sprintf("%d", vid), "compliance-info.vid")
 		assertContains(t, out, fmt.Sprintf("%d", pid), "compliance-info.pid")

@@ -127,9 +127,12 @@ func TestLightClientProxyAuth(t *testing.T) {
 	})
 
 	// 4. user1 is now visible through the proxy. Mirrors auth.sh lines 108-110.
+	//    queryUntilContains polls through the proxy's post-write sync window —
+	//    after Jack proposes and Alice approves, the proxy needs a few seconds
+	//    to catch up to the new block (bash sleeps 5; we poll up to 30s).
 	mustRun(t, "Found_User1_AfterAdd", func(t *testing.T) {
 		t.Helper()
-		out, qerr := queryWithRetry(LightClientProxyAddr,
+		out, qerr := queryUntilContains(LightClientProxyAddr, user1Addr,
 			"query", "auth", "account", "--address", user1Addr,
 		)
 		require.NoError(t, qerr)

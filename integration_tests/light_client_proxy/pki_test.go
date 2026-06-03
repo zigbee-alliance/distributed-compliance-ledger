@@ -181,9 +181,12 @@ func TestLightClientProxyPKI(t *testing.T) {
 	})
 
 	// 4. Proxy now serves the cert chain. (pki.sh lines 210-255)
+	//    First read polls through the proxy's post-write sync window
+	//    (bash sleeps 5; we poll up to 30s); subsequent queries reuse the
+	//    now-synced state.
 	mustRun(t, "Found_AfterSeed", func(t *testing.T) {
 		t.Helper()
-		out, qerr := queryWithRetry(LightClientProxyAddr,
+		out, qerr := queryUntilContains(LightClientProxyAddr, pkiRootCertSerialNumber,
 			"query", "pki", "x509-cert",
 			"--subject", pkiRootCertSubject,
 			"--subject-key-id", pkiRootCertSubjectKeyID,

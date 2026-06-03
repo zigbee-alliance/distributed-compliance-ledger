@@ -76,10 +76,11 @@ func TestLightClientProxyVendorInfo(t *testing.T) {
 		require.Equal(t, uint32(0), tx.Code, "add-vendor: %s", tx.RawLog)
 	})
 
-	// 4. Now the proxy serves the new record.
+	// 4. Now the proxy serves the new record. Poll through the proxy's
+	//    post-write sync window (bash sleeps 5; we poll up to 30s).
 	mustRun(t, "Found_AfterAdd", func(t *testing.T) {
 		t.Helper()
-		out, qerr := queryWithRetry(LightClientProxyAddr,
+		out, qerr := queryUntilContains(LightClientProxyAddr, companyLegalName,
 			"query", "vendorinfo", "vendor", "--vid", fmt.Sprintf("%d", vid),
 		)
 		require.NoError(t, qerr)

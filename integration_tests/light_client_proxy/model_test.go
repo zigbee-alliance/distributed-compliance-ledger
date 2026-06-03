@@ -119,9 +119,12 @@ func TestLightClientProxyModel(t *testing.T) {
 	})
 
 	// 4. Proxy now serves the new records. (model.sh lines 104-140)
+	//    First read polls through the proxy's post-write sync window
+	//    (bash sleeps 5; we poll up to 30s); subsequent queries reuse the
+	//    now-synced state.
 	mustRun(t, "Found_AfterAdd", func(t *testing.T) {
 		t.Helper()
-		out, qerr := queryWithRetry(LightClientProxyAddr,
+		out, qerr := queryUntilContains(LightClientProxyAddr, productLabel,
 			"query", "model", "get-model",
 			"--vid", fmt.Sprintf("%d", vid),
 			"--pid", fmt.Sprintf("%d", pid),
