@@ -6,6 +6,14 @@ This document outlines the procedure for upgrading an active Distributed Complia
 
 > **Provider scope:** The release-upgrade procedure itself (steps 3–6) is provider-agnostic. The provider-specific actions are **snapshot** (step 1), **SSH connection** (step 2), and **opening port 1022** (step 4.4). Expand the section for your cloud provider in each step.
 
+> **Multi-node order (Sentry Node + Validator Node):** Upgrade **sentries first (one at a time), then the validator last**.
+>
+> Why it's safe: this repo's ansible deploys the validator with `pex: false` and `persistent_peers` set only to its private sentries (see `deployment/ansible/roles/configure/vars/validator.yml` and `tasks/validator.yml`). Taking one sentry down leaves the validator connected through the others, so signing continues.
+>
+> Single-sentry operators: the upgrade still works. While the sentry is down, the validator will stop producing blocks, but DCL has no downtime slashing (see `x/validator/abci.go` — `HandleValidatorSignature` is intentionally not called), so the validator is not jailed. Once the sentry returns, the validator reconnects via its existing `persistent_peers` and catches up via blocksync. Before starting, check two things:
+> - **Voting power**: your validator going offline must not push the currently-online voting power below the 2/3 BFT threshold, or the chain will halt for the upgrade window.
+> - **Sentry IP stability (EC2)**: use an Elastic IP on the sentry so its address survives the reboots — otherwise the validator's `persistent_peers` entry points at a dead address until you update it.
+
 1.  **Take a Snapshot**: Before proceeding, take a snapshot of your running instance so you can roll back if anything goes wrong.
 
     <details>
@@ -255,10 +263,17 @@ This document outlines the procedure for upgrading an active Distributed Complia
 
     4.8 *(Conditional — only if the corresponding package is installed.)* You may be presented with package-specific debconf prompts, e.g. for **Postfix**. If asked, choose `No configuration` for Postfix unless you actively use it for mail. A vanilla DCL node will not see this prompt, since neither `postfix` nor `monit` is installed by the DCL deployment.
 
-    4.9 *(Conditional — only if you have locally modified the corresponding config file.)* For any `Configuration file '/path/to/file'` prompt with options `Y/I/N/O/D/Z` (typical files: `/etc/ssh/sshd_config`, `/etc/sudoers`, `/etc/sysctl.conf`, `/etc/default/grub`, `/etc/monit/monitrc`):
-    *   Press `N` to **keep your local version** (recommended if you have customized that file).
-    *   Press `Y` to take the **new package-maintainer version** (recommended if you have not customized it).
-    *   Press `D` to see a diff before deciding.
+    4.9 *(Conditional — only if you have locally modified the corresponding config file.)* You may be prompted about a modified config file (typical files on a DCL node: `/etc/ssh/sshd_config`, `/etc/sudoers`, `/etc/sysctl.conf`, `/etc/default/grub`, `/etc/monit/monitrc`).
+
+    The same choice appears in one of two forms depending on the package — both showed up during the real DCL upgrade:
+
+    | Choice                          | Letter form (`Y/I/N/O/D/Z`) | Numbered form |
+    |---------------------------------|-----------------------------|---------------|
+    | **Keep your local version**     | `N`                         | `2`           |
+    | Take the maintainer's version   | `Y`                         | `1`           |
+    | Show a diff before deciding     | `D`                         | `3`           |
+
+    > **Verified:** Choosing **"keep your local version"** for every prompt was tested end-to-end on a running DCL node during the 20.04 → 22.04 → 24.04 upgrade flow.
 
     4.10 For the `Remove obsolete packages` prompt, enter `y`. (Always appears.)
 
