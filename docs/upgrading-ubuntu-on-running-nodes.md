@@ -8,7 +8,7 @@ This document outlines the procedure for upgrading an active Distributed Complia
 
 > **Multi-node order (Sentry Node + Validator Node):** Upgrade **sentries first (one at a time), then the validator last**.
 >
-> Why it's safe: this repo's ansible deploys the validator with `pex: false` and `persistent_peers` set only to its private sentries (see `deployment/ansible/roles/configure/vars/validator.yml` and `tasks/validator.yml`). Taking one sentry down leaves the validator connected through the others, so signing continues.
+> Why it's safe (when you have ≥2 sentries): this repo's ansible deploys the validator with `pex: false` and `persistent_peers` set to **all** of its private sentries — `deployment/ansible/roles/configure/tasks/validator.yml:27,33` joins every entry of the `private_sentries` ansible group into the list. The validator's only peers are these sentries (no public gossip), so taking one sentry down for an OS upgrade still leaves the validator connected to the **remaining sentries**, and signing continues.
 >
 > Single-sentry operators: the upgrade still works. While the sentry is down, the validator will stop producing blocks, but DCL has no downtime slashing (see `x/validator/abci.go` — `HandleValidatorSignature` is intentionally not called), so the validator is not jailed. Once the sentry returns, the validator reconnects via its existing `persistent_peers` and catches up via blocksync. Before starting, check two things:
 > - **Voting power**: your validator going offline must not push the currently-online voting power below the 2/3 BFT threshold, or the chain will halt for the upgrade window.
