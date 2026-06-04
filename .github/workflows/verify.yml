@@ -200,12 +200,12 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: 1.26.4
-      - name: Gocovmerge build
+      - name: Install gocovmerge
         shell: bash
-        run: go build github.com/wadey/gocovmerge
+        run: go install github.com/wadey/gocovmerge@b5bfa59ec0adc420475f97f89b58045c721d761c
       - name: Merge test coverage
         shell: bash
-        run: ./gocovmerge unit_cover/cover.out integration_cover/cover.out > cover.out
+        run: gocovmerge unit_cover/cover.out integration_cover/cover.out > cover.out
       - name: Filter test coverage
         shell: bash
         run: .github/workflows/filter_coverage.sh
