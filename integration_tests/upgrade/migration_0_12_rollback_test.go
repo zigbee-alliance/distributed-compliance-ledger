@@ -23,13 +23,11 @@ import (
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 )
 
-// runRollback012 is the Go translation of
-// integration_tests/upgrade/02-test-upgrade-0.12-rollback.sh.
-//
-// Submits a propose+approve sequence for an upgrade plan whose name has no
-// registered cosmovisor handler ("wrong_plan_name"). Once block height passes
-// plan_height, the chain proceeds without applying any upgrade. Then seeds
-// _for_rollback state (vendor 4705 + models + compliance + users).
+// runRollback012 submits a propose+approve sequence for an upgrade plan
+// whose name has no registered cosmovisor handler ("wrong_plan_name").
+// Once block height passes plan_height, the chain proceeds without
+// applying any upgrade. Then seeds _for_rollback state (vendor 4705 +
+// models + compliance + users).
 //
 //nolint:funlen
 func runRollback012(t *testing.T, state *UpgradeTestState) {
@@ -67,9 +65,9 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 			"expected 'no upgrade scheduled', got: %s", string(out))
 
 		// `applied` query must fail / return Not Found for the wrong plan name.
+		// Either non-zero exit or a "not applied"/"not found"-ish output is
+		// acceptable.
 		out, err = QueryAppliedPlan(dcld, WrongPlanName)
-		// Bash uses `! query upgrade applied` so either non-zero exit or
-		// "not applied"/"not found"-ish output is acceptable.
 		if err == nil {
 			require.False(t, strings.Contains(string(out), `"height"`),
 				"upgrade unexpectedly applied: %s", string(out))
@@ -77,8 +75,8 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 	})
 
 	// ------------------------------------------------------------------
-	// Verify carry-over data from script 01 is intact. Mirrors the
-	// post-rollback readback in 02-test-upgrade-0.12-rollback.sh lines 85-280.
+	// Verify carry-over data from script 01 is intact — post-rollback
+	// readback of vendor info, models, compliance, pki, accounts, validator.
 	// ------------------------------------------------------------------
 	MustRun(t, "VerifyPreservedV0_12", func(t *testing.T) {
 		t.Helper()
@@ -280,8 +278,8 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 		checkResponseContains(t, out, state.User1Address)
 
 		// ----- Validator (host-side queries against the chain) -----
-		// Mirrors bash lines 271-280. Skip silently if the validator-demo
-		// container wasn't initialized in this test run.
+		// Skip silently if the validator-demo container wasn't initialized
+		// in this test run.
 		if state.ValidatorAddress != "" {
 			out, err = ExecuteCLIWithBin(dcld,
 				"query", "validator", "proposed-disable-node",
@@ -467,9 +465,8 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 
 	MustRun(t, "AccountFlowsForRollback", func(t *testing.T) {
 		t.Helper()
-		// Note: bash only uses 2-trustee approvals here, but with the rollback
-		// users being created post-trustee_4 (already 4 trustees on-chain),
-		// the threshold for revoke-account is still satisfied by 2 approvals.
+		// 2 trustee approvals: with 4 trustees on-chain, the threshold for
+		// revoke-account (1/3 quorum) is still satisfied by 2 approvals.
 		approvers2 := []string{state.Trustee2, state.Trustee3}
 
 		proposeUserAccount(t, dcld, state.Trustee1, approvers2,

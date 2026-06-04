@@ -36,23 +36,20 @@ const (
 	// LightClientProxyAddr is the light-client proxy endpoint exposed by
 	// docker-compose. Single-record queries are served here; list queries
 	// (`all-*`) and writes return a "doesn't work with a Light Client Proxy"
-	// payload that the bash tests assert on.
+	// rejection payload (see listQueryRejection / writeRejection).
 	LightClientProxyAddr = "tcp://localhost:26620"
 
-	// Bash light_client_proxy/auth.sh wraps every read in execute_with_retry
-	// "EOF". The proxy hits "EOF" while warming up; the bash retries 10x with
-	// 2s sleeps. queryWithRetry mirrors that — and additionally retries on the
-	// transport-level errors a cold proxy emits before its `cosmovisor run
-	// light dclchain` command finishes verifying trust headers and binds the
-	// 26620 port: "connection reset by peer", "connection refused", and
-	// "i/o timeout". Without these, the first query of a fresh localnet
-	// races the proxy startup and fails before it ever gets a chance.
+	// queryWithRetry budget. The proxy emits transport-level errors during
+	// its cold-start window — "EOF", "connection reset by peer",
+	// "connection refused", "i/o timeout" — before its `cosmovisor run
+	// light dclchain` command finishes verifying trust headers and binds
+	// port 26620. Without retry, the first query of a fresh localnet races
+	// the proxy startup and fails before it ever gets a chance.
 	queryRetryAttempts = 15
 	queryRetryDelay    = 2 * time.Second
 
 	// listQueryRejection / writeRejection are the user-facing payloads the
-	// proxy returns when it refuses to serve. Asserting on them ties the
-	// Go test to the same string contract the bash relies on.
+	// proxy returns when it refuses to serve a request.
 	listQueryRejection = "List queries don't work with a Light Client Proxy"
 	writeRejection     = "Write requests don't work with a Light Client Proxy"
 )
@@ -85,8 +82,8 @@ func executeCLIWithNode(node string, args ...string) ([]byte, error) {
 }
 
 // queryWithRetry executes a `dcld query …` against `node` and retries on
-// transient EOF responses from the light client proxy. Mirrors the bash
-// `execute_with_retry "<cmd>" "EOF"` helper in cli/common.sh.
+// transient transport errors from the light client proxy (EOF,
+// connection reset/refused, i/o timeout — see needsRetry).
 func queryWithRetry(node string, args ...string) ([]byte, error) {
 	out, err := executeCLIWithNode(node, args...)
 	for i := 0; i < queryRetryAttempts; i++ {
@@ -103,13 +100,12 @@ func queryWithRetry(node string, args ...string) ([]byte, error) {
 }
 
 // queryUntilContains polls the proxy until the response body contains
-// `expected`, or the retry budget is exhausted. Mirrors the `sleep 5` bash
-// inserts between switching to the proxy and the first read-back of a
-// just-written record — after a write to the full node the proxy needs to
-// sync the new block's state before it can serve the new value, and during
-// that window it returns "Not Found" (which queryWithRetry treats as a
-// valid response, since other tests assert "Not Found" as a positive
-// outcome). queryRetryAttempts × queryRetryDelay = 30s of total wait.
+// `expected`, or the retry budget is exhausted. After a write to the full
+// node the proxy needs to sync the new block's state before it can serve
+// the new value, and during that window it returns "Not Found" — which
+// queryWithRetry treats as a valid response, since other tests assert
+// "Not Found" as a positive outcome. queryRetryAttempts × queryRetryDelay
+// = 30s of total wait.
 //
 // Returns the final response (which may or may not contain `expected` if
 // the budget runs out — let the caller decide whether to fail loudly).
@@ -126,9 +122,8 @@ func queryUntilContains(node, expected string, args ...string) ([]byte, error) {
 	return out, err
 }
 
-// needsRetry reports whether queryWithRetry should try again. Extends the
-// bash `execute_with_retry "EOF"` contract with the transport-level errors
-// the proxy emits during its cold-start window.
+// needsRetry reports whether queryWithRetry should try again — covers the
+// transport-level errors the proxy emits during its cold-start window.
 func needsRetry(out []byte, err error) bool {
 	body := string(out)
 	if err != nil {
@@ -150,9 +145,7 @@ func needsRetry(out []byte, err error) bool {
 }
 
 // createKey runs `dcld keys add <name> --keyring-backend test`, then `keys
-// show -a` / `-p` to capture the bech32 address and pubkey JSON. Mirrors the
-// `random_string user; dcld keys add $user; dcld keys show ...` triple that
-// every cli/*.sh and light_client_proxy/*.sh script opens with.
+// show -a` / `-p` to capture the bech32 address and pubkey JSON.
 //
 // The localnet keyring is the file-backed `test` backend (see
 // genlocalnetconfig.sh: `dcld config keyring-backend test`), so we always
@@ -180,9 +173,9 @@ func trimWS(b []byte) string {
 	return strings.TrimRight(string(b), "\n\r \t")
 }
 
-// randomUint16 returns a random uint16 in the same range as bash's $RANDOM
-// (0..32767). Used to generate VIDs/PIDs/software versions that don't collide
-// with prior runs against the same localnet.
+// randomUint16 returns a random uint16 (0..32767). Used to generate
+// VIDs/PIDs/software versions that don't collide with prior runs against
+// the same localnet.
 func randomUint16() int {
 	var b [2]byte
 	if _, err := rand.Read(b[:]); err != nil {
@@ -192,11 +185,10 @@ func randomUint16() int {
 	return int(binary.BigEndian.Uint16(b[:]) >> 1)
 }
 
-// proposeVendorAccount creates a fresh key under `name` and proposes it as a
-// Vendor with `vid` against the full node. Mirrors bash `create_new_vendor_account`
-// in cli/common.sh (no explicit approval is needed — Vendor uses the 1/3
-// quorum so jack's proposer vote already meets threshold on a 3-trustee
-// genesis chain).
+// proposeVendorAccount creates a fresh key under `name` and proposes it
+// as a Vendor with `vid` against the full node. No explicit approval is
+// needed — Vendor uses the 1/3 quorum so jack's proposer vote already
+// meets threshold on a 3-trustee genesis chain.
 func proposeVendorAccount(t *testing.T, name string, vid int) (address string) {
 	t.Helper()
 
@@ -218,10 +210,10 @@ func proposeVendorAccount(t *testing.T, name string, vid int) (address string) {
 	return addr
 }
 
-// proposeAndApproveAccount creates a fresh key under `name`, proposes it with
-// `roles` from jack, then has alice approve. Mirrors bash `create_new_account`
-// in cli/common.sh — used for the CertificationCenter account in compliance.sh.
-// Two approvals satisfy the 2/3 quorum on the 3-trustee genesis chain.
+// proposeAndApproveAccount creates a fresh key under `name`, proposes it
+// with `roles` from jack, then has alice approve. Used for the
+// CertificationCenter account in the compliance test. Two approvals
+// satisfy the 2/3 quorum on the 3-trustee genesis chain.
 func proposeAndApproveAccount(t *testing.T, name, roles string) (address string) {
 	t.Helper()
 
@@ -251,8 +243,8 @@ func proposeAndApproveAccount(t *testing.T, name, roles string) (address string)
 	return addr
 }
 
-// addModelAndVersion adds a model + its first model-version against the full
-// node. Mirrors bash `create_model_and_version` in cli/common.sh.
+// addModelAndVersion adds a model + its first model-version against the
+// full node.
 func addModelAndVersion(t *testing.T, vid, pid, softwareVersion int, softwareVersionString, vendorAccount string) {
 	t.Helper()
 
@@ -312,12 +304,11 @@ func assertRejectionContains(t *testing.T, out []byte, err error, expected, labe
 		"expected %q in %s, got: %s", expected, label, text)
 }
 
-// mustRun is `t.Run` + `t.FailNow()` on failure — mirrors bash `set -e` so
-// the cascade halts at the first failure instead of producing misleading
-// follow-on errors. Same pattern as upgrade.MustRun; ported here because
-// each Test* in this package is a linear chain (NotFound → Seed → Found →
-// Write_Rejected) and the later steps depend on earlier ones writing to
-// chain state.
+// mustRun is `t.Run` + `t.FailNow()` on failure, so the cascade halts at
+// the first failure instead of producing misleading follow-on errors.
+// Same pattern as upgrade.MustRun; ported here because each Test* in this
+// package is a linear chain (NotFound → Seed → Found → Write_Rejected)
+// and the later steps depend on earlier ones writing to chain state.
 func mustRun(t *testing.T, name string, f func(t *testing.T)) {
 	t.Helper()
 	if !t.Run(name, f) {

@@ -23,8 +23,8 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
-// RandomString returns a short hex-encoded random suffix suitable for use as
-// a unique account name. Equivalent to the bash `random_string` helper.
+// RandomString returns a short hex-encoded random suffix suitable for
+// use as a unique account name.
 func RandomString() string {
 	var b [6]byte
 	if _, err := rand.Read(b[:]); err != nil {
@@ -36,12 +36,8 @@ func RandomString() string {
 	return "u" + hex.EncodeToString(b[:])
 }
 
-// CreateKey runs `keys add NAME` with the test keyring and returns the key's
-// bech32 address and pubkey JSON. Equivalent to the bash pattern:
-//
-//	dcld keys add <name>
-//	dcld keys show <name> -a
-//	dcld keys show <name> -p
+// CreateKey runs `keys add NAME` with the test keyring and returns the
+// key's bech32 address and pubkey JSON.
 func CreateKey(binPath, name string) (address, pubkey string, err error) {
 	if _, err = ExecuteCLIWithBin(binPath,
 		"keys", "add", name,

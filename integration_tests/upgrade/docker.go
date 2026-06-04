@@ -34,8 +34,8 @@ func dockerCmd(args ...string) ([]byte, error) {
 	return out, nil
 }
 
-// DockerRun starts a container. Pass the same flags as the bash `docker run`
-// invocations — typically -d --name --ip -p --network -i <image>.
+// DockerRun starts a container. Pass `docker run` flags — typically
+// -d --name --ip -p --network -i <image>.
 func DockerRun(args ...string) ([]byte, error) {
 	return dockerCmd(append([]string{"run"}, args...)...)
 }
@@ -47,7 +47,6 @@ func DockerExec(container string, args ...string) ([]byte, error) {
 }
 
 // DockerExecShell runs a shell command inside a container via `sh -c`.
-// Use this when the bash counterpart used `docker exec ... /bin/sh -c "..."`.
 func DockerExecShell(container, command string) ([]byte, error) {
 	return DockerExec(container, "/bin/sh", "-c", command)
 }
@@ -76,7 +75,7 @@ func DockerInspect(container string) ([]byte, error) {
 }
 
 // DockerCleanup stops and removes a container if it exists. Errors are
-// silently swallowed — matches the bash `cleanup_container` semantics.
+// silently swallowed — best-effort cleanup.
 func DockerCleanup(container string) {
 	inspectOut, err := exec.Command("docker", "container", "inspect", container).CombinedOutput()
 	if err != nil {

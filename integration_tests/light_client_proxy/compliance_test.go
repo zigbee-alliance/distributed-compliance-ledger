@@ -22,8 +22,8 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
-// TestLightClientProxyCompliance is the Go translation of
-// integration_tests/light_client_proxy/compliance.sh.
+// TestLightClientProxyCompliance exercises the dcld compliance module
+// against the light client proxy.
 //
 //nolint:funlen
 func TestLightClientProxyCompliance(t *testing.T) {
@@ -80,7 +80,7 @@ func TestLightClientProxyCompliance(t *testing.T) {
 	// 3. Seed: vendor account → certification center → model → certify.
 	//    Account names are suffixed with utils.RandString() — the five
 	//    light_client_proxy tests share one init_pool so the keyring is
-	//    shared (see integration_tests/run-all.sh).
+	//    shared (see run-all.sh).
 	vid, pid, sv := randomUint16(), randomUint16(), randomUint16()
 	svs := fmt.Sprintf("%d", randomUint16())
 	vendorAccount := "comp_vendor_" + utils.RandString()
@@ -113,8 +113,8 @@ func TestLightClientProxyCompliance(t *testing.T) {
 	// 4. Proxy now serves the new record. certified=true, revoked=false,
 	//    provisional=false. compliance-info reports softwareVersionCertificationStatus=2.
 	//    First do a poll-until-contains read to absorb the proxy's post-write
-	//    sync window (bash sleeps 5; we poll up to 30s); subsequent queries
-	//    in this block reuse the now-synced state.
+	//    sync window (up to 30s); subsequent queries in this block reuse the
+	//    now-synced state.
 	mustRun(t, "Found_AfterCertify", func(t *testing.T) {
 		t.Helper()
 		_, qerr := queryUntilContains(LightClientProxyAddr, fmt.Sprintf("%d", vid),

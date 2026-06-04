@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package upgrade contains end-to-end Go test migrations of the bash scripts
-// under integration_tests/upgrade/*.sh. These tests orchestrate cosmovisor
-// chain upgrades across historical dcld binary versions.
+// Package upgrade is the end-to-end Go test suite for cosmovisor chain
+// upgrades across historical dcld binary versions.
 package upgrade
 
 const (
@@ -67,7 +66,7 @@ const (
 const BinariesDir = "/tmp/dcld_bins"
 
 // HistoricalVersions is the set of dcld releases the upgrade tests exercise.
-// Mirrors the list in prepare-dcld-versions.sh.
+// Kept in sync with prepare-dcld-versions.sh's download loop.
 var HistoricalVersions = []string{
 	"0.12.0", "0.12.1", "1.2.2", "1.4.3", "1.4.4", "1.5.1", "1.5.2",
 	"1.6.0-0.dev.2",

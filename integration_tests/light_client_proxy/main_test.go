@@ -22,15 +22,16 @@ import (
 	"testing"
 )
 
-// runEnv is the env var that gates this suite. CI sets RUN_LIGHT_GO=1 when
-// running the "light" test bucket (see integration_tests/run-all.sh). Local
-// dev keeps the suite fast-skipping unless a developer opts in — the suite
-// needs a live localnet plus the light_client_proxy container reachable on
-// localhost:26620.
-const runEnv = "RUN_LIGHT_GO"
+// runLightFlowEnv is the env var that gates this suite. CI sets
+// RUN_LIGHT_GO=1 when running the "light" test bucket (see
+// integration_tests/run-all.sh). Local dev keeps the suite fast-skipping
+// unless a developer opts in — the suite needs a live localnet plus the
+// light_client_proxy container reachable on localhost:26620. Naming mirrors
+// upgrade's runUpgradeFlowEnv / shouldRunUpgradeFlow pair.
+const runLightFlowEnv = "RUN_LIGHT_GO"
 
-func shouldRun() bool {
-	return os.Getenv(runEnv) == "1"
+func shouldRunLightFlow() bool {
+	return os.Getenv(runLightFlowEnv) == "1"
 }
 
 // skipIfDisabled bails out of a test when RUN_LIGHT_GO=1 isn't set. Mirrors
@@ -38,8 +39,8 @@ func shouldRun() bool {
 // fast in regular development.
 func skipIfDisabled(t *testing.T) {
 	t.Helper()
-	if !shouldRun() {
-		t.Skipf("set %s=1 to run the light client proxy tests", runEnv)
+	if !shouldRunLightFlow() {
+		t.Skipf("set %s=1 to run the light client proxy tests", runLightFlowEnv)
 	}
 }
 

@@ -21,8 +21,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// runUpgrade012To12 is the Go translation of
-// integration_tests/upgrade/03-test-upgrade-0.12-to-1.2.sh.
+// runUpgrade012To12 runs the v0.12.0 → v1.2.2 cosmovisor upgrade, then
+// seeds 1.2-era state: a new vendor account (VID=4701), models with
+// compliance certifications, PKI root cert ladder, revocation point, and
+// three new users.
 //
 // Assumes the chain is currently running v0.12.0 with state from script 01.
 //
@@ -205,9 +207,9 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 		checkResponseContains(t, out, state.User1Address)
 	})
 
-	// Bulk `all-*` listings and pki / validator readbacks from bash 03 lines
-	// 180-280. These are gap-filling assertions that confirm script 01's
-	// state survives the v0.12 → v1.2 upgrade in aggregate form.
+	// Bulk `all-*` listings and pki / validator readbacks. Gap-filling
+	// assertions that confirm script 01's state survives the v0.12 → v1.2
+	// upgrade in aggregate form.
 	MustRun(t, "VerifyPreservedListings_1_2", func(t *testing.T) {
 		t.Helper()
 		out, err := ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-certified-models")
@@ -276,8 +278,8 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 		checkResponseContains(t, out, googleRootCertSubject)
 		checkResponseContains(t, out, googleRootCertSubjectKeyID)
 
-		// Validator queries — bash 03 lines 273-280 and 763-764. Run host-side
-		// against the chain. Gated on the container being initialized.
+		// Validator queries — run host-side against the chain. Gated on the
+		// container being initialized.
 		if state.ValidatorAddress != "" {
 			out, err = ExecuteCLIWithBin(dcldNew,
 				"query", "validator", "proposed-disable-node",
@@ -501,8 +503,9 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 
 	MustRun(t, "PKIFor1_2", func(t *testing.T) {
 		t.Helper()
-		// 1.2-era root_cert ladder: propose + (approve + reject + approve x3 by remaining trustees).
-		// Bash uses 4 trustees here, plus trustee_5 which is also in genesis quorum.
+		// 1.2-era root_cert ladder: propose + (approve + reject + approve x3 by
+		// remaining trustees). Uses 4 trustees + trustee_5 (added in script 02)
+		// for the 5-trustee quorum.
 		tx, err := ExecuteTxWithBin(dcldNew,
 			"tx", "pki", "propose-add-x509-root-cert",
 			"--certificate", RootCertPathFor1_2,
@@ -512,7 +515,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 
-		// trustee_2 approves, then rejects (bash quirk that exercises both paths).
+		// trustee_2 approves, then rejects (exercises both approval paths).
 		for _, action := range []string{"approve-add-x509-root-cert", "reject-add-x509-root-cert"} {
 			tx, err = ExecuteTxWithBin(dcldNew,
 				"tx", "pki", action,

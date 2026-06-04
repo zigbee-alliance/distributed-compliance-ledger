@@ -25,12 +25,12 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
-// AddValidatorNode is the Go translation of script 01's `add_validator_node`
-// function. It spins up a fresh validator-demo container at 192.167.10.6,
-// configures dcld, creates a NodeAdmin account, gets it approved by trustees
-// jack/alice/bob on the main chain, submits `tx validator add-node`, seeds
-// cosmovisor, starts the node helper, and records the resulting validator
-// owner address + account name on `state` for downstream disable/enable flows.
+// AddValidatorNode spins up a fresh validator-demo container at
+// 192.167.10.6, configures dcld, creates a NodeAdmin account, gets it
+// approved by trustees jack/alice/bob on the main chain, submits
+// `tx validator add-node`, seeds cosmovisor, starts the node helper, and
+// records the resulting validator owner address + account name on
+// `state` for downstream disable/enable flows.
 //
 //nolint:funlen
 func AddValidatorNode(t *testing.T, state *UpgradeTestState, dcldHost string) {
@@ -128,7 +128,7 @@ func AddValidatorNode(t *testing.T, state *UpgradeTestState, dcldHost string) {
 
 	// 9. Pre-add sanity check: pool should not yet know about this address —
 	// neither the `node` record nor a `last-power` entry should exist yet.
-	// Mirrors bash 01 lines 82-87.
+	// Confirms the pool has no record of this address pre-add.
 	out, _ := ExecuteCLIWithBin(dcldHost,
 		"query", "validator", "node", "--address", address)
 	require.True(t, strings.Contains(string(out), "Not Found"),
@@ -169,7 +169,8 @@ func AddValidatorNode(t *testing.T, state *UpgradeTestState, dcldHost string) {
 }
 
 // mustExtractOwner queries `validator node --address` and returns the `owner`
-// field. The bash version pipes through `jq -r '.owner'` after a fixed sleep.
+// field. Polls until the response is well-formed (avoids racing the post-
+// add-node block commit).
 func mustExtractOwner(t *testing.T, dcldHost, address string) string {
 	t.Helper()
 
@@ -198,7 +199,7 @@ func mustExtractOwner(t *testing.T, dcldHost, address string) string {
 }
 
 // DisableValidatorNode submits `tx validator disable-node --from=<account>`
-// from inside the validator-demo container. Mirrors the per-script disable.
+// from inside the validator-demo container.
 func DisableValidatorNode(account string) error {
 	_, err := DockerExecShell(ValidatorDemoContainerName, fmt.Sprintf(
 		`echo test1234 | dcld tx validator disable-node --from=%s --yes`, account,
@@ -250,15 +251,14 @@ func HasProposedDisable(dcldBin, validatorAddress string) bool {
 	return !strings.Contains(string(out), "Not Found")
 }
 
-// RunValidatorDisableEnableFlow is the per-script docker exec disable/enable
-// sequence common to scripts 01/03/05/06/07/10. The exact step ordering
-// matches the bash:
+// RunValidatorDisableEnableFlow is the per-phase docker exec
+// disable/enable sequence used by phases 01/03/05/06/07/10. Step order:
 //
 //	docker exec disable-node           (from validator-demo's account)
 //	docker exec enable-node
 //	host propose-disable-node          (from trustee_1) — only if no pending
-//	                                    proposal exists; script 02+ inherits
-//	                                    the previous script's tail-propose.
+//	                                    proposal exists; phase 02+ inherits
+//	                                    the previous phase's tail-propose.
 //	host approve-disable-node × N      (from trustee_2 … trustee_(approvers+1))
 //	docker exec enable-node
 //	host propose-disable-node          (from trustee_1) — leaves it proposed
@@ -274,12 +274,12 @@ func RunValidatorDisableEnableFlow(t *testing.T, state *UpgradeTestState, dcldBi
 		return
 	}
 
-	// Cosmos-SDK in dcld v1.4.3+ removed broadcast-mode=block. The container
-	// was configured with `block` at AddValidatorNode time (against the v0.12
-	// binary), but once cosmovisor inside it has crossed v1.4.3 the persisted
-	// `block` config makes `dcld tx ...` fail with "unsupported return type
-	// block". Mirror the bash scripts 05+/06+/07+/10+ that re-run
-	// `dcld config broadcast-mode sync` inside the validator-demo container.
+	// Cosmos-SDK in dcld v1.4.3+ removed broadcast-mode=block. The
+	// container was configured with `block` at AddValidatorNode time
+	// (against the v0.12 binary), but once cosmovisor inside it has
+	// crossed v1.4.3 the persisted `block` config makes `dcld tx ...`
+	// fail with "unsupported return type block". Re-run
+	// `dcld config broadcast-mode sync` inside the container to flip it.
 	if binPathSupportsOnlySyncMode(dcldBin) {
 		_, _ = DockerExecShell(ValidatorDemoContainerName,
 			"echo test1234 | dcld config broadcast-mode sync",
@@ -332,7 +332,7 @@ func RunValidatorDisableEnableFlow(t *testing.T, state *UpgradeTestState, dcldBi
 }
 
 // QueryAllValidatorNodes runs `dcld query validator all-nodes` from inside the
-// validator-demo container — mirroring the bash "Get node" verification.
+// validator-demo container — used by post-upgrade readback assertions.
 func QueryAllValidatorNodes() ([]byte, error) {
 	return DockerExecShell(ValidatorDemoContainerName,
 		`echo test1234 | dcld query validator all-nodes`,

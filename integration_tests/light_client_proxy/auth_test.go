@@ -22,10 +22,10 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
-// TestLightClientProxyAuth is the Go translation of
-// integration_tests/light_client_proxy/auth.sh.
+// TestLightClientProxyAuth exercises the dcld auth module against the
+// light client proxy.
 //
-// Flow (mirroring the bash):
+// Flow:
 //
 //  1. Generate two random users (user1 + user2). Both are bech32 addresses
 //     only — no on-chain account exists yet.
@@ -57,7 +57,7 @@ func TestLightClientProxyAuth(t *testing.T) {
 	require.NotEmpty(t, user2Addr)
 
 	// 1. Non-existent records via the proxy: every single-record query
-	//    returns "Not Found". Mirrors auth.sh lines 24-43.
+	//    returns "Not Found".
 	mustRun(t, "NotFound_BeforeAdd", func(t *testing.T) {
 		t.Helper()
 		for _, q := range []string{
@@ -74,8 +74,7 @@ func TestLightClientProxyAuth(t *testing.T) {
 		}
 	})
 
-	// 2. List queries are rejected by the proxy with the bash-asserted
-	//    payload. Mirrors auth.sh lines 51-68.
+	// 2. List queries are rejected by the proxy with the expected payload.
 	mustRun(t, "ListQueries_Rejected", func(t *testing.T) {
 		t.Helper()
 		for _, q := range []string{
@@ -97,8 +96,8 @@ func TestLightClientProxyAuth(t *testing.T) {
 		}
 	})
 
-	// 3. Write user1's account against the full node. Bash auth.sh lines
-	//    79-95: Jack proposes (NodeAdmin role), Alice approves.
+	// 3. Write user1's account against the full node: Jack proposes
+	//    (NodeAdmin role), Alice approves.
 	//
 	//    --node FullNodeAddr is explicit so the suite doesn't depend on what
 	//    ~/.dcl/config/client.toml currently points at — the upgrade suite
@@ -126,10 +125,10 @@ func TestLightClientProxyAuth(t *testing.T) {
 		require.Equal(t, uint32(0), tx.Code, "approve-add-account: %s", tx.RawLog)
 	})
 
-	// 4. user1 is now visible through the proxy. Mirrors auth.sh lines 108-110.
+	// 4. user1 is now visible through the proxy.
 	//    queryUntilContains polls through the proxy's post-write sync window —
 	//    after Jack proposes and Alice approves, the proxy needs a few seconds
-	//    to catch up to the new block (bash sleeps 5; we poll up to 30s).
+	//    to catch up to the new block (we poll up to 30s).
 	mustRun(t, "Found_User1_AfterAdd", func(t *testing.T) {
 		t.Helper()
 		out, qerr := queryUntilContains(LightClientProxyAddr, user1Addr,
@@ -143,7 +142,7 @@ func TestLightClientProxyAuth(t *testing.T) {
 	})
 
 	// 5. user2 was never proposed — proxy still says Not Found for every
-	//    single-record query. Mirrors auth.sh lines 121-138.
+	//    single-record query.
 	mustRun(t, "NotFound_User2_AfterAdd", func(t *testing.T) {
 		t.Helper()
 		for _, q := range []string{
@@ -160,10 +159,9 @@ func TestLightClientProxyAuth(t *testing.T) {
 		}
 	})
 
-	// 6. Writes through the proxy are rejected with the bash-asserted
-	//    payload. The tx is intentionally well-formed — the rejection comes
-	//    from the proxy itself, not from cosmos-sdk message validation.
-	//    Mirrors auth.sh lines 148-151.
+	// 6. Writes through the proxy are rejected with the expected payload.
+	//    The tx is intentionally well-formed — the rejection comes from the
+	//    proxy itself, not from cosmos-sdk message validation.
 	mustRun(t, "Write_Rejected", func(t *testing.T) {
 		t.Helper()
 		out, _ := executeCLIWithNode(LightClientProxyAddr,

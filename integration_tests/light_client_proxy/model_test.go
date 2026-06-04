@@ -22,15 +22,15 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
-// TestLightClientProxyModel is the Go translation of
-// integration_tests/light_client_proxy/model.sh.
+// TestLightClientProxyModel exercises the dcld model module against the
+// light client proxy.
 //
 //nolint:funlen
 func TestLightClientProxyModel(t *testing.T) {
 	skipIfDisabled(t)
 
 	// 1. Random vid/pid/sv → every single-record model query returns
-	//    Not Found via the proxy. (model.sh lines 13-41)
+	//    Not Found via the proxy.
 	mustRun(t, "NotFound_BeforeAdd", func(t *testing.T) {
 		t.Helper()
 		vid, pid, sv := randomUint16(), randomUint16(), randomUint16()
@@ -78,6 +78,7 @@ func TestLightClientProxyModel(t *testing.T) {
 	// 3. Seed vendor + model + model-version via the full node.
 	//    Account name is suffixed with utils.RandString() because the five
 	//    light_client_proxy tests share one init_pool (see run-all.sh).
+	//    Same isolation contract every test in this package uses.
 	vid, pid, sv := randomUint16(), randomUint16(), randomUint16()
 	vendorAccount := "model_vendor_" + utils.RandString()
 	const productLabel = "Device #1"
@@ -118,13 +119,12 @@ func TestLightClientProxyModel(t *testing.T) {
 		require.Equal(t, uint32(0), tx.Code, "add-model-version: %s", tx.RawLog)
 	})
 
-	// 4. Proxy now serves the new records. (model.sh lines 104-140)
+	// 4. Proxy now serves the new records.
 	//    The proxy syncs headers monotonically, so we warm up by polling the
 	//    *latest* write (add-model-version) until visible — once that's
 	//    visible, every earlier write (add-model) is guaranteed visible too.
 	//    Polling on the first write (get-model) here would race
-	//    add-model-version which lands in a later block. Bash sleeps 5; we
-	//    poll up to 30s.
+	//    add-model-version which lands in a later block. Poll up to 30s.
 	mustRun(t, "Found_AfterAdd", func(t *testing.T) {
 		t.Helper()
 		out, qerr := queryUntilContains(LightClientProxyAddr, fmt.Sprintf("%d", sv),
@@ -212,7 +212,7 @@ func TestLightClientProxyModel(t *testing.T) {
 	})
 
 	// 6. Write attempts through the proxy are rejected. Both add-model and
-	//    add-model-version. (model.sh lines 188-199)
+	//    add-model-version.
 	mustRun(t, "Write_Rejected", func(t *testing.T) {
 		t.Helper()
 		out, err := executeCLIWithNode(LightClientProxyAddr,

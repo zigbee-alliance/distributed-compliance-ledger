@@ -14,22 +14,18 @@
 
 package upgrade
 
-// UpgradeTestState carries the on-chain identifiers and per-version constants
-// that earlier scripts (01-07) put into the chain. Phase 1 subtests depend on
-// these; once phase 2/3/4 migrates the producing scripts to Go, the same
-// struct will be populated by Go setup code.
-//
-// Values mirror the literals in the existing bash scripts. Names match the
-// bash variable names to keep cross-referencing easy during migration.
+// UpgradeTestState carries the on-chain identifiers and per-version
+// constants that earlier phases (01-07) put into the chain. Later phases
+// depend on these.
 type UpgradeTestState struct {
-	// Trustees set up by 01-test-upgrade-initialize-0.12.sh.
-	Trustee1 string // "jack"   — hardcoded in 01.sh
-	Trustee2 string // "alice"  — hardcoded in 01.sh
-	Trustee3 string // "bob"    — hardcoded in 01.sh
+	// Trustees set up by phase 01.
+	Trustee1 string // "jack"   — genesis trustee
+	Trustee2 string // "alice"  — genesis trustee
+	Trustee3 string // "bob"    — genesis trustee
 	Trustee4 string // randomized
 	Trustee5 string // randomized
 
-	// Vendor + model identifiers seeded by 01.
+	// Vendor + model identifiers seeded by phase 01.
 	VendorAccount   string
 	VID             int
 	PID2            int
@@ -38,54 +34,54 @@ type UpgradeTestState struct {
 	PartNumber      string
 	SoftwareVersion int
 
-	// Vendor account created by 03-test-upgrade-0.12-to-1.2.sh.
+	// Vendor account created by phase 03 (v0.12 → v1.2).
 	VendorAccountFor1_2 string
 
-	// Constants set by 05 (lines 22-29) — referenced by 09's "ISSUE #593"
-	// block BEFORE 09 redefines them at line 174+.
+	// Constants set by phase 05 — referenced by phase 09's ISSUE #593
+	// pre-upgrade block before 09 redefines them later.
 	VIDFor1_6_0FromScript5              int
 	PID3For1_6_0FromScript5             int
 	SoftwareVersion1For1_6_0FromScript5 int
 	SoftwareVersion2For1_6_0FromScript5 int
 
-	// User accounts created in 01 — referenced by later scripts' pre-upgrade
-	// verifications. Names are randomized; addresses + pubkeys are propagated
-	// for later auth-flow steps that need them.
-	User1Address, User1Pubkey string // revoked by 01 (revoked-accounts list)
-	User2Address, User2Pubkey string // active CertCenter, then propose-revoke in 01
-	User3Address, User3Pubkey string // remains proposed in 01
+	// User accounts created in phase 01 — referenced by later phases'
+	// pre-upgrade verifications. Names are randomized; addresses + pubkeys
+	// propagate forward for auth-flow steps that need them.
+	User1Address, User1Pubkey string // revoked by phase 01
+	User2Address, User2Pubkey string // active CertCenter, then propose-revoke in phase 01
+	User3Address, User3Pubkey string // remains proposed at end of phase 01
 
-	// User accounts created in 03.
+	// User accounts created in phase 03.
 	User4Address, User4Pubkey string
 	User5Address, User5Pubkey string
 	User6Address, User6Pubkey string
 
-	// User accounts created in 05.
+	// User accounts created in phase 05.
 	User7Address, User7Pubkey string
 	User8Address, User8Pubkey string
 	User9Address, User9Pubkey string
 
-	// User accounts created in 06.
+	// User accounts created in phase 06.
 	User10Address, User10Pubkey string
 	User11Address, User11Pubkey string
 	User12Address, User12Pubkey string
 
-	// User accounts created in 07.
+	// User accounts created in phase 07.
 	User13Address, User13Pubkey string
 	User14Address, User14Pubkey string
 	User15Address, User15Pubkey string
 
-	// Master upgrade plan name = git short HEAD hash, computed when script 10
-	// builds the dcld-build-master image. Used by script 11 to verify the new
-	// observer eventually reports the same version after catch-up.
+	// Master upgrade plan name = git short HEAD hash, computed when phase
+	// 10 builds the dcld-build-master image. Used by phase 11 to verify
+	// the new observer eventually reports the same version after catch-up.
 	MasterPlanName string
 
-	// Validator-demo node bookkeeping. Set by AddValidatorNode (script 01)
-	// and re-used by all per-script disable/enable flows.
+	// Validator-demo node bookkeeping. Set by AddValidatorNode (phase 01)
+	// and re-used by all per-phase disable/enable flows.
 	ValidatorAccountName string // random name on the validator-demo's keyring
 	ValidatorAddress     string // cosmosvaloper... owner from `query validator node`
 
-	// Constants set by 07-test-upgrade-1.4.4-to-1.5.1.sh post-upgrade block.
+	// Constants set by phase 07's post-upgrade block.
 	VIDFor1_5_1                                 int
 	PID1For1_5_1                                int
 	PID2For1_5_1                                int
@@ -97,21 +93,20 @@ type UpgradeTestState struct {
 	MaxApplicableSoftwareVersionFor1_5_1        int
 }
 
-// DefaultBashState returns the contract that Phase 1 subtests assume. Values
-// match the literals in the corresponding bash scripts. When phases 2-3
-// migrate those scripts to Go, the producing code must keep these literal
-// values in lockstep (or this struct must be updated together with the
-// migration).
+// DefaultBashState returns the initial state TestUpgradeSequence assumes
+// when phase 01 starts. The producing code (phase 01's runInitV0_12 + its
+// downstream phases) must keep these literal values in lockstep — they're
+// the contract that later phases rely on.
 //
-// The empty Trustee4 captures that the bash version randomizes that name; the
-// migrated phase-2 code will fill it in.
+// Trustee4 is empty here; phase 01 randomizes the name and writes it back
+// into the struct.
 func DefaultBashState() *UpgradeTestState {
 	return &UpgradeTestState{
-		// 01-test-upgrade-initialize-0.12.sh
+		// Phase 01 — initial v0.12 state.
 		Trustee1:        "jack",
 		Trustee2:        "alice",
 		Trustee3:        "bob",
-		Trustee4:        "", // randomized — phase 2 will pin this
+		Trustee4:        "", // randomized — phase 01 sets this
 		VendorAccount:   "vendor_account",
 		VID:             1,
 		PID2:            2,
@@ -120,16 +115,17 @@ func DefaultBashState() *UpgradeTestState {
 		PartNumber:      "RCU2205A",
 		SoftwareVersion: 1,
 
-		// 03-test-upgrade-0.12-to-1.2.sh
+		// Phase 03 — v1.2 vendor account.
 		VendorAccountFor1_2: "vendor_account_4701",
 
-		// 05-test-upgrade-1.2-to-1.4.3.sh lines 22-29 (used early in 09)
-		VIDFor1_6_0FromScript5:              4701, // = $vid_for_1_2
+		// Phase 05 constants — referenced by phase 09's pre-upgrade block
+		// before 09 redefines them.
+		VIDFor1_6_0FromScript5:              4701, // = vid_for_1_2
 		PID3For1_6_0FromScript5:             160,
 		SoftwareVersion1For1_6_0FromScript5: 100001,
 		SoftwareVersion2For1_6_0FromScript5: 200002,
 
-		// 07-test-upgrade-1.4.4-to-1.5.1.sh lines 489-507
+		// Phase 07 — v1.5.1-era constants.
 		VIDFor1_5_1:          65529,
 		PID1For1_5_1:         79,
 		PID2For1_5_1:         89,
@@ -142,8 +138,7 @@ func DefaultBashState() *UpgradeTestState {
 	}
 }
 
-// Constants used by the rollback portion of script 02
-// (02-test-upgrade-0.12-rollback.sh).
+// Constants used by phase 02 (v0.12 rollback).
 const (
 	VIDForRollback                          = 4705
 	PID1ForRollback                         = 11
@@ -534,9 +529,8 @@ const (
 
 	TestDataURLForMaster = "https://url.data.dclmodel-master"
 
-	// MasterUpgradeImage is the locally-built image tag (matches the bash
-	// MASTER_UPGRADE_IMAGE variable). Defined in test-upgrade.sh as
-	// "dcld-build-master".
+	// MasterUpgradeImage is the locally-built image tag for the master
+	// build container ("dcld-build-master").
 	MasterUpgradeImage      = "dcld-build-master"
 	MasterUpgradeDockerfile = "./integration_tests/upgrade/Dockerfile-build-master"
 
@@ -553,7 +547,7 @@ const (
 	DCLDVersionV012           = "0.12.0"
 )
 
-// Upgrade plan checksums copied from the bash scripts.
+// Upgrade plan checksums.
 const (
 	UpgradeChecksumV1_5_2 = "sha256:746e4d24969f45f55b7d4a2f143ffe9609cf4f7a60c1472e38ecfe781b2327dc"
 	UpgradeChecksumV1_6_0 = "sha256:63a27d50985947dc79f03421a2f7c6475adb84932b431d26d0b6d0a2e2d539ad"
@@ -565,8 +559,7 @@ const (
 	PlanNameV1_6_0 = "v1.6.0"
 
 	// BinaryVersionV1_6_0 is the release tag used by the upgrade plan info.
-	// The bash carries a TODO to switch this to "1.6.0" once that release
-	// ships; until then it points at the dev tag.
+	// TODO: switch to "1.6.0" once the GA release ships.
 	BinaryVersionV1_5_2 = "1.5.2"
 	BinaryVersionV1_6_0 = "1.6.0-0.dev.2"
 )

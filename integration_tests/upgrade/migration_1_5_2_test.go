@@ -21,12 +21,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// runUpgrade151To152 is the Go translation of
-// integration_tests/upgrade/08-test-upgrade-1.5.1-to-1.5.2.sh.
+// runUpgrade151To152 runs the v1.5.1 → v1.5.2 cosmovisor upgrade, then
+// seeds 1.5.2-era state: a new vendor account (VID=65519, no vendorinfo
+// record), models exercising the new ICD / factory-reset /
+// specificationVersion fields, and a pid_3 add+delete to seed ghost state.
 //
-// It assumes the chain is currently running v1.5.1 with state seeded by
-// scripts 01-07 (captured in `state`). The Phase 1 caller skips this until
-// those scripts are themselves migrated to Go.
+// Assumes the chain is currently running v1.5.1 with state seeded by
+// phases 01-07.
 //
 //nolint:funlen
 func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
@@ -37,7 +38,7 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 	dcldNew, err := EnsureBinary("1.5.2")
 	require.NoError(t, err, "fetch dcld v1.5.2")
 
-	// Mirror `$DCLD_BIN_NEW config broadcast-mode sync` from the bash.
+	// `config broadcast-mode sync` — v1.4+ binaries no longer accept `block`.
 	_, _ = ExecuteCLIWithBin(dcldNew, "config", "broadcast-mode", "sync")
 
 	step := SoftwareUpgradeStep{
@@ -79,7 +80,7 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 		requireFieldEquals(t, out, "vid", state.VIDFor1_5_1)
 		requireFieldEquals(t, out, "pid", state.PID2For1_5_1)
 		checkResponseContains(t, out, state.ProductLabelFor1_5_1)
-		// Migration default for this field is 4 (bash line 104).
+		// Migration default for this field is 4.
 		requireFieldEquals(t, out, "commissioningModeSecondaryStepsHint", 4)
 	})
 
@@ -316,7 +317,7 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 		requireFieldEquals(t, out, "vid", VIDFor1_5_2)
 		requireFieldEquals(t, out, "pid", PID2For1_5_2)
 		checkResponseContains(t, out, ProductLabelFor1_5_2)
-		// Migration default for this field is 4 (bash line 318).
+		// Migration default for this field is 4.
 		requireFieldEquals(t, out, "commissioningModeSecondaryStepsHint", 4)
 
 		// Updated carry-over model.

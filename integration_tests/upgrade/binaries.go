@@ -34,10 +34,9 @@ func BinaryPath(version string) string {
 // EnsureBinary downloads the dcld binary for `version` if it is not already
 // present and executable on disk and applies the standard client config
 // (chain-id, node, keyring-backend, broadcast-mode). The broadcast-mode
-// matches the binary version — block for v0.12.x/v1.2.x, sync for v1.4+ —
-// mirroring the `$DCLD_BIN config broadcast-mode ...` lines bash runs at the
-// top of each upgrade script. Idempotent — safe to call repeatedly.
-// Returns the absolute path to the binary.
+// matches the binary version — block for v0.12.x/v1.2.x, sync for v1.4+.
+// Idempotent — safe to call repeatedly. Returns the absolute path to the
+// binary.
 func EnsureBinary(version string) (string, error) {
 	if err := os.MkdirAll(BinariesDir, 0o755); err != nil {
 		return "", fmt.Errorf("mkdir %s: %w", BinariesDir, err)
@@ -90,8 +89,8 @@ func EnsureBinary(version string) (string, error) {
 	return path, nil
 }
 
-// EnsureAllBinaries downloads every version in HistoricalVersions. Used as the
-// per-test-run setup, equivalent to prepare-dcld-versions.sh.
+// EnsureAllBinaries downloads every version in HistoricalVersions. Called
+// once at the start of TestUpgradeSequence.
 func EnsureAllBinaries() error {
 	for _, v := range HistoricalVersions {
 		if _, err := EnsureBinary(v); err != nil {

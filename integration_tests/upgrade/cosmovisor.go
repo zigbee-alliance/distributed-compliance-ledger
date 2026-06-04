@@ -16,10 +16,10 @@ package upgrade
 
 import "fmt"
 
-// SeedCosmovisorGenesis ensures the cosmovisor `genesis/bin` directory exists
-// inside the container and that the active dcld binary is copied in. This is
-// the ritual the bash scripts repeat before any `cosmovisor add-upgrade`
-// invocation against an ad-hoc container.
+// SeedCosmovisorGenesis ensures the cosmovisor `genesis/bin` directory
+// exists inside the container and that the active dcld binary is copied
+// in. Required before any `cosmovisor add-upgrade` invocation against an
+// ad-hoc container.
 func SeedCosmovisorGenesis(container string) error {
 	if _, err := DockerExec(container, "mkdir", "-p", CosmovisorGenesisBin); err != nil {
 		return err

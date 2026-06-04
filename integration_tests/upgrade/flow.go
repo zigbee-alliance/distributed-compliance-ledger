@@ -23,9 +23,8 @@ import (
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 )
 
-// SoftwareUpgradeStep encapsulates one cosmovisor upgrade transition. Mirrors
-// the propose+approve+wait+verify-applied sequence repeated across every
-// `0N-test-upgrade-A.B-to-X.Y.sh` script.
+// SoftwareUpgradeStep encapsulates one cosmovisor upgrade transition —
+// the propose+approve+wait+verify-applied sequence used by every phase.
 type SoftwareUpgradeStep struct {
 	// PlanName is the dclupgrade plan name (e.g. "v1.5.2").
 	PlanName string
@@ -42,7 +41,7 @@ type SoftwareUpgradeStep struct {
 	// Trustees[0] proposes; Trustees[1:] approve.
 	Trustees []string
 	// HeightOffset is how many blocks ahead of the current height to schedule
-	// the plan. Defaults to 20 if zero — matches the bash convention.
+	// the plan. Defaults to 20 if zero.
 	HeightOffset int64
 	// WaitTimeoutSec caps how long we wait for the chain to cross plan_height.
 	// Defaults to 300 if zero — matches `wait_for_height ... 300 outage-safe`.
@@ -95,11 +94,10 @@ func (s SoftwareUpgradeStep) Run(t *testing.T) {
 	require.True(t, strings.Contains(string(out), "no upgrade scheduled"),
 		"expected 'no upgrade scheduled', got: %s", string(out))
 
-	// `query upgrade applied` is diagnostic only. The bash original captures
-	// the output via `$(...)`, which under `set -e` swallows non-zero exits —
-	// so the bash test never fails here even when the query errors. We mirror
-	// that: log the result (or the error) and move on. The real "upgrade
-	// applied" check is the "no upgrade scheduled" assertion above.
+	// `query upgrade applied` is diagnostic only — log the result (or any
+	// error) and move on. The real "upgrade applied" check is the
+	// "no upgrade scheduled" assertion above; older dcld versions return
+	// non-zero exits here that aren't meaningful.
 	t.Logf("Verify upgrade %s is applied", s.PlanName)
 	if out, err := QueryAppliedPlan(s.DcldNewBin, s.PlanName); err != nil {
 		t.Logf("query upgrade applied %s: %v", s.PlanName, err)
@@ -108,18 +106,17 @@ func (s SoftwareUpgradeStep) Run(t *testing.T) {
 	}
 }
 
-// checkResponseContains asserts a query response contains substr, in the same
-// spirit as bash's check_response helper.
+// checkResponseContains asserts a query response contains substr.
 func checkResponseContains(t *testing.T, out []byte, substr string) {
 	t.Helper()
 	require.True(t, strings.Contains(string(out), substr),
 		"response missing %q, got: %s", substr, string(out))
 }
 
-// quoteField is a convenience for the recurring `"key": value` assertions
-// against the legacy bash-era JSON shape (which had a space after the colon).
-// Historical binaries emit JSON with `"key": value` while the master binary
-// emits `"key":value` — check both forms so a single test works across both.
+// quoteField is a convenience for the recurring `"key": value` assertions.
+// Historical dcld binaries emit JSON with `"key": value` (spaced); the
+// master binary emits `"key":value` (compact). Both forms appear in this
+// suite's queries, so quoteField returns both candidates.
 func quoteField(key string, value any) []string {
 	return []string{
 		fmt.Sprintf("%q: %v", key, value), // legacy spaced form
@@ -150,10 +147,10 @@ func requireFieldEquals(t *testing.T, out []byte, key string, value any) {
 }
 
 // MustRun is like t.Run but halts the parent test as soon as the subtest
-// fails. Migration sequences chain stateful steps (account → vendor → models
-// → compliance → …); once an earlier step fails the chain's preconditions are
-// gone, so continuing only produces a cascade of misleading errors. Mirrors
-// the `set -e` behavior of the original bash scripts.
+// fails. Migration sequences chain stateful steps (account → vendor →
+// models → compliance → …); once an earlier step fails the chain's
+// preconditions are gone, so continuing only produces a cascade of
+// misleading errors.
 func MustRun(t *testing.T, name string, f func(t *testing.T)) {
 	t.Helper()
 	if !t.Run(name, f) {

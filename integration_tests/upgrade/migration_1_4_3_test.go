@@ -22,8 +22,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// runUpgrade12To143 is the Go translation of
-// integration_tests/upgrade/05-test-upgrade-1.2-to-1.4.3.sh.
+// runUpgrade12To143 runs the v1.2 → v1.4.3 cosmovisor upgrade, then seeds
+// 1.4.3-era state including the Issue #593 ghost-version pre-setup, a new
+// vendor (VID=65521), DA + PAA root certificates, NOC cert add/remove,
+// and a revocation point.
 //
 // Assumes the chain is currently running v1.2 with state from scripts 01-03.
 //
@@ -235,7 +237,7 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 		checkResponseContains(t, out, state.User1Address) // revoked in 01
 		checkResponseContains(t, out, state.User4Address) // revoked in 03
 
-		// Single-record account variants from bash 05 lines 449-486.
+		// Single-record account variants.
 		for _, addr := range []string{state.User5Address, state.User2Address} {
 			out, err = ExecuteCLIWithBin(dcldNew, "query", "auth", "account", "--address", addr)
 			require.NoError(t, err)
@@ -258,9 +260,9 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 		}
 	})
 
-	// Bulk readback from bash 05 lines 219-454. Adds the gap-fill queries
-	// covering compliance/PKI/model listings and the remaining single-record
-	// pki/compliance forms not exercised by the blocks above.
+	// Bulk readback — gap-fill queries covering compliance/PKI/model listings
+	// and the remaining single-record pki/compliance forms not exercised by
+	// the blocks above.
 	MustRun(t, "VerifyPreservedListings_1_4_3", func(t *testing.T) {
 		t.Helper()
 		// ----- Model bulk listings -----
@@ -708,7 +710,7 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 			"tx", "pki", "propose-add-x509-root-cert",
 			"--certificate", PaaCertNoVIDPathFor1_4_3,
 			"--vid", fmt.Sprintf("%d", VIDFor1_4_3),
-			"--from", state.Trustee1, // bash uses trustee_5 here; t1 is functionally equivalent
+			"--from", state.Trustee1, // any trustee works here; t1 used for consistency
 		)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)

@@ -21,11 +21,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// runUpgrade144To151 is the Go translation of
-// integration_tests/upgrade/07-test-upgrade-1.4.4-to-1.5.1.sh.
+// runUpgrade144To151 runs the v1.4.4 → v1.5.1 cosmovisor upgrade, then
+// seeds 1.5.1-era state: new vendor (VID=65529), models that exercise the
+// new commissioningModeSecondaryStepsHint field.
 //
-// This is the final Phase 2 script — after it runs the chain is at v1.5.1 and
-// Phase 1's 08/09 subtests can take over.
+// This is the final Phase 2 step — after it runs the chain is at v1.5.1
+// and Phase 1's 08/09 subtests can take over.
 //
 //nolint:funlen
 func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
@@ -116,7 +117,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 			checkResponseContains(t, out, addr)
 		}
 
-		// Single-record account variants (bash 07 lines 364-411 style).
+		// Single-record account variants.
 		for _, addr := range []string{
 			state.User2Address, state.User5Address, state.User8Address, state.User11Address,
 		} {
@@ -147,8 +148,8 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 		}
 	})
 
-	// Bulk readback from bash 07. Adds gap-fill compliance/model/pki listings
-	// + remaining single-record forms, spanning the four pre-1.5.1 eras.
+	// Bulk readback — gap-fill compliance/model/pki listings + remaining
+	// single-record forms, spanning the four pre-1.5.1 eras.
 	MustRun(t, "VerifyPreservedListings_1_5_1", func(t *testing.T) {
 		t.Helper()
 		out, err := ExecuteCLIWithBin(dcldNew, "query", "vendorinfo", "all-vendors")

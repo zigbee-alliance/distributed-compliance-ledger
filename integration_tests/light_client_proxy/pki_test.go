@@ -22,9 +22,9 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
-// Bash pki.sh hardcodes vid=1, which is the genesis Vendor account's vid
-// (provisioned via gentestaccounts.sh: "tu00001" gets vid=1). All cert
-// fixtures (subjects/keyIDs/serials) come from integration_tests/constants/*
+// pkiVID=1 matches the genesis Vendor account's vid (provisioned via
+// gentestaccounts.sh: "tu00001" gets vid=1). All cert fixtures
+// (subjects/keyIDs/serials) come from integration_tests/constants/*
 // pre-signed PEMs the suite ships.
 const (
 	pkiVID = 1
@@ -47,15 +47,15 @@ const (
 	pkiUnknownCertSubjectKeyID = "68:99:0E:76:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB"
 )
 
-// TestLightClientProxyPKI is the Go translation of
-// integration_tests/light_client_proxy/pki.sh.
+// TestLightClientProxyPKI exercises the dcld pki module against the light
+// client proxy.
 //
 //nolint:funlen
 func TestLightClientProxyPKI(t *testing.T) {
 	skipIfDisabled(t)
 
 	// 1. Every single-record cert query returns Not Found through the proxy
-	//    before any certs are added. (pki.sh lines 30-83)
+	//    before any certs are added.
 	mustRun(t, "NotFound_BeforeAdd", func(t *testing.T) {
 		t.Helper()
 		queries := []struct {
@@ -101,17 +101,17 @@ func TestLightClientProxyPKI(t *testing.T) {
 	//    trustees propose+approve a root, then vendor adds intermediate and
 	//    leaf, revokes the leaf, and Jack proposes revocation of the root.
 	//
-	//    Account name is suffixed with utils.RandString() — bash hardcodes
-	//    "vendor_account_1" but the five Go tests share one init_pool so we
-	//    need a unique keyring entry per test (see run-all.sh).
+	//    Account name is suffixed with utils.RandString() — the five tests in
+	//    this package share one init_pool, so the keyring needs a unique
+	//    entry per test (see run-all.sh).
 	vendorAccount := "pki_vendor_" + utils.RandString()
 
 	mustRun(t, "Seed_CertChain", func(t *testing.T) {
 		t.Helper()
 		_ = proposeVendorAccount(t, vendorAccount, pkiVID)
 
-		// Vendor (non-Trustee) propose-root: must fail with a non-zero code.
-		// Bash pki.sh line 142 asserts response_does_not_contain "code": 0.
+		// Vendor (non-Trustee) propose-root: must fail with a non-zero code —
+		// only trustees are allowed to propose root certs.
 		tx, err := utils.ExecuteTx(
 			"tx", "pki", "propose-add-x509-root-cert",
 			"--certificate", pkiRootCertPath,
@@ -180,11 +180,11 @@ func TestLightClientProxyPKI(t *testing.T) {
 		require.Equal(t, uint32(0), tx.Code, "propose-revoke-root: %s", tx.RawLog)
 	})
 
-	// 4. Proxy now serves the cert chain. (pki.sh lines 210-255)
+	// 4. Proxy now serves the cert chain.
 	//    Warm up by polling the *latest* write (propose-revoke-x509-root-cert,
 	//    visible as proposed-x509-root-cert-to-revoke). Once that's visible
 	//    every earlier write — root cert, intermediate, leaf, leaf revocation —
-	//    is guaranteed visible too. Bash sleeps 5; we poll up to 30s.
+	//    is guaranteed visible too. Poll up to 30s.
 	mustRun(t, "Found_AfterSeed", func(t *testing.T) {
 		t.Helper()
 		_, qerr := queryUntilContains(LightClientProxyAddr, pkiRootCertSubjectKeyID,
@@ -250,7 +250,7 @@ func TestLightClientProxyPKI(t *testing.T) {
 
 	// 5. Querying an unknown cert subject still returns Not Found (or, for
 	//    all-revoked-x509-root-certs, an empty array since no roots have been
-	//    fully revoked yet — Jack only proposed). (pki.sh lines 266-311)
+	//    fully revoked yet — Jack only proposed).
 	mustRun(t, "NotFound_UnknownCert", func(t *testing.T) {
 		t.Helper()
 		queries := []struct {
@@ -278,19 +278,19 @@ func TestLightClientProxyPKI(t *testing.T) {
 		}
 
 		// all-revoked-x509-root-certs: empty-array response since no root has
-		// been fully revoked yet (Jack only proposed at line 192).
+		// been fully revoked yet (Jack only proposed).
 		out, qerr := queryWithRetry(LightClientProxyAddr,
 			"query", "pki", "all-revoked-x509-root-certs",
 		)
 		require.NoError(t, qerr)
-		// Bash asserts "\[\]" — accept either an empty JSON array or a
-		// "Not Found" response, depending on dcld version formatting.
+		// Accept either an empty JSON array or a "Not Found" response,
+		// depending on dcld version formatting.
 		require.True(t,
 			containsAnyLocal(out, "[]", "Not Found"),
 			"expected empty array or Not Found, got: %s", string(out))
 	})
 
-	// 6. Write through the proxy is rejected. (pki.sh lines 322-325)
+	// 6. Write through the proxy is rejected.
 	mustRun(t, "Write_Rejected", func(t *testing.T) {
 		t.Helper()
 		out, err := executeCLIWithNode(LightClientProxyAddr,

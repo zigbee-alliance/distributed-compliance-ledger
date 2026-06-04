@@ -21,8 +21,8 @@ import (
 	"strings"
 )
 
-// InitPoolOpts mirrors the positional args of bash `init_pool`. All fields
-// are optional; zero values produce the same defaults as bash.
+// InitPoolOpts mirrors the positional args of pool.sh's `init_pool`. All
+// fields are optional; zero values produce the same defaults pool.sh uses.
 type InitPoolOpts struct {
 	// PatchConfig controls whether the consensus timeouts are patched down to
 	// 1s. Defaults to "yes" if empty.

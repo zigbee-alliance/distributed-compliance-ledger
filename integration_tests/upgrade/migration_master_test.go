@@ -23,12 +23,10 @@ import (
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 )
 
-// runUpgrade160ToMaster is the Go translation of
-// integration_tests/upgrade/10-test-upgrade-1.6.0-to-master.sh.
-//
-// Builds the master image, hands the binary to each localnet node via
-// cosmovisor add-upgrade, then proposes/approves an upgrade plan whose name
-// is the master git short hash. After upgrade applies, seeds master-era state.
+// runUpgrade160ToMaster builds the master image, hands the binary to each
+// localnet node via cosmovisor add-upgrade, then proposes/approves an
+// upgrade plan whose name is the master git short hash. After upgrade
+// applies, seeds master-era state.
 //
 //nolint:funlen
 func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
@@ -126,8 +124,8 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 		checkResponseContains(t, out, PartNumberFor1_6_0)
 	})
 
-	// Bulk readback from bash 10. Adds gap-fill queries for auth (single+all),
-	// compliance (single+all), model bulk, pki (global/DA/NOC + revocation),
+	// Bulk readback — gap-fill queries for auth (single+all), compliance
+	// (single+all), model bulk, pki (global/DA/NOC + revocation),
 	// vendorinfo all-vendors, and validator all-nodes.
 	MustRun(t, "VerifyPreservedListings_Master", func(t *testing.T) {
 		t.Helper()

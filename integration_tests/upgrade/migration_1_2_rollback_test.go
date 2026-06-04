@@ -23,12 +23,10 @@ import (
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 )
 
-// runRollback12 is the Go translation of
-// integration_tests/upgrade/04-test-upgrade-1.2-rollback.sh.
-//
-// Same shape as runRollback012, but submitted against a v1.2 chain with
-// "wrong_plan_name_2" — verifying the chain doesn't accidentally upgrade to
-// v1.4.3 just because a plan with that target binary was approved.
+// runRollback12 mirrors runRollback012's no-op-upgrade pattern, this time
+// against a v1.2 chain with "wrong_plan_name_2" — verifying the chain
+// doesn't accidentally upgrade to v1.4.3 just because a plan with that
+// target binary was approved.
 //
 //nolint:funlen
 func runRollback12(t *testing.T, state *UpgradeTestState) {
@@ -72,8 +70,8 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 	})
 
 	// ------------------------------------------------------------------
-	// Verify carry-over from scripts 01/02/03 is intact. Mirrors the
-	// post-rollback readback in 04-test-upgrade-1.2-rollback.sh lines 83-454.
+	// Verify carry-over from scripts 01/02/03 is intact — post-rollback
+	// readback of vendor info, models, compliance, pki, accounts, validator.
 	// ------------------------------------------------------------------
 	MustRun(t, "VerifyPreservedAfterRollback1_2", func(t *testing.T) {
 		t.Helper()

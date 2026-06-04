@@ -21,10 +21,9 @@ import (
 	"time"
 )
 
-// BuildMasterImage runs `docker build -f Dockerfile-build-master` to produce
-// the dcld-build-master image. Equivalent to bash:
-//
-//	docker build -f "$MASTER_UPGRADE_DOCKERFILE" -t "$MASTER_UPGRADE_IMAGE" .
+// BuildMasterImage runs `docker build -f Dockerfile-build-master` to
+// produce the dcld-build-master image (which checks out master and
+// rebuilds dcld with test-upgrade.patch applied).
 //
 // The master build downloads a fresh Go module cache inside the container
 // (~2 GB), which trips "no space left on device" on the GitHub runner unless
@@ -97,10 +96,8 @@ func ExtractMasterBinary(hostPath string) error {
 	return os.Chmod(hostPath, 0o755)
 }
 
-// GetMasterPlanName runs the master image and returns the short git HEAD hash
-// of the bundled checkout — bash:
-//
-//	docker run "$MASTER_UPGRADE_IMAGE" /bin/sh -c "cd /go/src/distributed-compliance-ledger && git rev-parse --short HEAD"
+// GetMasterPlanName runs the master image and returns the short git HEAD
+// hash of the bundled checkout — used as the dclupgrade plan name.
 func GetMasterPlanName() (string, error) {
 	out, err := dockerCmd("run", "--rm", MasterUpgradeImage, "/bin/sh", "-c",
 		"cd /go/src/distributed-compliance-ledger && git rev-parse --short HEAD",
@@ -112,10 +109,10 @@ func GetMasterPlanName() (string, error) {
 	return strings.TrimSpace(string(out)), nil
 }
 
-// PrepareCosmovisorUpgradeOnLocalnetNodes hands the master binary to every
-// localnet node container that is present (node0..node3, observer0,
-// lightclient0) and registers it with cosmovisor under `planName`. Mirrors
-// the per-node loop in script 10.
+// PrepareCosmovisorUpgradeOnLocalnetNodes hands the master binary to
+// every localnet node container that is present (node0..node3,
+// observer0, lightclient0) and registers it with cosmovisor under
+// `planName`.
 func PrepareCosmovisorUpgradeOnLocalnetNodes(planName, hostBinaryPath string) error {
 	for _, node := range []string{"node0", "node1", "node2", "node3", "observer0", "lightclient0"} {
 		// Skip nodes that don't have a host-side .localnet directory.

@@ -24,10 +24,10 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
-// ExecuteCLIWithBin runs an arbitrary dcld command using the binary at binPath.
-// Mirrors utils.ExecuteCLI but allows targeting a historical dcld release.
-// Empty newlines are piped on stdin so commands that prompt for a passphrase
-// don't block on EOF.
+// ExecuteCLIWithBin runs an arbitrary dcld command using the binary at
+// binPath. Same shape as utils.ExecuteCLI but targets a specific binary
+// so we can drive a historical release. Empty newlines are piped on stdin
+// so commands that prompt for a passphrase don't block on EOF.
 func ExecuteCLIWithBin(binPath string, args ...string) ([]byte, error) {
 	cmd := exec.Command(binPath, args...)
 	cmd.Stdin = bytes.NewBufferString("\n\n")
@@ -102,16 +102,15 @@ func ExecuteTxWithBin(binPath string, args ...string) (*utils.TxResult, error) {
 }
 
 // ConfigureClient applies the standard dcld client config (chain-id, node,
-// keyring-backend, broadcast-mode) for the binary at binPath. Equivalent to
-// the `dcld config ...` block that opens every upgrade script.
+// keyring-backend, broadcast-mode) for the binary at binPath.
 //
-// Broadcast-mode follows the binary version: `block` for v0.12.x/v1.2.x
-// (matches bash scripts 01-03), `sync` for v1.4+ (matches bash scripts 04+,
-// where cosmos-sdk removed `block` mode). All dcld binaries share the same
-// `~/.dcl/config/client.toml`, so the last call wins — in practice the
-// upgrade test downloads binaries in version order, and the v1.4+ download
-// flips the global config to sync. v0.12/v1.2 binaries used after that point
-// still work because they also support sync mode.
+// Broadcast-mode follows the binary version: `block` for v0.12.x/v1.2.x,
+// `sync` for v1.4+ (cosmos-sdk removed `block` mode in v1.4.3). All dcld
+// binaries share the same `~/.dcl/config/client.toml`, so the last call
+// wins — in practice the upgrade test downloads binaries in version
+// order, and the v1.4+ download flips the global config to sync.
+// v0.12/v1.2 binaries used after that point still work because they also
+// support sync mode.
 //
 // `currentBroadcastMode` is updated so ExecuteTxWithBin knows whether to
 // poll for on-chain confirmation regardless of which binary is invoked.

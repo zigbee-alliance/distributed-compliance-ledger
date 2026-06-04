@@ -22,8 +22,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// runUpgrade143To144 is the Go translation of
-// integration_tests/upgrade/06-test-upgrade-1.4.3-to-1.4.4.sh.
+// runUpgrade143To144 runs the v1.4.3 → v1.4.4 cosmovisor upgrade, then
+// seeds 1.4.4-era state: new vendor (VID=65522), DA root certs + their
+// intermediates with revocation pairs, NOC certs with the new
+// revoke-noc-x509-* commands, and a revocation point.
 //
 //nolint:funlen
 func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
@@ -114,7 +116,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		checkResponseContains(t, out, state.User4Address)
 		checkResponseContains(t, out, state.User7Address)
 
-		// Single-record account variants from bash 06 lines 637-678.
+		// Single-record account variants.
 		for _, addr := range []string{state.User5Address, state.User2Address, state.User8Address} {
 			out, err = ExecuteCLIWithBin(dcldNew, "query", "auth", "account", "--address", addr)
 			require.NoError(t, err)
@@ -137,10 +139,10 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		}
 	})
 
-	// Bulk readback from bash 06 lines 107-687. Adds the gap-fill queries
-	// covering vendorinfo/model/compliance/PKI listings + global/DA/NOC cert
-	// queries introduced in 1.4.x. NOC-side "Not Found" responses are run for
-	// coverage but not asserted on, since the bash treats them as informational.
+	// Bulk readback — gap-fill queries covering vendorinfo/model/compliance/PKI
+	// listings + global/DA/NOC cert queries introduced in 1.4.x. NOC-side
+	// "Not Found" responses are run for coverage but not asserted on (treated
+	// as informational).
 	MustRun(t, "VerifyPreservedListings_1_4_4", func(t *testing.T) {
 		t.Helper()
 		// VendorInfo: all-vendors across three eras.
@@ -273,8 +275,8 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 			require.NoError(t, err)
 		}
 
-		// NOC namespace queries return Not Found for DA-side subjects — bash
-		// asserts the absence here to confirm DA/NOC namespace separation.
+		// NOC namespace queries return Not Found for DA-side subjects —
+		// confirms DA/NOC namespace separation.
 		for _, c := range []struct{ subj, kid string }{
 			{RootCertWithVIDSubjectFor1_4_3, RootCertWithVIDSubjectKeyIDFor1_4_3},
 			{TestRootCertSubjectFor1_2, TestRootCertSubjectKeyIDFor1_2},

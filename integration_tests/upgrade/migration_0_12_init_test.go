@@ -63,13 +63,14 @@ const (
 	intermediateCertSubjectKeyID = "4E:3B:73:F4:70:4D:C2:98:0D:DB:C8:5A:5F:02:3B:BF:86:25:56:2B"
 )
 
-// runInitV0_12 is the Go translation of
-// integration_tests/upgrade/01-test-upgrade-initialize-0.12.sh.
+// runInitV0_12 seeds the initial chain state at dcld v0.12.0 — accounts
+// (trustees, vendor, certification center, three users), vendor info,
+// three models with versions, compliance state (certify/revoke/provision),
+// x509 root certificates, and a validator-node.
 //
 // On entry: a clean localnet must already be running with dcld v0.12.0. On
-// exit, the chain has the full menu of seeded state subsequent upgrade scripts
-// depend on (accounts, vendor info, models, compliance state, x509 certs,
-// validator-node).
+// exit, the chain has the full menu of seeded state subsequent upgrade
+// phases depend on.
 //
 //nolint:funlen
 func runInitV0_12(t *testing.T, state *UpgradeTestState) {
@@ -108,8 +109,9 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 	})
 	require.NoError(t, err)
 	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
-	// Bash doesn't approve the vendor account: only a single trustee approval is
-	// needed for the Vendor role under the v0.12.0 schema. We follow the bash.
+	// Vendor role uses the 1/3 quorum, so a single trustee propose-add
+	// already satisfies the threshold on the 3-trustee genesis chain — no
+	// explicit approval needed.
 
 	// CertificationCenter account (used to certify/revoke/provision models).
 	ccAddr, ccPub, err := CreateKey(dcld, certificationCenterAccount)
@@ -417,8 +419,7 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 		t.Helper()
 		AddValidatorNode(t, state, dcld)
 
-		// Bash 01 line 85 checks `query validator last-power --address` once
-		// the validator has joined the pool — assert the new owner has a
+		// Once the validator has joined the pool, assert the new owner has a
 		// queryable last-power entry.
 		if state.ValidatorAddress != "" {
 			_, err := ExecuteCLIWithBin(dcld,

@@ -22,8 +22,8 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
-// TestLightClientProxyVendorInfo is the Go translation of
-// integration_tests/light_client_proxy/vendorinfo.sh.
+// TestLightClientProxyVendorInfo exercises the dcld vendorinfo module
+// against the light client proxy.
 func TestLightClientProxyVendorInfo(t *testing.T) {
 	skipIfDisabled(t)
 
@@ -48,11 +48,11 @@ func TestLightClientProxyVendorInfo(t *testing.T) {
 	})
 
 	// 3. Propose Vendor account against the full node, then add the vendor
-	//    info record. Mirrors bash lines 42-58.
+	//    info record.
 	//
 	//    Account name is suffixed with utils.RandString() so all five tests
 	//    in this package can share one init_pool without colliding on the
-	//    shared keyring (see integration_tests/run-all.sh).
+	//    shared keyring (see run-all.sh).
 	vid := randomUint16()
 	vendorAccount := "vinfo_vendor_" + utils.RandString()
 	const (
@@ -77,7 +77,7 @@ func TestLightClientProxyVendorInfo(t *testing.T) {
 	})
 
 	// 4. Now the proxy serves the new record. Poll through the proxy's
-	//    post-write sync window (bash sleeps 5; we poll up to 30s).
+	//    post-write sync window (up to 30s).
 	mustRun(t, "Found_AfterAdd", func(t *testing.T) {
 		t.Helper()
 		out, qerr := queryUntilContains(LightClientProxyAddr, companyLegalName,

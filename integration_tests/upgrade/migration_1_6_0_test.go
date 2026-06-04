@@ -22,10 +22,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// runUpgrade152To160 is the Go translation of
-// integration_tests/upgrade/09-test-upgrade-1.5.2-to-1.6.0.sh.
+// runUpgrade152To160 runs the v1.5.2 → v1.6.0 cosmovisor upgrade and
+// verifies Issue #593 ghost-cleanup: a model version deleted on v1.5.2
+// becomes properly inaccessible after the v1.6.0 migration, and the
+// underlying model can now be deleted cleanly.
 //
-// Assumes the chain is at v1.5.2 with state from scripts 01-08.
+// Assumes the chain is at v1.5.2 with state from phases 01-08.
 //
 //nolint:funlen
 func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
@@ -68,7 +70,7 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 			"expected sv2 absent post-delete, got: %s", string(out))
 	})
 
-	// `$DCLD_BIN_NEW config broadcast-mode sync` (bash line 42).
+	// v1.4+ binaries no longer accept --broadcast-mode block.
 	_, _ = ExecuteCLIWithBin(dcldNew, "config", "broadcast-mode", "sync")
 
 	step := SoftwareUpgradeStep{
@@ -156,7 +158,7 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 		requireFieldEquals(t, out, "minApplicableSoftwareVersion", MinApplicableSoftwareVersionFor1_5_2)
 		requireFieldEquals(t, out, "maxApplicableSoftwareVersion", MaxApplicableSoftwareVersionFor1_5_2)
 
-		// Bulk model listings — bash 09 gap-fill (all-models + vendor-models).
+		// Bulk model listings (all-models + vendor-models).
 		out, err = ExecuteCLIWithBin(dcldNew, "query", "model", "all-models")
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", VIDFor1_5_2)

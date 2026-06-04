@@ -22,10 +22,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// runAddNewNodeAfterUpgrade is the Go translation of
-// integration_tests/upgrade/11-test-add-new-node-after-upgrade.sh.
-//
-// Spins up a fresh observer container at IP 192.167.10.28 installed with dcld
+// runAddNewNodeAfterUpgrade spins up a fresh observer container at
+// IP 192.167.10.28 installed with dcld
 // v0.12.0. Seeds cosmovisor with the master binary under the master plan
 // name. Starts the node and polls until:
 //
@@ -133,8 +131,8 @@ func runAddNewNodeAfterUpgrade(t *testing.T, state *UpgradeTestState) {
 		))
 	})
 
-	// Step 8 + 9: catch-up starts and then finishes. Polling window is 15min
-	// per status — bash uses 900s for each.
+	// Step 8 + 9: catch-up starts and then finishes. 15min polling window
+	// per status.
 	MustRun(t, "ObserverCatchUpLifecycle", func(t *testing.T) {
 		t.Helper()
 		require.NoError(t, WaitForCatchingUpStatus(
