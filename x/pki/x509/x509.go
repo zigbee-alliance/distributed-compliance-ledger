@@ -49,6 +49,25 @@ const (
 
 type DecodeX509CertVerificationOptions func(cert *x509.Certificate) error
 
+// ParseAndValidateCertificateOptions is an option applied by ParseAndValidateCertificate
+// after the standard size/SAN/subject-field checks pass. Options receive the parsed
+// *x509.Certificate and may return an error to reject the certificate.
+type ParseAndValidateCertificateOptions = DecodeX509CertVerificationOptions
+
+// VerifyIsCACertificate is a ParseAndValidateCertificate option that fails if the
+// certificate does not have BasicConstraints marked valid with cA set to TRUE.
+// Pass it when validating root, intermediate, ICA, or NOC certificates; omit it
+// for end-entity (leaf) certificates such as CRL signer certificates.
+func VerifyIsCACertificate(cert *x509.Certificate) error {
+	if !cert.BasicConstraintsValid || !cert.IsCA {
+		return pkitypes.NewErrInappropriateCertificateType(
+			"certificate is not a CA: BasicConstraints extension must be present and cA must be set to TRUE",
+		)
+	}
+
+	return nil
+}
+
 func DecodeX509Certificate(pemCertificate string, options ...DecodeX509CertVerificationOptions) (*Certificate, error) {
 	block, _ := pem.Decode([]byte(pemCertificate))
 	if block == nil {
@@ -221,11 +240,12 @@ func (c Certificate) IsSelfSigned() bool {
 //
 // Parameters:
 //   - pemCertificate: PEM-encoded X.509 certificate string
+//   - options: optional checks applied to the parsed certificate, e.g. VerifyIsCACertificate
 //
 // Returns:
 //   - *Certificate: Parsed certificate structure if validation succeeds
 //   - error: Error if validation fails or certificate cannot be parsed
-func ParseAndValidateCertificate(pemCertificate string) (*Certificate, error) {
+func ParseAndValidateCertificate(pemCertificate string, options ...ParseAndValidateCertificateOptions) (*Certificate, error) {
 	// 1. Check Certificate Size
 	if len(pemCertificate) > MaxCertSize {
 		return nil, pkitypes.NewErrInvalidCertificate(fmt.Sprintf("certificate size (%d bytes) exceeds maximum limit of %d bytes", len(pemCertificate), MaxCertSize))
@@ -263,6 +283,13 @@ func ParseAndValidateCertificate(pemCertificate string) (*Certificate, error) {
 	subjectFieldCount := len(cert.Certificate.Subject.Names)
 	if subjectFieldCount > MaxSubjectFields {
 		return nil, pkitypes.NewErrInvalidCertificate(fmt.Sprintf("subject field count (%d) exceeds maximum limit of %d", subjectFieldCount, MaxSubjectFields))
+	}
+
+	// 4. Apply caller-supplied options (e.g. VerifyIsCACertificate)
+	for _, opt := range options {
+		if err = opt(cert.Certificate); err != nil {
+			return nil, err
+		}
 	}
 
 	return cert, nil

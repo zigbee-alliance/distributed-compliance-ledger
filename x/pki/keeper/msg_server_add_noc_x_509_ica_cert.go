@@ -24,10 +24,10 @@ func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNoc
 		return nil, pkitypes.NewErrUnauthorizedRole("MsgAddNocX509IcaCert", dclauthtypes.Vendor)
 	}
 
-	// decode pem certificate
-	x509Certificate, err := x509.ParseAndValidateCertificate(msg.Cert)
+	// decode pem certificate (must be a CA: NOC ICA certificate)
+	x509Certificate, err := x509.ParseAndValidateCertificate(msg.Cert, x509.VerifyIsCACertificate)
 	if err != nil {
-		return nil, pkitypes.NewErrInvalidCertificate(err)
+		return nil, err
 	}
 
 	// fail if certificate is self-signed
