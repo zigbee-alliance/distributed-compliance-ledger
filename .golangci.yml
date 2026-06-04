@@ -16,75 +16,117 @@
 version: "2"
 
 linters:
-  default: all
-  disable:
-    - gochecknoinits
-    - gochecknoglobals
-    - mnd
-    - dupl
-    - varnamelen
-    - tagliatelle
-    - wrapcheck
-    - testpackage
-    - paralleltest
-    - ireturn
-    - err113
-    - wsl
-    - wsl_v5
-    - forcetypeassert
-    - exhaustive
-    - godoclint
-    - modernize
-    - prealloc
-    - noinlineerr
-    - funcorder
-    - recvcheck
-    - intrange
-    - copyloopvar
-    - errname
-    - lll
-    - gosec
-    - funlen
-    - cyclop
-    - forbidigo
-    - gocognit
-    - godox
-    - gomoddirectives
-    - containedctx
-    - maintidx
-    - nonamedreturns
-    - exhaustruct
-    - depguard
-    - godot
-    - inamedparam
-    - goconst
-    - perfsprint
-    - unparam
-    - revive
-    - errcheck
-    - predeclared
+  # Explicit allowlist. Avoid `default: all` so future golangci-lint releases
+  # don't silently enable new noisy linters on upgrade.
+  default: none
+  enable:
+    # --- Core correctness (real bugs) ---
+    - bodyclose
+    - contextcheck
+    - durationcheck
+    - errchkjson
+    - errorlint
+    - fatcontext
+    - gocheckcompilerdirectives
+    - gochecksumtype
+    - govet
+    - ineffassign
+    - makezero
+    - nilerr
+    - nilnesserr
+    - noctx
+    - reassign
+    - rowserrcheck
+    - spancheck
+    - sqlclosecheck
+    - staticcheck
+    - unused
+    - wastedassign
+
+    # --- Test correctness ---
+    - ginkgolinter
+    - testableexamples
+    - testifylint
+    - thelper
+    - tparallel
+    - usetesting
+
+    # --- API / stdlib usage ---
+    - asasalint
+    - canonicalheader
+    - exptostd
+    - importas
+    - loggercheck
+    - mirror
+    - musttag
+    - nosprintfhostport
+    - promlinter
+    - protogetter
+    - sloglint
+    - usestdlibvars
+    - zerologlint
+
+    # --- Style / quality ---
+    - asciicheck
+    - bidichk
+    - decorder
+    - dogsled
+    - dupword
+    - embeddedstructfieldcheck
+    - gocritic
+    - gocyclo
+    - goheader
+    - goprintffuncname
+    - grouper
+    - iface
+    - interfacebloat
+    - iotamixing
+    - misspell
+    - nakedret
+    - nestif
+    - nilnil
+    - nlreturn
+    - nolintlint
+    - tagalign
+    - unconvert
+    - whitespace
+
+    # --- Niche / dependency-specific (no findings today, kept for safety nets) ---
+    - arangolint
+    - clickhouselint
+    - gomodguard
+    - gosmopolitan
+    - unqueryvet
+
   settings:
     staticcheck:
+      # Drop "quick fix" suggestions (QF*) and stylecheck rules (ST*).
+      # ST* used to be a separate `stylecheck` linter in v1 — kept disabled
+      # here to match the original team policy.
       checks:
         - all
         - -QF*
         - -ST*
     govet:
+      # Disable the modernization "inline" analyzer — it nags about replacing
+      # ioutil/reflect constants with newer equivalents. Style, not bugs.
       disable:
         - inline
+
   exclusions:
+    # Skip auto-generated files (e.g. *.pb.go from protoc).
+    generated: lax
     rules:
+      # TODO: testifylint actually adds value in tests (catches argument-order
+      # mistakes in assert/require). Consider removing it from these exclusions
+      # and fixing any findings as a follow-up.
       - path: _test\.go$
         linters:
-          - goconst
           - staticcheck
           - testifylint
-          - perfsprint
           - dupword
       - path: helpers\.go$
         linters:
-          - goconst
           - staticcheck
           - testifylint
-          - perfsprint
           - dupword
