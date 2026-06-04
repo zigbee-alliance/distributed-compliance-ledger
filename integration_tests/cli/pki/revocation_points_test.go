@@ -59,7 +59,6 @@ const (
 	revPointGsr4IssuerSKID = "54B07BAD45B8E2407FFB0A6EFBBE33C93CA384D5"
 )
 
-// TestPKIRevocationPoints translates pki-revocation-points.sh.
 func TestPKIRevocationPoints(t *testing.T) {
 	jack := testconstants.JackAccount
 	alice := testconstants.AliceAccount

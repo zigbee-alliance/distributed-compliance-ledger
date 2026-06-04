@@ -10,7 +10,6 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
-// TestComplianceDemoHex translates compliance-demo-hex.sh.
 func TestComplianceDemoHex(t *testing.T) {
 	// Use random VID/PID expressed as hex to avoid collisions across test runs.
 	vid := rand.Intn(65534) + 1

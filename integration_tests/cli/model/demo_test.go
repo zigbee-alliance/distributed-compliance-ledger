@@ -10,7 +10,6 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
-// TestModelDemo translates model-demo.sh.
 func TestModelDemo(t *testing.T) {
 	vid := rand.Intn(65534) + 1
 	vendorAccount := fmt.Sprintf("vendor_account_%d", vid)

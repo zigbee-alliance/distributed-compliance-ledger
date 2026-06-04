@@ -10,7 +10,6 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
-// TestModelVersionDemoHex translates modelversion-demo-hex.sh.
 func TestModelVersionDemoHex(t *testing.T) {
 	vidHex := "0xA13"
 	pidHex := "0xA11"

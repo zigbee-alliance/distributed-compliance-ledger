@@ -20,7 +20,6 @@ const (
 	approvalTestVid                  = 24582
 )
 
-// TestPKIApproval translates pki-approval.sh.
 // This test covers approval and revocation flows requiring a 2/3-quorum with 6 trustees.
 func TestPKIApproval(t *testing.T) {
 	jack := testconstants.JackAccount

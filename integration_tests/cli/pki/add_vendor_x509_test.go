@@ -22,7 +22,6 @@ const (
 	addVendorIntermCertSubjectKeyID = "A8:88:D9:8A:39:AC:65:D5:82:4B:37:A8:95:6C:65:43:CD:44:01:E0"
 )
 
-// TestPKIAddVendorX509Certificates translates pki-add-vendor-x509-certificates.sh.
 func TestPKIAddVendorX509Certificates(t *testing.T) {
 	jack := testconstants.JackAccount
 	alice := testconstants.AliceAccount

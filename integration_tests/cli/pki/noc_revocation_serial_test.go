@@ -9,7 +9,6 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
-// TestPKINocRevocationWithSerialNumber translates pki-noc-revocation-with-serial-number.sh.
 // After TestPKINocRevocationWithRevokingChild, noc_root_cert_1/copy, noc_cert_1, and noc_leaf_cert_1
 // are in the revoked pool. This test removes them and re-adds them before running serial revocation.
 func TestPKINocRevocationWithSerialNumber(t *testing.T) {

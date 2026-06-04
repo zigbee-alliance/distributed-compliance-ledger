@@ -31,7 +31,6 @@ const (
 	removeX509LeafCertSerialNum    = "5"
 )
 
-// TestPKIRemoveX509Certificates translates pki-remove-x509-certificates.sh.
 func TestPKIRemoveX509Certificates(t *testing.T) {
 	jack := testconstants.JackAccount
 

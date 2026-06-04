@@ -10,7 +10,6 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
-// TestModelVersionDemo translates modelversion-demo.sh.
 func TestModelVersionDemo(t *testing.T) {
 	vid := rand.Intn(65534) + 1
 	pid := rand.Intn(65534) + 1

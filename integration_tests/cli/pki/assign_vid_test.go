@@ -19,7 +19,6 @@ const (
 	assignVidTestRootCertSubjectKeyID = "BB:FF:CA:8E:23:9F:4F:99:CA:DB:E2:68:A6:A5:15:27:17:1E:D9:0E"
 )
 
-// TestPKIAssignVid translates pki-assign-vid.sh.
 func TestPKIAssignVid(t *testing.T) {
 	jack := testconstants.JackAccount
 	alice := testconstants.AliceAccount

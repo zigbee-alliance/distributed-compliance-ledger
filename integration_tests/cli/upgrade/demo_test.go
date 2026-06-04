@@ -37,7 +37,6 @@ const (
 	farFutureHeight = "10000000"
 )
 
-// TestUpgradeDemo translates upgrade-demo.sh.
 func TestUpgradeDemo(t *testing.T) {
 	alice := testconstants.AliceAccount
 	bob := testconstants.BobAccount

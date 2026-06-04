@@ -24,7 +24,6 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
-// TestVendorInfoDemo translates vendorinfo-demo.sh.
 func TestVendorInfoDemo(t *testing.T) {
 	vid := rand.Intn(60000) + 1
 	vid2 := rand.Intn(60000) + 1

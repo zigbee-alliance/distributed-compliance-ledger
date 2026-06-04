@@ -12,14 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package validator_test contains integration tests translated from validator-demo.sh.
+// Package validator contains integration tests for the validator module's
+// disable/enable/propose/approve/reject flows.
 //
-// Note: The original shell script spins up a new Docker container, adds a brand new validator
-// node, and then tests disable/enable/propose/approve/reject flows against that node.  These
-// Go tests cover the same logical flows using the existing localnet nodes (node0 … node3) so
-// that no Docker setup is required at the Go-test level.  The per-validator address that the
-// shell script resolved via "dcld tendermint show-address" inside the container is replaced by
-// querying all-nodes and picking the first node whose validator address is already known.
+// Tests run against the existing localnet nodes (node0 … node3) — no
+// per-test Docker setup. The per-validator address is resolved by querying
+// all-nodes and picking the first node whose validator address is already
+// known.
 package validator
 
 import (
@@ -32,8 +31,8 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
-// TestValidatorProposeRejectDisable translates the propose-and-reject disable-validator section
-// and the sequential approve/reject/re-vote flows from validator-demo.sh.
+// TestValidatorProposeRejectDisable covers the propose-and-reject
+// disable-validator path and the sequential approve/reject/re-vote flows.
 //
 // Prerequisites: a running localnet with at least one validator node visible via
 //

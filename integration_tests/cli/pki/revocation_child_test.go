@@ -46,7 +46,6 @@ const (
 	revChildLeafCertSubjectKeyID = "12:16:55:8E:5E:2A:DF:04:D7:E6:FE:D1:53:69:61:98:EF:17:2F:03"
 )
 
-// TestPKIRevocationWithRevokingChild translates pki-revocation-with-revoking-child.sh.
 // Root certs (root_with_same_subject_and_skid_1/2) are already on chain from TestPKICombineCerts,
 // so SetupCerts only adds intermediate and leaf certs.
 // Root revocation tests run in TestPKIRevocationWithSerialNumber to avoid state conflicts.

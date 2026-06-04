@@ -19,7 +19,6 @@ const (
 	nocLeafCert2SerialNumber = "628585745496304216074570439204763956375973944746"
 )
 
-// TestPKINocRevocationWithRevokingChild translates pki-noc-revocation-with-revoking-child.sh.
 // noc_root_cert_1/copy and noc_cert_1/copy were added and revoked by TestPKINocCerts,
 // so this test removes them from the revoked pool and re-adds them before revoking again.
 func TestPKINocRevocationWithRevokingChild(t *testing.T) {

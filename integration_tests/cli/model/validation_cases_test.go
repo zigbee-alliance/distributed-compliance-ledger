@@ -39,7 +39,6 @@ func requireTxFailContains(t *testing.T, txResult *utils.TxResult, err error, wa
 		"expected error to contain %q, got: %s", want, msg)
 }
 
-// TestModelValidationCases translates model-validation-cases.sh.
 func TestModelValidationCases(t *testing.T) {
 	vid1 := rand.Intn(65534) + 1
 	vendorAccount1 := fmt.Sprintf("vendor_account_%d", vid1)

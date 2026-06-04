@@ -10,7 +10,6 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
-// TestModelNegativeCases translates model-negative-cases.sh.
 func TestModelNegativeCases(t *testing.T) {
 	certificationHouse := cliputils.CreateAccount(t, "CertificationCenter")
 

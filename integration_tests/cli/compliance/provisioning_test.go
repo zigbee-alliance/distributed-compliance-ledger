@@ -10,7 +10,6 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
-// TestComplianceProvisioning translates compliance-provisioning.sh.
 func TestComplianceProvisioning(t *testing.T) {
 	vid := rand.Intn(65534) + 1
 	vendorAccount := fmt.Sprintf("vendor_account_%d", vid)

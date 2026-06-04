@@ -30,7 +30,6 @@ const (
 	removeNocLeafCertSubjectKeyID = "77:1F:DB:C4:4C:B1:29:7E:3C:EB:3E:D8:2A:38:0B:63:06:07:00:01"
 )
 
-// TestPKIRemoveNocCertificates translates pki-remove-noc-certificates.sh.
 func TestPKIRemoveNocCertificates(t *testing.T) {
 	jack := testconstants.JackAccount
 

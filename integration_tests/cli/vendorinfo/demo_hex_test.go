@@ -32,7 +32,6 @@ const (
 	hexVid2Decimal = 2580
 )
 
-// TestVendorInfoDemoHex translates vendorinfo-demo-hex.sh.
 func TestVendorInfoDemoHex(t *testing.T) {
 	vendorAccount := fmt.Sprintf("vendor_account_%s", hexVid)
 	secondVendorAccount := fmt.Sprintf("vendor_account_%s", hexVid2)

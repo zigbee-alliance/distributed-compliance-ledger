@@ -53,7 +53,6 @@ const (
 	nocVid2 = 4701
 )
 
-// TestPKINocCerts translates pki-noc-certs.sh.
 func TestPKINocCerts(t *testing.T) {
 	vendorAccount := fmt.Sprintf("vendor_account_%d", nocVid)
 	cliputils.CreateVendorAccount(t, vendorAccount, nocVid)

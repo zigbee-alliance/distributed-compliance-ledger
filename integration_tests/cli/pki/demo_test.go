@@ -48,7 +48,6 @@ const (
 	pkiDemoVid = 1
 )
 
-// TestPKIDemo translates pki-demo.sh.
 func TestPKIDemo(t *testing.T) {
 	jack := testconstants.JackAccount
 	alice := testconstants.AliceAccount

@@ -24,8 +24,8 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
-// Constants for pki-revocation-with-serial-number.sh — reuses same cert paths as revocation_child_test.go.
-// We alias them here to keep this file self-contained.
+// Cert fixtures — same paths as revocation_child_test.go, aliased here to
+// keep this file self-contained.
 const (
 	revSerialRootCert1SerialNumber = revChildRootCert1SerialNumber
 	revSerialRootCert2SerialNumber = revChildRootCert2SerialNumber
@@ -49,7 +49,6 @@ const (
 	revSerialLeafCertSubjectKeyID = revChildLeafCertSubjectKeyID
 )
 
-// TestPKIRevocationWithSerialNumber translates pki-revocation-with-serial-number.sh.
 // Root certs are already on-chain from TestPKICombineCerts.
 // Intermediate/leaf certs are re-added by TestPKIRevocationWithRevokingChild.ReAddCertsAfterRevocation.
 // This test also covers RevokeRootCertWithChildFlag (moved here from revocation_child_test.go

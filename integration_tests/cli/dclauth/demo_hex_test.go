@@ -10,7 +10,6 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
-// TestAuthDemoHex translates auth-demo-hex.sh.
 // It creates a Vendor account using a hex-format VID, adds a model with the hex VID,
 // verifies that using a different VID is rejected, updates the model, and queries it.
 func TestAuthDemoHex(t *testing.T) {

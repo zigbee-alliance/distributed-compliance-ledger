@@ -18,7 +18,6 @@ const (
 	rootWithSameSubjectAndSkidSubjectKeyID = "33:5E:0C:07:44:F8:B5:9C:CD:55:01:9B:6D:71:23:83:6F:D0:D4:BE"
 )
 
-// TestPKICombineCerts translates pki-combine-certs.sh.
 // Tests that multiple certificates with the same subject and SKID can coexist.
 func TestPKICombineCerts(t *testing.T) {
 	jack := testconstants.JackAccount
