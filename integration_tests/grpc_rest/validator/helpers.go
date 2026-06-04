@@ -2,7 +2,6 @@ package validator
 
 import (
 	"context"
-	"fmt"
 
 	tmrand "github.com/cometbft/cometbft/libs/rand"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -82,7 +81,7 @@ func GetProposedValidatorToDisable(suite *utils.TestSuite, address sdk.ValAddres
 
 	if suite.Rest {
 		var resp validatortypes.QueryGetProposedDisableValidatorResponse
-		err := suite.QueryREST(fmt.Sprintf(DCLValidatorProposedDisableNodeEndpoint+address.String()), &resp)
+		err := suite.QueryREST(DCLValidatorProposedDisableNodeEndpoint+address.String(), &resp)
 		if err != nil {
 			return nil, err
 		}
@@ -142,7 +141,7 @@ func GetRejectedValidatorToDisable(
 
 	if suite.Rest {
 		var resp validatortypes.QueryGetRejectedDisableValidatorResponse
-		err := suite.QueryREST(fmt.Sprintf(DCLValidatorRejectedDisableNodeEndpoint+address.String()), &resp)
+		err := suite.QueryREST(DCLValidatorRejectedDisableNodeEndpoint+address.String(), &resp)
 		if err != nil {
 			return nil, err
 		}
