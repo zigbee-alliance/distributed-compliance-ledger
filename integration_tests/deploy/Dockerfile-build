@@ -18,7 +18,7 @@
 # The resulting image is used only for getting the build artifacts from
 # a container based on it. Containers based on this image are never run.
 ################################################################################
-FROM golang:1.26.4-bullseye
+FROM golang:1.26.4-bookworm
 
 WORKDIR /go/src/dc-ledger
 COPY app ./app/
