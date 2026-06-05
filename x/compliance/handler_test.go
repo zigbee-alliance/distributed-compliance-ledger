@@ -301,6 +301,7 @@ func checkProvisionalModelInfo(
 	require.Equal(t, provisionalModelMsg.Transport, receivedComplianceInfo.Transport)
 	require.Equal(t, provisionalModelMsg.ParentChild, receivedComplianceInfo.ParentChild)
 	require.Equal(t, provisionalModelMsg.CertificationIdOfSoftwareComponent, receivedComplianceInfo.CertificationIdOfSoftwareComponent)
+	require.Equal(t, provisionalModelMsg.SpecificationVersion, receivedComplianceInfo.SpecificationVersion)
 }
 
 func checkCertifiedModelInfo(
@@ -327,6 +328,7 @@ func checkCertifiedModelInfo(
 	require.Equal(t, certifyModelMsg.Transport, receivedComplianceInfo.Transport)
 	require.Equal(t, certifyModelMsg.ParentChild, receivedComplianceInfo.ParentChild)
 	require.Equal(t, certifyModelMsg.CertificationIdOfSoftwareComponent, receivedComplianceInfo.CertificationIdOfSoftwareComponent)
+	require.Equal(t, certifyModelMsg.SpecificationVersion, receivedComplianceInfo.SpecificationVersion)
 }
 
 func checkDeviceSoftwareCompliance(
@@ -353,6 +355,7 @@ func checkDeviceSoftwareCompliance(
 	require.Equal(t, info.Transport, receivedComplianceInfo.Transport)
 	require.Equal(t, info.ParentChild, receivedComplianceInfo.ParentChild)
 	require.Equal(t, info.CertificationIdOfSoftwareComponent, receivedComplianceInfo.CertificationIdOfSoftwareComponent)
+	require.Equal(t, info.SpecificationVersion, receivedComplianceInfo.SpecificationVersion)
 	require.Equal(t, info.SchemaVersion, receivedComplianceInfo.SchemaVersion)
 }
 
@@ -427,6 +430,7 @@ func newMsgUpdateComplianceInfo(
 		OSVersion:                          "",
 		ParentChild:                        "",
 		CertificationIdOfSoftwareComponent: "",
+		SpecificationVersion:               0,
 		SchemaVersion:                      testconstants.SchemaVersion,
 	}
 }
@@ -460,6 +464,7 @@ func newMsgUpdateComplianceInfoWithAllOptionalFlags(
 		OSVersion:                          "new OSVersion",
 		ParentChild:                        "new ParentChild",
 		CertificationIdOfSoftwareComponent: "new CertificationIdOfSoftwareComponent",
+		SpecificationVersion:               2,
 		SchemaVersion:                      testconstants.SchemaVersion,
 	}
 }
@@ -494,6 +499,7 @@ func newMsgProvisionModelWithAllOptionalFlags(
 		Transport:                          testconstants.Transport,
 		ParentChild:                        testconstants.ParentChild1,
 		CertificationIdOfSoftwareComponent: testconstants.CertificationIDOfSoftwareComponent,
+		SpecificationVersion:               testconstants.SpecificationVersion,
 	}
 }
 
@@ -565,6 +571,7 @@ func newMsgCertifyModelWithAllOptionalFlags(
 		Transport:                          testconstants.Transport,
 		ParentChild:                        testconstants.ParentChild1,
 		CertificationIdOfSoftwareComponent: testconstants.CertificationIDOfSoftwareComponent,
+		SpecificationVersion:               testconstants.SpecificationVersion,
 	}
 }
 

@@ -67,6 +67,9 @@ export interface ComplianceComplianceInfo {
   certificationIdOfSoftwareComponent?: string;
 
     /** @format int64 */
+    specificationVersion?: number;
+
+    /** @format int64 */
     schemaVersion?: number;
 }
 

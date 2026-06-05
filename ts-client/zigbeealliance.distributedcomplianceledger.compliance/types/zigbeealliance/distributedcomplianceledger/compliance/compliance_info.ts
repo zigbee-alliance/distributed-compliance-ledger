@@ -20,15 +20,36 @@ export interface ComplianceInfo {
   certificationRoute: string;
   programType: string;
   programTypeVersion: string;
+  /**
+   * Deprecated
+   *
+   * @deprecated
+   */
   compliantPlatformUsed: string;
+  /**
+   * Deprecated
+   *
+   * @deprecated
+   */
   compliantPlatformVersion: string;
   transport: string;
   familyId: string;
   supportedClusters: string;
+  /**
+   * Deprecated
+   *
+   * @deprecated
+   */
   OSVersion: string;
   parentChild: string;
+  /**
+   * Deprecated
+   *
+   * @deprecated
+   */
   certificationIdOfSoftwareComponent: string;
   schemaVersion: number;
+  specificationVersion: number;
 }
 
 function createBaseComplianceInfo(): ComplianceInfo {
@@ -57,6 +78,7 @@ function createBaseComplianceInfo(): ComplianceInfo {
     parentChild: "",
     certificationIdOfSoftwareComponent: "",
     schemaVersion: 0,
+    specificationVersion: 0,
   };
 }
 
@@ -133,6 +155,9 @@ export const ComplianceInfo = {
     }
     if (message.schemaVersion !== 0) {
       writer.uint32(192).uint32(message.schemaVersion);
+    }
+    if (message.specificationVersion !== 0) {
+      writer.uint32(200).uint32(message.specificationVersion);
     }
     return writer;
   },
@@ -216,6 +241,9 @@ export const ComplianceInfo = {
         case 24:
           message.schemaVersion = reader.uint32();
           break;
+        case 25:
+          message.specificationVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -254,6 +282,7 @@ export const ComplianceInfo = {
         ? String(object.certificationIdOfSoftwareComponent)
         : "",
       schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
+      specificationVersion: isSet(object.specificationVersion) ? Number(object.specificationVersion) : 0,
     };
   },
 
@@ -289,6 +318,7 @@ export const ComplianceInfo = {
     message.certificationIdOfSoftwareComponent !== undefined
       && (obj.certificationIdOfSoftwareComponent = message.certificationIdOfSoftwareComponent);
     message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
+    message.specificationVersion !== undefined && (obj.specificationVersion = Math.round(message.specificationVersion));
     return obj;
   },
 
@@ -318,6 +348,7 @@ export const ComplianceInfo = {
     message.parentChild = object.parentChild ?? "";
     message.certificationIdOfSoftwareComponent = object.certificationIdOfSoftwareComponent ?? "";
     message.schemaVersion = object.schemaVersion ?? 0;
+    message.specificationVersion = object.specificationVersion ?? 0;
     return message;
   },
 };

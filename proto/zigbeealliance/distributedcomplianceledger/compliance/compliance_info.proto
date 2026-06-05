@@ -22,14 +22,19 @@ message ComplianceInfo {
   string certificationRoute = 13;
   string programType = 14;
   string programTypeVersion = 15;
-  string compliantPlatformUsed = 16;
-  string compliantPlatformVersion = 17;
+  // Deprecated
+  string compliantPlatformUsed = 16 [deprecated = true];
+  // Deprecated
+  string compliantPlatformVersion = 17 [deprecated = true];
   string transport = 18;
   string familyId = 19;
   string supportedClusters = 20;
-  string OSVersion = 21;
+  // Deprecated
+  string OSVersion = 21 [deprecated = true];;
   string parentChild = 22;
-  string certificationIdOfSoftwareComponent = 23;
+  // Deprecated
+  string certificationIdOfSoftwareComponent = 23 [deprecated = true];
   uint32 schemaVersion = 24;
+  uint32 specificationVersion = 25;
 }
 

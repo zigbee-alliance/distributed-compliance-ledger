@@ -1058,7 +1058,7 @@ func TestHandler_UpdateModelEnhancedSetupFlowTCRevisionIncrement(t *testing.T) {
 	msgAddModel.EnhancedSetupFlowTCRevision = int32(testconstants.EnhancedSetupFlowTCRevision)
 	msgAddModel.EnhancedSetupFlowTCDigest = testconstants.EnhancedSetupFlowTCDigest
 	msgAddModel.EnhancedSetupFlowTCFileSize = uint32(testconstants.EnhancedSetupFlowTCFileSize)
-	msgAddModel.EnhancedSetupFlowMaintenanceUrl = testconstants.EnhancedSetupFlowMaintenanceURL
+	msgAddModel.MaintenanceUrl = testconstants.MaintenanceURL
 	_, err := setup.Handler(setup.Ctx, msgAddModel)
 	require.NoError(t, err)
 
@@ -1087,7 +1087,7 @@ func TestHandler_UpdateModelEnhancedSetupFlowTCRevisionIncorrectIncrement(t *tes
 	msgAddModel.EnhancedSetupFlowTCRevision = int32(testconstants.EnhancedSetupFlowTCRevision)
 	msgAddModel.EnhancedSetupFlowTCDigest = testconstants.EnhancedSetupFlowTCDigest
 	msgAddModel.EnhancedSetupFlowTCFileSize = uint32(testconstants.EnhancedSetupFlowTCFileSize)
-	msgAddModel.EnhancedSetupFlowMaintenanceUrl = testconstants.EnhancedSetupFlowMaintenanceURL
+	msgAddModel.MaintenanceUrl = testconstants.MaintenanceURL
 	_, err := setup.Handler(setup.Ctx, msgAddModel)
 	require.NoError(t, err)
 
@@ -2496,7 +2496,7 @@ func NewMsgUpdateModel(signer sdk.AccAddress) *types.MsgUpdateModel {
 		EnhancedSetupFlowTCRevision:                int32(testconstants.EnhancedSetupFlowTCRevision + 1),
 		EnhancedSetupFlowTCDigest:                  testconstants.EnhancedSetupFlowTCDigest,
 		EnhancedSetupFlowTCFileSize:                uint32(testconstants.EnhancedSetupFlowTCFileSize + 1),
-		EnhancedSetupFlowMaintenanceUrl:            testconstants.EnhancedSetupFlowMaintenanceURL + "/updated",
+		MaintenanceUrl:                             testconstants.MaintenanceURL + "/updated",
 		CommissioningFallbackUrl:                   testconstants.CommissioningFallbackURL + "/updated",
 	}
 }

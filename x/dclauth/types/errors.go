@@ -18,6 +18,7 @@ var (
 	PendingAccountRevocationDoesNotExist  = errors.Register(ModuleName, 106, "pending account revocation not found")
 	MissingVendorIDForVendorAccount       = errors.Register(ModuleName, 107, "no Vendor ID provided")
 	MissingRoles                          = errors.Register(ModuleName, 108, "no roles provided")
+	AccountTotalCountReachedLimit         = errors.Register(ModuleName, 109, "total number of active accounts reached the limit")
 )
 
 func ErrAccountAlreadyExists(address interface{}) error {
@@ -58,4 +59,8 @@ func ErrMissingVendorIDForVendorAccount() error {
 func ErrMissingRoles() error {
 	return errors.Wrapf(MissingRoles,
 		"No roles provided")
+}
+
+func ErrAccountTotalCountReachedLimit(role AccountRole, maxCount int) error {
+	return errors.Wrapf(AccountTotalCountReachedLimit, "Total count for account with %v role is reached the %d limit", role, maxCount)
 }

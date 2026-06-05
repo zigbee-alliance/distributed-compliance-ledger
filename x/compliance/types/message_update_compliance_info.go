@@ -19,7 +19,7 @@ func NewMsgUpdateComplianceInfo(creator string, vid int32, pid int32, softwareVe
 	cDVersionNumber string, date string, reason string, owner string, cDCertificateID string, certificationRoute string,
 	programType string, programTypeVersion string, compliantPlatformUsed string, compliantPlatformVersion string,
 	transport string, familyID string, supportedClusters string, oSVersion string, parentChild string,
-	certificationIDOfSoftwareComponent string, schemaVersion uint32) *MsgUpdateComplianceInfo {
+	certificationIDOfSoftwareComponent string, specificationVersion uint32, schemaVersion uint32) *MsgUpdateComplianceInfo {
 	return &MsgUpdateComplianceInfo{
 		Creator:                            creator,
 		Vid:                                vid,
@@ -42,6 +42,7 @@ func NewMsgUpdateComplianceInfo(creator string, vid int32, pid int32, softwareVe
 		OSVersion:                          oSVersion,
 		ParentChild:                        parentChild,
 		CertificationIdOfSoftwareComponent: certificationIDOfSoftwareComponent,
+		SpecificationVersion:               specificationVersion,
 		SchemaVersion:                      schemaVersion,
 	}
 }
@@ -112,6 +113,26 @@ func (msg *MsgUpdateComplianceInfo) ValidateBasic() error {
 
 	if msg.CDCertificateId != "" && len(msg.CDCertificateId) != 19 {
 		return errors.Wrap(validator.ErrFieldEqualBoundViolated, "CDCertificateId length must be equal to 19")
+	}
+
+	if msg.CertificationRoute != "" && !IsValidCertificationRoute(msg.CertificationRoute) {
+		return NewErrInvalidCertificationRoute(msg.CertificationRoute, CertificationRoutesList)
+	}
+
+	if msg.FamilyId != "" && !IsValidFamilyID(msg.FamilyId) {
+		return NewErrInvalidFamilyID(msg.FamilyId)
+	}
+
+	if msg.Transport != "" && !IsValidTransport(msg.Transport) {
+		return NewErrInvalidTransport(msg.Transport, TransportsList)
+	}
+
+	if msg.ProgramType != "" && !IsValidProgramType(msg.ProgramType) {
+		return NewErrInvalidProgramType(msg.ProgramType, ProgramTypesList)
+	}
+
+	if !IsValidSupportedClusters(msg.SupportedClusters) {
+		return NewErrInvalidSupportedClusters(msg.SupportedClusters)
 	}
 
 	return nil

@@ -84,6 +84,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 			SoftwareVersion:                    msg.SoftwareVersion,
 			SoftwareVersionString:              msg.SoftwareVersionString,
 			CertificationType:                  msg.CertificationType,
+			SpecificationVersion:               msg.SpecificationVersion,
 			Date:                               msg.CertificationDate,
 			Reason:                             msg.Reason,
 			Owner:                              msg.Signer,

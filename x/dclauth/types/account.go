@@ -37,6 +37,7 @@ const (
 	Trustee             AccountRole = "Trustee"
 	NodeAdmin           AccountRole = "NodeAdmin"
 	VendorAdmin         AccountRole = "VendorAdmin"
+	MaxTrusteeCount     int         = 12
 )
 
 var Roles = AccountRoles{Vendor, CertificationCenter, Trustee, NodeAdmin, VendorAdmin}

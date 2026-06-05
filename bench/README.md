@@ -369,7 +369,7 @@ More details can be found in:
 - [locust.conf](../locust.conf): default values
 - `locust --help` (being in the project root)
 - [locust configuration](https://docs.locust.io/en/stable/configuration.html)
-- [locust stats](https://docs.locust.io/en/stable/retrieving-stats.html)
+- [locust stats](https://docs.locust.io/en/stable/configuration.html#save-test-statistics-in-csv-format)
 
 ### Re-run
 
