@@ -729,20 +729,20 @@ da_intermediate_cert_2_serial_number_for_1_4_4="3"
 da_intermediate_cert_2_vid_for_1_4_4=65521
 
 noc_root_cert_1_path_for_1_4_4="integration_tests/constants/noc_root_cert_2"
-noc_root_cert_1_subject_for_1_4_4="MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIDApTb21lIFN0YXRlMREwDwYDVQQHDAhUYXNoa2VudDEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDDAVOT0MtMg=="
-noc_root_cert_1_subject_key_id_for_1_4_4="CF:E6:DD:37:2B:4C:B2:B9:A9:F2:75:30:1C:AA:B1:37:1B:11:7F:1B"
+noc_root_cert_1_subject_for_1_4_4="MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIEwpTb21lIFN0YXRlMREwDwYDVQQHEwhUYXNoa2VudDEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDEwVOT0MtMg=="
+noc_root_cert_1_subject_key_id_for_1_4_4="AB:3C:C0:55:86:22:19:C5:B1:51:F3:6A:12:FC:48:FD:ED:2E:5C:1F"
 
 noc_ica_cert_1_path_for_1_4_4="integration_tests/constants/noc_cert_2"
-noc_ica_cert_1_subject_for_1_4_4="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtOT0MtY2hpbGQtMg=="
-noc_ica_cert_1_subject_key_id_for_1_4_4="87:48:A2:33:12:1F:51:5C:93:E6:90:40:4A:2C:AB:9E:D6:19:E5:AD"
+noc_ica_cert_1_subject_for_1_4_4="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECBMKU29tZSBTdGF0ZTETMBEGA1UEBxMKU29tZSBTdGF0ZTEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDEwtOT0MtY2hpbGQtMg=="
+noc_ica_cert_1_subject_key_id_for_1_4_4="71:F5:70:95:F4:6E:5E:FB:A9:38:0E:15:C7:1F:08:0F:FC:9F:60:5B"
 
 noc_root_cert_2_path_for_1_4_4="integration_tests/constants/noc_root_cert_3"
-noc_root_cert_2_subject_for_1_4_4="MFUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQxDjAMBgNVBAMMBU5PQy0z"
-noc_root_cert_2_subject_key_id_for_1_4_4="88:0D:06:D9:64:22:29:34:78:7F:8C:3B:AE:F5:08:93:86:8F:0D:20"
+noc_root_cert_2_subject_for_1_4_4="MFUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIEwpTb21lLVN0YXRlMSEwHwYDVQQKExhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQxDjAMBgNVBAMTBU5PQy0z"
+noc_root_cert_2_subject_key_id_for_1_4_4="0F:D2:F8:12:06:F1:38:2D:D2:19:2F:29:52:42:AA:FB:E7:2F:7B:A3"
 
 noc_ica_cert_2_path_for_1_4_4="integration_tests/constants/noc_cert_3"
-noc_ica_cert_2_subject_for_1_4_4="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtOT0MtY2hpbGQtMw=="
-noc_ica_cert_2_subject_key_id_for_1_4_4="DE:F9:1D:90:D5:A1:0F:23:59:5C:3F:5C:C7:2D:31:58:2F:A8:79:33"
+noc_ica_cert_2_subject_for_1_4_4="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECBMKU29tZSBTdGF0ZTETMBEGA1UEBxMKU29tZSBTdGF0ZTEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDEwtOT0MtY2hpbGQtMw=="
+noc_ica_cert_2_subject_key_id_for_1_4_4="0C:DA:15:1E:9B:04:A8:F3:07:BE:FE:71:B7:74:56:14:B3:6E:0D:02"
 
 test_data_url_for_1_4_4="https://url.data.dclmodel-1.4.4"
 
