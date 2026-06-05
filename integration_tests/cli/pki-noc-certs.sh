@@ -27,8 +27,8 @@ noc_root_cert_1_copy_serial_number="46064735316815294660694566968790552787909584
 
 noc_root_cert_2_path="integration_tests/constants/noc_root_cert_2"
 noc_root_cert_2_subject="MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIEwpTb21lIFN0YXRlMREwDwYDVQQHEwhUYXNoa2VudDEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDEwVOT0MtMg=="
-noc_root_cert_2_subject_key_id="AB:3C:C0:55:86:22:19:C5:B1:51:F3:6A:12:FC:48:FD:ED:2E:5C:1F"
-noc_root_cert_2_serial_number="424313472344665612988655074390183444859972647767"
+noc_root_cert_2_subject_key_id="46:C0:B0:74:0C:63:C8:9E:E0:5C:14:C2:71:62:F8:67:24:5C:8E:29"
+noc_root_cert_2_serial_number="727423814323052015089749828769570958840545369270"
 noc_root_cert_2_subject_as_text="CN=NOC-2,OU=Testing Division,O=Example Company,L=Tashkent,ST=Some State,C=UZ"
 
 noc_root_cert_3_path="integration_tests/constants/noc_root_cert_3"
@@ -47,8 +47,8 @@ noc_cert_1_copy_serial_number="169445068204646961882009388640343665944683778293"
 
 noc_cert_2_path="integration_tests/constants/noc_cert_2"
 noc_cert_2_subject="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECBMKU29tZSBTdGF0ZTETMBEGA1UEBxMKU29tZSBTdGF0ZTEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDEwtOT0MtY2hpbGQtMg=="
-noc_cert_2_subject_key_id="71:F5:70:95:F4:6E:5E:FB:A9:38:0E:15:C7:1F:08:0F:FC:9F:60:5B"
-noc_cert_2_serial_number="700750747196526739891443532164374450362882391072"
+noc_cert_2_subject_key_id="17:E2:72:19:E1:7F:19:D7:0D:02:1A:B0:40:7B:04:26:CC:D4:2B:F5"
+noc_cert_2_serial_number="634591262660314610068979921875981241084684028375"
 
 noc_leaf_cert_1_path="integration_tests/constants/noc_leaf_cert_1"
 noc_leaf_cert_1_subject="MIGBMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRMwEQYDVQQDDApOT0MtbGVhZi0x"

@@ -730,11 +730,11 @@ da_intermediate_cert_2_vid_for_1_4_4=65521
 
 noc_root_cert_1_path_for_1_4_4="integration_tests/constants/noc_root_cert_2"
 noc_root_cert_1_subject_for_1_4_4="MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIEwpTb21lIFN0YXRlMREwDwYDVQQHEwhUYXNoa2VudDEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDEwVOT0MtMg=="
-noc_root_cert_1_subject_key_id_for_1_4_4="AB:3C:C0:55:86:22:19:C5:B1:51:F3:6A:12:FC:48:FD:ED:2E:5C:1F"
+noc_root_cert_1_subject_key_id_for_1_4_4="46:C0:B0:74:0C:63:C8:9E:E0:5C:14:C2:71:62:F8:67:24:5C:8E:29"
 
 noc_ica_cert_1_path_for_1_4_4="integration_tests/constants/noc_cert_2"
 noc_ica_cert_1_subject_for_1_4_4="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECBMKU29tZSBTdGF0ZTETMBEGA1UEBxMKU29tZSBTdGF0ZTEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDEwtOT0MtY2hpbGQtMg=="
-noc_ica_cert_1_subject_key_id_for_1_4_4="71:F5:70:95:F4:6E:5E:FB:A9:38:0E:15:C7:1F:08:0F:FC:9F:60:5B"
+noc_ica_cert_1_subject_key_id_for_1_4_4="17:E2:72:19:E1:7F:19:D7:0D:02:1A:B0:40:7B:04:26:CC:D4:2B:F5"
 
 noc_root_cert_2_path_for_1_4_4="integration_tests/constants/noc_root_cert_3"
 noc_root_cert_2_subject_for_1_4_4="MFUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIEwpTb21lLVN0YXRlMSEwHwYDVQQKExhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQxDjAMBgNVBAMTBU5PQy0z"
