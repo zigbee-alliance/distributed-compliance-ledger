@@ -13,6 +13,7 @@ func CertifyModel(vid, pid, sv int, svs, certType, certDate, cdCertID, from stri
 		"--softwareVersion", itoa(sv),
 		"--softwareVersionString", svs,
 		"--certificationType", certType,
+		"--specificationVersion", "1",
 		"--certificationDate", certDate,
 		"--cdCertificateId", cdCertID,
 		"--from", from,
@@ -39,7 +40,9 @@ func RevokeModel(vid, pid, sv int, svs, certType, revocationDate, from string, e
 	return utils.ExecuteTx(args...)
 }
 
-// ProvisionModel executes the provision-model transaction.
+// ProvisionModel executes the provision-model transaction. specificationVersion
+// is required in #703 matter-spec conformance — defaulted to 1; callers can
+// override via `extra` if they need a different value.
 func ProvisionModel(vid, pid, sv int, svs, certType, provisionalDate, cdCertID, from string, extra ...string) (*utils.TxResult, error) {
 	args := []string{
 		"tx", "compliance", "provision-model",
@@ -48,6 +51,7 @@ func ProvisionModel(vid, pid, sv int, svs, certType, provisionalDate, cdCertID, 
 		"--softwareVersion", itoa(sv),
 		"--softwareVersionString", svs,
 		"--certificationType", certType,
+		"--specificationVersion", "1",
 		"--provisionalDate", provisionalDate,
 		"--cdCertificateId", cdCertID,
 		"--from", from,

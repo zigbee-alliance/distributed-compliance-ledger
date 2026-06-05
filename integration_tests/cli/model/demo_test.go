@@ -63,7 +63,7 @@ func TestModelDemo(t *testing.T) {
 		enhancedSetupFlowTCRevision := 1
 		enhancedSetupFlowTCDigest := "MWRjNGE0NDA0MWRjYWYxMTU0NWI3NTQzZGZlOTQyZjQ3NDJmNTY4YmU2OGZlZTI3NTQ0MWIwOTJiYjYwZGVlZA=="
 		enhancedSetupFlowTCFileSize := 1024
-		enhancedSetupFlowMaintenanceUrl := "https://example.org"
+		maintenanceURL := "https://example.org"
 		commissioningFallbackUrl := "https://url.commissioningfallbackurl.dclmodel"
 
 		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
@@ -79,7 +79,7 @@ func TestModelDemo(t *testing.T) {
 			"--enhancedSetupFlowTCRevision", fmt.Sprintf("%d", enhancedSetupFlowTCRevision),
 			"--enhancedSetupFlowTCDigest", enhancedSetupFlowTCDigest,
 			"--enhancedSetupFlowTCFileSize", fmt.Sprintf("%d", enhancedSetupFlowTCFileSize),
-			"--enhancedSetupFlowMaintenanceUrl", enhancedSetupFlowMaintenanceUrl,
+			"--maintenanceUrl", maintenanceURL,
 			"--commissioningFallbackUrl", commissioningFallbackUrl,
 			"--discoveryCapabilitiesBitmask", "1",
 			"--from", vendorAccountWithPids,

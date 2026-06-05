@@ -484,14 +484,14 @@ func TestComplianceDemo(t *testing.T) {
 		txResult, err := CertifyModel(vid, pid2, sv2, svs2, zigbeeCertType, reCertDate, cdCertID, zbAccount,
 			"--cdVersionNumber", fmt.Sprintf("%d", cdVersionNumber),
 			"--programTypeVersion", "1.0",
-			"--familyId", "someFID",
-			"--supportedClusters", "someClusters",
+			"--familyId", "FAM123456abc",
+			"--supportedClusters", "0x0003,0x0004",
 			"--compliantPlatformUsed", "WIFI",
 			"--compliantPlatformVersion", "V1",
 			"--OSVersion", "someV",
-			"--certificationRoute", "Full",
-			"--programType", "pType",
-			"--transport", "someTransport",
+			"--certificationRoute", "fullTested",
+			"--programType", "endProduct",
+			"--transport", "wi-fi",
 			"--parentChild", "parent",
 			"--certificationIDOfSoftwareComponent", "someIDOfSoftwareComponent",
 		)
@@ -515,16 +515,17 @@ func TestComplianceDemo(t *testing.T) {
 		require.Contains(t, string(out), `"softwareVersionCertificationStatus":2`)
 		require.Contains(t, string(out), fmt.Sprintf(`"date":"%s"`, reCertDate))
 		require.Contains(t, string(out), fmt.Sprintf(`"certificationType":"%s"`, zigbeeCertType))
+		require.Contains(t, string(out), `"specificationVersion":1`)
 		require.Contains(t, string(out), fmt.Sprintf(`"cDCertificateId":"%s"`, cdCertID))
 		require.Contains(t, string(out), `"programTypeVersion":"1.0"`)
-		require.Contains(t, string(out), `"familyId":"someFID"`)
-		require.Contains(t, string(out), `"supportedClusters":"someClusters"`)
+		require.Contains(t, string(out), `"familyId":"FAM123456abc"`)
+		require.Contains(t, string(out), `"supportedClusters":"0x0003,0x0004"`)
 		require.Contains(t, string(out), `"compliantPlatformUsed":"WIFI"`)
 		require.Contains(t, string(out), `"compliantPlatformVersion":"V1"`)
 		require.Contains(t, string(out), `"OSVersion":"someV"`)
-		require.Contains(t, string(out), `"certificationRoute":"Full"`)
-		require.Contains(t, string(out), `"programType":"pType"`)
-		require.Contains(t, string(out), `"transport":"someTransport"`)
+		require.Contains(t, string(out), `"certificationRoute":"fullTested"`)
+		require.Contains(t, string(out), `"programType":"endProduct"`)
+		require.Contains(t, string(out), `"transport":"wi-fi"`)
 		require.Contains(t, string(out), `"parentChild":"parent"`)
 		require.Contains(t, string(out), `"certificationIdOfSoftwareComponent":"someIDOfSoftwareComponent"`)
 
@@ -536,16 +537,17 @@ func TestComplianceDemo(t *testing.T) {
 		require.Contains(t, string(out), `"softwareVersionCertificationStatus":2`)
 		require.Contains(t, string(out), fmt.Sprintf(`"date":"%s"`, reCertDate))
 		require.Contains(t, string(out), fmt.Sprintf(`"certificationType":"%s"`, zigbeeCertType))
+		require.Contains(t, string(out), `"specificationVersion":1`)
 		require.Contains(t, string(out), fmt.Sprintf(`"cDCertificateId":"%s"`, cdCertID))
 		require.Contains(t, string(out), `"programTypeVersion":"1.0"`)
-		require.Contains(t, string(out), `"familyId":"someFID"`)
-		require.Contains(t, string(out), `"supportedClusters":"someClusters"`)
+		require.Contains(t, string(out), `"familyId":"FAM123456abc"`)
+		require.Contains(t, string(out), `"supportedClusters":"0x0003,0x0004"`)
 		require.Contains(t, string(out), `"compliantPlatformUsed":"WIFI"`)
 		require.Contains(t, string(out), `"compliantPlatformVersion":"V1"`)
 		require.Contains(t, string(out), `"OSVersion":"someV"`)
-		require.Contains(t, string(out), `"certificationRoute":"Full"`)
-		require.Contains(t, string(out), `"programType":"pType"`)
-		require.Contains(t, string(out), `"transport":"someTransport"`)
+		require.Contains(t, string(out), `"certificationRoute":"fullTested"`)
+		require.Contains(t, string(out), `"programType":"endProduct"`)
+		require.Contains(t, string(out), `"transport":"wi-fi"`)
 		require.Contains(t, string(out), `"parentChild":"parent"`)
 		require.Contains(t, string(out), `"certificationIdOfSoftwareComponent":"someIDOfSoftwareComponent"`)
 	})
@@ -553,9 +555,9 @@ func TestComplianceDemo(t *testing.T) {
 	t.Run("UpdateComplianceInfo_ByCertCenter", func(t *testing.T) {
 		txResult, err := UpdateComplianceInfo(vid, pid2, sv2, zigbeeCertType, zbAccount,
 			"--reason", "new_reason",
-			"--programType", "new_program_type",
+			"--programType", "softwareComponent",
 			"--parentChild", "child",
-			"--transport", "new_transport",
+			"--transport", "ethernet",
 		)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
@@ -570,16 +572,17 @@ func TestComplianceDemo(t *testing.T) {
 		require.Contains(t, string(out), `"softwareVersionCertificationStatus":2`)
 		require.Contains(t, string(out), fmt.Sprintf(`"date":"%s"`, reCertDate))
 		require.Contains(t, string(out), fmt.Sprintf(`"certificationType":"%s"`, zigbeeCertType))
+		require.Contains(t, string(out), `"specificationVersion":1`)
 		require.Contains(t, string(out), fmt.Sprintf(`"cDCertificateId":"%s"`, cdCertID))
 		require.Contains(t, string(out), `"programTypeVersion":"1.0"`)
-		require.Contains(t, string(out), `"familyId":"someFID"`)
-		require.Contains(t, string(out), `"supportedClusters":"someClusters"`)
+		require.Contains(t, string(out), `"familyId":"FAM123456abc"`)
+		require.Contains(t, string(out), `"supportedClusters":"0x0003,0x0004"`)
 		require.Contains(t, string(out), `"compliantPlatformUsed":"WIFI"`)
 		require.Contains(t, string(out), `"compliantPlatformVersion":"V1"`)
 		require.Contains(t, string(out), `"OSVersion":"someV"`)
-		require.Contains(t, string(out), `"certificationRoute":"Full"`)
-		require.Contains(t, string(out), `"programType":"new_program_type"`)
-		require.Contains(t, string(out), `"transport":"new_transport"`)
+		require.Contains(t, string(out), `"certificationRoute":"fullTested"`)
+		require.Contains(t, string(out), `"programType":"softwareComponent"`)
+		require.Contains(t, string(out), `"transport":"ethernet"`)
 		require.Contains(t, string(out), `"parentChild":"child"`)
 		require.Contains(t, string(out), `"reason":"new_reason"`)
 		require.Contains(t, string(out), `"certificationIdOfSoftwareComponent":"someIDOfSoftwareComponent"`)
@@ -588,9 +591,9 @@ func TestComplianceDemo(t *testing.T) {
 	t.Run("UpdateComplianceInfo_ByVendor_Fails", func(t *testing.T) {
 		txResult, err := UpdateComplianceInfo(vid, pid2, sv2, zigbeeCertType, vendorAccount,
 			"--reason", "by_vendor_reason",
-			"--programType", "by_vendor_program_type",
+			"--programType", "compliantPlatform",
 			"--parentChild", "parent",
-			"--transport", "by_vendor_transport",
+			"--transport", "bluetooth",
 		)
 		require.NoError(t, err)
 		require.NotEqual(t, uint32(0), txResult.Code)
@@ -599,8 +602,8 @@ func TestComplianceDemo(t *testing.T) {
 		// Fields must be unchanged after vendor update attempt
 		out, err := QueryComplianceInfo(vid, pid2, sv2, zigbeeCertType)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"programType":"new_program_type"`)
-		require.Contains(t, string(out), `"transport":"new_transport"`)
+		require.Contains(t, string(out), `"programType":"softwareComponent"`)
+		require.Contains(t, string(out), `"transport":"ethernet"`)
 		require.Contains(t, string(out), `"parentChild":"child"`)
 		require.Contains(t, string(out), `"reason":"new_reason"`)
 	})
@@ -615,8 +618,8 @@ func TestComplianceDemo(t *testing.T) {
 		// Fields must remain as set by the first update
 		out, err := QueryComplianceInfo(vid, pid2, sv2, zigbeeCertType)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"programType":"new_program_type"`)
-		require.Contains(t, string(out), `"transport":"new_transport"`)
+		require.Contains(t, string(out), `"programType":"softwareComponent"`)
+		require.Contains(t, string(out), `"transport":"ethernet"`)
 		require.Contains(t, string(out), `"parentChild":"child"`)
 		require.Contains(t, string(out), `"reason":"new_reason"`)
 		require.Contains(t, string(out), `"certificationIdOfSoftwareComponent":"someIDOfSoftwareComponent"`)
@@ -630,14 +633,14 @@ func TestComplianceDemo(t *testing.T) {
 			"--certificationDate", "2022-01-01T00:00:01Z",
 			"--reason", "brand_new_reason",
 			"--cdCertificateId", updCdCertID,
-			"--certificationRoute", "brand_new_route",
-			"--programType", "brand_new_program_type",
+			"--certificationRoute", "similarity",
+			"--programType", "endProduct",
 			"--programTypeVersion", "brand_new_program_type_version",
 			"--compliantPlatformUsed", "brand_new_compliant_platform_used",
 			"--compliantPlatformVersion", "brand_new_compliant_platform_version",
-			"--transport", "brand_new_transport",
-			"--familyId", "brand_new_family_ID",
-			"--supportedClusters", "brand_new_clusters",
+			"--transport", "thread,nfc",
+			"--familyId", "FAM123456abc",
+			"--supportedClusters", "0x0006,0x0008,0x0062",
 			"--OSVersion", "brand_new_os_version",
 			"--parentChild", "parent",
 			"--certificationIDOfSoftwareComponent", "brand_new_component",
@@ -655,18 +658,19 @@ func TestComplianceDemo(t *testing.T) {
 		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid2))
 		require.Contains(t, string(out), fmt.Sprintf(`"softwareVersion":%d`, sv2))
 		require.Contains(t, string(out), fmt.Sprintf(`"certificationType":"%s"`, zigbeeCertType))
+		require.Contains(t, string(out), `"specificationVersion":1`)
 		require.Contains(t, string(out), `"cDVersionNumber":1`)
 		require.Contains(t, string(out), `"date":"2022-01-01T00:00:01Z"`)
 		require.Contains(t, string(out), `"reason":"brand_new_reason"`)
 		require.Contains(t, string(out), fmt.Sprintf(`"cDCertificateId":"%s"`, updCdCertID))
-		require.Contains(t, string(out), `"certificationRoute":"brand_new_route"`)
-		require.Contains(t, string(out), `"programType":"brand_new_program_type"`)
+		require.Contains(t, string(out), `"certificationRoute":"similarity"`)
+		require.Contains(t, string(out), `"programType":"endProduct"`)
 		require.Contains(t, string(out), `"programTypeVersion":"brand_new_program_type_version"`)
 		require.Contains(t, string(out), `"compliantPlatformUsed":"brand_new_compliant_platform_used"`)
 		require.Contains(t, string(out), `"compliantPlatformVersion":"brand_new_compliant_platform_version"`)
-		require.Contains(t, string(out), `"transport":"brand_new_transport"`)
-		require.Contains(t, string(out), `"familyId":"brand_new_family_ID"`)
-		require.Contains(t, string(out), `"supportedClusters":"brand_new_clusters"`)
+		require.Contains(t, string(out), `"transport":"thread,nfc"`)
+		require.Contains(t, string(out), `"familyId":"FAM123456abc"`)
+		require.Contains(t, string(out), `"supportedClusters":"0x0006,0x0008,0x0062"`)
 		require.Contains(t, string(out), `"OSVersion":"brand_new_os_version"`)
 		require.Contains(t, string(out), `"parentChild":"parent"`)
 		require.Contains(t, string(out), `"certificationIdOfSoftwareComponent":"brand_new_component"`)

@@ -138,6 +138,7 @@ func TestModelNegativeCases(t *testing.T) {
 			"--softwareVersion", fmt.Sprintf("%d", sv),
 			"--cdVersionNumber", "1",
 			"--certificationType", "zigbee",
+			"--specificationVersion", "1",
 			"--certificationDate", certificationDate,
 			"--softwareVersionString", softwareVersionString,
 			"--cdCertificateId", "1230000000000000000",

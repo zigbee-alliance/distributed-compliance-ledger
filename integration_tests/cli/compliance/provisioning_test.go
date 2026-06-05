@@ -43,6 +43,7 @@ func TestComplianceProvisioning(t *testing.T) {
 		require.Contains(t, string(out), fmt.Sprintf(`"softwareVersion":%d`, sv))
 		require.Contains(t, string(out), fmt.Sprintf(`"softwareVersionString":"%s"`, svs))
 		require.Contains(t, string(out), fmt.Sprintf(`"certificationType":"%s"`, certTypeZb))
+		require.Contains(t, string(out), `"specificationVersion":1`)
 		require.Contains(t, string(out), fmt.Sprintf(`"date":"%s"`, provisionDate))
 		require.Contains(t, string(out), fmt.Sprintf(`"cDCertificateId":"%s"`, cdCertID))
 
