@@ -89,7 +89,7 @@ func GetProposedUpgrade(
 		res = resp.GetProposedUpgrade()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/dclauth service.
 		dclupgradeClient := dclupgradetypes.NewQueryClient(grpcConn)
@@ -121,7 +121,7 @@ func GetApprovedUpgrade(
 		res = resp.GetApprovedUpgrade()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/dclauth service.
 		dclupgradeClient := dclupgradetypes.NewQueryClient(grpcConn)
@@ -153,7 +153,7 @@ func GetRejectedUpgrade(
 		res = resp.GetRejectedUpgrade()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		dclupgradeClient := dclupgradetypes.NewQueryClient(grpcConn)
 		resp, err := dclupgradeClient.RejectedUpgrade(
@@ -179,7 +179,7 @@ func GetProposedUpgrades(suite *utils.TestSuite) (res []dclupgradetypes.Proposed
 		res = resp.GetProposedUpgrade()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/dclauth service.
 		dclupgradeClient := dclupgradetypes.NewQueryClient(grpcConn)
@@ -206,7 +206,7 @@ func GetApprovedUpgrades(suite *utils.TestSuite) (res []dclupgradetypes.Approved
 		res = resp.GetApprovedUpgrade()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/dclauth service.
 		dclupgradeClient := dclupgradetypes.NewQueryClient(grpcConn)
@@ -233,7 +233,7 @@ func GetRejectedUpgrades(suite *utils.TestSuite) (res []dclupgradetypes.Rejected
 		res = resp.GetRejectedUpgrade()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		dclupgradeClient := dclupgradetypes.NewQueryClient(grpcConn)
 		resp, err := dclupgradeClient.RejectedUpgradeAll(

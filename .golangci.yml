@@ -24,6 +24,7 @@ linters:
     - bodyclose
     - contextcheck
     - durationcheck
+    - errcheck
     - errchkjson
     - errorlint
     - fatcontext
@@ -75,7 +76,10 @@ linters:
     - embeddedstructfieldcheck
     - gocritic
     - gocyclo
-    - goheader
+    # goheader removed — repo headers are heterogeneous (years vary;
+    # some files include "DSR Corporation", others just "Copyright YYYY"),
+    # so enabling without a template was a no-op and enabling with one
+    # would need a separate header-standardization pass first.
     - goprintffuncname
     - grouper
     - iface
@@ -117,16 +121,21 @@ linters:
     # Skip auto-generated files (e.g. *.pb.go from protoc).
     generated: lax
     rules:
-      # TODO: testifylint actually adds value in tests (catches argument-order
-      # mistakes in assert/require). Consider removing it from these exclusions
-      # and fixing any findings as a follow-up.
       - path: _test\.go$
         linters:
-          - staticcheck
           - testifylint
           - dupword
-      - path: helpers\.go$
+      - path: ^integration_tests/.*/helpers\.go$
         linters:
-          - staticcheck
           - testifylint
           - dupword
+
+# In golangci-lint v2 formatters live in their own block (separate from
+# `linters:`). Keep this minimal: gofmt and goimports are the existing repo
+# baseline; gofumpt/gci can be added later if the team wants stricter style.
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  exclusions:
+    generated: lax

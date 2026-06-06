@@ -49,7 +49,7 @@ func GetAllComplianceInfo(suite *utils.TestSuite) (res []compliancetypes.Complia
 		res = resp.GetComplianceInfo()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		client := compliancetypes.NewQueryClient(grpcConn)
@@ -89,7 +89,7 @@ func GetComplianceInfo(
 		res = resp.GetComplianceInfo()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		client := compliancetypes.NewQueryClient(grpcConn)
@@ -147,7 +147,7 @@ func GetAllCertifiedModels(suite *utils.TestSuite) (res []compliancetypes.Certif
 		res = resp.GetCertifiedModel()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		client := compliancetypes.NewQueryClient(grpcConn)
@@ -187,7 +187,7 @@ func GetCertifiedModel(
 		res = resp.GetCertifiedModel()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		client := compliancetypes.NewQueryClient(grpcConn)
@@ -245,7 +245,7 @@ func GetAllRevokedModels(suite *utils.TestSuite) (res []compliancetypes.RevokedM
 		res = resp.GetRevokedModel()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		client := compliancetypes.NewQueryClient(grpcConn)
@@ -285,7 +285,7 @@ func GetRevokedModel(
 		res = resp.GetRevokedModel()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		client := compliancetypes.NewQueryClient(grpcConn)
@@ -343,7 +343,7 @@ func GetAllProvisionalModels(suite *utils.TestSuite) (res []compliancetypes.Prov
 		res = resp.GetProvisionalModel()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		client := compliancetypes.NewQueryClient(grpcConn)
@@ -383,7 +383,7 @@ func GetProvisionalModel(
 		res = resp.GetProvisionalModel()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		client := compliancetypes.NewQueryClient(grpcConn)
@@ -441,7 +441,7 @@ func GetAllDeviceSoftwareCompliance(suite *utils.TestSuite) (res []compliancetyp
 		res = resp.GetDeviceSoftwareCompliance()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		client := compliancetypes.NewQueryClient(grpcConn)
@@ -478,7 +478,7 @@ func GetDeviceSoftwareCompliance(
 		res = resp.GetDeviceSoftwareCompliance()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		client := compliancetypes.NewQueryClient(grpcConn)

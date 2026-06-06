@@ -32,7 +32,7 @@ func GetDisabledValidator(suite *utils.TestSuite, address sdk.ValAddress) (*vali
 		res = resp.GetDisabledValidator()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/validator service.
 		validatorClient := validatortypes.NewQueryClient(grpcConn)
@@ -59,7 +59,7 @@ func GetDisabledValidators(suite *utils.TestSuite) (res []validatortypes.Disable
 		res = resp.GetDisabledValidator()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/validator service.
 		validatorClient := validatortypes.NewQueryClient(grpcConn)
@@ -88,7 +88,7 @@ func GetProposedValidatorToDisable(suite *utils.TestSuite, address sdk.ValAddres
 		res = resp.GetProposedDisableValidator()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/validator service.
 		validatorClient := validatortypes.NewQueryClient(grpcConn)
@@ -117,7 +117,7 @@ func GetProposedValidatorsToDisable(suite *utils.TestSuite) (
 		res = resp.GetProposedDisableValidator()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/validator service.
 		validatorClient := validatortypes.NewQueryClient(grpcConn)
@@ -148,7 +148,7 @@ func GetRejectedValidatorToDisable(
 		res = resp.GetRejectedValidator()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/validator service.
 		validatorClient := validatortypes.NewQueryClient(grpcConn)
@@ -177,7 +177,7 @@ func GetRejectedValidatorsToDisable(suite *utils.TestSuite) (
 		res = resp.GetRejectedValidator()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/validator service.
 		validatorClient := validatortypes.NewQueryClient(grpcConn)

@@ -237,7 +237,7 @@ func GetModel(
 		res = resp.GetModel()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/dclauth service.
 		modelClient := modeltypes.NewQueryClient(grpcConn)
@@ -290,7 +290,7 @@ func GetModelVersion(
 		res = resp.GetModelVersion()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/dclauth service.
 		modelClient := modeltypes.NewQueryClient(grpcConn)
@@ -323,7 +323,7 @@ func GetModelVersions(
 		res = resp.GetModelVersions()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/dclauth service.
 		modelClient := modeltypes.NewQueryClient(grpcConn)
@@ -350,7 +350,7 @@ func GetModels(suite *utils.TestSuite) (res []modeltypes.Model, err error) {
 		res = resp.GetModel()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/dclauth service.
 		modelClient := modeltypes.NewQueryClient(grpcConn)
@@ -382,7 +382,7 @@ func GetVendorModels(
 		res = resp.GetVendorProducts()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/dclauth service.
 		modelClient := modeltypes.NewQueryClient(grpcConn)

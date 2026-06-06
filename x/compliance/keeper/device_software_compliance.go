@@ -50,7 +50,7 @@ func (k Keeper) GetAllDeviceSoftwareCompliance(ctx sdk.Context) (list []types.De
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DeviceSoftwareComplianceKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
-	defer iterator.Close()
+	defer func() { _ = iterator.Close() }()
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.DeviceSoftwareCompliance

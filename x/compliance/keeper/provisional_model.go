@@ -65,7 +65,7 @@ func (k Keeper) GetAllProvisionalModel(ctx sdk.Context) (list []types.Provisiona
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProvisionalModelKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
-	defer iterator.Close()
+	defer func() { _ = iterator.Close() }()
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.ProvisionalModel

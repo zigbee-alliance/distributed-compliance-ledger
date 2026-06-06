@@ -118,7 +118,7 @@ func (k Keeper) GetAllAllCertificatesBySubject(ctx sdk.Context) (list []types.Al
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.AllCertificatesBySubjectKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
-	defer iterator.Close()
+	defer func() { _ = iterator.Close() }()
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.AllCertificatesBySubject

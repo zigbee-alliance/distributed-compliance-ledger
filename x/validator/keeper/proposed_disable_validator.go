@@ -50,7 +50,7 @@ func (k Keeper) GetAllProposedDisableValidator(ctx sdk.Context) (list []types.Pr
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedDisableValidatorKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
-	defer iterator.Close()
+	defer func() { _ = iterator.Close() }()
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.ProposedDisableValidator

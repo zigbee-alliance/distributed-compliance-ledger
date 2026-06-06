@@ -173,7 +173,7 @@ func (suite *TestSuite) BroadcastTx(txBytes []byte) (*sdk.TxResponse, error) {
 		txResponse = &_getResp
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// Broadcast the tx via gRPC. We create a new client for the Protobuf Tx
 		// service.
