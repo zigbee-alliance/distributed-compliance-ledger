@@ -8,6 +8,7 @@ func (d *ComplianceInfo) SetCertifiedStatus(date string, reason string, cdCertif
 		Reason:                             d.Reason,
 		CDVersionNumber:                    d.CDVersionNumber,
 	}
+
 	d.History = append(d.History, &historyItem)
 	d.SoftwareVersionCertificationStatus = svCertificationStatus
 	d.Date = date
@@ -23,6 +24,7 @@ func (d *ComplianceInfo) SetRevokedStatus(date string, reason string) {
 		Reason:                             d.Reason,
 		CDVersionNumber:                    d.CDVersionNumber,
 	}
+
 	d.History = append(d.History, &historyItem)
 	d.SoftwareVersionCertificationStatus = svCertificationStatus
 	d.Date = date
@@ -73,18 +75,23 @@ func (d *ComplianceInfo) SetOptionalFields(optionalFields *OptionalFields) {
 	if optionalFields.CertificationIDOfSoftwareComponent != "" {
 		d.CertificationIdOfSoftwareComponent = optionalFields.CertificationIDOfSoftwareComponent
 	}
+
+	if optionalFields.Reason != "" {
+		d.Reason = optionalFields.Reason
+	}
 }
 
 type OptionalFields struct {
-	ProgramTypeVersion                 string
 	FamilyID                           string
 	SupportedClusters                  string
 	CompliantPlatformUsed              string
 	CompliantPlatformVersion           string
+	CertificationIDOfSoftwareComponent string
 	OSVersion                          string
 	CertificationRoute                 string
 	ProgramType                        string
+	ProgramTypeVersion                 string
 	Transport                          string
 	ParentChild                        string
-	CertificationIDOfSoftwareComponent string
+	Reason                             string
 }

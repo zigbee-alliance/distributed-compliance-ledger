@@ -21,6 +21,11 @@ export interface ModelVersion {
   releaseNotesUrl: string;
   creator: string;
   schemaVersion: number;
+  /**
+   * Deprecated: will be stated/stored in ComplianceInfo record:
+   *
+   * @deprecated
+   */
   specificationVersion: number;
 }
 

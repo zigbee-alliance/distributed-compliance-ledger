@@ -89,7 +89,7 @@ var (
 	EnhancedSetupFlowTCRevision                       = 1
 	EnhancedSetupFlowTCDigest                         = "MmNmMjRkYmE1ZmIwYTMwZTI2ZTgzYjJhYzViOWUyOWUxYjE2MWU1YzFmYTc0MjVlNzMwNDMzNjI5MzhiOTgyNA=="
 	EnhancedSetupFlowTCFileSize                       = 1
-	EnhancedSetupFlowMaintenanceURL                   = "https://url.maintenanceurl.dclmodel"
+	MaintenanceURL                                    = "https://url.maintenanceurl.dclmodel"
 	CommissioningFallbackURL                          = "https://url.commissioningfallbackurl.dclmodel"
 	DiscoveryCapabilitiesBitmask               uint32 = 0
 	LsfURL                                            = "https://url.lsfurl.dclmodel"
@@ -120,15 +120,15 @@ var (
 	RevocationReason                   = "Some Reason"
 	CertificationType                  = "zigbee"
 	CDCertificateID                    = "12345678910abcdefgh"
-	FamilyID                           = "Some Family ID"
-	SupportedClusters                  = "Some Supported Clusters"
+	FamilyID                           = "FAM123456abc"
+	SupportedClusters                  = "0x0003,0x0004,0x0006,0x0008,0x0062,0x0300"
 	CompliantPlatformUsed              = "Some Compliance Platform Used"
 	CompliantPlatformVersion           = "Some Compliance Platform Version"
 	OSVersion                          = "Some OS Version"
-	CertificationRoute                 = "Some Certification Route"
-	ProgramType                        = "Some Program Type"
-	ProgramTypeVersion                 = "Some Program Type Version"
-	Transport                          = "Some Transport"
+	CertificationRoute                 = "fullTested"
+	ProgramType                        = "endProduct"
+	ProgramTypeVersion                 = "1.4.2"
+	Transport                          = "wi-fi,ethernet"
 	SoftwareVersionCertificationStatus = uint32(
 		3,
 	)
@@ -209,7 +209,7 @@ var (
 
 	// SchemaVersion initial default value.
 	SchemaVersion        uint32
-	SpecificationVersion uint32
+	SpecificationVersion uint32 = 0x01040200
 )
 
 /*

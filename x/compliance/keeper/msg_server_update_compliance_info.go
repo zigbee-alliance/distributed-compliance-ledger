@@ -89,6 +89,10 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		complianceInfo.ProgramType = msg.ProgramType
 	}
 
+	if complianceInfo.ProgramType == "" && msg.ProgramTypeVersion != "" {
+		return nil, types.NewErrProgramTypeVersionWithoutProgramType()
+	}
+
 	if msg.ProgramTypeVersion != "" {
 		complianceInfo.ProgramTypeVersion = msg.ProgramTypeVersion
 	}
@@ -103,6 +107,10 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 
 	if msg.Transport != "" {
 		complianceInfo.Transport = msg.Transport
+	}
+
+	if msg.SpecificationVersion != 0 {
+		complianceInfo.SpecificationVersion = msg.SpecificationVersion
 	}
 
 	complianceInfo.SchemaVersion = msg.SchemaVersion

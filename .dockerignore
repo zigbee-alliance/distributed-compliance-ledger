@@ -3,6 +3,7 @@
   !testutil
   !utils
   !x
+  !internal
   !types
   !go.mod
   !go.sum

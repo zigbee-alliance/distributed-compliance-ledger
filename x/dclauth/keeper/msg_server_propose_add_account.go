@@ -20,6 +20,12 @@ func (k msgServer) ProposeAddAccount(goCtx context.Context, msg *types.MsgPropos
 		return nil, errors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: (%s)", err)
 	}
 
+	// check if accounts with trustee roles does not exceed the limit
+	trusteeAccCount := k.CountAccountsWithRole(ctx, types.Trustee)
+	if trusteeAccCount >= types.MaxTrusteeCount {
+		return nil, types.ErrAccountTotalCountReachedLimit(types.Trustee, types.MaxTrusteeCount)
+	}
+
 	// check if sender has enough rights to create a validator node
 	if !k.HasRole(ctx, signerAddr, types.Trustee) {
 		return nil, errors.Wrapf(sdkerrors.ErrUnauthorized,
