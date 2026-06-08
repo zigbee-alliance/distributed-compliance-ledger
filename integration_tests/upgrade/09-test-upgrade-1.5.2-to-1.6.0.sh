@@ -33,12 +33,12 @@ test_divider
 # Upgrade constants
 
 plan_name="v1.6.0"
-upgrade_checksum="sha256:63a27d50985947dc79f03421a2f7c6475adb84932b431d26d0b6d0a2e2d539ad"
+upgrade_checksum="sha256:47d91b6be0b0a15e7edde7b78e3013d4eedbbb3c2c1b164de78409198548a2de"
 # TODO it must be v1.6.0 before actual release
-binary_version_new="v1.6.0-0.dev.2"
+binary_version_new="v1.6.0-0.dev.3"
 
 DCLD_BIN_OLD="/tmp/dcld_bins/dcld_v1.5.2"
-DCLD_BIN_NEW="/tmp/dcld_bins/dcld_v1.6.0-0.dev.2" # TODO it must be v1.6.0 before actual release
+DCLD_BIN_NEW="/tmp/dcld_bins/dcld_v1.6.0-0.dev.3" # TODO it must be v1.6.0 before actual release
 $DCLD_BIN_NEW config broadcast-mode sync
 ########################################################################################
 
@@ -183,6 +183,7 @@ icd_user_active_mode_trigger_instruction_for_1_6_0="icd_user_active_mode_trigger
 factory_reset_steps_hint_for_1_6_0=4
 factory_reset_steps_instruction_for_1_6_0="factory_reset_steps_instruction_for_1_6_0"
 commissioning_mode_sec_hint_for_1_6_0=8
+commissioning_custom_flow_for_1_6_0=0
 specification_version_for_1_6_0=3
 part_number_for_1_6_0="RCU2246M"
 software_version_for_1_6_0=5
@@ -237,7 +238,7 @@ result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_1_6_
   --deviceTypeID=$device_type_id_for_1_6_0 --productName=$product_name_for_1_6_0 --productLabel=$product_label_for_1_6_0 --partNumber=$part_number_for_1_6_0 \
   --icdUserActiveModeTriggerHint="$icd_user_active_mode_trigger_hint_for_1_6_0" --icdUserActiveModeTriggerInstruction="$icd_user_active_mode_trigger_instruction_for_1_6_0" \
   --factoryResetStepsHint="$factory_reset_steps_hint_for_1_6_0" --factoryResetStepsInstruction="$factory_reset_steps_instruction_for_1_6_0" \
-  --commissioningModeSecondaryStepsHint="$commissioning_mode_sec_hint_for_1_6_0" \
+  --commissioningCustomFlow=$commissioning_custom_flow_for_1_6_0 --commissioningModeSecondaryStepsHint="$commissioning_mode_sec_hint_for_1_6_0" \
   --from=$vendor_account_for_1_6_0 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
@@ -253,7 +254,7 @@ test_divider
 
 echo "Add model vid=$vid_for_1_6_0 pid=$pid_2_for_1_6_0"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_1_6_0 --pid=$pid_2_for_1_6_0 --deviceTypeID=$device_type_id_for_1_6_0 \
-  --productName=$product_name_for_1_6_0 --productLabel=$product_label_for_1_6_0 --partNumber=$part_number_for_1_6_0 --from=$vendor_account_for_1_6_0 --yes)
+  --productName=$product_name_for_1_6_0 --productLabel=$product_label_for_1_6_0 --partNumber=$part_number_for_1_6_0 --commissioningCustomFlow=$commissioning_custom_flow_for_1_6_0 --from=$vendor_account_for_1_6_0 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 

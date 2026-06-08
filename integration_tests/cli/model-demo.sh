@@ -74,12 +74,12 @@ enhancedSetupFlowTCUrl="https://example.org/file.txt"
 enhancedSetupFlowTCRevision=1
 enhancedSetupFlowTCDigest="MWRjNGE0NDA0MWRjYWYxMTU0NWI3NTQzZGZlOTQyZjQ3NDJmNTY4YmU2OGZlZTI3NTQ0MWIwOTJiYjYwZGVlZA=="
 enhancedSetupFlowTCFileSize=1024
-enhancedSetupFlowMaintenanceUrl="https://example.org"
+maintenanceUrl="https://example.org"
 commissioningFallbackUrl="https://url.commissioningfallbackurl.dclmodel"
 discoveryCapabilitiesBitmask=1
 echo "Add Model with VID: $vid_with_pids PID: $pid"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid_with_pids --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="$productLabel" --partNumber=1 --commissioningCustomFlow=0 --enhancedSetupFlowOptions=$enhancedSetupFlowOptions_1 \
-  --enhancedSetupFlowTCUrl=$enhancedSetupFlowTCUrl --enhancedSetupFlowTCRevision=$enhancedSetupFlowTCRevision --enhancedSetupFlowTCDigest=$enhancedSetupFlowTCDigest --enhancedSetupFlowTCFileSize=$enhancedSetupFlowTCFileSize --enhancedSetupFlowMaintenanceUrl=$enhancedSetupFlowMaintenanceUrl \
+  --enhancedSetupFlowTCUrl=$enhancedSetupFlowTCUrl --enhancedSetupFlowTCRevision=$enhancedSetupFlowTCRevision --enhancedSetupFlowTCDigest=$enhancedSetupFlowTCDigest --enhancedSetupFlowTCFileSize=$enhancedSetupFlowTCFileSize --maintenanceUrl=$maintenanceUrl \
   --commissioningFallbackUrl=$commissioningFallbackUrl --discoveryCapabilitiesBitmask=$discoveryCapabilitiesBitmask --from=$vendor_account_with_pids --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
@@ -107,7 +107,7 @@ check_response "$result" "\"enhancedSetupFlowTCUrl\": \"$enhancedSetupFlowTCUrl\
 check_response "$result" "\"enhancedSetupFlowTCRevision\": $enhancedSetupFlowTCRevision"
 check_response "$result" "\"enhancedSetupFlowTCDigest\": \"$enhancedSetupFlowTCDigest\""
 check_response "$result" "\"enhancedSetupFlowTCFileSize\": $enhancedSetupFlowTCFileSize"
-check_response "$result" "\"enhancedSetupFlowMaintenanceUrl\": \"$enhancedSetupFlowMaintenanceUrl\""
+check_response "$result" "\"maintenanceUrl\": \"$maintenanceUrl\""
 check_response "$result" "\"commissioningFallbackUrl\": \"$commissioningFallbackUrl\""
 check_response "$result" "\"discoveryCapabilitiesBitmask\": $discoveryCapabilitiesBitmask"
 echo "$result"
@@ -168,11 +168,11 @@ newEnhancedSetupFlowTCUrl="https://example.org/file2.txt"
 newEnhancedSetupFlowTCRevision=2
 newEnhancedSetupFlowTCDigest="MWRjM2E0MTA0MWRjYWYxMTU0NWI3NTQzZGZlOTQyZjQ3NDJmNTY4YmU2OGZlZTI3NTQ0MWIwOTJiYjYxZGVlZA=="
 newEnhancedSetupFlowTCFileSize=2048
-newEnhancedSetupFlowMaintenanceUrl="https://example2.org"
+newMaintenanceUrl="https://example2.org"
 newCommissioningFallbackUrl="https://url.commissioningfallbackurl2.dclmodel"
-echo "Update Model with VID: ${vid_with_pids} PID: ${pid} with new description, enhancedSetupFlowTCUrl, enhancedSetupFlowTCRevision, enhancedSetupFlowTCDigest, enhancedSetupFlowTCFileSize and enhancedSetupFlowMaintenanceUrl"
+echo "Update Model with VID: ${vid_with_pids} PID: ${pid} with new description, enhancedSetupFlowTCUrl, enhancedSetupFlowTCRevision, enhancedSetupFlowTCDigest, enhancedSetupFlowTCFileSize and maintenanceUrl"
 result=$(echo "test1234" | dcld tx model update-model --vid=$vid_with_pids --pid=$pid --from $vendor_account_with_pids --yes --productLabel "$description" --enhancedSetupFlowOptions=$enhancedSetupFlowOptions_1 \
-    --enhancedSetupFlowTCUrl=$newEnhancedSetupFlowTCUrl --enhancedSetupFlowTCRevision=$newEnhancedSetupFlowTCRevision --enhancedSetupFlowTCDigest=$newEnhancedSetupFlowTCDigest --enhancedSetupFlowTCFileSize=$newEnhancedSetupFlowTCFileSize --enhancedSetupFlowMaintenanceUrl=$newEnhancedSetupFlowMaintenanceUrl --commissioningFallbackUrl=$newCommissioningFallbackUrl --from=$vendor_account_with_pids --yes)
+    --enhancedSetupFlowTCUrl=$newEnhancedSetupFlowTCUrl --enhancedSetupFlowTCRevision=$newEnhancedSetupFlowTCRevision --enhancedSetupFlowTCDigest=$newEnhancedSetupFlowTCDigest --enhancedSetupFlowTCFileSize=$newEnhancedSetupFlowTCFileSize --maintenanceUrl=$newMaintenanceUrl --commissioningFallbackUrl=$newCommissioningFallbackUrl --from=$vendor_account_with_pids --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 echo "$result"
@@ -202,7 +202,7 @@ check_response "$result" "\"enhancedSetupFlowTCUrl\": \"$newEnhancedSetupFlowTCU
 check_response "$result" "\"enhancedSetupFlowTCRevision\": $newEnhancedSetupFlowTCRevision"
 check_response "$result" "\"enhancedSetupFlowTCDigest\": \"$newEnhancedSetupFlowTCDigest\""
 check_response "$result" "\"enhancedSetupFlowTCFileSize\": $newEnhancedSetupFlowTCFileSize"
-check_response "$result" "\"enhancedSetupFlowMaintenanceUrl\": \"$newEnhancedSetupFlowMaintenanceUrl\""
+check_response "$result" "\"maintenanceUrl\": \"$newMaintenanceUrl\""
 check_response "$result" "\"commissioningFallbackUrl\": \"$newCommissioningFallbackUrl\""
 echo "$result"
 

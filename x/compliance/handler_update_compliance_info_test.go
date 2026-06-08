@@ -19,6 +19,7 @@ func (setup *TestSetup) checkAllComplianceInfoFieldsUpdated(t *testing.T, origin
 	require.Equal(t, originalComplianceInfo.SoftwareVersionString, updatedComplianceInfo.SoftwareVersionString)
 	require.Equal(t, originalComplianceInfo.CertificationType, updatedComplianceInfo.CertificationType)
 	require.NotEqual(t, originalComplianceInfo.CertificationIdOfSoftwareComponent, updatedComplianceInfo.CertificationIdOfSoftwareComponent)
+	require.NotEqual(t, originalComplianceInfo.SpecificationVersion, updatedComplianceInfo.SpecificationVersion)
 	require.NotEqual(t, originalComplianceInfo.CertificationRoute, updatedComplianceInfo.CertificationRoute)
 	require.NotEqual(t, originalComplianceInfo.CompliantPlatformUsed, updatedComplianceInfo.CompliantPlatformUsed)
 	require.NotEqual(t, originalComplianceInfo.CompliantPlatformVersion, updatedComplianceInfo.CompliantPlatformVersion)
@@ -211,4 +212,41 @@ func TestHandler_UpdateToAnotherCDCertificateID(t *testing.T) {
 	cdCertificateIDExcluded := originalDeviceSoftwareCompliance2.ComplianceInfo[0]
 	cdCertificateIDExcluded.CDCertificateId = cDCertificateID1
 	require.Equal(t, cdCertificateIDExcluded, newDeviceSoftwareCompliance1.ComplianceInfo[1])
+}
+
+func TestHandler_UpdateComplianceInfo_RejectsProgramTypeVersionWhenProgramTypeEmpty(t *testing.T) {
+	setup, vid, pid, softwareVersion, certificationType, _, originalComplianceInfo, _ := setupUpdateComplianceInfo(t)
+	require.Empty(t, originalComplianceInfo.ProgramType)
+
+	updateComplianceInfoMsg := newMsgUpdateComplianceInfo(setup.CertificationCenter, vid, pid, softwareVersion, certificationType)
+	updateComplianceInfoMsg.ProgramTypeVersion = "1.0"
+
+	_, err := setup.Handler(setup.Ctx, updateComplianceInfoMsg)
+	require.ErrorIs(t, err, types.ErrProgramTypeVersionWithoutProgramType)
+
+	updatedComplianceInfo := queryExistingComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
+	require.Equal(t, originalComplianceInfo, updatedComplianceInfo)
+}
+
+func TestHandler_UpdateComplianceInfo_AcceptsProgramTypeVersionOnly_WhenExistingHasProgramType(t *testing.T) {
+	setup := setup(t)
+	vid, pid, softwareVersion, softwareVersionString := setup.addModelVersion(
+		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
+	certificationType := types.ZigbeeCertificationType
+
+	certifyModelMsg := newMsgCertifyModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	certifyModelMsg.ProgramType = types.EndProductProgramType
+	certifyModelMsg.ProgramTypeVersion = "1.0"
+	_, certifyErr := setup.Handler(setup.Ctx, certifyModelMsg)
+	require.NoError(t, certifyErr)
+
+	updateMsg := newMsgUpdateComplianceInfo(setup.CertificationCenter, vid, pid, softwareVersion, certificationType)
+	updateMsg.ProgramTypeVersion = "2.0"
+
+	_, updateErr := setup.Handler(setup.Ctx, updateMsg)
+	require.NoError(t, updateErr)
+
+	updated := queryExistingComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
+	require.Equal(t, types.EndProductProgramType, updated.ProgramType)
+	require.Equal(t, "2.0", updated.ProgramTypeVersion)
 }

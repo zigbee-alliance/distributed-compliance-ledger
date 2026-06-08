@@ -60,8 +60,8 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvision
 		Vid:                                msg.Vid,
 		Pid:                                msg.Pid,
 		SoftwareVersion:                    msg.SoftwareVersion,
-		SoftwareVersionString:              msg.SoftwareVersionString,
 		CertificationType:                  msg.CertificationType,
+		SoftwareVersionString:              msg.SoftwareVersionString,
 		Date:                               msg.ProvisionalDate,
 		Reason:                             msg.Reason,
 		Owner:                              msg.Signer,
@@ -80,6 +80,7 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvision
 		Transport:                          msg.Transport,
 		ParentChild:                        msg.ParentChild,
 		CertificationIdOfSoftwareComponent: msg.CertificationIdOfSoftwareComponent,
+		SpecificationVersion:               msg.SpecificationVersion,
 		SchemaVersion:                      msg.SchemaVersion,
 	}
 

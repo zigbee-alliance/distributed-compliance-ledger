@@ -27,16 +27,16 @@ Below is the list of notes to consider while mapping DCL Compliance module to Ma
 1. The [Device Software Compliance schema](https://github.com/CHIP-Specifications/connectedhomeip-spec/blob/master/src/service_device_management/DistributedComplianceLedger.adoc#8-devicesoftwarecompliance--compliance-test-result-schema) corresponds to the [Compliance Info](../proto/zigbeealliance/distributedcomplianceledger/compliance/compliance_info.proto) entity, and the associated `write/read` requests can be found in the [Compliance section](transactions.md#compliance)
 2. In DCL, specific endpoints are used (by CSA) to handle [certification status](https://github.com/CHIP-Specifications/connectedhomeip-spec/blob/master/src/service_device_management/DistributedComplianceLedger.adoc#82-softwareversioncertificationstatusenum-type) of the device software version according to the provided `certificatType`(ZB/Matter):
    - [Provision](transactions/compliance.md#PROVISION_MODEL) endpoint is used to register that particular device software is in `provisional` (going into certification testing phase) state
-      * **Note:** This endpoint **cannot** be used for device software versions that are already in `compliant` or `revoked` state
-   - [Certify](transactions/compliance.md#CERTIFY_MODEL) endpoint is used to register that particular device software version is in `compliant` state
+      * **Note:** This endpoint **cannot** be used for device software versions that are already in `certified` or `revoked` state
+   - [Certify](transactions/compliance.md#CERTIFY_MODEL) endpoint is used to register that particular device software version is in `certified` state
       * **Note:** This endpoint **can** be used for device software versions that are already in `provisional` or `revoked` state (e.g. re-certification)
    - [Revoke](transactions/compliance.md#REVOKE_MODEL_CERTIFICATION) endpoint is used to register that particular device software version is `revoked`
-     * **Note:** This endpoint **can** be used for device software versions that are already in `provisional` or `compliant` state
+     * **Note:** This endpoint **can** be used for device software versions that are already in `provisional` or `certified` state
    - [Update](transactions/compliance.md#UPDATE_COMPLIANCE_INFO) endpoint is used to update the additional-info/metadata of a particular device software version
      * **Note:** This endpoint **cannot** be used to change the certification status
 3. In DCL, there are several query endpoints can be used for specific reading purposes.
    - [Provisional Model](transactions/compliance.md#GET_PROVISIONAL_MODEL) can be used to retrieve/check the software version certification of particular device is in `provisional` state
-   - [Certified Model](transactions/compliance.md#GET_CERTIFIED_MODEL) can be used to retrieve/check the software version certification of particular device in `compliant` state
+   - [Certified Model](transactions/compliance.md#GET_CERTIFIED_MODEL) can be used to retrieve/check the software version certification of particular device in `certified` state
    - [Revoked Model](transactions/compliance.md#GET_REVOKED_MODEL) can be used to retrieve/check the software version certification of particular device in `revoked` state
    - [Compliance Info](transactions/compliance.md#GET_COMPLIANCE_INFO) can be used to get the full compliance(including certification state) information of a particular device software version, bypassing state check query calls mentioned above
    - [Device Software Compliance](transactions/compliance.md#GET_DEVICE_SOFTWARE_COMPLIANCE) can be used to get all compliance records associated with [CD Certificate ID](https://github.com/CHIP-Specifications/connectedhomeip-spec/blob/master/src/service_device_management/DistributedComplianceLedger.adoc#83-cdcertificateid)

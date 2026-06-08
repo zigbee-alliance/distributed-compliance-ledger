@@ -18,7 +18,7 @@ func NewMsgProvisionModel(
 	provisionalDate string, certificationType string, reason string, programTypeVersion string, cDCertificateID string,
 	familyID string, supportedClusters string, compliantPlatformUsed string, compliantPlatformVersion string, osVersion string,
 	certificationRoute string, programType string, transport string, parentChild string, certificationIDOfSoftwareComponent string,
-	schemaVersion uint32,
+	specificationVersion uint32, schemaVersion uint32,
 ) *MsgProvisionModel {
 	return &MsgProvisionModel{
 		Signer:                             signer,
@@ -42,6 +42,7 @@ func NewMsgProvisionModel(
 		Transport:                          transport,
 		ParentChild:                        parentChild,
 		CertificationIdOfSoftwareComponent: certificationIDOfSoftwareComponent,
+		SpecificationVersion:               specificationVersion,
 		SchemaVersion:                      schemaVersion,
 	}
 }
@@ -91,6 +92,30 @@ func (msg *MsgProvisionModel) ValidateBasic() error {
 
 	if !IsValidPFCCertificationRoute(msg.ParentChild) {
 		return NewErrInvalidPFCCertificationRoute(msg.ParentChild, PFCCertificationRouteList)
+	}
+
+	if msg.CertificationRoute != "" && !IsValidCertificationRoute(msg.CertificationRoute) {
+		return NewErrInvalidCertificationRoute(msg.CertificationRoute, CertificationRoutesList)
+	}
+
+	if msg.FamilyId != "" && !IsValidFamilyID(msg.FamilyId) {
+		return NewErrInvalidFamilyID(msg.FamilyId)
+	}
+
+	if msg.Transport != "" && !IsValidTransport(msg.Transport) {
+		return NewErrInvalidTransport(msg.Transport, TransportsList)
+	}
+
+	if msg.ProgramType != "" && !IsValidProgramType(msg.ProgramType) {
+		return NewErrInvalidProgramType(msg.ProgramType, ProgramTypesList)
+	}
+
+	if msg.ProgramType == "" && msg.ProgramTypeVersion != "" {
+		return NewErrProgramTypeVersionWithoutProgramType()
+	}
+
+	if !IsValidSupportedClusters(msg.SupportedClusters) {
+		return NewErrInvalidSupportedClusters(msg.SupportedClusters)
 	}
 
 	return nil
