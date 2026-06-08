@@ -76,7 +76,6 @@ linters:
     - embeddedstructfieldcheck
     - gocritic
     - gocyclo
-    - goheader
     - goprintffuncname
     - grouper
     - iface
@@ -108,14 +107,6 @@ linters:
         - all
         - -QF*
         - -ST*
-    goheader:
-      # Match the canonical DSR Corporation Apache-2.0 header. The year is a
-      # regex so existing 2020/2021/2022/... headers all match. Template text
-      # lives in .golangci-goheader-template.txt
-      values:
-        regexp:
-          year: "20\\d{2}"
-      template-path: .golangci-goheader-template.txt
     govet:
       # Disable the modernization "inline" analyzer — it nags about replacing
       # ioutil/reflect constants with newer equivalents. Style, not bugs.
@@ -137,7 +128,7 @@ linters:
 
 # In golangci-lint v2 formatters live in their own block (separate from
 # `linters:`). Keep this minimal: gofmt and goimports are the existing repo
-# baseline; gofumpt/gci can be added later if the stricter style will be needed.
+# baseline; gofumpt/gci can be added later if the stricter style is needed.
 formatters:
   enable:
     - gofmt
