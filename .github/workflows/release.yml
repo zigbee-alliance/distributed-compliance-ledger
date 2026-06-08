@@ -24,12 +24,13 @@ on:
 env:
   BIN_NAME: dcld
   COSMOVISOR_VERSION: 1.5.0
+  URL_LIVENESS_CHECK_ENABLED: true
 
 jobs:
 
   checks:
     name: verify release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       included: ${{ steps.release_info.outputs.included }}
       matrix_os: ${{ steps.release_info.outputs.matrix_os }}
@@ -59,55 +60,58 @@ jobs:
             echo "$EOF"
           } >> "$GITHUB_OUTPUT"
 
-          asset_bin_url="$(echo "$release_info" \
-              | jq -r '.assets[] | select(.name | match("^${{ env.BIN_NAME }}$")) | .browser_download_url')"
-          echo "$asset_bin_url"
-
-          asset_ubuntu_tgz_url="$(echo "$release_info" \
-              | jq -r '.assets[] | select(.name | match("^${{ env.BIN_NAME }}.ubuntu.tar.gz$")) | .browser_download_url')"
-          echo "$asset_ubuntu_tgz_url"
-
-          asset_cosmovisor_url="$(echo "$release_info" \
-              | jq -r '.assets[] | select(.name | match("^cosmovisor$")) | .browser_download_url')"
-          echo "$asset_cosmovisor_url"
-
           asset_service_url="$(echo "$release_info" \
               | jq -r '.assets[] | select(.name | match("^cosmovisor.service$")) | .browser_download_url')"
-          echo "$asset_service_url"
+          echo "service: $asset_service_url"
 
           asset_service_conf_url="$(echo "$release_info" \
               | jq -r '.assets[] | select(.name | match("^cosmovisor.conf$")) | .browser_download_url')"
-          echo "$asset_service_conf_url"
+          echo "service_conf: $asset_service_conf_url"
 
           asset_start_url="$(echo "$release_info" \
               | jq -r '.assets[] | select(.name | match("^cosmovisor_start.sh$")) | .browser_download_url')"
-          echo "$asset_start_url"
+          echo "start: $asset_start_url"
 
           asset_preupgrade_url="$(echo "$release_info" \
               | jq -r '.assets[] | select(.name | match("^cosmovisor_preupgrade.sh$")) | .browser_download_url')"
-          echo "$asset_preupgrade_url"
+          echo "preupgrade: $asset_preupgrade_url"
 
           asset_deploy_script_url="$(echo "$release_info" \
               | jq -r '.assets[] | select(.name | match("^run_dcl_node$")) | .browser_download_url')"
-          echo "$asset_deploy_script_url"
-
-          asset_macos_tgz_url="$(echo "$release_info" \
-              | jq -r '.assets[] | select(.name | match("^${{ env.BIN_NAME }}.macos.tar.gz$")) | .browser_download_url')"
-          echo "$asset_macos_tgz_url"
+          echo "deploy: $asset_deploy_script_url"
 
           upload_url="$(echo "$release_info" | jq -r '.upload_url')"
-          echo "$upload_url"
           echo "upload_url=$upload_url" >> "$GITHUB_OUTPUT"
 
           # build json string to use later as a job matrix
           included=()
-          if [[ -z "$asset_bin_url" || -z "$asset_ubuntu_tgz_url" || -z "$asset_cosmovisor_url" || -z "$asset_service_url" || -z "$asset_service_conf_url" || -z "$asset_start_url" || -z "$asset_preupgrade_url" || -z "$asset_deploy_script_url" ]]; then
-            # os|bin-url|tgz-url|cosmovisor-url|service-file-url|service-conf-file-url|start-script-url|preupgrade-script-url|deploy-script-url|tgz-suffix
-            included+=("ubuntu-22.04|$asset_bin_url|$asset_ubuntu_tgz_url|$asset_cosmovisor_url|$asset_service_url|$asset_service_conf_url|$asset_start_url|$asset_preupgrade_url|$asset_deploy_script_url|.ubuntu.tar.gz")
-          fi
+          for os in "ubuntu-20.04" "ubuntu-24.04"; do
+            asset_bin_url="$(echo "$release_info" | jq -r ".assets[] | select(.name == \"${{ env.BIN_NAME }}-$os\") | .browser_download_url")"
+            asset_tgz_url="$(echo "$release_info" | jq -r ".assets[] | select(.name == \"$os.tar.gz\") | .browser_download_url")"
+            asset_cv_url="$(echo "$release_info" | jq -r ".assets[] | select(.name == \"cosmovisor-v${{ env.COSMOVISOR_VERSION }}-$os\") | .browser_download_url")"
+
+            # Check if we need to run the job for this OS
+            # For 20.04, we don't care if BIN or CV are missing (we only want TGZ and common assets)
+            if [[ -z "$asset_tgz_url" || \
+                  ( "$os" == "ubuntu-24.04" && ( -z "$asset_bin_url" || -z "$asset_cv_url" ) ) || \
+                  ( "$os" == "ubuntu-20.04" && ( -z "$asset_service_url" || -z "$asset_service_conf_url" || -z "$asset_start_url" || -z "$asset_preupgrade_url" || -z "$asset_deploy_script_url" ) ) ]]; then
+          
+              # For non-20.04, we don't want to re-check/re-upload generic assets if they are being handled by 20.04 or already exist
+              # If they are missing, 20.04 job will upload them.
+              if [[ "$os" == "ubuntu-20.04" ]]; then
+                # os|bin-url|tgz-url|cosmovisor-url|service-file-url|service-conf-file-url|start-script-url|preupgrade-script-url|deploy-script-url|tgz-filename
+                included+=("$os|$asset_bin_url|$asset_tgz_url|$asset_cv_url|$asset_service_url|$asset_service_conf_url|$asset_start_url|$asset_preupgrade_url|$asset_deploy_script_url|$os.tar.gz")
+              else
+                included+=("$os|$asset_bin_url|$asset_tgz_url|$asset_cv_url|skip|skip|skip|skip|skip|$os.tar.gz")
+              fi
+            fi
+          done
+
+          asset_macos_tgz_url="$(echo "$release_info" \
+              | jq -r '.assets[] | select(.name | match("^macos.tar.gz$")) | .browser_download_url')"
           if [[ -z "$asset_macos_tgz_url" ]]; then
             # bin, service file and deploy script are not considered for macos job
-            included+=("macos-14|-||-|-|-|-|-|-|.macos.tar.gz")
+            included+=("macos-14|-||-|-|-|-|-|-|macos.tar.gz")
           fi
 
           matrix_os="$(jq -ncR '
@@ -123,7 +127,7 @@ jobs:
                 (input | split(" ")) |
                 [ .[] | split("|") |
                 {"os": .[0], "bin": .[1] | length, "tgz": .[2] | length, "cosmovisor": .[3] | length, "service": .[4] | length, "service_conf": .[5] |
-                length, "start": .[6] | length, "preupgrade": .[7] | length, "deploy_script": .[8] | length, "tgz_name_suffix": .[9]} ]
+                length, "start": .[6] | length, "preupgrade": .[7] | length, "deploy_script": .[8] | length, "tgz_filename": .[9]} ]
               ' <<<"${included[*]}"
             )"
             echo "$included_json"
@@ -131,6 +135,7 @@ jobs:
           fi
 
         shell: bash
+
 
       - name: check release published
         if: ${{ !steps.release_info.outputs.release_info }}
@@ -172,25 +177,22 @@ jobs:
             ${{ runner.os }}-go-
 
       - name: build application binary
-        if: ${{ matrix.os != 'ubuntu-22.04' && (!matrix.bin || !matrix.tgz) }}
+        if: ${{ !startsWith(matrix.os, 'ubuntu-') && (!matrix.bin || !matrix.tgz) }}
         run: |
           make build
           build/${{ env.BIN_NAME }} version
-
-          tar czf build/${{ env.BIN_NAME }}${{ matrix.tgz_name_suffix }} -C build ${{ env.BIN_NAME }}
         shell: bash
 
-      - name: build application and cosmovisor binary | ubuntu-22.04
-        if: ${{ matrix.os == 'ubuntu-22.04' && (!matrix.bin || !matrix.tgz || !matrix.cosmovisor) }}
+      - name: build application and cosmovisor binary | ubuntu
+        if: ${{ startsWith(matrix.os, 'ubuntu-') && (!matrix.bin || !matrix.tgz || !matrix.cosmovisor) }} # TODO: When archive is not present, but bin (dcld) and/or cosmovisor are already available in the release makes sense to not rebuild the existing artifacts but rather download them
         run: |
-          bash .github/workflows/ubuntu-20.04-build.sh
+          UBUNTU_VERSION=$(echo "${{ matrix.os }}" | cut -d'-' -f2)
+          UBUNTU_VERSION=$UBUNTU_VERSION bash .github/workflows/ubuntu-build.sh
           ls -la build
-
-          tar czf build/${{ env.BIN_NAME }}${{ matrix.tgz_name_suffix }} -C build ${{ env.BIN_NAME }}
         shell: bash
 
       - name: upload to GitHub (application binary)
-        if: ${{ !matrix.bin }}
+        if: ${{ !matrix.bin && matrix.os == 'ubuntu-24.04' }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -200,19 +202,8 @@ jobs:
           asset_name: ${{ env.BIN_NAME }}
           asset_content_type: application/octet-stream  # TODO check for less generic type
 
-      - name: upload to GitHub (archived application binary)
-        if: ${{ !matrix.tgz }}
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.checks.outputs.upload_url }}
-          asset_path: build/${{ env.BIN_NAME }}${{ matrix.tgz_name_suffix }}
-          asset_name: ${{ env.BIN_NAME }}${{ matrix.tgz_name_suffix }}
-          asset_content_type: application/x-gtar
-
       - name: build cosmovisor binary
-        if: ${{ matrix.os != 'ubuntu-22.04' && !matrix.cosmovisor }}
+        if: ${{ !startsWith(matrix.os, 'ubuntu-') && (!matrix.cosmovisor || !matrix.tgz) }}
         run: |
           go install "cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@v${{ env.COSMOVISOR_VERSION }}"
           GOPATH="${GOPATH:-${HOME}/go}"
@@ -220,8 +211,34 @@ jobs:
           cp "$GOBIN/cosmovisor" build
         shell: bash
 
+      - name: create archive with all artifacts
+        if: ${{ !matrix.tgz }}
+        run: |
+          mkdir -p build/artifacts
+          cp build/${{ env.BIN_NAME }} build/artifacts/
+          cp build/cosmovisor build/artifacts/
+          cp deployment/cosmovisor.service build/artifacts/
+          cp deployment/cosmovisor.conf build/artifacts/
+          cp deployment/ansible/roles/bootstrap/files/cosmovisor_preupgrade.sh build/artifacts/
+          cp deployment/ansible/roles/bootstrap/files/cosmovisor_start.sh build/artifacts/
+          cp deployment/scripts/run_dcl_node build/artifacts/
+
+          tar czf build/${{ matrix.tgz_filename }} -C build/artifacts .
+        shell: bash
+
+      - name: upload to GitHub (archived application binary)
+        if: ${{ !matrix.tgz }}
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.checks.outputs.upload_url }}
+          asset_path: build/${{ matrix.tgz_filename }}
+          asset_name: ${{ matrix.tgz_filename }}
+          asset_content_type: application/x-gtar
+
       - name: upload to GitHub (cosmovisor binary)
-        if: ${{ !matrix.cosmovisor }}
+        if: ${{ !matrix.cosmovisor && matrix.os == 'ubuntu-24.04' }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

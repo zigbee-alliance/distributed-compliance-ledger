@@ -1,4 +1,5 @@
 PACKAGES = $(shell go list ./... | grep -v '/integration_tests')
+TESTS_WITH_DEV_TAG_DISABLED = $(shell grep -rl '//go:build !dev' --include='*_test.go' .)
 
 ifndef DCL_VERSION
 DCL_VERSION := $(shell echo $(shell git describe --tags --always) | sed 's/^v//')
@@ -11,6 +12,8 @@ endif
 NAME ?= dcl
 APPNAME ?= $(NAME)d
 LEDGER_ENABLED ?= true
+URL_LIVENESS_CHECK_ENABLED ?= true
+CGO_ENABLED ?= 0
 
 OUTPUT_DIR ?= build
 
@@ -23,6 +26,7 @@ ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=DcLedger \
 
 # DB backend selection
 ifeq (cleveldb,$(findstring cleveldb,$(COSMOS_BUILD_OPTIONS)))
+  CGO_ENABLED = 1
   ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=cleveldb
 endif
 
@@ -54,6 +58,10 @@ endif
 
 ifeq (cleveldb,$(findstring cleveldb,$(COSMOS_BUILD_OPTIONS)))
   build_tags += gcc
+endif
+
+ifeq ($(URL_LIVENESS_CHECK_ENABLED),false)
+  build_tags += dev
 endif
 
 whitespace :=
@@ -100,17 +108,21 @@ TEST_TARGETS= ${LOCALNET_TARGETS} ${TEST_DEPLOY_TARGETS}
 all: install
 
 build: go.sum
-	go build -mod=readonly $(DCLD_BUILD_FLAGS) -o $(OUTPUT_DIR)/dcld ./cmd/dcld
+	CGO_ENABLED=${CGO_ENABLED} go build -mod=readonly $(DCLD_BUILD_FLAGS) -o $(OUTPUT_DIR)/dcld ./cmd/dcld
 
 install: go.sum
-	go install -mod=readonly $(DCLD_BUILD_FLAGS) ./cmd/dcld
+	CGO_ENABLED=${CGO_ENABLED} go install -mod=readonly $(DCLD_BUILD_FLAGS) ./cmd/dcld
 
 go.sum: go.mod
 	@echo "--> Ensure dependencies have not been modified"
 	GO111MODULE=on go mod verify
 
 test:
-	go test -v $(PACKAGES)
+	go test -tags=dev -v $(PACKAGES)
+	@for f in $(TESTS_WITH_DEV_TAG_DISABLED); do \
+		d=$$(dirname $$f); \
+		go test -v $$(ls $$d/*.go | grep -v _test.go) $$f || exit 1; \
+	done
 
 lint:
 	golangci-lint run ./... --timeout 5m0s
@@ -124,9 +136,20 @@ license-check:
 clean:
 	rm -rf $(OUTPUT_DIR)
 
+# Regenerate the TypeScript client and apply the RFC 3986 query-encoding patch.
+# The patch is required so base64 pagination keys (+, /, =) survive transit;
+# without it the cosmos-sdk gRPC-gateway decodes '+' as space and rejects next_key.
+ts-client-gen:
+	ignite generate ts-client
+	./scripts/patch-ts-client-encoding.sh
+
+ts-client-test:
+	node --test scripts/test-ts-client-encoding.test.js
+
 ${TEST_TARGETS}:
 	make -f ${MK_TEST} $@
 
 .PHONY: all build install test lint clean \
+		ts-client-gen ts-client-test \
 		license license-check \
 		${TEST_TARGETS}

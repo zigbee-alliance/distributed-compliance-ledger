@@ -37,7 +37,7 @@ from the revocation list.
   - programTypeVersion: `optional(string)` - Version of programType (see `programType` flag for supported programs). Can be used when `programType` is provided.
   - transport: `optional(string)` - Underlying communication technology the device uses to connect and exchange data. Supported transports are `thread`, `wi-fi`, `ethernet`, `bluetooth` and `nfc`. When multiple transports supported - should be used with comma-separator (e.g. `wi-fi,ethernet,bluetooth`).
   - parentChild: `optional(string)` - Parent vs. child characteristic when using the Product Family Certification or Portfolio Certification Program. Supported values are `parent` and `child`.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 1 (default 1)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
   - compliantPlatformUsed: `optional(string)` - **Deprecated.**  Certification ID of the compliant platform used with the product.
   - compliantPlatformVersion: `optional(string)` - **Deprecated.**  Certified firmware version of Compliant Platform.
   - certificationIDOfSoftwareComponent: `optional(string)` - **Deprecated.** Certification ID of a software component.
@@ -77,7 +77,7 @@ Updates a compliance info by VID, PID, Software Version and Certification Type.
   - programTypeVersion: `optional(string)` - Version of programType (see `programType` flag for supported programs). Can be used when `programType` is provided.
   - transport: `optional(string)` - Underlying communication technology the device uses to connect and exchange data. Supported transports are `thread`, `wi-fi`, `ethernet`, `bluetooth` and `nfc`. When multiple transports supported - should be used with comma-separator (e.g. `wi-fi,ethernet,bluetooth`).
   - parentChild: `optional(string)` - Parent vs. child characteristic when using the Product Family Certification or Portfolio Certification Program. Supported values are `parent` and `child`.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 1 (default 1)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
   - compliantPlatformUsed: `optional(string)` - **Deprecated.**  Certification ID of the compliant platform used with the product.
   - compliantPlatformVersion: `optional(string)` - **Deprecated.**  Certified firmware version of Compliant Platform.
   - certificationIDOfSoftwareComponent: `optional(string)` - **Deprecated.** Certification ID of a software component.
@@ -130,7 +130,7 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
   - revocationDate: `string` - The date of model revocation (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
   - reason: `optional(string)` - Optional comment describing the reason of revocation
   - cDVersionNumber: `optional(uint32)` - CD Version Number of the certification
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 1 (default 1)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State:
   - `compliance/ComplianceInfo/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
   - `compliance/RevokedModel/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
@@ -170,7 +170,7 @@ Can not be set if there is already a certification record on the ledger (certifi
   - programTypeVersion: `optional(string)` - Version of programType (see `programType` flag for supported programs). Can be used when `programType` is provided.
   - transport: `optional(string)` - Underlying communication technology the device uses to connect and exchange data. Supported transports are `thread`, `wi-fi`, `ethernet`, `bluetooth` and `nfc`. When multiple transports supported - should be used with comma-separator (e.g. `wi-fi,ethernet,bluetooth`).
   - parentChild: `optional(string)` - Parent vs. child characteristic when using the Product Family Certification or Portfolio Certification Program. Supported values are `parent` and `child`.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 1 (default 1)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
   - compliantPlatformUsed: `optional(string)` - **Deprecated.**  Certification ID of the compliant platform used with the product.
   - compliantPlatformVersion: `optional(string)` - **Deprecated.**  Certified firmware version of Compliant Platform.
   - certificationIDOfSoftwareComponent: `optional(string)` - **Deprecated.** Certification ID of a software component.

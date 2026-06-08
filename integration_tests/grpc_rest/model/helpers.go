@@ -67,7 +67,7 @@ func NewMsgCreateModel(vid int32, pid int32, signer string) *modeltypes.MsgCreat
 		EnhancedSetupFlowTCRevision:                int32(testconstants.EnhancedSetupFlowTCRevision),
 		EnhancedSetupFlowTCDigest:                  testconstants.EnhancedSetupFlowTCDigest,
 		EnhancedSetupFlowTCFileSize:                uint32(testconstants.EnhancedSetupFlowTCFileSize),
-		EnhancedSetupFlowMaintenanceUrl:            testconstants.EnhancedSetupFlowMaintenanceURL,
+		MaintenanceUrl:                             testconstants.MaintenanceURL,
 		CommissioningFallbackUrl:                   testconstants.CommissioningFallbackURL,
 		DiscoveryCapabilitiesBitmask:               testconstants.DiscoveryCapabilitiesBitmask,
 	}
@@ -75,22 +75,22 @@ func NewMsgCreateModel(vid int32, pid int32, signer string) *modeltypes.MsgCreat
 
 func NewMsgUpdateModel(vid int32, pid int32, signer string) *modeltypes.MsgUpdateModel {
 	return &modeltypes.MsgUpdateModel{
-		Creator:                         signer,
-		Vid:                             vid,
-		Pid:                             pid,
-		ProductLabel:                    utils.RandString(),
-		CommissioningCustomFlowUrl:      testconstants.CommissioningCustomFlowURL + "/new",
-		UserManualUrl:                   testconstants.UserManualURL + "/new",
-		SupportUrl:                      testconstants.SupportURL + "/new",
-		ProductUrl:                      testconstants.ProductURL + "/new",
-		LsfUrl:                          testconstants.LsfURL + "/new",
-		LsfRevision:                     testconstants.LsfRevision + 1,
-		EnhancedSetupFlowOptions:        testconstants.EnhancedSetupFlowOptions + 2,
-		EnhancedSetupFlowTCUrl:          testconstants.EnhancedSetupFlowTCURL + "/updated",
-		EnhancedSetupFlowTCRevision:     int32(testconstants.EnhancedSetupFlowTCRevision + 1),
-		EnhancedSetupFlowTCDigest:       testconstants.EnhancedSetupFlowTCDigest,
-		EnhancedSetupFlowTCFileSize:     uint32(testconstants.EnhancedSetupFlowTCFileSize + 1),
-		EnhancedSetupFlowMaintenanceUrl: testconstants.EnhancedSetupFlowMaintenanceURL + "/updated",
+		Creator:                     signer,
+		Vid:                         vid,
+		Pid:                         pid,
+		ProductLabel:                utils.RandString(),
+		CommissioningCustomFlowUrl:  testconstants.CommissioningCustomFlowURL + "/new",
+		UserManualUrl:               testconstants.UserManualURL + "/new",
+		SupportUrl:                  testconstants.SupportURL + "/new",
+		ProductUrl:                  testconstants.ProductURL + "/new",
+		LsfUrl:                      testconstants.LsfURL + "/new",
+		LsfRevision:                 testconstants.LsfRevision + 1,
+		EnhancedSetupFlowOptions:    testconstants.EnhancedSetupFlowOptions + 2,
+		EnhancedSetupFlowTCUrl:      testconstants.EnhancedSetupFlowTCURL + "/updated",
+		EnhancedSetupFlowTCRevision: int32(testconstants.EnhancedSetupFlowTCRevision + 1),
+		EnhancedSetupFlowTCDigest:   testconstants.EnhancedSetupFlowTCDigest,
+		EnhancedSetupFlowTCFileSize: uint32(testconstants.EnhancedSetupFlowTCFileSize + 1),
+		MaintenanceUrl:              testconstants.MaintenanceURL + "/updated",
 	}
 }
 

@@ -28,12 +28,13 @@ on:
 jobs:
   changes:
     name: Check for changes
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       go: ${{ steps.filter.outputs.go }}
       src: ${{ steps.filter.outputs.src }}
       docs: ${{ steps.filter.outputs.docs }}
       workflows: ${{ steps.filter.outputs.workflows }}
+      ts_client: ${{ steps.filter.outputs.ts_client }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -53,10 +54,14 @@ jobs:
               - '**/*.md'
             workflows:
               - '.github/**'
+            ts_client:
+              - 'ts-client/**'
+              - 'scripts/patch-ts-client-encoding.sh'
+              - 'scripts/test-ts-client-encoding.test.js'
   gh-actions:
     if: needs.changes.outputs.workflows == 'true'
     name: Run actionlint tool to verify lint issues in GitHub actions
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs:
       - changes
     steps:
@@ -65,7 +70,7 @@ jobs:
   links:
     if: needs.changes.outputs.docs == 'true'
     name: Run markdown-link-check tool to verify link issues
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs:
       - changes
     steps:
@@ -77,7 +82,7 @@ jobs:
   spell:
     if: needs.changes.outputs.docs == 'true'
     name: Run PySpelling tool to verify spelling issues
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs:
       - changes
     steps:
@@ -85,7 +90,7 @@ jobs:
       - uses: rojopolis/spellcheck-github-actions@0.35.0
   unit-tests:
     name: Check unit tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs:
       - lint
     steps:
@@ -107,7 +112,8 @@ jobs:
         run: |
           set -euo pipefail
           # shellcheck disable=SC2046
-          go test -json -v $(go list ./... | grep -v '/integration_tests') -coverprofile=./cover.out -covermode=set -coverpkg=./... 2>&1 | tee /tmp/gotest.log | gotestfmt
+          go test -tags=dev -json -v $(go list ./... | grep -v '/integration_tests') -coverprofile=./cover.out -covermode=set -coverpkg=./... 2>&1 | tee /tmp/gotest.log | gotestfmt
+          go test -v utils/cli/url_liveness.go  utils/cli/url_liveness_test.go
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GOCOVER_MODE: set
@@ -119,7 +125,7 @@ jobs:
   integration-tests:
     if: needs.changes.outputs.src == 'true'
     name: Integration tests
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs:
       - changes
     steps:
@@ -140,7 +146,9 @@ jobs:
         run: integration_tests/run-all.sh all cover
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          UBUNTU_VERSION: ${{ 24.04 }}
           GOCOVER_MODE: set  # Ensure integration tests use the same mode as unit tests
+          URL_LIVENESS_CHECK_ENABLED: false # Disable network calls to check URLs for integration tests
       - name: Generate test coverage
         shell: bash
         run: go tool covdata textfmt -i=integration_tests/gocover -o cover.out
@@ -149,10 +157,23 @@ jobs:
         with:
           name: integration_cover
           path: cover.out
+  ts-client-tests:
+    if: needs.changes.outputs.ts_client == 'true'
+    name: Verify ts-client query-encoding patch
+    runs-on: ubuntu-latest
+    needs:
+      - changes
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run ts-client encoding tests
+        run: make ts-client-test
   lint:
     if: needs.changes.outputs.go == 'true'
     name: Check linter issues with golangci-lint tool
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs:
       - changes
     steps:
@@ -172,7 +193,7 @@ jobs:
       - changes
       - unit-tests
       - integration-tests
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
@@ -220,10 +241,11 @@ jobs:
       - spell
       - gh-actions
       - cover
-    runs-on: ubuntu-latest
+      - ts-client-tests
+    runs-on: ubuntu-24.04
     steps:
       - name: Decide whether the needed jobs succeeded or failed
         uses: re-actors/alls-green@release/v1
         with:
-          allowed-skips: lint, unit-tests, integration-tests, links, spell, gh-actions, cover
+          allowed-skips: lint, unit-tests, integration-tests, links, spell, gh-actions, cover, ts-client-tests
           jobs: ${{ toJSON(needs) }}
