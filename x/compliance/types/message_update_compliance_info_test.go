@@ -147,6 +147,7 @@ func TestMsgUpdateComplianceInfo_ValidateBasic(t *testing.T) {
 				Reason:               testconstants.Reason,
 				CDVersionNumber:      "312",
 				CertificationRoute:   "FullTested",
+				SchemaVersion:        1,
 			},
 			err: ErrInvalidCertificationRoute,
 		},
