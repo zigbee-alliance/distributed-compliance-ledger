@@ -281,8 +281,6 @@ func TestHandler_AddNocIntermediateCert_ForInvalidCertificate(t *testing.T) {
 }
 
 func TestHandler_AddNocIntermediateCert_ForNonCACertificate(t *testing.T) {
-	// LeafCertPem has BasicConstraintsValid=true but IsCA=false; VerifyIsCACertificate
-	// must reject it before the self-signed check (which would also fire downstream).
 	cases := []CertificateTestCase{
 		{
 			name:                    "OperationalPKI_AddNocIntermediateCert_ForNonCACertificate",
@@ -298,7 +296,7 @@ func TestHandler_AddNocIntermediateCert_ForNonCACertificate(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			setup := utils.Setup(t)
 
-			addX509Cert := types.NewMsgAddNocX509IcaCert(setup.Vendor1.String(), testconstants.LeafCertPem, testconstants.CertSchemaVersion, tc.isVidVerificationSigner)
+			addX509Cert := types.NewMsgAddNocX509IcaCert(setup.Vendor1.String(), testconstants.LeafCertWithoutBasicConstraints, testconstants.CertSchemaVersion, tc.isVidVerificationSigner)
 			_, err := setup.Handler(setup.Ctx, addX509Cert)
 			require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
 		})
