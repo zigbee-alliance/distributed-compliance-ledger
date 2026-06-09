@@ -56,12 +56,36 @@ type ParseAndValidateCertificateOptions = DecodeX509CertVerificationOptions
 
 // VerifyIsCACertificate is a ParseAndValidateCertificate option that fails if the
 // certificate does not have BasicConstraints marked valid with cA set to TRUE.
-// Pass it when validating root, intermediate, ICA, or NOC certificates; omit it
-// for end-entity (leaf) certificates such as CRL signer certificates.
+// Pass it for CA-only roles: DA root (PAA), DA intermediate (PAI), and NOC root
+// (RCAC). Do NOT pass it for end-entity certificates — Matter R1.5 §6.2.2.3
+// requires DAC with cA=FALSE and §6.5.12 requires NOC with is-ca=false — nor
+// for the NOC ICA handler, which currently accepts both ICACs and NOCs.
 func VerifyIsCACertificate(cert *x509.Certificate) error {
 	if !cert.BasicConstraintsValid || !cert.IsCA {
 		return pkitypes.NewErrInappropriateCertificateType(
 			"certificate is not a CA: BasicConstraints extension must be present and cA must be set to TRUE",
+		)
+	}
+
+	return nil
+}
+
+// VerifyBasicConstraintsPresent is a ParseAndValidateCertificate option that fails
+// if the certificate does not encode the BasicConstraints extension at all.
+// It does NOT dictate the value of the cA flag, so it accepts both is-ca=true
+// (ICAC) and is-ca=false (NOC, DAC, CRL signer).
+//
+// Pass it on paths that take leaf certificates or paths that take both CAs and
+// leaves — Matter R1.5 §6.2.2.3 (DAC) and §6.5.12 (NOC) both require the
+// BasicConstraints extension to be encoded. The NOC-ICA handler accepts both
+// ICACs and NOCs, so a "BC encoded" check is the right gate there
+//
+// crypto/x509 sets BasicConstraintsValid = true if and only if the BC extension
+// was found and parsed.
+func VerifyBasicConstraintsPresent(cert *x509.Certificate) error {
+	if !cert.BasicConstraintsValid {
+		return pkitypes.NewErrInappropriateCertificateType(
+			"BasicConstraints extension SHALL be present",
 		)
 	}
 

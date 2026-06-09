@@ -375,3 +375,33 @@ func Test_ParseAndValidateCertificate_VerifyIsCACertificate(t *testing.T) {
 		require.NotNil(t, cert)
 	})
 }
+
+func Test_ParseAndValidateCertificate_VerifyBasicConstraintsPresent(t *testing.T) {
+	positiveTests := []struct {
+		name    string
+		certPem string
+	}{
+		{name: "root CA (BC encoded, cA=true)", certPem: testconstants.RootCertPem},
+		{name: "intermediate CA (BC encoded, cA=true)", certPem: testconstants.IntermediateCertPem},
+		{name: "leaf (BC encoded, cA=false)", certPem: testconstants.LeafCertPem},
+		{name: "PAA with VID (BC encoded, cA=true)", certPem: testconstants.PAACertWithNumericVid},
+	}
+	for _, tt := range positiveTests {
+		t.Run("ok/"+tt.name, func(t *testing.T) {
+			cert, err := ParseAndValidateCertificate(tt.certPem, VerifyBasicConstraintsPresent)
+			require.NoError(t, err)
+			require.NotNil(t, cert)
+		})
+	}
+
+	// A cert that has no BasicConstraints extension at all must be rejected.
+	t.Run("reject/BC-extension-absent", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.LeafCertPem)
+		require.NoError(t, err)
+		cert.Certificate.BasicConstraintsValid = false
+
+		err = VerifyBasicConstraintsPresent(cert.Certificate)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+	})
+}
