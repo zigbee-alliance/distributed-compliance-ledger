@@ -28,8 +28,10 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 		)
 	}
 
-	// decode pem certificate (must be a CA: root certificate)
-	x509Certificate, err := x509.ParseAndValidateCertificate(msg.Cert, x509.VerifyIsCACertificate)
+	// decode pem certificate — must satisfy the Matter R1.5 PAA structural
+	// profile: BC critical with cA=TRUE, KU critical with keyCertSign+cRLSign
+	// (and optionally digitalSignature)
+	x509Certificate, err := x509.ParseAndValidateCertificate(msg.Cert, x509.VerifyCAExtensions)
 	if err != nil {
 		return nil, err
 	}

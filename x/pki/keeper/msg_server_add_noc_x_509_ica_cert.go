@@ -24,11 +24,11 @@ func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNoc
 		return nil, pkitypes.NewErrUnauthorizedRole("MsgAddNocX509IcaCert", dclauthtypes.Vendor)
 	}
 
-	// Decode the PEM. AddNocX509IcaCert message accepts both Matter ICACs (is-ca=true) and Matter NOCs
-	// (is-ca=false) per Matter R1.5 §6.5.12 — a blanket CA flag check would reject any
-	// spec-compliant NOC. Both profiles require the BasicConstraints extension to be
-	// encoded
-	x509Certificate, err := x509.ParseAndValidateCertificate(msg.Cert, x509.VerifyBasicConstraintsPresent)
+	// Decode the PEM. AddNocX509IcaCert accepts both Matter ICACs (is-ca=TRUE) and
+	// Matter NOCs (is-ca=FALSE); VerifyNOCChainNonRoot dispatches by the
+	// BasicConstraints cA flag and enforces the Matter R1.5 §6.5.12 ICAC profile for
+	// CAs and the NOC profile for end-entities.
+	x509Certificate, err := x509.ParseAndValidateCertificate(msg.Cert, x509.VerifyNOCChainNonRoot)
 	if err != nil {
 		return nil, err
 	}

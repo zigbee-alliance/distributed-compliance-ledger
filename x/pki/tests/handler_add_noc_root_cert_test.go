@@ -215,15 +215,21 @@ func TestHandler_AddNocRootCert_InvalidCertificate(t *testing.T) {
 			err:         pkitypes.ErrInvalidCertificate,
 		},
 		{
+			// NocCert2 satisfies the strict CA extension profile but is not
+			// self-signed — so it passes VerifyCAExtensions and is rejected at
+			// the IsSelfSigned check, exactly as the original test intended.
+			// IntermediateCertPem can no longer be used here because it lacks
+			// critical BC/KU and would fail at parse instead.
 			name:        "NonRootCertificate",
 			accountVid:  testconstants.Vid,
 			accountRole: dclauthtypes.Vendor,
-			nocRoorCert: testconstants.IntermediateCertPem,
+			nocRoorCert: testconstants.NocCert2,
 			err:         pkitypes.ErrRootCertificateIsNotSelfSigned,
 		},
 		{
-			// Leaf cert is BasicConstraintsValid=true but IsCA=false; VerifyIsCACertificate
-			// must reject it before the self-signed check runs.
+			// Leaf cert is BasicConstraintsValid=true but IsCA=false;
+			// VerifyCAExtensions must reject it before the self-signed check
+			// runs.
 			name:        "NonCACertificate",
 			accountVid:  testconstants.Vid,
 			accountRole: dclauthtypes.Vendor,
@@ -273,60 +279,65 @@ func TestHandler_AddNocRootCert_CertificateExist(t *testing.T) {
 		nocRoorCert  string
 		err          error
 	}{
+		// These sub-cases switched from RootCertPem to NocRootCert3 because
+		// RootCertPem currently fails the strict VerifyCAExtensions profile
+		// at parse time (no critical KeyUsage extension), so the test could
+		// no longer reach the duplicate/ownership checks below. NocRootCert3
+		// is a regenerated, profile-compliant NOC root.
 		{
 			name: "Duplicate",
 			existingCert: &types.Certificate{
-				Issuer:        testconstants.RootIssuer,
-				Subject:       testconstants.RootSubject,
-				SubjectAsText: testconstants.RootSubjectAsText,
-				SubjectKeyId:  testconstants.RootSubjectKeyID,
-				SerialNumber:  testconstants.RootSerialNumber,
+				Issuer:        testconstants.NocRootCert3Subject,
+				Subject:       testconstants.NocRootCert3Subject,
+				SubjectAsText: testconstants.NocRootCert3SubjectAsText,
+				SubjectKeyId:  testconstants.NocRootCert3SubjectKeyID,
+				SerialNumber:  testconstants.NocRootCert3SerialNumber,
 				IsRoot:        true,
 				Vid:           testconstants.Vid,
 			},
-			nocRoorCert: testconstants.RootCertPem,
+			nocRoorCert: testconstants.NocRootCert3,
 			err:         pkitypes.ErrCertificateAlreadyExists,
 		},
 		{
 			name: "ExistingNonRootCert",
 			existingCert: &types.Certificate{
 				Issuer:        testconstants.TestIssuer,
-				Subject:       testconstants.RootSubject,
-				SubjectAsText: testconstants.RootSubjectAsText,
-				SubjectKeyId:  testconstants.RootSubjectKeyID,
+				Subject:       testconstants.NocRootCert3Subject,
+				SubjectAsText: testconstants.NocRootCert3SubjectAsText,
+				SubjectKeyId:  testconstants.NocRootCert3SubjectKeyID,
 				SerialNumber:  testconstants.TestSerialNumber,
 				IsRoot:        false,
 				Vid:           testconstants.Vid,
 			},
-			nocRoorCert: testconstants.RootCertPem,
+			nocRoorCert: testconstants.NocRootCert3,
 			err:         sdkerrors.ErrUnauthorized,
 		},
 		{
 			name: "ExistingNotNocCert",
 			existingCert: &types.Certificate{
-				Issuer:        testconstants.RootIssuer,
-				Subject:       testconstants.RootSubject,
-				SubjectAsText: testconstants.RootSubjectAsText,
-				SubjectKeyId:  testconstants.RootSubjectKeyID,
+				Issuer:        testconstants.NocRootCert3Subject,
+				Subject:       testconstants.NocRootCert3Subject,
+				SubjectAsText: testconstants.NocRootCert3SubjectAsText,
+				SubjectKeyId:  testconstants.NocRootCert3SubjectKeyID,
 				SerialNumber:  testconstants.TestSerialNumber,
 				IsRoot:        true,
 				Vid:           testconstants.Vid,
 			},
-			nocRoorCert: testconstants.RootCertPem,
+			nocRoorCert: testconstants.NocRootCert3,
 			err:         pkitypes.ErrInappropriateCertificateType,
 		},
 		{
 			name: "ExistingCertWithDifferentVid",
 			existingCert: &types.Certificate{
-				Issuer:        testconstants.RootIssuer,
-				Subject:       testconstants.RootSubject,
-				SubjectAsText: testconstants.RootSubjectAsText,
-				SubjectKeyId:  testconstants.RootSubjectKeyID,
+				Issuer:        testconstants.NocRootCert3Subject,
+				Subject:       testconstants.NocRootCert3Subject,
+				SubjectAsText: testconstants.NocRootCert3SubjectAsText,
+				SubjectKeyId:  testconstants.NocRootCert3SubjectKeyID,
 				SerialNumber:  testconstants.GoogleSerialNumber,
 				IsRoot:        true,
 				Vid:           testconstants.VendorID1,
 			},
-			nocRoorCert: testconstants.RootCertPem,
+			nocRoorCert: testconstants.NocRootCert3,
 			err:         sdkerrors.ErrUnauthorized,
 		},
 	}

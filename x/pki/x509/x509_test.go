@@ -16,6 +16,7 @@
 package x509
 
 import (
+	x509std "crypto/x509"
 	"testing"
 	"time"
 
@@ -403,5 +404,312 @@ func Test_ParseAndValidateCertificate_VerifyBasicConstraintsPresent(t *testing.T
 		err = VerifyBasicConstraintsPresent(cert.Certificate)
 		require.Error(t, err)
 		require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+	})
+}
+
+func Test_ParseAndValidateCertificate_VerifyCAExtensions(t *testing.T) {
+	// Positive fixtures: known CA certs that comply with the full Matter R1.5
+	// CA profile (BC critical + cA=TRUE, KU critical with at least keyCertSign
+	// and cRLSign, no disallowed bits).
+	positiveTests := []struct {
+		name    string
+		certPem string
+	}{
+		{name: "PAA with VID", certPem: testconstants.PAACertWithNumericVid},
+		{name: "PAA no VID", certPem: testconstants.PAACertNoVid},
+		{name: "Google PAA", certPem: testconstants.GoogleCertPem},
+		{name: "PAI", certPem: testconstants.PAICertWithNumericVid},
+		{name: "regenerated RCAC NocRootCert2", certPem: testconstants.NocRootCert2},
+	}
+	for _, tt := range positiveTests {
+		t.Run("ok/"+tt.name, func(t *testing.T) {
+			cert, err := ParseAndValidateCertificate(tt.certPem, VerifyCAExtensions)
+			require.NoError(t, err)
+			require.NotNil(t, cert)
+		})
+	}
+
+	// Negative fixtures: legacy roots that still violate the strict profile —
+	// they're kept on disk because many tests depend on them. They exercise the
+	// "is not a CA / missing critical / wrong KU" failure modes.
+	type negCase struct {
+		name         string
+		certPem      string
+		expectSubstr string
+		massage      func(*x509std.Certificate)
+	}
+	negativeTests := []negCase{
+		// NOTE: RootCertPem and NocRootCert1 were previously non-compliant
+		// fixtures (KU missing / BC not critical). They have since been
+		// regenerated to pass the strict profile so they can flow through
+		// MsgProposeAddX509RootCert and MsgAddNocX509RootCert under
+		// VerifyCAExtensions. The negative coverage for "BC not critical",
+		// "KU not critical", and "KU missing-bit" is now provided by the
+		// synthetic mutation block below.
+		{
+			name:         "leaf (cA=FALSE)",
+			certPem:      testconstants.LeafCertPem,
+			expectSubstr: "BasicConstraints extension must be present and cA must be set to TRUE",
+		},
+	}
+	for _, tt := range negativeTests {
+		t.Run("reject/"+tt.name, func(t *testing.T) {
+			cert, err := ParseAndValidateCertificate(tt.certPem, VerifyCAExtensions)
+			require.Error(t, err)
+			require.Nil(t, cert)
+			require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+			require.Contains(t, err.Error(), tt.expectSubstr)
+		})
+	}
+
+	// Synthetic edge cases — start from a compliant cert and flip just one
+	// invariant at a time, so each branch of VerifyCAExtensions has dedicated
+	// coverage independent of which fixtures happen to violate which rules.
+	flipCases := []struct {
+		name         string
+		mutate       func(*x509std.Certificate)
+		expectSubstr string
+	}{
+		{
+			name: "KU disallowed bit set",
+			mutate: func(c *x509std.Certificate) {
+				c.KeyUsage |= x509std.KeyUsageDataEncipherment
+			},
+			expectSubstr: "SHALL NOT include bits other than",
+		},
+		{
+			name: "KU keyCertSign missing",
+			mutate: func(c *x509std.Certificate) {
+				c.KeyUsage &^= x509std.KeyUsageCertSign
+			},
+			expectSubstr: "keyCertSign and cRLSign",
+		},
+		{
+			name: "BC not critical",
+			mutate: func(c *x509std.Certificate) {
+				for i := range c.Extensions {
+					if c.Extensions[i].Id.String() == "2.5.29.19" {
+						c.Extensions[i].Critical = false
+						return
+					}
+				}
+				panic("test fixture has no BasicConstraints extension")
+			},
+			expectSubstr: "BasicConstraints extension SHALL be marked critical",
+		},
+		{
+			name: "KU not critical",
+			mutate: func(c *x509std.Certificate) {
+				for i := range c.Extensions {
+					if c.Extensions[i].Id.String() == "2.5.29.15" {
+						c.Extensions[i].Critical = false
+						return
+					}
+				}
+				panic("test fixture has no KeyUsage extension")
+			},
+			expectSubstr: "KeyUsage extension SHALL be marked critical",
+		},
+	}
+	for _, tt := range flipCases {
+		t.Run("reject/synthetic/"+tt.name, func(t *testing.T) {
+			cert, err := ParseAndValidateCertificate(testconstants.PAACertWithNumericVid)
+			require.NoError(t, err)
+			tt.mutate(cert.Certificate)
+
+			err = VerifyCAExtensions(cert.Certificate)
+			require.Error(t, err)
+			require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+			require.Contains(t, err.Error(), tt.expectSubstr)
+		})
+	}
+}
+
+func Test_ParseAndValidateCertificate_VerifyDACExtensions(t *testing.T) {
+	// Positive case: a DAC-shaped cert (BC critical + cA=FALSE, KU critical
+	// with exactly digitalSignature, SKI + AKI present).
+	t.Run("ok/DAC-shaped leaf", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.MatterDACShaped, VerifyDACExtensions)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	// LeafCertPem was regenerated to satisfy the DAC profile so the DA-chain
+	// handler can dispatch on cA and apply VerifyDACExtensions to leaves.
+	t.Run("ok/LeafCertPem", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.LeafCertPem, VerifyDACExtensions)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	// Negative cases that exercise each branch of the helper.
+	negativeTests := []struct {
+		name         string
+		certPem      string
+		mutate       func(*x509std.Certificate) // optional; applied after parse
+		expectSubstr string
+	}{
+		{
+			name:         "CA cert (cA=TRUE)",
+			certPem:      testconstants.PAACertWithNumericVid,
+			expectSubstr: "DAC: BasicConstraints cA SHALL be set to FALSE",
+		},
+		{
+			name:         "BC extension absent",
+			certPem:      testconstants.LeafCertWithoutBasicConstraints,
+			expectSubstr: "DAC: BasicConstraints extension SHALL be present",
+		},
+		{
+			// Synthetic: take a DAC-shaped leaf and OR an extra KU bit (cRLSign)
+			// — DAC profile (§6.2.2.3) bans any KU bit other than
+			// digitalSignature, so this must trip the "exactly digitalSignature"
+			// rule.
+			name:    "synthetic: KU has cRLSign bit",
+			certPem: testconstants.MatterDACShaped,
+			mutate: func(c *x509std.Certificate) {
+				c.KeyUsage |= x509std.KeyUsageCRLSign
+			},
+			expectSubstr: "DAC: KeyUsage SHALL be exactly digitalSignature",
+		},
+		{
+			name:    "synthetic: SKI cleared",
+			certPem: testconstants.MatterDACShaped,
+			mutate: func(c *x509std.Certificate) {
+				c.SubjectKeyId = nil
+			},
+			expectSubstr: "DAC: SubjectKeyIdentifier extension SHALL be present",
+		},
+		{
+			name:    "synthetic: AKI cleared",
+			certPem: testconstants.MatterDACShaped,
+			mutate: func(c *x509std.Certificate) {
+				c.AuthorityKeyId = nil
+			},
+			expectSubstr: "DAC: AuthorityKeyIdentifier extension SHALL be present",
+		},
+	}
+	for _, tt := range negativeTests {
+		t.Run("reject/"+tt.name, func(t *testing.T) {
+			if tt.mutate == nil {
+				cert, err := ParseAndValidateCertificate(tt.certPem, VerifyDACExtensions)
+				require.Error(t, err)
+				require.Nil(t, cert)
+				require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+				require.Contains(t, err.Error(), tt.expectSubstr)
+				return
+			}
+			cert, err := ParseAndValidateCertificate(tt.certPem)
+			require.NoError(t, err)
+			tt.mutate(cert.Certificate)
+			err = VerifyDACExtensions(cert.Certificate)
+			require.Error(t, err)
+			require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+			require.Contains(t, err.Error(), tt.expectSubstr)
+		})
+	}
+}
+
+func Test_ParseAndValidateCertificate_VerifyNOCExtensions(t *testing.T) {
+	// Positive: a NOC-shaped cert with EKU critical and {serverAuth, clientAuth}.
+	t.Run("ok/NOC-shaped leaf", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.MatterNOCShaped, VerifyNOCExtensions)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	// Negative: DAC-shaped leaf has no EKU → fails at the EKU presence check.
+	t.Run("reject/DAC-shaped (no EKU)", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.MatterDACShaped, VerifyNOCExtensions)
+		require.Error(t, err)
+		require.Nil(t, cert)
+		require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+		require.Contains(t, err.Error(), "NOC: ExtendedKeyUsage extension SHALL be present")
+	})
+
+	// Negative synthetic: NOC with extra EKU entry.
+	t.Run("reject/synthetic NOC with 3 EKUs", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.MatterNOCShaped)
+		require.NoError(t, err)
+		cert.Certificate.ExtKeyUsage = append(cert.Certificate.ExtKeyUsage, x509std.ExtKeyUsageCodeSigning)
+		err = VerifyNOCExtensions(cert.Certificate)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+		require.Contains(t, err.Error(), "NOC: ExtendedKeyUsage SHALL be exactly {serverAuth, clientAuth}")
+	})
+
+	// Negative: CA cert with cA=TRUE.
+	t.Run("reject/CA cert", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.PAACertWithNumericVid, VerifyNOCExtensions)
+		require.Error(t, err)
+		require.Nil(t, cert)
+		require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+		require.Contains(t, err.Error(), "NOC: BasicConstraints cA SHALL be set to FALSE")
+	})
+}
+
+// VerifyDAChainNonRoot dispatches on cA: PAIs go to VerifyCAExtensions + the
+// §6.2.2.4 pathLen=0 rule, DACs go to VerifyDACExtensions. Both branches must
+// accept their respective fixtures and reject the opposite shape.
+func Test_ParseAndValidateCertificate_VerifyDAChainNonRoot(t *testing.T) {
+	t.Run("ok/PAI (cA=TRUE, pathLen=0)", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.PAICertWithNumericVid, VerifyDAChainNonRoot)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("ok/IntermediateCertPem (DA chain ICA)", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.IntermediateCertPem, VerifyDAChainNonRoot)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("ok/LeafCertPem (DAC-shaped)", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.LeafCertPem, VerifyDAChainNonRoot)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("ok/MatterDACShaped", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.MatterDACShaped, VerifyDAChainNonRoot)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("reject/BC-extension-absent", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.LeafCertWithoutBasicConstraints, VerifyDAChainNonRoot)
+		require.Error(t, err)
+		require.Nil(t, cert)
+		require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+		require.Contains(t, err.Error(), "BasicConstraints extension SHALL be present")
+	})
+}
+
+// VerifyNOCChainNonRoot dispatches on cA: ICACs go to VerifyCAExtensions, NOCs
+// go to VerifyNOCExtensions. Both branches must accept their respective fixtures.
+func Test_ParseAndValidateCertificate_VerifyNOCChainNonRoot(t *testing.T) {
+	t.Run("ok/NocCert1 (ICAC)", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.NocCert1, VerifyNOCChainNonRoot)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("ok/NocLeafCert1 (NOC end-entity)", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.NocLeafCert1, VerifyNOCChainNonRoot)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("ok/MatterNOCShaped", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.MatterNOCShaped, VerifyNOCChainNonRoot)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("reject/BC-extension-absent", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.LeafCertWithoutBasicConstraints, VerifyNOCChainNonRoot)
+		require.Error(t, err)
+		require.Nil(t, cert)
+		require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+		require.Contains(t, err.Error(), "BasicConstraints extension SHALL be present")
 	})
 }
