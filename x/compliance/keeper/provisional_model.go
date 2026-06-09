@@ -3,13 +3,18 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	commontypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
 // SetProvisionalModel set a specific provisionalModel in the store from its index.
-func (k Keeper) SetProvisionalModel(ctx sdk.Context, provisionalModel types.ProvisionalModel) {
+// The schema version is stamped to the current value unless any guard returns false.
+func (k Keeper) SetProvisionalModel(ctx sdk.Context, provisionalModel *types.ProvisionalModel, guards ...commontypes.SchemaVersionGuard) {
+	// Bump schema version if guards passed
+	commontypes.SetCurrentSchemaVersion(provisionalModel, guards...)
+
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProvisionalModelKeyPrefix))
-	b := k.cdc.MustMarshal(&provisionalModel)
+	b := k.cdc.MustMarshal(provisionalModel)
 	store.Set(types.ProvisionalModelKey(
 		provisionalModel.Vid,
 		provisionalModel.Pid,

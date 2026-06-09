@@ -21,7 +21,7 @@ func createNDeviceSoftwareCompliance(keeper *keeper.Keeper, ctx sdk.Context, n i
 	for i := range items {
 		items[i].CDCertificateId = strconv.Itoa(i)
 
-		keeper.SetDeviceSoftwareCompliance(ctx, items[i])
+		keeper.SetDeviceSoftwareCompliance(ctx, &items[i])
 	}
 	return items
 }

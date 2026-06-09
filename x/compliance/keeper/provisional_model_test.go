@@ -24,7 +24,7 @@ func createNProvisionalModel(keeper *keeper.Keeper, ctx sdk.Context, n int) []ty
 		items[i].CertificationType = strconv.Itoa(i)
 		items[i].Value = true
 
-		keeper.SetProvisionalModel(ctx, items[i])
+		keeper.SetProvisionalModel(ctx, &items[i])
 	}
 
 	return items

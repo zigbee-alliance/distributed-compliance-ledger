@@ -272,3 +272,60 @@ func TestHandler_CertifyRevokedModel(t *testing.T) {
 
 	setup.checkModelCertified(t, certifyModelMsg)
 }
+
+func TestHandler_SchemaVersion_CertifyModel_StampsCurrentOnCreate(t *testing.T) {
+	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := setupCertifyModel(t)
+
+	certifyModelMsg := newMsgCertifyModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	_, err := setup.Handler(setup.Ctx, certifyModelMsg)
+	require.NoError(t, err)
+
+	complianceInfo := queryExistingComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
+	require.Equal(t, types.ComplianceInfoSchemaVersion, complianceInfo.SchemaVersion)
+	require.Equal(t, complianceInfo.CurrentSchemaVersion(), complianceInfo.SchemaVersion)
+
+	certifiedModel, _ := queryCertifiedModel(setup, vid, pid, softwareVersion, certificationType)
+	require.Equal(t, certifiedModel.CurrentSchemaVersion(), certifiedModel.SchemaVersion)
+
+	revokedModel, _ := queryRevokedModel(setup, vid, pid, softwareVersion, certificationType)
+	require.Equal(t, revokedModel.CurrentSchemaVersion(), revokedModel.SchemaVersion)
+
+	provisionalModel, _ := queryProvisionalModel(setup, vid, pid, softwareVersion, certificationType)
+	require.Equal(t, provisionalModel.CurrentSchemaVersion(), provisionalModel.SchemaVersion)
+
+	deviceSoftwareCompliance := queryExistingDeviceSoftwareCompliance(setup, certifyModelMsg.CDCertificateId)
+	require.Equal(t, deviceSoftwareCompliance.CurrentSchemaVersion(), deviceSoftwareCompliance.SchemaVersion)
+}
+
+func TestHandler_SchemaVersion_CertifyProvisionedModel_PreservesStored_WhenSpecVersionAbsent(t *testing.T) {
+	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := setupCertifyModel(t)
+
+	_, provisionErr := setup.provisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	require.NoError(t, provisionErr)
+	setup.seedStoredSchemaVersion(vid, pid, softwareVersion, certificationType, 0)
+
+	certifyMsg := newMsgCertifyModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	require.Zero(t, certifyMsg.SpecificationVersion)
+	_, err := setup.Handler(setup.Ctx, certifyMsg)
+	require.NoError(t, err)
+
+	updated := queryExistingComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
+	require.Equal(t, uint32(0), updated.SchemaVersion)
+	require.Equal(t, types.CodeCertified, updated.SoftwareVersionCertificationStatus)
+}
+
+func TestHandler_SchemaVersion_CertifyProvisionedModel_BumpsToCurrent_WhenSpecVersionProvided(t *testing.T) {
+	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := setupCertifyModel(t)
+
+	_, provisionErr := setup.provisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	require.NoError(t, provisionErr)
+	setup.seedStoredSchemaVersion(vid, pid, softwareVersion, certificationType, 0)
+
+	certifyMsg := newMsgCertifyModelWithAllOptionalFlags(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	require.NotZero(t, certifyMsg.SpecificationVersion)
+	_, err := setup.Handler(setup.Ctx, certifyMsg)
+	require.NoError(t, err)
+
+	updated := queryExistingComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
+	require.Equal(t, updated.CurrentSchemaVersion(), updated.SchemaVersion)
+}
