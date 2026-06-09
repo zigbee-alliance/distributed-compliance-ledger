@@ -16,6 +16,8 @@ package x509
 
 import (
 	"bytes"
+	"crypto/ecdsa"
+	"crypto/elliptic"
 	"crypto/x509"
 	"encoding/asn1"
 	"encoding/base64"
@@ -318,6 +320,35 @@ func VerifyNOCExtensions(cert *x509.Certificate) error {
 	return nil
 }
 
+// VerifyECDSAP256SHA256 is a ParseAndValidateCertificate option that asserts
+// the certificate is signed with ecdsa-with-SHA256 and that its subject public
+// key is an ECDSA key on the prime256v1 (P-256 / secp256r1) curve, per Matter
+// R1.5 §6.2.2.3 (DAC), §6.2.2.4 (PAI), §6.2.2.5 (PAA), and §6.5.5/§6.5.8/§6.5.9
+// (NOC chain). Mirrors the long-standing check in VerifyCRLSignerCertFormat —
+// before this helper existed, the CRL signer path was the only place these
+// rules were enforced.
+func VerifyECDSAP256SHA256(cert *x509.Certificate) error {
+	if cert.SignatureAlgorithm != x509.ECDSAWithSHA256 {
+		return pkitypes.NewErrInvalidCertificate(
+			"signatureAlgorithm SHALL be ecdsa-with-SHA256",
+		)
+	}
+
+	pub, ok := cert.PublicKey.(*ecdsa.PublicKey)
+	if !ok {
+		return pkitypes.NewErrInvalidCertificate(
+			"subjectPublicKeyInfo algorithm SHALL be ECDSA on prime256v1",
+		)
+	}
+	if pub.Curve != elliptic.P256() {
+		return pkitypes.NewErrInvalidCertificate(
+			"subjectPublicKeyInfo curve SHALL be prime256v1 (P-256)",
+		)
+	}
+
+	return nil
+}
+
 // VerifyNOCChainNonRoot is a ParseAndValidateCertificate option for the
 // MsgAddNocX509IcaCert handler, which accepts both Matter ICACs (is-ca=TRUE)
 // and Matter NOCs (is-ca=FALSE). The certificate is dispatched by its
@@ -339,6 +370,55 @@ func VerifyNOCChainNonRoot(cert *x509.Certificate) error {
 	}
 
 	return VerifyNOCExtensions(cert)
+}
+
+// VerifyVidPidConsistency enforces the immediate-parent VID/PID matching rules
+// from Matter R1.5 §6.2.2.3 (DAC) 8a and 9a, and §6.2.2.4 (PAI) 7a:
+//
+//   - When the parent's subject carries a Matter VID, the child's subject SHALL
+//     carry the same Matter VID.
+//   - When the parent's subject carries a Matter PID, the child's subject SHALL
+//     carry the same Matter PID.
+//
+// Following the spec literally, the rules only fire when the parent actually
+// carries the attribute — a PAA without a VID does not constrain its PAI's
+// VID, and a PAI without a PID does not constrain its DAC's PID. The child is
+// not required to be VID/PID-scoped on its own; the structural rules that
+// require it (DAC SHALL have VID, PAI SHALL have VID) belong to the per-cert
+// extension/DN validation, not to this immediate-parent consistency check.
+//
+// Both arguments are subject strings already passed through ToSubjectAsText,
+// which is the canonical representation stored alongside each certificate.
+func VerifyVidPidConsistency(childSubjectAsText, parentSubjectAsText string) error {
+	parentVid, err := GetVidFromSubject(parentSubjectAsText)
+	if err != nil {
+		return pkitypes.NewErrInvalidVidFormat(err)
+	}
+	if parentVid != 0 {
+		childVid, err := GetVidFromSubject(childSubjectAsText)
+		if err != nil {
+			return pkitypes.NewErrInvalidVidFormat(err)
+		}
+		if childVid != parentVid {
+			return pkitypes.NewErrCertVidNotEqualToIssuerVid(childVid, parentVid)
+		}
+	}
+
+	parentPid, err := GetPidFromSubject(parentSubjectAsText)
+	if err != nil {
+		return pkitypes.NewErrInvalidPidFormat(err)
+	}
+	if parentPid != 0 {
+		childPid, err := GetPidFromSubject(childSubjectAsText)
+		if err != nil {
+			return pkitypes.NewErrInvalidPidFormat(err)
+		}
+		if childPid != parentPid {
+			return pkitypes.NewErrCertPidNotEqualToIssuerPid(childPid, parentPid)
+		}
+	}
+
+	return nil
 }
 
 func DecodeX509Certificate(pemCertificate string, options ...DecodeX509CertVerificationOptions) (*Certificate, error) {

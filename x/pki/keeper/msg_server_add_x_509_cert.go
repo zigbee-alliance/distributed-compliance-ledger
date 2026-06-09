@@ -27,8 +27,13 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 	// Decode pem certificate. This handler accepts both Matter PAIs (cA=TRUE) and Matter
 	// DACs (cA=FALSE); VerifyDAChainNonRoot dispatches by the BasicConstraints cA flag
 	// and enforces the Matter R1.5 §6.2.2.4 PAI profile for ICAs and the §6.2.2.3 DAC
-	// profile for end-entities.
-	x509Certificate, err := x509.ParseAndValidateCertificate(msg.Cert, x509.VerifyDAChainNonRoot)
+	// profile for end-entities. VerifyECDSAP256SHA256 enforces the §6.2.2.3/4 ecdsa-
+	// with-SHA256 + prime256v1 algorithm requirement.
+	x509Certificate, err := x509.ParseAndValidateCertificate(
+		msg.Cert,
+		x509.VerifyECDSAP256SHA256,
+		x509.VerifyDAChainNonRoot,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -89,6 +94,16 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 		return nil, err
 	}
 
+	// Matter R1.5 §6.2.2.3 (DAC) 8a + 9a and §6.2.2.4 (PAI) 7a require the new
+	// cert's subject VID/PID to match the immediate issuer's. We look up the
+	// parent by (Issuer, AuthorityKeyID) — the chain was just verified, so the
+	// parent is guaranteed to exist in the store. This runs after
+	// ensureVidMatches so the existing root-relative authorization errors
+	// surface first for back-compat with negative tests.
+	if err = k.verifyImmediateIssuerVidPid(ctx, x509Certificate); err != nil {
+		return nil, err
+	}
+
 	subjectVid, err := x509.GetVidFromSubject(x509Certificate.SubjectAsText)
 	if err != nil {
 		return nil, pkitypes.NewErrInvalidCertificate(err)
@@ -117,6 +132,26 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 	k.StoreDaCertificate(ctx, certificate, false)
 
 	return &types.MsgAddX509CertResponse{}, nil
+}
+
+// verifyImmediateIssuerVidPid enforces Matter R1.5 §6.2.2.3 8a/9a and §6.2.2.4
+// 7a against the certificate's *immediate* issuer (one hop up in the chain),
+// distinct from ensureVidMatches which compares against the root.
+//
+// The parent is looked up by (cert.Issuer, cert.AuthorityKeyID); if no parent
+// is found at that exact key the chain check upstream would already have
+// failed, so this returns nil and lets the upstream error speak. When a parent
+// is found, the actual VID/PID equality check is delegated to
+// x509.VerifyVidPidConsistency, which only enforces rules the spec actually
+// states (no symmetric checks).
+func (k msgServer) verifyImmediateIssuerVidPid(ctx sdk.Context, childCert *x509.Certificate) error {
+	parents, found := k.GetAllCertificates(ctx, childCert.Issuer, childCert.AuthorityKeyID)
+	if !found || len(parents.Certs) == 0 {
+		return nil
+	}
+	parent := parents.Certs[0]
+
+	return x509.VerifyVidPidConsistency(childCert.SubjectAsText, x509.ToSubjectAsText(parent.SubjectAsText))
 }
 
 func (k msgServer) ensureVidMatches(

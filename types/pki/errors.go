@@ -53,6 +53,8 @@ var (
 	ErrCRLSignerCertificateInvalidFormat                 = errors.Register(ModuleName, 441, "invalid CRLSignerCertificate certificate")
 	ErrInvalidAuthorityKeyIDFormat                       = errors.Register(ModuleName, 442, "invalid AuthorityKeyID format")
 	ErrCRLSignerCertificateInvalidVersion                = errors.Register(ModuleName, 443, "invalid CRLSignerCertificate version")
+	ErrCertVidNotEqualToIssuerVid                        = errors.Register(ModuleName, 444, "certificate's vid is not equal to issuer's vid")
+	ErrCertPidNotEqualToIssuerPid                        = errors.Register(ModuleName, 445, "certificate's pid is not equal to issuer's pid")
 )
 
 func NewErrUnauthorizedRole(transactionName string, requiredRole types.AccountRole) error {
@@ -436,6 +438,20 @@ func NewErrInvalidPidFormat(e interface{}) error {
 
 func NewErrCertificateVidNotEqualMsgVid(e interface{}) error {
 	return errors.Wrapf(ErrCertificateVidNotEqualMsgVid, "%v", e)
+}
+
+func NewErrCertVidNotEqualToIssuerVid(certVID, issuerVID int32) error {
+	return errors.Wrapf(ErrCertVidNotEqualToIssuerVid,
+		"Matter R1.5 §6.2.2.3/§6.2.2.4: child certificate VID SHALL match issuer's VID. "+
+			"Certificate VID=%v, Issuer VID=%v",
+		certVID, issuerVID)
+}
+
+func NewErrCertPidNotEqualToIssuerPid(certPID, issuerPID int32) error {
+	return errors.Wrapf(ErrCertPidNotEqualToIssuerPid,
+		"Matter R1.5 §6.2.2.3: when issuer has a PID, child certificate SHALL have a matching PID. "+
+			"Certificate PID=%v, Issuer PID=%v",
+		certPID, issuerPID)
 }
 
 func NewErrCertNotChainedBack() error {

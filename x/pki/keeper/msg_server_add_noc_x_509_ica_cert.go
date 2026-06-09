@@ -27,8 +27,13 @@ func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNoc
 	// Decode the PEM. AddNocX509IcaCert accepts both Matter ICACs (is-ca=TRUE) and
 	// Matter NOCs (is-ca=FALSE); VerifyNOCChainNonRoot dispatches by the
 	// BasicConstraints cA flag and enforces the Matter R1.5 §6.5.12 ICAC profile for
-	// CAs and the NOC profile for end-entities.
-	x509Certificate, err := x509.ParseAndValidateCertificate(msg.Cert, x509.VerifyNOCChainNonRoot)
+	// CAs and the NOC profile for end-entities. VerifyECDSAP256SHA256 enforces the
+	// §6.5.5/§6.5.8/§6.5.9 ecdsa-with-SHA256 + prime256v1 algorithm requirement.
+	x509Certificate, err := x509.ParseAndValidateCertificate(
+		msg.Cert,
+		x509.VerifyECDSAP256SHA256,
+		x509.VerifyNOCChainNonRoot,
+	)
 	if err != nil {
 		return nil, err
 	}

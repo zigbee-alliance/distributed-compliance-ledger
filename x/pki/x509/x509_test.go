@@ -713,3 +713,108 @@ func Test_ParseAndValidateCertificate_VerifyNOCChainNonRoot(t *testing.T) {
 		require.Contains(t, err.Error(), "BasicConstraints extension SHALL be present")
 	})
 }
+
+// VerifyECDSAP256SHA256 must accept every fixture currently in the codebase
+// (all are ECDSA-with-SHA256 on P-256) and reject any mutation that changes
+// either the signature algorithm or the public-key curve.
+func Test_ParseAndValidateCertificate_VerifyECDSAP256SHA256(t *testing.T) {
+	positiveTests := []struct {
+		name    string
+		certPem string
+	}{
+		{name: "PAA with VID", certPem: testconstants.PAACertWithNumericVid},
+		{name: "PAI", certPem: testconstants.PAICertWithNumericVid},
+		{name: "DAC-shaped leaf", certPem: testconstants.MatterDACShaped},
+		{name: "NOC-shaped leaf", certPem: testconstants.MatterNOCShaped},
+		{name: "RCAC NocRootCert1", certPem: testconstants.NocRootCert1},
+		{name: "ICAC NocCert1", certPem: testconstants.NocCert1},
+		{name: "NOC leaf NocLeafCert1", certPem: testconstants.NocLeafCert1},
+		{name: "LeafCertPem", certPem: testconstants.LeafCertPem},
+	}
+	for _, tt := range positiveTests {
+		t.Run("ok/"+tt.name, func(t *testing.T) {
+			cert, err := ParseAndValidateCertificate(tt.certPem, VerifyECDSAP256SHA256)
+			require.NoError(t, err)
+			require.NotNil(t, cert)
+		})
+	}
+
+	t.Run("reject/non-ECDSA-SHA256 signature", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.PAACertWithNumericVid)
+		require.NoError(t, err)
+		cert.Certificate.SignatureAlgorithm = x509std.ECDSAWithSHA384
+		err = VerifyECDSAP256SHA256(cert.Certificate)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+		require.Contains(t, err.Error(), "ecdsa-with-SHA256")
+	})
+
+	t.Run("reject/non-ECDSA public key", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.PAACertWithNumericVid)
+		require.NoError(t, err)
+		cert.Certificate.PublicKey = struct{}{}
+		err = VerifyECDSAP256SHA256(cert.Certificate)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+		require.Contains(t, err.Error(), "ECDSA on prime256v1")
+	})
+}
+
+func Test_VerifyVidPidConsistency(t *testing.T) {
+	t.Run("ok/parent has no VID — rule does not fire", func(t *testing.T) {
+		// Spec only constrains the child when the parent carries the attribute.
+		require.NoError(t, VerifyVidPidConsistency(
+			"O=child,vid=0xFFF1",
+			"O=parent",
+		))
+	})
+
+	t.Run("ok/matching VID", func(t *testing.T) {
+		require.NoError(t, VerifyVidPidConsistency(
+			"CN=Matter Test DAC,vid=0xFFF1",
+			"CN=Matter Test PAI,vid=0xFFF1",
+		))
+	})
+
+	t.Run("ok/matching VID + matching PID", func(t *testing.T) {
+		require.NoError(t, VerifyVidPidConsistency(
+			"CN=Matter Test DAC,pid=0x8000,vid=0xFFF1",
+			"CN=Matter Test PAI,pid=0x8000,vid=0xFFF1",
+		))
+	})
+
+	t.Run("ok/parent has no PID — PID rule does not fire", func(t *testing.T) {
+		require.NoError(t, VerifyVidPidConsistency(
+			"CN=DAC,pid=0x1234,vid=0xFFF1",
+			"CN=PAI,vid=0xFFF1",
+		))
+	})
+
+	t.Run("reject/child VID mismatches parent VID", func(t *testing.T) {
+		err := VerifyVidPidConsistency(
+			"CN=DAC,vid=0xFFF2",
+			"CN=PAI,vid=0xFFF1",
+		)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrCertVidNotEqualToIssuerVid)
+	})
+
+	t.Run("reject/parent has VID, child missing VID", func(t *testing.T) {
+		// Child VID parsed as 0; parent's non-zero VID means mismatch.
+		err := VerifyVidPidConsistency(
+			"O=DAC",
+			"CN=PAI,vid=0xFFF1",
+		)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrCertVidNotEqualToIssuerVid)
+	})
+
+	t.Run("reject/PID mismatch", func(t *testing.T) {
+		err := VerifyVidPidConsistency(
+			"CN=DAC,pid=0x8001,vid=0xFFF1",
+			"CN=PAI,pid=0x8000,vid=0xFFF1",
+		)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrCertPidNotEqualToIssuerPid)
+	})
+}
