@@ -17,6 +17,8 @@ package x509
 
 import (
 	x509std "crypto/x509"
+	"crypto/x509/pkix"
+	"encoding/asn1"
 	"testing"
 	"time"
 
@@ -816,5 +818,69 @@ func Test_VerifyVidPidConsistency(t *testing.T) {
 		)
 		require.Error(t, err)
 		require.ErrorIs(t, err, pkitypes.ErrCertPidNotEqualToIssuerPid)
+	})
+}
+
+// VerifyCAExtensions now also asserts SKI presence (always) and AKI presence
+// (only for non-self-signed CAs). Synthetic mutations exercise each branch.
+func Test_VerifyCAExtensions_SKIAndAKI(t *testing.T) {
+	t.Run("reject/SKI absent on self-signed CA", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.PAACertWithNumericVid)
+		require.NoError(t, err)
+		cert.Certificate.SubjectKeyId = nil
+		err = VerifyCAExtensions(cert.Certificate)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+		require.Contains(t, err.Error(), "SubjectKeyIdentifier extension SHALL be present")
+	})
+
+	t.Run("reject/AKI absent on non-self-signed CA", func(t *testing.T) {
+		// IntermediateCertPem is a non-self-signed PAI; clearing its AKI must
+		// trip the new presence rule.
+		cert, err := ParseAndValidateCertificate(testconstants.IntermediateCertPem)
+		require.NoError(t, err)
+		cert.Certificate.AuthorityKeyId = nil
+		err = VerifyCAExtensions(cert.Certificate)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+		require.Contains(t, err.Error(), "AuthorityKeyIdentifier extension SHALL be present")
+	})
+
+	t.Run("ok/AKI absent on self-signed CA (PAA)", func(t *testing.T) {
+		// PAAs MAY omit AKI per §6.2.2.5; the rule only fires for non-self-signed.
+		cert, err := ParseAndValidateCertificate(testconstants.RootCertWithVid, VerifyCAExtensions)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+}
+
+// VerifyNoEKU rejects certs that carry an ExtendedKeyUsage extension. All
+// current RCAC/ICAC fixtures comply (none encode EKU). Synthetic mutations
+// exercise the rejection.
+func Test_VerifyNoEKU(t *testing.T) {
+	t.Run("ok/RCAC NocRootCert1 has no EKU", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.NocRootCert1, VerifyNoEKU)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("ok/ICAC NocCert1 has no EKU", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.NocCert1, VerifyNoEKU)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("reject/synthetic EKU added", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.NocRootCert1)
+		require.NoError(t, err)
+		cert.Certificate.Extensions = append(cert.Certificate.Extensions, pkix.Extension{
+			Id:       asn1.ObjectIdentifier{2, 5, 29, 37},
+			Critical: false,
+			Value:    []byte{0x30, 0x00},
+		})
+		err = VerifyNoEKU(cert.Certificate)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+		require.Contains(t, err.Error(), "ExtendedKeyUsage extension SHALL NOT be present")
 	})
 }

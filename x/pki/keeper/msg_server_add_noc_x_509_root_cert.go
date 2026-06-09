@@ -25,12 +25,13 @@ func (k msgServer) AddNocX509RootCert(goCtx context.Context, msg *types.MsgAddNo
 
 	// decode pem certificate (must satisfy the Matter R1.5 RCAC structural
 	// profile: BC critical with cA=TRUE, KU critical with keyCertSign+cRLSign
-	// and at most an extra digitalSignature, signed with ecdsa-with-SHA256 on
-	// a prime256v1 subject public key)
+	// and at most an extra digitalSignature, no ExtendedKeyUsage, signed with
+	// ecdsa-with-SHA256 on a prime256v1 subject public key)
 	x509Certificate, err := x509.ParseAndValidateCertificate(
 		msg.Cert,
 		x509.VerifyECDSAP256SHA256,
 		x509.VerifyCAExtensions,
+		x509.VerifyNoEKU,
 	)
 	if err != nil {
 		return nil, err

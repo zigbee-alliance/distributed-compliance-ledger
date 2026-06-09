@@ -105,14 +105,13 @@ func VerifyIsCACertificate(cert *x509.Certificate) error {
 //   - KeyUsage extension SHALL be present and marked critical.
 //   - KeyUsage SHALL include keyCertSign and cRLSign.
 //   - KeyUsage MAY include digitalSignature; no other bits SHALL be set.
+//   - SubjectKeyIdentifier SHALL be present.
+//   - AuthorityKeyIdentifier SHALL be present for non-self-signed CAs
+//     (PAI / ICAC); §6.2.2.5 leaves AKI optional for self-signed PAAs, and the
+//     §6.5.12 RCAC AKI==SKI rule is enforced separately by the RCAC handler.
 //
-// This is the strict counterpart to VerifyIsCACertificate. It is appropriate
-// for CA-only roles (PAA, PAI, RCAC, ICAC) but not yet wired into the existing
-// handlers — several foundational test fixtures (RootCertPem, RootCertWithVid,
-// NocRootCert1 / NocRootCert1Copy) currently omit a critical KeyUsage
-// extension. Switching handlers from VerifyIsCACertificate to VerifyCAExtensions
-// requires regenerating those chains; the helper is published here so it is
-// available for new handlers and so unit tests can lock in the contract.
+// Used directly by PAA and RCAC handlers, and dispatched to from the IsCA=TRUE
+// branches of VerifyDAChainNonRoot (PAI) and VerifyNOCChainNonRoot (ICAC).
 func VerifyCAExtensions(cert *x509.Certificate) error {
 	if !cert.BasicConstraintsValid || !cert.IsCA {
 		return pkitypes.NewErrInappropriateCertificateType(
@@ -149,6 +148,21 @@ func VerifyCAExtensions(cert *x509.Certificate) error {
 	if cert.KeyUsage&^allowedCAKU != 0 {
 		return pkitypes.NewErrInappropriateCertificateType(
 			"KeyUsage SHALL NOT include bits other than keyCertSign, cRLSign, and digitalSignature",
+		)
+	}
+
+	if len(cert.SubjectKeyId) == 0 {
+		return pkitypes.NewErrInappropriateCertificateType(
+			"SubjectKeyIdentifier extension SHALL be present for CA certificates",
+		)
+	}
+
+	// crypto/x509 exposes RawIssuer/RawSubject as the DER bytes of the Name
+	// sequence, so byte-equality is the structural "self-signed" test.
+	selfSigned := bytes.Equal(cert.RawIssuer, cert.RawSubject)
+	if !selfSigned && len(cert.AuthorityKeyId) == 0 {
+		return pkitypes.NewErrInappropriateCertificateType(
+			"AuthorityKeyIdentifier extension SHALL be present for non-self-signed CA certificates",
 		)
 	}
 
@@ -320,6 +334,24 @@ func VerifyNOCExtensions(cert *x509.Certificate) error {
 	return nil
 }
 
+// VerifyNoEKU is a ParseAndValidateCertificate option that fails if the
+// certificate encodes an ExtendedKeyUsage extension. Matter R1.5 §6.5.12 says
+// "The ExtendedKeyUsage extension SHALL NOT be present" for RCAC and ICAC.
+// PAA / PAI are NOT constrained by this rule (§6.2.2.5 rule 11 explicitly
+// allows EKU on PAA), so this helper is wired only on the NOC-chain CA paths.
+func VerifyNoEKU(cert *x509.Certificate) error {
+	const oidExtKeyUsageStr = "2.5.29.37"
+	for _, e := range cert.Extensions {
+		if e.Id.String() == oidExtKeyUsageStr {
+			return pkitypes.NewErrInappropriateCertificateType(
+				"ExtendedKeyUsage extension SHALL NOT be present on RCAC/ICAC certificates",
+			)
+		}
+	}
+
+	return nil
+}
+
 // VerifyECDSAP256SHA256 is a ParseAndValidateCertificate option that asserts
 // the certificate is signed with ecdsa-with-SHA256 and that its subject public
 // key is an ECDSA key on the prime256v1 (P-256 / secp256r1) curve, per Matter
@@ -354,7 +386,8 @@ func VerifyECDSAP256SHA256(cert *x509.Certificate) error {
 // and Matter NOCs (is-ca=FALSE). The certificate is dispatched by its
 // BasicConstraints cA flag:
 //
-//   - cA=TRUE  → Matter R1.5 §6.5.12 ICAC profile, enforced by VerifyCAExtensions.
+//   - cA=TRUE  → Matter R1.5 §6.5.12 ICAC profile, enforced by VerifyCAExtensions
+//     plus the §6.5.12 "EKU SHALL NOT be present" rule via VerifyNoEKU.
 //   - cA=FALSE → Matter R1.5 §6.5.12 NOC profile, enforced by VerifyNOCExtensions.
 //
 // BasicConstraints must be encoded either way; a missing BC extension is
@@ -366,7 +399,11 @@ func VerifyNOCChainNonRoot(cert *x509.Certificate) error {
 		)
 	}
 	if cert.IsCA {
-		return VerifyCAExtensions(cert)
+		if err := VerifyCAExtensions(cert); err != nil {
+			return err
+		}
+
+		return VerifyNoEKU(cert)
 	}
 
 	return VerifyNOCExtensions(cert)
