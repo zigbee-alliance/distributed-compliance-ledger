@@ -89,7 +89,7 @@ zigbee_certification_type="zigbee"
 matter_certification_type="matter"
 specification_version=1
 cd_certificate_id="12345678910abcdefgh"
-result=$(echo 'test1234' | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --cdVersionNumber=1 --certificationType="$zigbee_certification_type" --specificationVersion=$specification_version --certificationDate="$certification_date" --softwareVersionString=$softwareVersionString --cdCertificateId="$cd_certificate_id" --from $zb_account --yes)
+result=$(echo 'test1234' | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --cdVersionNumber=1 --certificationType="$zigbee_certification_type" --specificationVersion=$specification_version --certificationDate="$certification_date" --softwareVersionString=$softwareVersionString --cdCertificateId="$cd_certificate_id" --schemaVersion=1 --from $zb_account --yes)
 result=$(get_txn_result "$result")
 echo "$result"
 

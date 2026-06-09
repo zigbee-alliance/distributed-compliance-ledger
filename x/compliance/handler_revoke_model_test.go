@@ -279,3 +279,32 @@ func TestHandler_CertifyRevokedModelThatWasCertifiedEarlier(t *testing.T) {
 	require.Equal(t, types.CodeRevoked, complianceInfo.History[1].SoftwareVersionCertificationStatus)
 	require.Equal(t, revokeModelMsg.RevocationDate, complianceInfo.History[1].Date)
 }
+
+func TestHandler_SchemaVersion_RevokeModel_StampsCurrentOnCreate(t *testing.T) {
+	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := setupRevokeModel(t)
+
+	_, err := setup.revokeModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	require.NoError(t, err)
+
+	complianceInfo := queryExistingComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
+	require.Equal(t, complianceInfo.CurrentSchemaVersion(), complianceInfo.SchemaVersion)
+
+	revokedModel, _ := queryRevokedModel(setup, vid, pid, softwareVersion, certificationType)
+	require.Equal(t, revokedModel.CurrentSchemaVersion(), revokedModel.SchemaVersion)
+}
+
+func TestHandler_SchemaVersion_RevokeModel_AlwaysStampsOnUpdate(t *testing.T) {
+	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := setupRevokeModel(t)
+
+	certifyMsg := newMsgCertifyModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	_, certifyErr := setup.Handler(setup.Ctx, certifyMsg)
+	require.NoError(t, certifyErr)
+	setup.seedStoredSchemaVersion(vid, pid, softwareVersion, certificationType, 0)
+
+	_, revokeErr := setup.revokeModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	require.NoError(t, revokeErr)
+
+	updated := queryExistingComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
+	require.Equal(t, updated.CurrentSchemaVersion(), updated.SchemaVersion)
+	require.Equal(t, types.CodeRevoked, updated.SoftwareVersionCertificationStatus)
+}

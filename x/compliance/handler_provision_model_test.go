@@ -185,3 +185,16 @@ func TestHandler_ProvisionModel_MoreThanOneModel(t *testing.T) {
 		setup.checkModelProvisioned(t, provisionModelMsg)
 	}
 }
+
+func TestHandler_SchemaVersion_ProvisionModel_StampsCurrentOnCreate(t *testing.T) {
+	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := setupProvisionModel(t)
+
+	_, err := setup.provisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	require.NoError(t, err)
+
+	complianceInfo := queryExistingComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
+	require.Equal(t, complianceInfo.CurrentSchemaVersion(), complianceInfo.SchemaVersion)
+
+	provisionalModel, _ := queryProvisionalModel(setup, vid, pid, softwareVersion, certificationType)
+	require.Equal(t, provisionalModel.CurrentSchemaVersion(), provisionalModel.SchemaVersion)
+}

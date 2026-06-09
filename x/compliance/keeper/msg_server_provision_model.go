@@ -81,11 +81,10 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvision
 		ParentChild:                        msg.ParentChild,
 		CertificationIdOfSoftwareComponent: msg.CertificationIdOfSoftwareComponent,
 		SpecificationVersion:               msg.SpecificationVersion,
-		SchemaVersion:                      msg.SchemaVersion,
 	}
 
-	// store compliance info
-	k.SetComplianceInfo(ctx, complianceInfo)
+	// store compliance info — Set* stamps the current schema version internally.
+	k.SetComplianceInfo(ctx, &complianceInfo)
 
 	// update provisional index
 	provisionalModel := types.ProvisionalModel{
@@ -95,7 +94,7 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvision
 		CertificationType: msg.CertificationType,
 		Value:             true,
 	}
-	k.SetProvisionalModel(ctx, provisionalModel)
+	k.SetProvisionalModel(ctx, &provisionalModel)
 
 	return &types.MsgProvisionModelResponse{}, nil
 }

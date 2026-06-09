@@ -7,6 +7,7 @@ import (
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	commontypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
@@ -109,11 +110,13 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		complianceInfo.Transport = msg.Transport
 	}
 
+	// Preserve the previously stored schema version if SpecificationVersion is not set.
+	// SetComplianceInfo skips the stamp when this guard evaluates false.
+	var stampComplianceInfo commontypes.SchemaVersionGuard
 	if msg.SpecificationVersion != 0 {
 		complianceInfo.SpecificationVersion = msg.SpecificationVersion
+		stampComplianceInfo = complianceInfo.SchemaVersion < complianceInfo.CurrentSchemaVersion()
 	}
-
-	complianceInfo.SchemaVersion = msg.SchemaVersion
 
 	//nolint:nestif
 	if msg.CDCertificateId != "" && msg.CDCertificateId != complianceInfo.CDCertificateId {
@@ -128,7 +131,7 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 		if len(currentDeviceSoftwareCompliance.ComplianceInfo) == 0 {
 			k.RemoveDeviceSoftwareCompliance(ctx, currentDeviceSoftwareCompliance.CDCertificateId)
 		} else {
-			k.SetDeviceSoftwareCompliance(ctx, currentDeviceSoftwareCompliance)
+			k.SetDeviceSoftwareCompliance(ctx, &currentDeviceSoftwareCompliance)
 		}
 
 		// update the compliance info cd certificate id field
@@ -141,7 +144,8 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 			targetDeviceSoftwareCompliance.CDCertificateId = msg.CDCertificateId
 		}
 		targetDeviceSoftwareCompliance.ComplianceInfo = append(targetDeviceSoftwareCompliance.ComplianceInfo, &complianceInfo)
-		k.SetDeviceSoftwareCompliance(ctx, targetDeviceSoftwareCompliance)
+
+		k.SetDeviceSoftwareCompliance(ctx, &targetDeviceSoftwareCompliance)
 	} else { // update the corresponding device software compliance to sync with compliance info.
 		deviceSoftwareCompliance, _ := k.GetDeviceSoftwareCompliance(ctx, complianceInfo.CDCertificateId)
 
@@ -150,10 +154,10 @@ func (k msgServer) UpdateComplianceInfo(goCtx context.Context, msg *types.MsgUpd
 			deviceSoftwareCompliance.ComplianceInfo[index] = &complianceInfo
 		}
 
-		k.SetDeviceSoftwareCompliance(ctx, deviceSoftwareCompliance)
+		k.SetDeviceSoftwareCompliance(ctx, &deviceSoftwareCompliance)
 	}
 
-	k.SetComplianceInfo(ctx, complianceInfo)
+	k.SetComplianceInfo(ctx, &complianceInfo, stampComplianceInfo)
 
 	return &types.MsgUpdateComplianceInfoResponse{}, nil
 }

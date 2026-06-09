@@ -176,6 +176,7 @@ func NewMsgCertifyModelVersion(
 		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		SoftwareVersion:       softwareVersion,
 		SoftwareVersionString: softwareVersionString,
+		SchemaVersion:         1,
 	}
 }
 
@@ -1062,6 +1063,7 @@ func DeleteModelVersionCertified(suite *utils.TestSuite) {
 		CDCertificateId:       testconstants.CDCertificateID,
 		CDVersionNumber:       uint32(createModelVersionMsg.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
+		SchemaVersion:         1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenterName, certCenterAccount)
 	require.NoError(suite.T, err)

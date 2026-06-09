@@ -9,6 +9,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
+	commontypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
@@ -43,6 +44,11 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 	}
 
 	complianceInfo, found := k.GetComplianceInfo(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
+	// On the update path (existing record) only bump the schema version when
+	// SpecificationVersion is being supplied and the stored SchemaVersion is still
+	// unset; on the creation path the guard true, so SetComplianceInfo
+	// stamps to the current schema version internally.
+	var complianceInfoGuard commontypes.SchemaVersionGuard = true
 	//nolint:nestif
 	if found {
 		// Compliance record already exist. Cases:
@@ -75,6 +81,9 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 		}
 
 		complianceInfo.SetCertifiedStatus(msg.CertificationDate, msg.Reason, msg.CDCertificateId)
+		// Preserve the previously stored schema version if SpecificationVersion is not set.
+		// SetComplianceInfo skips the stamp when this guard evaluates false.
+		complianceInfoGuard = msg.SpecificationVersion > 0 && complianceInfo.SchemaVersion < complianceInfo.CurrentSchemaVersion()
 	} else {
 		// There is no compliance record yet. So certification will be tracked on ledger.
 
@@ -92,7 +101,6 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 			History:                            []*types.ComplianceHistoryItem{},
 			CDVersionNumber:                    msg.CDVersionNumber,
 			CDCertificateId:                    msg.CDCertificateId,
-			SchemaVersion:                      msg.SchemaVersion,
 		}
 	}
 
@@ -111,18 +119,15 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 	}
 
 	complianceInfo.SetOptionalFields(optionalFields)
-
-	// store compliance info
-	k.SetComplianceInfo(ctx, complianceInfo)
+	k.SetComplianceInfo(ctx, &complianceInfo, complianceInfoGuard)
 
 	deviceSoftwareCompliance, found := k.GetDeviceSoftwareCompliance(ctx, msg.CDCertificateId)
 	if !found {
 		deviceSoftwareCompliance.CDCertificateId = msg.CDCertificateId
 	}
-	deviceSoftwareCompliance.ComplianceInfo = append(deviceSoftwareCompliance.ComplianceInfo, &complianceInfo)
 
-	// store device compliance software
-	k.SetDeviceSoftwareCompliance(ctx, deviceSoftwareCompliance)
+	deviceSoftwareCompliance.ComplianceInfo = append(deviceSoftwareCompliance.ComplianceInfo, &complianceInfo)
+	k.SetDeviceSoftwareCompliance(ctx, &deviceSoftwareCompliance)
 
 	// update certified, revoked and provisional index
 	certifiedModel := types.CertifiedModel{
@@ -132,7 +137,8 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 		CertificationType: msg.CertificationType,
 		Value:             true,
 	}
-	k.SetCertifiedModel(ctx, certifiedModel)
+	k.SetCertifiedModel(ctx, &certifiedModel)
+
 	revokedModel := types.RevokedModel{
 		Vid:               msg.Vid,
 		Pid:               msg.Pid,
@@ -140,7 +146,8 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 		CertificationType: msg.CertificationType,
 		Value:             false,
 	}
-	k.SetRevokedModel(ctx, revokedModel)
+	k.SetRevokedModel(ctx, &revokedModel)
+
 	provisionalModel := types.ProvisionalModel{
 		Vid:               msg.Vid,
 		Pid:               msg.Pid,
@@ -148,7 +155,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 		CertificationType: msg.CertificationType,
 		Value:             false,
 	}
-	k.SetProvisionalModel(ctx, provisionalModel)
+	k.SetProvisionalModel(ctx, &provisionalModel)
 
 	return &types.MsgCertifyModelResponse{}, nil
 }
