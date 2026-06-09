@@ -193,7 +193,10 @@ func verifyPAA(cert *x509.Certificate, msg *types.MsgAddPkiRevocationDistributio
 	return nil
 }
 
-var oidKeyUsage = asn1.ObjectIdentifier{2, 5, 29, 15}
+var (
+	oidKeyUsage         = asn1.ObjectIdentifier{2, 5, 29, 15}
+	oidBasicConstraints = asn1.ObjectIdentifier{2, 5, 29, 19}
+)
 
 func verifyPAI(cert *x509.Certificate, msg *types.MsgAddPkiRevocationDistributionPoint) error {
 	if cert.IsSelfSigned() {
@@ -268,25 +271,32 @@ func VerifyCRLSignerCertFormat(certificate *x509.Certificate) error {
 		)
 	}
 
-	// Basic Constraint extension should be marked critical and have the cA field set to false
+	// Basic Constraints extension must be present and have cA = FALSE.
 	if !cert.BasicConstraintsValid || cert.IsCA {
 		return pkitypes.NewErrCRLSignerCertificateInvalidFormat(
 			"Basic Constraint extension's cA field SHALL be set to FALSE",
 		)
 	}
 
-	// Basic Constraint extension should be marked critical
-	isCritical := false
+	// Both Basic Constraints and Key Usage extensions SHALL be marked critical.
+	bcCritical, kuCritical := false, false
+	bcSeen, kuSeen := false, false
 	for _, ext := range cert.Extensions {
-		if ext.Id.Equal(oidKeyUsage) {
-			isCritical = ext.Critical
-
-			break
+		switch {
+		case ext.Id.Equal(oidBasicConstraints):
+			bcCritical = ext.Critical
+			bcSeen = true
+		case ext.Id.Equal(oidKeyUsage):
+			kuCritical = ext.Critical
+			kuSeen = true
 		}
 	}
 
-	if !isCritical {
+	if !bcSeen || !bcCritical {
 		return pkitypes.NewErrCRLSignerCertificateInvalidFormat("Basic Constraint extension SHALL be marked critical")
+	}
+	if !kuSeen || !kuCritical {
+		return pkitypes.NewErrCRLSignerCertificateInvalidFormat("Key Usage extension SHALL be marked critical")
 	}
 
 	if cert.KeyUsage&x509std.KeyUsageCRLSign == 0 {
