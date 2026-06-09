@@ -334,6 +334,37 @@ func VerifyNOCExtensions(cert *x509.Certificate) error {
 	return nil
 }
 
+// VerifyVersionV3 is a ParseAndValidateCertificate option that asserts the
+// certificate is X.509 v3, as required by Matter R1.5 §6.2.2.3 (DAC),
+// §6.2.2.4 (PAI), §6.2.2.5 (PAA), and §6.5.5/§6.5.8/§6.5.9 (NOC chain). The
+// DER-level INTEGER 2 maps to crypto/x509's Version=3.
+func VerifyVersionV3(cert *x509.Certificate) error {
+	if cert.Version != 3 {
+		return pkitypes.NewErrInvalidCertificate(
+			fmt.Sprintf("certificate version SHALL be v3, got v%d", cert.Version),
+		)
+	}
+
+	return nil
+}
+
+// VerifyNoPIDInSubject is a ParseAndValidateCertificate option that asserts the
+// certificate's subject does not contain a Matter ProductID attribute. Matter
+// R1.5 §6.2.2.5 rule 8 prohibits a ProductID in the PAA's subject (and
+// equivalently issuer, since PAAs are self-signed). Wired into the PAA add
+// handler; the same logic was already enforced on the CRL revocation path.
+func VerifyNoPIDInSubject(cert *x509.Certificate) error {
+	pid, err := GetPidFromSubject(ToSubjectAsText(cert.Subject.String()))
+	if err != nil {
+		return pkitypes.NewErrInvalidPidFormat(err)
+	}
+	if pid != 0 {
+		return pkitypes.NewErrNotEmptyPidForRootCertificate()
+	}
+
+	return nil
+}
+
 // VerifyNoEKU is a ParseAndValidateCertificate option that fails if the
 // certificate encodes an ExtendedKeyUsage extension. Matter R1.5 §6.5.12 says
 // "The ExtendedKeyUsage extension SHALL NOT be present" for RCAC and ICAC.

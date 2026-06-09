@@ -884,3 +884,44 @@ func Test_VerifyNoEKU(t *testing.T) {
 		require.Contains(t, err.Error(), "ExtendedKeyUsage extension SHALL NOT be present")
 	})
 }
+
+func Test_VerifyVersionV3(t *testing.T) {
+	t.Run("ok/RootCertPem", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.RootCertPem, VerifyVersionV3)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("reject/synthetic v1", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.PAACertWithNumericVid)
+		require.NoError(t, err)
+		cert.Certificate.Version = 1
+		err = VerifyVersionV3(cert.Certificate)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+		require.Contains(t, err.Error(), "v3")
+	})
+}
+
+func Test_VerifyNoPIDInSubject(t *testing.T) {
+	t.Run("ok/PAACertWithNumericVid (no PID)", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.PAACertWithNumericVid, VerifyNoPIDInSubject)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("ok/RootCertPem (no PID)", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.RootCertPem, VerifyNoPIDInSubject)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("reject/PAI cert with PID is rejected if used as PAA", func(t *testing.T) {
+		// PAICertWithNumericPidVid carries pid=0x8000. The rule applies only to
+		// the PAA add path; this confirms the helper trips on a PID-bearing DN.
+		cert, err := ParseAndValidateCertificate(testconstants.PAICertWithNumericPidVid, VerifyNoPIDInSubject)
+		require.Error(t, err)
+		require.Nil(t, cert)
+		require.ErrorIs(t, err, pkitypes.ErrNotEmptyPid)
+	})
+}

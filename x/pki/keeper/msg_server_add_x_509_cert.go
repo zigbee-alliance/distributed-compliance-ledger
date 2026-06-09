@@ -28,9 +28,10 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 	// DACs (cA=FALSE); VerifyDAChainNonRoot dispatches by the BasicConstraints cA flag
 	// and enforces the Matter R1.5 §6.2.2.4 PAI profile for ICAs and the §6.2.2.3 DAC
 	// profile for end-entities. VerifyECDSAP256SHA256 enforces the §6.2.2.3/4 ecdsa-
-	// with-SHA256 + prime256v1 algorithm requirement.
+	// with-SHA256 + prime256v1 algorithm requirement; VerifyVersionV3 enforces v3.
 	x509Certificate, err := x509.ParseAndValidateCertificate(
 		msg.Cert,
+		x509.VerifyVersionV3,
 		x509.VerifyECDSAP256SHA256,
 		x509.VerifyDAChainNonRoot,
 	)
