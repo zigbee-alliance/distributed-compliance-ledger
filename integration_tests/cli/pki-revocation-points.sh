@@ -51,11 +51,11 @@ test_root_cert_subject_key_id="E2:90:8D:36:9C:3C:A3:C1:13:BB:09:E2:4D:C1:CC:C5:A
 
 root_cert_with_vid_path="integration_tests/constants/root_cert_with_vid"
 root_cert_with_vid_subject="MIGYMQswCQYDVQQGEwJVUzERMA8GA1UECBMITmV3IFlvcmsxETAPBgNVBAcTCE5ldyBZb3JrMRgwFgYDVQQKEw9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsTEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMTD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgETBEZGRjE="
-root_cert_with_vid_subject_key_id="01:A9:FC:05:0D:83:72:97:53:65:E8:24:EB:33:CB:90:E6:D7:23:DB"
+root_cert_with_vid_subject_key_id="5E:F7:5A:79:3D:28:32:58:67:BC:89:8A:35:00:41:FD:53:92:11:D3"
 
 delegator_cert_with_vid_65521_path="integration_tests/constants/intermediate_cert_with_vid_1"
 delegator_cert_with_vid_65521_copy_path="integration_tests/constants/intermediate_cert_with_vid_1_copy"
-delegator_cert_with_vid_subject_key_id="0E8CE8C8B8AA50BC258556B9B19CC2C7D9C52F17"
+delegator_cert_with_vid_subject_key_id="5A56A327B4170D964286B2CF3F1909DBDD33129F"
 
 crl_signer_delegated_by_pai_1="integration_tests/constants/leaf_cert_with_vid_65521"
 crl_signer_delegated_by_pai_2="integration_tests/constants/leaf_cert_with_vid_65522"
