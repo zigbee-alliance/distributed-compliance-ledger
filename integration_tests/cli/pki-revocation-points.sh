@@ -42,16 +42,16 @@ pai_cert_with_numeric_vid_path="integration_tests/constants/pai_cert_numeric_vid
 pai_cert_with_numeric_vid_pid_path="integration_tests/constants/pai_cert_numeric_vid_pid"
 
 root_cert_path="integration_tests/constants/root_cert"
-root_cert_subject="MDQxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRAwDgYDVQQKDAdyb290LWNh"
-root_cert_subject_key_id="5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB"
+root_cert_subject="MDQxCzAJBgNVBAYTAkFVMRMwEQYDVQQIEwpzb21lLXN0YXRlMRAwDgYDVQQKEwdyb290LWNh"
+root_cert_subject_key_id="DF:4E:AF:B0:8C:9C:37:78:1A:E7:53:12:CA:E4:78:6B:48:1E:AF:B0"
 
 test_root_cert_path="integration_tests/constants/test_root_cert"
 test_root_cert_subject="MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBDEyNUQ="
 test_root_cert_subject_key_id="E2:90:8D:36:9C:3C:A3:C1:13:BB:09:E2:4D:C1:CC:C5:A6:66:91:D4"
 
 root_cert_with_vid_path="integration_tests/constants/root_cert_with_vid"
-root_cert_with_vid_subject="MIGYMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgEMBEZGRjE="
-root_cert_with_vid_subject_key_id="CE:A8:92:66:EA:E0:80:BD:2B:B5:68:E4:0B:07:C4:FA:2C:34:6D:31"
+root_cert_with_vid_subject="MIGYMQswCQYDVQQGEwJVUzERMA8GA1UECBMITmV3IFlvcmsxETAPBgNVBAcTCE5ldyBZb3JrMRgwFgYDVQQKEw9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsTEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMTD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgETBEZGRjE="
+root_cert_with_vid_subject_key_id="01:A9:FC:05:0D:83:72:97:53:65:E8:24:EB:33:CB:90:E6:D7:23:DB"
 
 delegator_cert_with_vid_65521_path="integration_tests/constants/intermediate_cert_with_vid_1"
 delegator_cert_with_vid_65521_copy_path="integration_tests/constants/intermediate_cert_with_vid_1_copy"

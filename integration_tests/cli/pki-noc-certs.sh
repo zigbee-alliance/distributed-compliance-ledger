@@ -17,13 +17,13 @@ set -euo pipefail
 source integration_tests/cli/common.sh
 
 noc_root_cert_1_path="integration_tests/constants/noc_root_cert_1"
-noc_root_cert_1_subject="MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIDApTb21lIFN0YXRlMREwDwYDVQQHDAhUYXNoa2VudDEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDDAVOT0MtMQ=="
-noc_root_cert_1_subject_key_id="44:EB:4C:62:6B:25:48:CD:A2:B3:1C:87:41:5A:08:E7:2B:B9:83:26"
-noc_root_cert_1_serial_number="47211865327720222621302679792296833381734533449"
+noc_root_cert_1_subject="MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIEwpTb21lIFN0YXRlMREwDwYDVQQHEwhUYXNoa2VudDEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDEwVOT0MtMQ=="
+noc_root_cert_1_subject_key_id="0E:10:B8:5D:96:7A:08:33:C7:C5:44:49:0E:28:0F:C1:6E:D5:D4:7C"
+noc_root_cert_1_serial_number="313831573505791137291636389937677533381171619492"
 noc_root_cert_1_subject_as_text="CN=NOC-1,OU=Testing Division,O=Example Company,L=Tashkent,ST=Some State,C=UZ"
 
 noc_root_cert_1_copy_path="integration_tests/constants/noc_root_cert_1_copy"
-noc_root_cert_1_copy_serial_number="460647353168152946606945669687905527879095841977"
+noc_root_cert_1_copy_serial_number="12722088350714347345576486793058060481880825999"
 
 noc_root_cert_2_path="integration_tests/constants/noc_root_cert_2"
 noc_root_cert_2_subject="MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIEwpTb21lIFN0YXRlMREwDwYDVQQHEwhUYXNoa2VudDEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDEwVOT0MtMg=="
@@ -38,12 +38,12 @@ noc_root_cert_3_serial_number="620481712672111766723531823383547399894194653186"
 noc_root_cert_3_subject_as_text="CN=NOC-3,O=Internet Widgits Pty Ltd,ST=Some-State,C=AU"
 
 noc_cert_1_path="integration_tests/constants/noc_cert_1"
-noc_cert_1_subject="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtOT0MtY2hpbGQtMQ=="
-noc_cert_1_subject_key_id="02:72:6E:BC:BB:EF:D6:BD:8D:9B:42:AE:D4:3C:C0:55:5F:66:3A:B3"
-noc_cert_1_serial_number="631388393741945881054190991612463928825155142122"
+noc_cert_1_subject="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECBMKU29tZSBTdGF0ZTETMBEGA1UEBxMKU29tZSBTdGF0ZTEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDEwtOT0MtY2hpbGQtMQ=="
+noc_cert_1_subject_key_id="06:9F:5A:E0:1F:23:3E:9F:C7:4F:B6:F9:A2:33:47:33:62:7A:07:C5"
+noc_cert_1_serial_number="577430346509479530103103319788179390906984119670"
 
 noc_cert_1_copy_path="integration_tests/constants/noc_cert_1_copy"
-noc_cert_1_copy_serial_number="169445068204646961882009388640343665944683778293"
+noc_cert_1_copy_serial_number="617357865778805507017637943649984133152592305888"
 
 noc_cert_2_path="integration_tests/constants/noc_cert_2"
 noc_cert_2_subject="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECBMKU29tZSBTdGF0ZTETMBEGA1UEBxMKU29tZSBTdGF0ZTEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDEwtOT0MtY2hpbGQtMg=="
@@ -51,9 +51,9 @@ noc_cert_2_subject_key_id="17:E2:72:19:E1:7F:19:D7:0D:02:1A:B0:40:7B:04:26:CC:D4
 noc_cert_2_serial_number="634591262660314610068979921875981241084684028375"
 
 noc_leaf_cert_1_path="integration_tests/constants/noc_leaf_cert_1"
-noc_leaf_cert_1_subject="MIGBMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRMwEQYDVQQDDApOT0MtbGVhZi0x"
-noc_leaf_cert_1_subject_key_id="77:1F:DB:C4:4C:B1:29:7E:3C:EB:3E:D8:2A:38:0B:63:06:07:00:01"
-noc_leaf_cert_1_serial_number="281347277961838999749763518155363401757954575313"
+noc_leaf_cert_1_subject="MIGBMQswCQYDVQQGEwJVWjETMBEGA1UECBMKU29tZSBTdGF0ZTETMBEGA1UEBxMKU29tZSBTdGF0ZTEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMRMwEQYDVQQDEwpOT0MtbGVhZi0x"
+noc_leaf_cert_1_subject_key_id="F0:3A:A5:96:8F:60:63:F0:15:21:24:0C:DA:0A:E6:2B:CC:A0:58:F9"
+noc_leaf_cert_1_serial_number="201294310322324358101935163941973786245732555938"
 
 trustee_account="jack"
 second_trustee_account="alice"

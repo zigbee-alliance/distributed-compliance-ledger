@@ -525,7 +525,6 @@ func Test_ParseAndValidateCertificate_VerifyCAExtensions(t *testing.T) {
 		name         string
 		certPem      string
 		expectSubstr string
-		massage      func(*x509std.Certificate)
 	}
 	negativeTests := []negCase{
 		// NOTE: RootCertPem and NocRootCert1 were previously non-compliant
@@ -579,6 +578,7 @@ func Test_ParseAndValidateCertificate_VerifyCAExtensions(t *testing.T) {
 				for i := range c.Extensions {
 					if c.Extensions[i].Id.String() == "2.5.29.19" {
 						c.Extensions[i].Critical = false
+
 						return
 					}
 				}
@@ -592,6 +592,7 @@ func Test_ParseAndValidateCertificate_VerifyCAExtensions(t *testing.T) {
 				for i := range c.Extensions {
 					if c.Extensions[i].Id.String() == "2.5.29.15" {
 						c.Extensions[i].Critical = false
+
 						return
 					}
 				}
@@ -685,6 +686,7 @@ func Test_ParseAndValidateCertificate_VerifyDACExtensions(t *testing.T) {
 				require.Nil(t, cert)
 				require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
 				require.Contains(t, err.Error(), tt.expectSubstr)
+
 				return
 			}
 			cert, err := ParseAndValidateCertificate(tt.certPem)
@@ -1011,6 +1013,7 @@ func Test_VerifyAtMostOneVIDAndPID(t *testing.T) {
 		for _, n := range cert.Certificate.Subject.Names {
 			if n.Type.String() == "1.3.6.1.4.1.37244.2.1" {
 				vid = n
+
 				break
 			}
 		}
