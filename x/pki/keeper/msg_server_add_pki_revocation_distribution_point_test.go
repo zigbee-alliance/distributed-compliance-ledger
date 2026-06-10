@@ -21,10 +21,6 @@ var (
 	oidKeyUsageTest         = asn1.ObjectIdentifier{2, 5, 29, 15}
 )
 
-// setExtCritical flips the Critical flag of the extension matching `oid`.
-// Panics when the OID is absent: the existing test fixture (LeafCertWithVid)
-// is known to carry both Basic Constraints and Key Usage, so a missing OID
-// means the fixture changed and the test setup needs revisiting.
 func setExtCritical(cert *x509.Certificate, oid asn1.ObjectIdentifier, critical bool) {
 	for i := range cert.Certificate.Extensions {
 		if cert.Certificate.Extensions[i].Id.Equal(oid) {

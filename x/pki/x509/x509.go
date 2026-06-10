@@ -78,26 +78,6 @@ type DecodeX509CertVerificationOptions func(cert *x509.Certificate) error
 // *x509.Certificate and may return an error to reject the certificate.
 type ParseAndValidateCertificateOptions = DecodeX509CertVerificationOptions
 
-// VerifyIsCACertificate is a ParseAndValidateCertificate option that fails if the
-// certificate does not have BasicConstraints marked valid with cA set to TRUE.
-// Pass it for CA-only roles: DA root (PAA), DA intermediate (PAI), and NOC root
-// (RCAC). Do NOT pass it for end-entity certificates — Matter R1.5 §6.2.2.3
-// requires DAC with cA=FALSE and §6.5.12 requires NOC with is-ca=false — nor
-// for the NOC ICA handler, which currently accepts both ICACs and NOCs.
-//
-// This is a minimal "cA=TRUE" check kept for backward compatibility. For the
-// full per-extension Matter R1.5 CA profile (BC critical, KU critical with
-// correct bits), use VerifyCAExtensions.
-func VerifyIsCACertificate(cert *x509.Certificate) error {
-	if !cert.BasicConstraintsValid || !cert.IsCA {
-		return pkitypes.NewErrInappropriateCertificateType(
-			"certificate is not a CA: BasicConstraints extension must be present and cA must be set to TRUE",
-		)
-	}
-
-	return nil
-}
-
 // VerifyCAExtensions is a ParseAndValidateCertificate option that enforces the
 // full structural CA profile mandated by Matter R1.5 §6.2.2.4/5 and §6.5.12:
 //
@@ -763,7 +743,7 @@ func (c Certificate) IsSelfSigned() bool {
 //
 // Parameters:
 //   - pemCertificate: PEM-encoded X.509 certificate string
-//   - options: optional checks applied to the parsed certificate, e.g. VerifyIsCACertificate
+//   - options: optional checks applied to the parsed certificate, e.g. VerifyVersionV3
 //
 // Returns:
 //   - *Certificate: Parsed certificate structure if validation succeeds
@@ -808,7 +788,7 @@ func ParseAndValidateCertificate(pemCertificate string, options ...ParseAndValid
 		return nil, pkitypes.NewErrInvalidCertificate(fmt.Sprintf("subject field count (%d) exceeds maximum limit of %d", subjectFieldCount, MaxSubjectFields))
 	}
 
-	// 4. Apply caller-supplied options (e.g. VerifyIsCACertificate)
+	// 4. Apply caller-supplied options (e.g. VerifyVersionV3)
 	for _, opt := range options {
 		if err = opt(cert.Certificate); err != nil {
 			return nil, err
