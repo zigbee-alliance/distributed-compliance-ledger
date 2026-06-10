@@ -128,10 +128,10 @@ func (k msgServer) verifyUpdatedPAA(ctx sdk.Context, newCertificatePem string, r
 		return pkitypes.NewErrRootCertificateDoesNotExist(newCertificate.Subject, newCertificate.SubjectKeyID)
 	}
 
-	// check that it has the same PEM value
+	// check that it has the same PEM value (compare DER bytes, ignoring whitespace/headers)
 	var foundRootCert *types.Certificate
 	for _, approvedCertificate := range approvedCertificates.Certs {
-		if x509.RemoveWhitespaces(approvedCertificate.PemCert) == x509.RemoveWhitespaces(newCertificatePem) {
+		if x509.CertificatePEMsEqual(approvedCertificate.PemCert, newCertificatePem) {
 			foundRootCert = approvedCertificate
 
 			break

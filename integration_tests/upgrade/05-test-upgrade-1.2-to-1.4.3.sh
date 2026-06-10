@@ -531,7 +531,7 @@ paa_cert_no_vid_subject_for_1_4_3="MBoxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQQ=="
 paa_cert_no_vid_subject_key_id_for_1_4_3="78:5C:E7:05:B8:6B:8F:4E:6F:C7:93:AA:60:CB:43:EA:69:68:82:D5"
 
 root_cert_subject_for_1_4_3="MIGCMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbQ=="
-root_cert_subject_key_id_for_1_4_3="33:5E:0C:07:44:F8:B5:9C:CD:55:01:9B:6D:71:23:83:6F:D0:D4:BE"
+root_cert_subject_key_id_for_1_4_3="39:86:07:80:B4:3F:95:7F:3B:39:A6:7F:53:BD:02:F8:70:22:1E:55"
 root_cert_path_for_1_4_3="integration_tests/constants/root_with_same_subject_and_skid_1"
 
 intermediate_cert_with_vid_subject_for_1_4_3="MIGuMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgEMBEZGRjExFDASBgorBgEEAYKifAICDARGRkYx"

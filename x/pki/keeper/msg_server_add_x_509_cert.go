@@ -24,10 +24,12 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 		return nil, pkitypes.NewErrUnauthorizedRole("MsgAddX509Cert", dclauthtypes.Vendor)
 	}
 
-	// decode pem certificate
-	x509Certificate, err := x509.ParseAndValidateCertificate(msg.Cert)
+	// Decode pem certificate. This handler accepts both Matter PAIs (cA=TRUE) and Matter
+	// DACs (cA=FALSE) per Matter R1.5 §6.2.2.3/4 — both profiles require the
+	// BasicConstraints extension to be encoded
+	x509Certificate, err := x509.ParseAndValidateCertificate(msg.Cert, x509.VerifyBasicConstraintsPresent)
 	if err != nil {
-		return nil, pkitypes.NewErrInvalidCertificate(err)
+		return nil, err
 	}
 
 	// fail if certificate is self-signed

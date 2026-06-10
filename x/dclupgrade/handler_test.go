@@ -1122,6 +1122,169 @@ func TestHandler_RejectUpgrade_TwoRejectApprovalsAreNeeded_FiveTrustees(t *testi
 	require.Equal(t, proposeUpgrade.Creator, rejectedUpgrade.Creator)
 }
 
+func TestHandler_RejectUpgrade_QuorumDoesNotScheduleUpgrade(t *testing.T) {
+	setup := Setup(t)
+
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
+	trusteeAccAddress2 := testdata.GenerateAccAddress()
+	trusteeAccAddress3 := testdata.GenerateAccAddress()
+	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress3, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(3)
+
+	// propose new upgrade
+	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil)
+	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
+	require.NoError(t, err)
+
+	// propose-time ScheduleUpgrade runs against a branched (cached) context for validation only
+	setup.UpgradeKeeper.AssertCalled(
+		t,
+		"ScheduleUpgrade",
+		mock.MatchedBy(isContextWithCachedMultiStore),
+		msgProposeUpgrade.Plan,
+	)
+
+	// reject twice to reach the reject quorum
+	msgRejectUpgrade := NewMsgRejectUpgrade(trusteeAccAddress2)
+	_, err = setup.Handler(setup.Ctx, msgRejectUpgrade)
+	require.NoError(t, err)
+
+	msgRejectUpgrade = NewMsgRejectUpgrade(trusteeAccAddress3)
+	_, err = setup.Handler(setup.Ctx, msgRejectUpgrade)
+	require.NoError(t, err)
+
+	// reaching the reject quorum must NOT schedule the upgrade
+	setup.UpgradeKeeper.AssertNotCalled(
+		t,
+		"ScheduleUpgrade",
+		mock.MatchedBy(isContextWithNonCachedMultiStore),
+		msgProposeUpgrade.Plan,
+	)
+
+	// proposed upgrade should be removed
+	_, isFound := setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
+
+	// rejected upgrade should be created
+	rejectedUpgrade, isFound := setup.Keeper.GetRejectedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.True(t, isFound)
+	require.Equal(t, msgProposeUpgrade.Plan, rejectedUpgrade.Plan)
+	require.Equal(t, msgProposeUpgrade.Creator, rejectedUpgrade.Creator)
+	require.Equal(t, 2, len(rejectedUpgrade.Rejects))
+
+	// approved upgrade must not be created
+	_, isFound = setup.Keeper.GetApprovedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
+}
+
+func TestHandler_RejectUpgrade_QuorumAfterApprovalDoesNotScheduleUpgrade(t *testing.T) {
+	setup := Setup(t)
+
+	// 4 trustees: 1 propose-approval + 1 extra approval, then 2 rejects (one of which
+	// flips the previous approval). This exercises the path where the message creator
+	// had previously approved before rejecting.
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
+	trusteeAccAddress2 := testdata.GenerateAccAddress()
+	trusteeAccAddress3 := testdata.GenerateAccAddress()
+	trusteeAccAddress4 := testdata.GenerateAccAddress()
+	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress3, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress4, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(4)
+
+	// propose new upgrade from trustee1
+	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil)
+	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
+	require.NoError(t, err)
+
+	// approve upgrade from trustee2
+	msgApproveUpgrade := NewMsgApproveUpgrade(trusteeAccAddress2)
+	_, err = setup.Handler(setup.Ctx, msgApproveUpgrade)
+	require.NoError(t, err)
+
+	// reject from trustee3 and trustee2 (trustee2 flips approval to reject) to reach the reject quorum
+	msgRejectUpgrade := NewMsgRejectUpgrade(trusteeAccAddress3)
+	_, err = setup.Handler(setup.Ctx, msgRejectUpgrade)
+	require.NoError(t, err)
+
+	msgRejectUpgrade = NewMsgRejectUpgrade(trusteeAccAddress2)
+	_, err = setup.Handler(setup.Ctx, msgRejectUpgrade)
+	require.NoError(t, err)
+
+	// reject quorum must not trigger ScheduleUpgrade on the real (non-cached) context
+	setup.UpgradeKeeper.AssertNotCalled(
+		t,
+		"ScheduleUpgrade",
+		mock.MatchedBy(isContextWithNonCachedMultiStore),
+		msgProposeUpgrade.Plan,
+	)
+
+	// proposed upgrade should be removed
+	_, isFound := setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
+
+	// rejected upgrade should be created
+	rejectedUpgrade, isFound := setup.Keeper.GetRejectedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.True(t, isFound)
+	require.Equal(t, 2, len(rejectedUpgrade.Rejects))
+
+	// approved upgrade must not be created
+	_, isFound = setup.Keeper.GetApprovedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
+}
+
+func TestHandler_RejectUpgrade_QuorumDoesNotErrorWhenScheduleWouldFail(t *testing.T) {
+	setup := Setup(t)
+
+	// Simulate the scenario the removed buggy code would have hit: the plan's height
+	// has already passed by the time the reject quorum is reached. Previously this
+	// would have caused ScheduleUpgrade to fail and the reject to return an error,
+	// blocking the rejection. After the fix, the reject should succeed regardless.
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
+	trusteeAccAddress2 := testdata.GenerateAccAddress()
+	trusteeAccAddress3 := testdata.GenerateAccAddress()
+	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress3, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(3)
+
+	// propose new upgrade with plan height > current block height
+	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
+	msgProposeUpgrade.Plan.Height = 100
+	setup.Ctx = setup.Ctx.WithBlockHeight(1)
+
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil).Once()
+	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
+	require.NoError(t, err)
+
+	// advance past plan height — a ScheduleUpgrade call now would fail
+	setup.Ctx = setup.Ctx.WithBlockHeight(200)
+
+	// any further ScheduleUpgrade call (including the previously buggy one in reject) would error
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(sdkerrors.ErrInvalidRequest)
+
+	// reject upgrade by trustee2 and trustee3 — quorum reached
+	msgRejectUpgrade := NewMsgRejectUpgrade(trusteeAccAddress2)
+	_, err = setup.Handler(setup.Ctx, msgRejectUpgrade)
+	require.NoError(t, err)
+
+	msgRejectUpgrade = NewMsgRejectUpgrade(trusteeAccAddress3)
+	_, err = setup.Handler(setup.Ctx, msgRejectUpgrade)
+	require.NoError(t, err)
+
+	// proposed upgrade should be removed and rejected upgrade should be created
+	_, isFound := setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
+
+	_, isFound = setup.Keeper.GetRejectedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.True(t, isFound)
+}
+
 func TestHandler_ApproveUpgrade_FourApprovalsAreNeeded_FiveTrustees(t *testing.T) {
 	setup := Setup(t)
 

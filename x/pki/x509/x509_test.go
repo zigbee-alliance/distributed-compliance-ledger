@@ -22,6 +22,7 @@ import (
 	tmrand "github.com/cometbft/cometbft/libs/rand"
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 )
 
 func Test_DecodeCertificates(t *testing.T) {
@@ -328,4 +329,79 @@ func Test_ParseAndValidateCertificate(t *testing.T) {
 			require.Contains(t, err.Error(), tt.expectErrorSubstr)
 		}
 	}
+}
+
+func Test_ParseAndValidateCertificate_VerifyIsCACertificate(t *testing.T) {
+	positiveTests := []struct {
+		name    string
+		certPem string
+	}{
+		{name: "self-signed root CA", certPem: testconstants.RootCertPem},
+		{name: "non-self-signed intermediate CA", certPem: testconstants.IntermediateCertPem},
+		{name: "PAA with VID (CA)", certPem: testconstants.PAACertWithNumericVid},
+	}
+
+	for _, tt := range positiveTests {
+		t.Run("ok/"+tt.name, func(t *testing.T) {
+			cert, err := ParseAndValidateCertificate(tt.certPem, VerifyIsCACertificate)
+			require.NoError(t, err)
+			require.NotNil(t, cert)
+		})
+	}
+
+	negativeTests := []struct {
+		name    string
+		certPem string
+	}{
+		// BasicConstraintsValid=true, IsCA=false — explicit non-CA end-entity
+		{name: "leaf certificate (IsCA=false)", certPem: testconstants.LeafCertPem},
+	}
+
+	for _, tt := range negativeTests {
+		t.Run("reject/"+tt.name, func(t *testing.T) {
+			cert, err := ParseAndValidateCertificate(tt.certPem, VerifyIsCACertificate)
+			require.Error(t, err)
+			require.Nil(t, cert)
+			require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+		})
+	}
+
+	// Without the option, the same leaf certificate must parse successfully —
+	// confirms the rejection is driven by VerifyIsCACertificate, not by some
+	// other validation that already existed.
+	t.Run("leaf passes without VerifyIsCACertificate", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.LeafCertPem)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+}
+
+func Test_ParseAndValidateCertificate_VerifyBasicConstraintsPresent(t *testing.T) {
+	positiveTests := []struct {
+		name    string
+		certPem string
+	}{
+		{name: "root CA (BC encoded, cA=true)", certPem: testconstants.RootCertPem},
+		{name: "intermediate CA (BC encoded, cA=true)", certPem: testconstants.IntermediateCertPem},
+		{name: "leaf (BC encoded, cA=false)", certPem: testconstants.LeafCertPem},
+		{name: "PAA with VID (BC encoded, cA=true)", certPem: testconstants.PAACertWithNumericVid},
+	}
+	for _, tt := range positiveTests {
+		t.Run("ok/"+tt.name, func(t *testing.T) {
+			cert, err := ParseAndValidateCertificate(tt.certPem, VerifyBasicConstraintsPresent)
+			require.NoError(t, err)
+			require.NotNil(t, cert)
+		})
+	}
+
+	// A cert that has no BasicConstraints extension at all must be rejected.
+	t.Run("reject/BC-extension-absent", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.LeafCertPem)
+		require.NoError(t, err)
+		cert.Certificate.BasicConstraintsValid = false
+
+		err = VerifyBasicConstraintsPresent(cert.Certificate)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+	})
 }

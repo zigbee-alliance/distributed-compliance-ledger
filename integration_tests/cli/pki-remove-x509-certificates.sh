@@ -17,18 +17,18 @@ set -euo pipefail
 source integration_tests/cli/common.sh
 
 root_cert_subject="MIGCMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbQ=="
-root_cert_subject_key_id="33:5E:0C:07:44:F8:B5:9C:CD:55:01:9B:6D:71:23:83:6F:D0:D4:BE"
+root_cert_subject_key_id="39:86:07:80:B4:3F:95:7F:3B:39:A6:7F:53:BD:02:F8:70:22:1E:55"
 root_cert_1_path="integration_tests/constants/root_with_same_subject_and_skid_1"
 root_cert_1_serial_number="1"
 root_cert_vid=65521
 intermediate_cert_subject="MEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQ="
-intermediate_cert_subject_key_id="2E:13:3B:44:52:2C:30:E9:EC:FB:45:FA:5D:E5:04:0A:C1:C6:E6:B9"
+intermediate_cert_subject_key_id="81:50:BE:1A:EA:53:DD:05:3E:F6:B2:E9:A0:25:59:6F:B8:29:3D:AD"
 intermediate_cert_1_path="integration_tests/constants/intermediate_with_same_subject_and_skid_1"
 intermediate_cert_2_path="integration_tests/constants/intermediate_with_same_subject_and_skid_2"
 intermediate_cert_1_serial_number="3"
 intermediate_cert_2_serial_number="4"
 leaf_cert_subject="MEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQ="
-leaf_cert_subject_key_id="12:16:55:8E:5E:2A:DF:04:D7:E6:FE:D1:53:69:61:98:EF:17:2F:03"
+leaf_cert_subject_key_id="1B:71:00:5C:3A:4B:17:5C:3F:A8:E5:31:DF:5C:9A:6B:7A:FE:64:25"
 leaf_cert_path="integration_tests/constants/leaf_with_same_subject_and_skid"
 leaf_cert_serial_number="5"
 
