@@ -521,8 +521,8 @@ certification_date_for_1_4_3="2022-01-01T00:00:00Z"
 provisional_date_for_1_4_3="2012-12-12T00:00:00Z"
 cd_certificate_id_for_1_4_3="12345678910abcdefgh"
 
-root_cert_with_vid_subject_for_1_4_3="MIGYMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgEMBEZGRjE="
-root_cert_with_vid_subject_key_id_for_1_4_3="CE:A8:92:66:EA:E0:80:BD:2B:B5:68:E4:0B:07:C4:FA:2C:34:6D:31"
+root_cert_with_vid_subject_for_1_4_3="MIGYMQswCQYDVQQGEwJVUzERMA8GA1UECBMITmV3IFlvcmsxETAPBgNVBAcTCE5ldyBZb3JrMRgwFgYDVQQKEw9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsTEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMTD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgETBEZGRjE="
+root_cert_with_vid_subject_key_id_for_1_4_3="01:A9:FC:05:0D:83:72:97:53:65:E8:24:EB:33:CB:90:E6:D7:23:DB"
 root_cert_with_vid_path_for_1_4_3="integration_tests/constants/root_cert_with_vid"
 root_cert_vid_for_1_4_3=65521
 
@@ -530,27 +530,27 @@ paa_cert_no_vid_path_for_1_4_3="integration_tests/constants/paa_cert_no_vid"
 paa_cert_no_vid_subject_for_1_4_3="MBoxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQQ=="
 paa_cert_no_vid_subject_key_id_for_1_4_3="78:5C:E7:05:B8:6B:8F:4E:6F:C7:93:AA:60:CB:43:EA:69:68:82:D5"
 
-root_cert_subject_for_1_4_3="MIGCMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbQ=="
-root_cert_subject_key_id_for_1_4_3="33:5E:0C:07:44:F8:B5:9C:CD:55:01:9B:6D:71:23:83:6F:D0:D4:BE"
+root_cert_subject_for_1_4_3="MIGCMQswCQYDVQQGEwJVUzERMA8GA1UECBMITmV3IFlvcmsxETAPBgNVBAcTCE5ldyBZb3JrMRgwFgYDVQQKEw9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsTEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMTD3d3dy5leGFtcGxlLmNvbQ=="
+root_cert_subject_key_id_for_1_4_3="76:16:85:A1:B2:F9:C0:5A:03:A4:5B:70:CE:18:BC:78:9E:3A:9B:68"
 root_cert_path_for_1_4_3="integration_tests/constants/root_with_same_subject_and_skid_1"
 
-intermediate_cert_with_vid_subject_for_1_4_3="MIGuMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgEMBEZGRjExFDASBgorBgEEAYKifAICDARGRkYx"
-intermediate_cert_with_vid_subject_key_id_for_1_4_3="0E:8C:E8:C8:B8:AA:50:BC:25:85:56:B9:B1:9C:C2:C7:D9:C5:2F:17"
+intermediate_cert_with_vid_subject_for_1_4_3="MIGuMQswCQYDVQQGEwJVUzERMA8GA1UECBMITmV3IFlvcmsxETAPBgNVBAcTCE5ldyBZb3JrMRgwFgYDVQQKEw9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsTEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMTD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgETBEZGRjExFDASBgorBgEEAYKifAICEwRGRkYx"
+intermediate_cert_with_vid_subject_key_id_for_1_4_3="01:EA:C7:E5:68:AF:D6:F3:35:DB:FC:D5:9D:7C:59:4A:81:63:33:65"
 intermediate_cert_with_vid_path_for_1_4_3="integration_tests/constants/intermediate_cert_with_vid_1"
 intermediate_cert_with_vid_serial_number_for_1_4_3="3"
 intermediate_cert_with_vid_65521_vid_for_1_4_3=65521
 
 noc_root_cert_1_path_for_1_4_3="integration_tests/constants/noc_root_cert_1"
-noc_root_cert_1_subject_for_1_4_3="MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIDApTb21lIFN0YXRlMREwDwYDVQQHDAhUYXNoa2VudDEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDDAVOT0MtMQ=="
-noc_root_cert_1_subject_key_id_for_1_4_3="44:EB:4C:62:6B:25:48:CD:A2:B3:1C:87:41:5A:08:E7:2B:B9:83:26"
+noc_root_cert_1_subject_for_1_4_3="MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIEwpTb21lIFN0YXRlMREwDwYDVQQHEwhUYXNoa2VudDEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDEwVOT0MtMQ=="
+noc_root_cert_1_subject_key_id_for_1_4_3="0E:10:B8:5D:96:7A:08:33:C7:C5:44:49:0E:28:0F:C1:6E:D5:D4:7C"
 
 noc_ica_cert_1_path_for_1_4_3="integration_tests/constants/noc_cert_1"
-noc_ica_cert_1_subject_for_1_4_3="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtOT0MtY2hpbGQtMQ=="
-noc_ica_cert_1_subject_key_id_for_1_4_3="02:72:6E:BC:BB:EF:D6:BD:8D:9B:42:AE:D4:3C:C0:55:5F:66:3A:B3"
+noc_ica_cert_1_subject_for_1_4_3="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECBMKU29tZSBTdGF0ZTETMBEGA1UEBxMKU29tZSBTdGF0ZTEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDEwtOT0MtY2hpbGQtMQ=="
+noc_ica_cert_1_subject_key_id_for_1_4_3="06:9F:5A:E0:1F:23:3E:9F:C7:4F:B6:F9:A2:33:47:33:62:7A:07:C5"
 
 crl_signer_delegated_by_pai_1="integration_tests/constants/leaf_cert_with_vid_65521"
 delegator_cert_with_vid_65521_path="integration_tests/constants/intermediate_cert_with_vid_1"
-delegator_cert_with_vid_subject_key_id="0E8CE8C8B8AA50BC258556B9B19CC2C7D9C52F17"
+delegator_cert_with_vid_subject_key_id="01EAC7E568AFD6F335DBFCD59D7C594A81633365"
 
 test_data_url_for_1_4_3="https://url.data.dclmodel-1.4"
 

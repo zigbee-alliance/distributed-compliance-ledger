@@ -29,6 +29,7 @@ func setExtCritical(cert *x509.Certificate, oid asn1.ObjectIdentifier, critical 
 	for i := range cert.Certificate.Extensions {
 		if cert.Certificate.Extensions[i].Id.Equal(oid) {
 			cert.Certificate.Extensions[i].Critical = critical
+
 			return
 		}
 	}

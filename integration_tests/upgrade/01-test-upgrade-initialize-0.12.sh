@@ -138,9 +138,9 @@ provisional_date="2019-12-12T00:00:00Z"
 cd_certificate_id="12345678910abcdefgh"
 
 root_cert_path="integration_tests/constants/root_cert"
-root_cert_subject="MDQxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRAwDgYDVQQKDAdyb290LWNh"
-root_cert_subject_key_id="5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB"
-root_cert_serial_number="442314047376310867378175982234956458728610743315"
+root_cert_subject="MDQxCzAJBgNVBAYTAkFVMRMwEQYDVQQIEwpzb21lLXN0YXRlMRAwDgYDVQQKEwdyb290LWNh"
+root_cert_subject_key_id="DF:4E:AF:B0:8C:9C:37:78:1A:E7:53:12:CA:E4:78:6B:48:1E:AF:B0"
+root_cert_serial_number="81311506302208030248766861785118937702312370677"
 root_cert_subject_as_text="O=root-ca,ST=some-state,C=AU"
 
 test_root_cert_path="integration_tests/constants/test_root_cert"
@@ -157,8 +157,8 @@ google_cert_serial_number="1"
 google_cert_subject_as_text="CN=Matter PAA 1,O=Google,C=US,vid=0x6006"
 
 intermediate_cert_path="integration_tests/constants/intermediate_cert"
-intermediate_cert_subject="MDwxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRgwFgYDVQQKDA9pbnRlcm1lZGlhdGUtY2E="
-intermediate_cert_subject_key_id="4E:3B:73:F4:70:4D:C2:98:0D:DB:C8:5A:5F:02:3B:BF:86:25:56:2B"
+intermediate_cert_subject="MDwxCzAJBgNVBAYTAkFVMRMwEQYDVQQIEwpzb21lLXN0YXRlMRgwFgYDVQQKEw9pbnRlcm1lZGlhdGUtY2E="
+intermediate_cert_subject_key_id="1B:73:2A:91:34:46:8A:90:2A:87:19:91:E4:BD:8F:69:3A:F9:04:77"
 
 vendor_name="VendorName"
 company_legal_name="LegalCompanyName"
