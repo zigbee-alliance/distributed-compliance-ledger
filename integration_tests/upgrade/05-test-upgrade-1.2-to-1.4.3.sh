@@ -522,7 +522,7 @@ provisional_date_for_1_4_3="2012-12-12T00:00:00Z"
 cd_certificate_id_for_1_4_3="12345678910abcdefgh"
 
 root_cert_with_vid_subject_for_1_4_3="MIGYMQswCQYDVQQGEwJVUzERMA8GA1UECBMITmV3IFlvcmsxETAPBgNVBAcTCE5ldyBZb3JrMRgwFgYDVQQKEw9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsTEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMTD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgETBEZGRjE="
-root_cert_with_vid_subject_key_id_for_1_4_3="5E:F7:5A:79:3D:28:32:58:67:BC:89:8A:35:00:41:FD:53:92:11:D3"
+root_cert_with_vid_subject_key_id_for_1_4_3="6B:8C:77:1E:AD:CB:A8:3C:33:9C:2F:10:27:5F:42:03:1D:0A:F4:8E"
 root_cert_with_vid_path_for_1_4_3="integration_tests/constants/root_cert_with_vid"
 root_cert_vid_for_1_4_3=65521
 
@@ -535,7 +535,7 @@ root_cert_subject_key_id_for_1_4_3="76:16:85:A1:B2:F9:C0:5A:03:A4:5B:70:CE:18:BC
 root_cert_path_for_1_4_3="integration_tests/constants/root_with_same_subject_and_skid_1"
 
 intermediate_cert_with_vid_subject_for_1_4_3="MIGuMQswCQYDVQQGEwJVUzERMA8GA1UECBMITmV3IFlvcmsxETAPBgNVBAcTCE5ldyBZb3JrMRgwFgYDVQQKEw9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsTEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMTD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgETBEZGRjExFDASBgorBgEEAYKifAICEwRGRkYx"
-intermediate_cert_with_vid_subject_key_id_for_1_4_3="5A:56:A3:27:B4:17:0D:96:42:86:B2:CF:3F:19:09:DB:DD:33:12:9F"
+intermediate_cert_with_vid_subject_key_id_for_1_4_3="B0:7B:3F:F1:45:01:91:8F:C1:FA:EE:CB:9A:01:06:C7:47:9B:5D:EC"
 intermediate_cert_with_vid_path_for_1_4_3="integration_tests/constants/intermediate_cert_with_vid_1"
 intermediate_cert_with_vid_serial_number_for_1_4_3="3"
 intermediate_cert_with_vid_65521_vid_for_1_4_3=65521
@@ -550,7 +550,7 @@ noc_ica_cert_1_subject_key_id_for_1_4_3="06:9F:5A:E0:1F:23:3E:9F:C7:4F:B6:F9:A2:
 
 crl_signer_delegated_by_pai_1="integration_tests/constants/leaf_cert_with_vid_65521"
 delegator_cert_with_vid_65521_path="integration_tests/constants/intermediate_cert_with_vid_1"
-delegator_cert_with_vid_subject_key_id="5A56A327B4170D964286B2CF3F1909DBDD33129F"
+delegator_cert_with_vid_subject_key_id="B07B3FF14501918FC1FAEECB9A0106C7479B5DEC"
 
 test_data_url_for_1_4_3="https://url.data.dclmodel-1.4"
 

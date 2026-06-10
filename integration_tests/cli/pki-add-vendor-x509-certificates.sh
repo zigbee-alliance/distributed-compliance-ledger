@@ -17,12 +17,12 @@ set -euo pipefail
 source integration_tests/cli/common.sh
 
 root_cert_with_vid_65521_subject="MIGYMQswCQYDVQQGEwJVUzERMA8GA1UECBMITmV3IFlvcmsxETAPBgNVBAcTCE5ldyBZb3JrMRgwFgYDVQQKEw9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsTEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMTD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgETBEZGRjE="
-root_cert_with_vid_65521_subject_key_id="5E:F7:5A:79:3D:28:32:58:67:BC:89:8A:35:00:41:FD:53:92:11:D3"
+root_cert_with_vid_65521_subject_key_id="6B:8C:77:1E:AD:CB:A8:3C:33:9C:2F:10:27:5F:42:03:1D:0A:F4:8E"
 root_cert_with_vid_65521_path="integration_tests/constants/root_cert_with_vid"
 root_cert_with_vid_65521_vid=65521
 
 intermediate_cert_with_vid_65521_subject="MIGuMQswCQYDVQQGEwJVUzERMA8GA1UECBMITmV3IFlvcmsxETAPBgNVBAcTCE5ldyBZb3JrMRgwFgYDVQQKEw9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsTEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMTD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgETBEZGRjExFDASBgorBgEEAYKifAICEwRGRkYx"
-intermediate_cert_with_vid_65521_subject_key_id="5A:56:A3:27:B4:17:0D:96:42:86:B2:CF:3F:19:09:DB:DD:33:12:9F"
+intermediate_cert_with_vid_65521_subject_key_id="B0:7B:3F:F1:45:01:91:8F:C1:FA:EE:CB:9A:01:06:C7:47:9B:5D:EC"
 intermediate_cert_with_vid_65521_path="integration_tests/constants/intermediate_cert_with_vid_1"
 intermediate_cert_with_vid_65521_serial_number="3"
 intermediate_cert_with_vid_65521_vid=65521
