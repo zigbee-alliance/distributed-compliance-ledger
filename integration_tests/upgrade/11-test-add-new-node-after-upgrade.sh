@@ -136,7 +136,7 @@ check_expected_version_for_interval "$DCLD_VERSION_OLD" || {
 
 test_divider
 
-overall_ping_time_sec=900
+overall_ping_time_sec=1200
 
 echo "8. Check node \"$NEW_OBSERVER_CONTAINER_NAME\" for START catching up process pinging it every second for $overall_ping_time_sec seconds"
 

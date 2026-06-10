@@ -84,7 +84,8 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 				deviceSoftwareCompliance.RemoveComplianceInfo(index)
 			}
 		}
-		k.SetDeviceSoftwareCompliance(ctx, deviceSoftwareCompliance)
+
+		k.SetDeviceSoftwareCompliance(ctx, &deviceSoftwareCompliance)
 
 		// If we don't have compliance info in Device Software Compliance - we should delete this Device Software Compliance
 		if len(deviceSoftwareCompliance.ComplianceInfo) == 0 {
@@ -99,7 +100,8 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 			CertificationType: msg.CertificationType,
 			Value:             false,
 		}
-		k.SetCertifiedModel(ctx, certifiedModel)
+		k.SetCertifiedModel(ctx, &certifiedModel)
+
 		provisionalModel := types.ProvisionalModel{
 			Vid:               msg.Vid,
 			Pid:               msg.Pid,
@@ -107,7 +109,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 			CertificationType: msg.CertificationType,
 			Value:             false,
 		}
-		k.SetProvisionalModel(ctx, provisionalModel)
+		k.SetProvisionalModel(ctx, &provisionalModel)
 	} else {
 		// There is no compliance record yet. So only revocation will be tracked on ledger.
 
@@ -123,12 +125,11 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 			SoftwareVersionCertificationStatus: types.CodeRevoked,
 			History:                            []*types.ComplianceHistoryItem{},
 			CDVersionNumber:                    msg.CDVersionNumber,
-			SchemaVersion:                      msg.SchemaVersion,
 		}
 	}
 
-	// store compliance info
-	k.SetComplianceInfo(ctx, complianceInfo)
+	// store compliance info — Set* stamps the current schema version internally.
+	k.SetComplianceInfo(ctx, &complianceInfo)
 
 	// update revoked index
 	revokedModel := types.RevokedModel{
@@ -138,7 +139,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 		CertificationType: msg.CertificationType,
 		Value:             true,
 	}
-	k.SetRevokedModel(ctx, revokedModel)
+	k.SetRevokedModel(ctx, &revokedModel)
 
 	return &types.MsgRevokeModelResponse{}, nil
 }

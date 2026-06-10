@@ -101,11 +101,11 @@ func (k msgServer) checkRootCert(ctx sdk.Context, crlSignerCertificate *x509.Cer
 		return pkitypes.NewErrRootCertificateDoesNotExist(crlSignerCertificate.Subject, crlSignerCertificate.SubjectKeyID)
 	}
 
-	// check that it has the same PEM value
+	// check that it has the same PEM value (compare DER bytes, ignoring whitespace/headers)
 	var foundRootCert *types.Certificate
-	for _, approvedCertificate := range approvedCertificates.Certs {
-		if x509.RemoveWhitespaces(approvedCertificate.PemCert) == x509.RemoveWhitespaces(msg.CrlSignerCertificate) {
-			foundRootCert = approvedCertificate
+	for _, cert := range approvedCertificates.Certs {
+		if x509.CertificatePEMsEqual(cert.PemCert, msg.CrlSignerCertificate) {
+			foundRootCert = cert
 
 			break
 		}

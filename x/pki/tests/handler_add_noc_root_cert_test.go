@@ -222,6 +222,15 @@ func TestHandler_AddNocRootCert_InvalidCertificate(t *testing.T) {
 			err:         pkitypes.ErrRootCertificateIsNotSelfSigned,
 		},
 		{
+			// Leaf cert is BasicConstraintsValid=true but IsCA=false; VerifyIsCACertificate
+			// must reject it before the self-signed check runs.
+			name:        "NonCACertificate",
+			accountVid:  testconstants.Vid,
+			accountRole: dclauthtypes.Vendor,
+			nocRoorCert: testconstants.LeafCertPem,
+			err:         pkitypes.ErrInappropriateCertificateType,
+		},
+		{
 			name:        "ExpiredCertificate",
 			accountVid:  testconstants.Vid,
 			accountRole: dclauthtypes.Vendor,

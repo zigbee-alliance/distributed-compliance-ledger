@@ -27,20 +27,21 @@ message MsgCertifyModel {
   uint32 cDVersionNumber = 6  [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
   string certificationDate = 7 [(gogoproto.moretags) = "validate:\"required\""];
   string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=20\""];
-  string reason = 9 [(gogoproto.moretags) = "validate:\"max=102400\""];
+  string reason = 9 [(gogoproto.moretags) = "validate:\"max=20480\""];
   string programTypeVersion = 10 [(gogoproto.moretags) = "validate:\"max=64\""];
   string cDCertificateId = 11 [(gogoproto.moretags) = "validate:\"required,min=19,max=19\""];
   string familyId = 12 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string supportedClusters = 13 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string compliantPlatformUsed = 14 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string compliantPlatformVersion = 15 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string OSVersion = 16 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string supportedClusters = 13 [(gogoproto.moretags) = "validate:\"max=256\""];
+  string compliantPlatformUsed = 14 [(gogoproto.moretags) = "validate:\"max=64\"", deprecated = true];
+  string compliantPlatformVersion = 15 [(gogoproto.moretags) = "validate:\"max=64\"", deprecated = true];
+  string OSVersion = 16 [(gogoproto.moretags) = "validate:\"max=64\"", deprecated = true];
   string certificationRoute = 17 [(gogoproto.moretags) = "validate:\"max=64\""];
   string programType = 18 [(gogoproto.moretags) = "validate:\"max=64\""];
   string transport = 19 [(gogoproto.moretags) = "validate:\"max=64\""];
   string parentChild = 20 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string certificationIdOfSoftwareComponent = 21 [(gogoproto.moretags) = "validate:\"max=64\""];
-  uint32 schemaVersion = 22 [(gogoproto.moretags) = "validate:\"eq=0\""];
+  string certificationIdOfSoftwareComponent = 21 [(gogoproto.moretags) = "validate:\"max=64\"", deprecated = true];
+  uint32 schemaVersion = 22 [(gogoproto.moretags) = "validate:\"eq=1\""];
+  uint32 specificationVersion = 23 [(gogoproto.moretags) = "validate:\"required\""];
 }
 
 message MsgCertifyModelResponse {
@@ -52,11 +53,11 @@ message MsgRevokeModel {
   int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
   uint32 softwareVersion = 4;
   string softwareVersionString = 5 [(gogoproto.moretags) = "validate:\"required,max=64\""];
-  uint32 cDVersionNumber = 6  [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];  
+  uint32 cDVersionNumber = 6  [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
   string revocationDate = 7 [(gogoproto.moretags) = "validate:\"required\""];
   string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=20\""];
-  string reason = 9 [(gogoproto.moretags) = "validate:\"max=102400\""];
-  uint32 schemaVersion = 10 [(gogoproto.moretags) = "validate:\"eq=0\""];
+  string reason = 9 [(gogoproto.moretags) = "validate:\"max=20480\""];
+  uint32 schemaVersion = 10 [(gogoproto.moretags) = "validate:\"eq=1\""];
 }
 
 message MsgRevokeModelResponse {
@@ -71,20 +72,21 @@ message MsgProvisionModel {
   uint32 cDVersionNumber = 6 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
   string provisionalDate = 7 [(gogoproto.moretags) = "validate:\"required\""];
   string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=20\""];
-  string reason = 9 [(gogoproto.moretags) = "validate:\"max=102400\""];
+  string reason = 9 [(gogoproto.moretags) = "validate:\"max=20480\""];
   string programTypeVersion = 10 [(gogoproto.moretags) = "validate:\"max=64\""];
   string cDCertificateId = 11 [(gogoproto.moretags) = "validate:\"required,min=19,max=19\""];
   string familyId = 12 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string supportedClusters = 13 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string compliantPlatformUsed = 14 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string compliantPlatformVersion = 15 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string OSVersion = 16 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string supportedClusters = 13 [(gogoproto.moretags) = "validate:\"max=256\""];
+  string compliantPlatformUsed = 14 [(gogoproto.moretags) = "validate:\"max=64\"", deprecated = true];
+  string compliantPlatformVersion = 15 [(gogoproto.moretags) = "validate:\"max=64\"", deprecated = true];
+  string OSVersion = 16 [(gogoproto.moretags) = "validate:\"max=64\"", deprecated = true];
   string certificationRoute = 17 [(gogoproto.moretags) = "validate:\"max=64\""];
   string programType = 18 [(gogoproto.moretags) = "validate:\"max=64\""];
   string transport = 19 [(gogoproto.moretags) = "validate:\"max=64\""];
   string parentChild = 20 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string certificationIdOfSoftwareComponent = 21 [(gogoproto.moretags) = "validate:\"max=64\""];
-  uint32 schemaVersion = 22 [(gogoproto.moretags) = "validate:\"eq=0\""];
+  string certificationIdOfSoftwareComponent = 21 [(gogoproto.moretags) = "validate:\"max=64\"", deprecated = true];
+  uint32 schemaVersion = 22 [(gogoproto.moretags) = "validate:\"eq=1\""];
+  uint32 specificationVersion = 23 [(gogoproto.moretags) = "validate:\"required\""];
 }
 
 message MsgProvisionModelResponse {
@@ -98,21 +100,22 @@ message MsgUpdateComplianceInfo {
   string certificationType = 5 [(gogoproto.moretags) = "validate:\"required,max=20\""];
   string cDVersionNumber = 6 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string date = 7;
-  string reason = 8 [(gogoproto.moretags) = "validate:\"omitempty,max=102400\""];
+  string reason = 8 [(gogoproto.moretags) = "validate:\"omitempty,max=20480\""];
   string owner = 9 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   string cDCertificateId = 10 [(gogoproto.moretags) = "validate:\"omitempty,max=19\""];
   string certificationRoute = 11 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string programType = 12 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string programTypeVersion = 13 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
-  string compliantPlatformUsed = 14 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
-  string compliantPlatformVersion = 15 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
+  string compliantPlatformUsed = 14 [(gogoproto.moretags) = "validate:\"omitempty,max=64\"", deprecated = true];
+  string compliantPlatformVersion = 15 [(gogoproto.moretags) = "validate:\"omitempty,max=64\"", deprecated = true];
   string transport = 16 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
   string familyId = 17 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
-  string supportedClusters = 18 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
-  string OSVersion = 19 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
+  string supportedClusters = 18 [(gogoproto.moretags) = "validate:\"omitempty,max=256\""];
+  string OSVersion = 19 [(gogoproto.moretags) = "validate:\"omitempty,max=64\"", deprecated = true];
   string parentChild = 20 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
-  string certificationIdOfSoftwareComponent = 21 [(gogoproto.moretags) = "validate:\"omitempty,max=64\""];
-  uint32 schemaVersion = 22 [(gogoproto.moretags) = "validate:\"eq=0\""];
+  string certificationIdOfSoftwareComponent = 21 [(gogoproto.moretags) = "validate:\"omitempty,max=64\"", deprecated = true];
+  uint32 schemaVersion = 22 [(gogoproto.moretags) = "validate:\"eq=1\""];
+  uint32 specificationVersion = 23;
 }
 
 message MsgUpdateComplianceInfoResponse {

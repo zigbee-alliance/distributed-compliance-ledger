@@ -59,22 +59,15 @@ func CmdRevokeModel() *cobra.Command {
 			return err
 		},
 	}
-	cmd.Flags().Int32Var(&vid, FlagVID, 0,
-		"Model vendor ID (positive non-zero uint16)")
-	cmd.Flags().Int32Var(&pid, FlagPID, 0,
-		"Model product ID (positive non-zero uint16)")
-	cmd.Flags().Uint32VarP(&softwareVersion, FlagSoftwareVersion, FlagSoftwareVersionShortcut, 0,
-		"Software Version of model (uint32)")
-	cmd.Flags().StringVar(&softwareVersionString, FlagSoftwareVersionString, "",
-		"Software Version String of model")
-	cmd.Flags().Uint32Var(&cdVersionNumber, FlagCDVersionNumber, 0,
-		"CD Version Number of the certification")
+	cmd.Flags().Int32Var(&vid, FlagVID, 0, TextVID)
+	cmd.Flags().Int32Var(&pid, FlagPID, 0, TextPID)
+	cmd.Flags().Uint32VarP(&softwareVersion, FlagSoftwareVersion, FlagSoftwareVersionShortcut, 0, TextSoftwareVersion)
+	cmd.Flags().StringVar(&softwareVersionString, FlagSoftwareVersionString, "", TextSoftwareVersionString)
+	cmd.Flags().Uint32Var(&cdVersionNumber, FlagCDVersionNumber, 0, TextCDVersionNumber)
 	cmd.Flags().StringVarP(&certificationType, FlagCertificationType, FlagCertificationTypeShortcut, "", TextCertificationType)
-	cmd.Flags().StringVarP(&revocationDate, FlagRevocationDate, FlagDateShortcut, "",
-		"The date of model revocation (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z")
-	cmd.Flags().StringVar(&reason, FlagReason, "",
-		"Optional comment describing the reason of revocation")
-	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
+	cmd.Flags().StringVarP(&revocationDate, FlagRevocationDate, FlagDateShortcut, "", TextRevocationDate)
+	cmd.Flags().StringVar(&reason, FlagReason, "", TextRevocationReason)
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, types.ComplianceInfoSchemaVersion, TextSchemaVersion)
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)

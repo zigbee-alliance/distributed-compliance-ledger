@@ -3,13 +3,18 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	commontypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
 // SetDeviceSoftwareCompliance set a specific deviceSoftwareCompliance in the store from its index.
-func (k Keeper) SetDeviceSoftwareCompliance(ctx sdk.Context, deviceSoftwareCompliance types.DeviceSoftwareCompliance) {
+// The schema version is stamped to the current value unless any guard returns false.
+func (k Keeper) SetDeviceSoftwareCompliance(ctx sdk.Context, deviceSoftwareCompliance *types.DeviceSoftwareCompliance, guards ...commontypes.SchemaVersionGuard) {
+	// Bump schema version if guards passed
+	commontypes.SetCurrentSchemaVersion(deviceSoftwareCompliance, guards...)
+
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DeviceSoftwareComplianceKeyPrefix))
-	b := k.cdc.MustMarshal(&deviceSoftwareCompliance)
+	b := k.cdc.MustMarshal(deviceSoftwareCompliance)
 	store.Set(types.DeviceSoftwareComplianceKey(
 		deviceSoftwareCompliance.CDCertificateId,
 	), b)

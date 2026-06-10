@@ -15,6 +15,7 @@
 package x509
 
 import (
+	"bytes"
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/hex"
@@ -24,7 +25,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"unicode"
 
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 )
@@ -48,6 +48,49 @@ const (
 )
 
 type DecodeX509CertVerificationOptions func(cert *x509.Certificate) error
+
+// ParseAndValidateCertificateOptions is an option applied by ParseAndValidateCertificate
+// after the standard size/SAN/subject-field checks pass. Options receive the parsed
+// *x509.Certificate and may return an error to reject the certificate.
+type ParseAndValidateCertificateOptions = DecodeX509CertVerificationOptions
+
+// VerifyIsCACertificate is a ParseAndValidateCertificate option that fails if the
+// certificate does not have BasicConstraints marked valid with cA set to TRUE.
+// Pass it for CA-only roles: DA root (PAA), DA intermediate (PAI), and NOC root
+// (RCAC). Do NOT pass it for end-entity certificates — Matter R1.5 §6.2.2.3
+// requires DAC with cA=FALSE and §6.5.12 requires NOC with is-ca=false — nor
+// for the NOC ICA handler, which currently accepts both ICACs and NOCs.
+func VerifyIsCACertificate(cert *x509.Certificate) error {
+	if !cert.BasicConstraintsValid || !cert.IsCA {
+		return pkitypes.NewErrInappropriateCertificateType(
+			"certificate is not a CA: BasicConstraints extension must be present and cA must be set to TRUE",
+		)
+	}
+
+	return nil
+}
+
+// VerifyBasicConstraintsPresent is a ParseAndValidateCertificate option that fails
+// if the certificate does not encode the BasicConstraints extension at all.
+// It does NOT dictate the value of the cA flag, so it accepts both is-ca=true
+// (ICAC) and is-ca=false (NOC, DAC, CRL signer).
+//
+// Pass it on paths that take leaf certificates or paths that take both CAs and
+// leaves — Matter R1.5 §6.2.2.3 (DAC) and §6.5.12 (NOC) both require the
+// BasicConstraints extension to be encoded. The NOC-ICA handler accepts both
+// ICACs and NOCs, so a "BC encoded" check is the right gate there
+//
+// crypto/x509 sets BasicConstraintsValid = true if and only if the BC extension
+// was found and parsed.
+func VerifyBasicConstraintsPresent(cert *x509.Certificate) error {
+	if !cert.BasicConstraintsValid {
+		return pkitypes.NewErrInappropriateCertificateType(
+			"BasicConstraints extension SHALL be present",
+		)
+	}
+
+	return nil
+}
 
 func DecodeX509Certificate(pemCertificate string, options ...DecodeX509CertVerificationOptions) (*Certificate, error) {
 	block, _ := pem.Decode([]byte(pemCertificate))
@@ -179,16 +222,17 @@ func BytesToHex(bytes []byte) string {
 	return strings.Join(bytesHex, ":")
 }
 
-func RemoveWhitespaces(pem string) string {
-	var builder strings.Builder
-
-	for _, r := range pem {
-		if !unicode.IsSpace(r) {
-			builder.WriteRune(r)
-		}
+// CertificatePEMsEqual reports whether two PEM-encoded certificates contain the
+// same DER bytes. It tolerates differences in whitespace, line wrapping, and PEM
+// block headers, which are not part of the certificate itself.
+func CertificatePEMsEqual(a, b string) bool {
+	blockA, _ := pem.Decode([]byte(a))
+	blockB, _ := pem.Decode([]byte(b))
+	if blockA == nil || blockB == nil {
+		return false
 	}
 
-	return builder.String()
+	return bytes.Equal(blockA.Bytes, blockB.Bytes)
 }
 
 func (c Certificate) Verify(parent *Certificate, blockTime time.Time) error {
@@ -220,11 +264,12 @@ func (c Certificate) IsSelfSigned() bool {
 //
 // Parameters:
 //   - pemCertificate: PEM-encoded X.509 certificate string
+//   - options: optional checks applied to the parsed certificate, e.g. VerifyIsCACertificate
 //
 // Returns:
 //   - *Certificate: Parsed certificate structure if validation succeeds
 //   - error: Error if validation fails or certificate cannot be parsed
-func ParseAndValidateCertificate(pemCertificate string) (*Certificate, error) {
+func ParseAndValidateCertificate(pemCertificate string, options ...ParseAndValidateCertificateOptions) (*Certificate, error) {
 	// 1. Check Certificate Size
 	if len(pemCertificate) > MaxCertSize {
 		return nil, pkitypes.NewErrInvalidCertificate(fmt.Sprintf("certificate size (%d bytes) exceeds maximum limit of %d bytes", len(pemCertificate), MaxCertSize))
@@ -262,6 +307,13 @@ func ParseAndValidateCertificate(pemCertificate string) (*Certificate, error) {
 	subjectFieldCount := len(cert.Certificate.Subject.Names)
 	if subjectFieldCount > MaxSubjectFields {
 		return nil, pkitypes.NewErrInvalidCertificate(fmt.Sprintf("subject field count (%d) exceeds maximum limit of %d", subjectFieldCount, MaxSubjectFields))
+	}
+
+	// 4. Apply caller-supplied options (e.g. VerifyIsCACertificate)
+	for _, opt := range options {
+		if err = opt(cert.Certificate); err != nil {
+			return nil, err
+		}
 	}
 
 	return cert, nil

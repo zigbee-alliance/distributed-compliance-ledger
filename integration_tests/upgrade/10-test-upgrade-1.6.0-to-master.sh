@@ -19,7 +19,7 @@ source integration_tests/cli/common.sh
 # Upgrade constants
 
 # TODO it must be v1.6 before actual 1.6 release
-DCLD_BIN_OLD="/tmp/dcld_bins/dcld_v1.6.0-0.dev.2"
+DCLD_BIN_OLD="/tmp/dcld_bins/dcld_v1.6.0-0.dev.3"
 DCLD_BIN_NEW="/tmp/dcld_bins/dcld_master"
 DCL_DIR="/var/lib/dcl/.dcl"
 
@@ -501,6 +501,7 @@ product_label_for_master="ProductLabel_master"
 part_number_for_master="ZCU2245M"
 software_version_for_master=4
 software_version_string_for_master="5.3"
+specification_version=1
 cd_version_number_for_master=743
 min_applicable_software_version_for_master=4
 max_applicable_software_version_for_master=4000
@@ -640,21 +641,21 @@ test_divider
 # CERTIFY_DEVICE_COMPLIANCE
 
 echo "Certify model vid=$vid_for_master pid=$pid_1_for_master"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance certify-model --vid=$vid_for_master --pid=$pid_1_for_master --softwareVersion=$software_version_for_master --softwareVersionString=$software_version_string_for_master  --certificationType=$certification_type_for_master --certificationDate=$certification_date_for_master --cdCertificateId=$cd_certificate_id_for_master --from=$certification_center_account --cdVersionNumber=$cd_version_number_for_master --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance certify-model --vid=$vid_for_master --pid=$pid_1_for_master --softwareVersion=$software_version_for_master --specificationVersion=$specification_version --softwareVersionString=$software_version_string_for_master  --certificationType=$certification_type_for_master --certificationDate=$certification_date_for_master --cdCertificateId=$cd_certificate_id_for_master --from=$certification_center_account --cdVersionNumber=$cd_version_number_for_master --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Provision model vid=$vid_for_master pid=$pid_2_for_master"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance provision-model --vid=$vid_for_master --pid=$pid_2_for_master --softwareVersion=$software_version_for_master --softwareVersionString=$software_version_string_for_master --certificationType=$certification_type_for_master --provisionalDate=$provisional_date_for_master --cdCertificateId=$cd_certificate_id_for_master --from=$certification_center_account --cdVersionNumber=$cd_version_number_for_master --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance provision-model --vid=$vid_for_master --pid=$pid_2_for_master --softwareVersion=$software_version_for_master --specificationVersion=$specification_version --softwareVersionString=$software_version_string_for_master --certificationType=$certification_type_for_master --provisionalDate=$provisional_date_for_master --cdCertificateId=$cd_certificate_id_for_master --from=$certification_center_account --cdVersionNumber=$cd_version_number_for_master --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 test_divider
 
 echo "Certify model vid=$vid_for_master pid=$pid_2_for_master"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance certify-model --vid=$vid_for_master --pid=$pid_2_for_master --softwareVersion=$software_version_for_master --softwareVersionString=$software_version_string_for_master  --certificationType=$certification_type_for_master --certificationDate=$certification_date_for_master --cdCertificateId=$cd_certificate_id_for_master --from=$certification_center_account --cdVersionNumber=$cd_version_number_for_master  --yes)
+result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance certify-model --vid=$vid_for_master --pid=$pid_2_for_master --softwareVersion=$software_version_for_master  --specificationVersion=$specification_version --softwareVersionString=$software_version_string_for_master  --certificationType=$certification_type_for_master --certificationDate=$certification_date_for_master --cdCertificateId=$cd_certificate_id_for_master --from=$certification_center_account --cdVersionNumber=$cd_version_number_for_master  --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 

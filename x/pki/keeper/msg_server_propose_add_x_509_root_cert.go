@@ -28,10 +28,10 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 		)
 	}
 
-	// decode pem certificate
-	x509Certificate, err := x509.ParseAndValidateCertificate(msg.Cert)
+	// decode pem certificate (must be a CA: root certificate)
+	x509Certificate, err := x509.ParseAndValidateCertificate(msg.Cert, x509.VerifyIsCACertificate)
 	if err != nil {
-		return nil, pkitypes.NewErrInvalidCertificate(err)
+		return nil, err
 	}
 
 	subjectVid, err := x509.GetVidFromSubject(x509Certificate.SubjectAsText)
