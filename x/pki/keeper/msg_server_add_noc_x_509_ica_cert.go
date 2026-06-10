@@ -35,6 +35,7 @@ func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNoc
 		x509.VerifyVersionV3,
 		x509.VerifyECDSAP256SHA256,
 		x509.VerifyNOCChainNonRoot,
+		x509.VerifyAtMostOneVIDAndPID,
 	)
 	if err != nil {
 		return nil, err

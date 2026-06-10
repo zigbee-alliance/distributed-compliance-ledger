@@ -168,13 +168,15 @@ func Test_FormatVID(t *testing.T) {
 	}
 
 	for _, tt := range positiveTests {
-		result := FormatOID(tt.header, tt.oldKey, tt.newKey)
-		require.Equal(t, result, tt.result)
+		result, err := FormatOID(tt.header, tt.oldKey, tt.newKey)
+		require.NoError(t, err)
+		require.Equal(t, tt.result, result)
 	}
 
 	for _, tt := range negativeTests {
-		result := FormatOID(tt.header, tt.oldKey, tt.newKey)
-		require.Equal(t, result, tt.result)
+		result, err := FormatOID(tt.header, tt.oldKey, tt.newKey)
+		require.NoError(t, err)
+		require.Equal(t, tt.result, result)
 	}
 }
 
@@ -205,29 +207,114 @@ func Test_FormatPID(t *testing.T) {
 		},
 	}
 
-	negativeTests := []struct {
+	// "Unchanged" cases — oldKey does not match any entry, so FormatOID
+	// returns the header verbatim with no error. These cover legitimate input
+	// where the rewrite is simply not applicable.
+	unchangedTests := []struct {
 		header string
 		oldKey string
 		newKey string
 		result string
 	}{
-		// set incorrect oldKey
+		// Different OID under the same prefix tree.
 		{
 			header: "CN=Matter PAA 1,O=Google,C=US,1.3.6.1.4.1.37244.2.1=#130436303036",
 			oldKey: "1.3.6.1.4.1.37244.2.2",
 			newKey: "vid",
 			result: "CN=Matter PAA 1,O=Google,C=US,1.3.6.1.4.1.37244.2.1=#130436303036",
 		},
+		// Prefix-only match must NOT trigger rewriting: the OID
+		// 1.3.6.1.4.1.37244.2.10 (hypothetical) shares a textual prefix with
+		// 1.3.6.1.4.1.37244.2.1 but is a different attribute.
+		{
+			header: "CN=X,1.3.6.1.4.1.37244.2.10=#130436303036",
+			oldKey: "1.3.6.1.4.1.37244.2.1",
+			newKey: "vid",
+			result: "CN=X,1.3.6.1.4.1.37244.2.10=#130436303036",
+		},
+	}
+
+	// "Decoded" cases — oldKey matches and the value is well-formed but uses
+	// encodings the original FormatOID was brittle about.
+	decodedTests := []struct {
+		header string
+		oldKey string
+		newKey string
+		result string
+	}{
+		// UTF8String-tagged values (tag 0x0c) must be decoded too.
+		{
+			header: "CN=X,1.3.6.1.4.1.37244.2.2=#0c0438303030",
+			oldKey: "1.3.6.1.4.1.37244.2.2",
+			newKey: "pid",
+			result: "CN=X,pid=0x8000",
+		},
+		// 6-byte value — the hardened parser uses the DER length byte, not a
+		// hardcoded 8-hex-char slice.
+		{
+			header: "CN=X,1.3.6.1.4.1.37244.2.2=#1306414243444546",
+			oldKey: "1.3.6.1.4.1.37244.2.2",
+			newKey: "pid",
+			result: "CN=X,pid=0xABCDEF",
+		},
+	}
+
+	// "Error" cases — oldKey matches BUT the value is malformed. FormatOID
+	// must refuse to project these into the readable form: silently keeping
+	// the raw OID entry would make GetVidFromSubject / GetPidFromSubject
+	// return 0 and bypass every VID/PID-based check.
+	errorTests := []struct {
+		header       string
+		oldKey       string
+		newKey       string
+		expectSubstr string
+	}{
+		// Unknown tag (e.g. OCTET STRING 0x04).
+		{
+			header:       "CN=X,1.3.6.1.4.1.37244.2.2=#040436303036",
+			oldKey:       "1.3.6.1.4.1.37244.2.2",
+			newKey:       "pid",
+			expectSubstr: "PrintableString or UTF8String",
+		},
+		// Truncated DER: length byte says 4 but only 1 byte follows.
+		{
+			header:       "CN=X,1.3.6.1.4.1.37244.2.2=#130436",
+			oldKey:       "1.3.6.1.4.1.37244.2.2",
+			newKey:       "pid",
+			expectSubstr: "DER length",
+		},
+		// Non-hex content after `#`.
+		{
+			header:       "CN=X,1.3.6.1.4.1.37244.2.2=#13ZZZZZZ",
+			oldKey:       "1.3.6.1.4.1.37244.2.2",
+			newKey:       "pid",
+			expectSubstr: "not valid hex",
+		},
 	}
 
 	for _, tt := range positiveTests {
-		result := FormatOID(tt.header, tt.oldKey, tt.newKey)
-		require.Equal(t, result, tt.result)
+		result, err := FormatOID(tt.header, tt.oldKey, tt.newKey)
+		require.NoError(t, err)
+		require.Equal(t, tt.result, result)
 	}
 
-	for _, tt := range negativeTests {
-		result := FormatOID(tt.header, tt.oldKey, tt.newKey)
-		require.Equal(t, result, tt.result)
+	for _, tt := range unchangedTests {
+		result, err := FormatOID(tt.header, tt.oldKey, tt.newKey)
+		require.NoError(t, err)
+		require.Equal(t, tt.result, result)
+	}
+
+	for _, tt := range decodedTests {
+		result, err := FormatOID(tt.header, tt.oldKey, tt.newKey)
+		require.NoError(t, err)
+		require.Equal(t, tt.result, result)
+	}
+
+	for _, tt := range errorTests {
+		result, err := FormatOID(tt.header, tt.oldKey, tt.newKey)
+		require.Error(t, err)
+		require.Empty(t, result)
+		require.Contains(t, err.Error(), tt.expectSubstr)
 	}
 }
 
@@ -900,6 +987,58 @@ func Test_VerifyVersionV3(t *testing.T) {
 		require.Error(t, err)
 		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
 		require.Contains(t, err.Error(), "v3")
+	})
+}
+
+func Test_VerifyAtMostOneVIDAndPID(t *testing.T) {
+	t.Run("ok/cert with one VID + one PID", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.PAICertWithNumericPidVid, VerifyAtMostOneVIDAndPID)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("ok/cert with no VID and no PID", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.RootCertPem, VerifyAtMostOneVIDAndPID)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("reject/duplicate VID in subject", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.PAACertWithNumericVid)
+		require.NoError(t, err)
+		// Duplicate the matter-vid attribute that's already in the subject.
+		var vid pkix.AttributeTypeAndValue
+		for _, n := range cert.Certificate.Subject.Names {
+			if n.Type.String() == "1.3.6.1.4.1.37244.2.1" {
+				vid = n
+				break
+			}
+		}
+		require.NotZero(t, vid.Type, "fixture must already carry a matter-vid")
+		cert.Certificate.Subject.Names = append(cert.Certificate.Subject.Names, vid)
+		err = VerifyAtMostOneVIDAndPID(cert.Certificate)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+		require.Contains(t, err.Error(), "subject SHALL contain at most one matter-vid")
+	})
+
+	t.Run("reject/duplicate PID in issuer", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.PAICertWithNumericPidVid)
+		require.NoError(t, err)
+		cert.Certificate.Issuer.Names = append(cert.Certificate.Issuer.Names,
+			pkix.AttributeTypeAndValue{
+				Type:  asn1.ObjectIdentifier{1, 3, 6, 1, 4, 1, 37244, 2, 2},
+				Value: "8000",
+			},
+			pkix.AttributeTypeAndValue{
+				Type:  asn1.ObjectIdentifier{1, 3, 6, 1, 4, 1, 37244, 2, 2},
+				Value: "8001",
+			},
+		)
+		err = VerifyAtMostOneVIDAndPID(cert.Certificate)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+		require.Contains(t, err.Error(), "issuer SHALL contain at most one matter-pid")
 	})
 }
 

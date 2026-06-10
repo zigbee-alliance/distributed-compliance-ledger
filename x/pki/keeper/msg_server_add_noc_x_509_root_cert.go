@@ -33,6 +33,7 @@ func (k msgServer) AddNocX509RootCert(goCtx context.Context, msg *types.MsgAddNo
 		x509.VerifyECDSAP256SHA256,
 		x509.VerifyCAExtensions,
 		x509.VerifyNoEKU,
+		x509.VerifyAtMostOneVIDAndPID,
 	)
 	if err != nil {
 		return nil, err

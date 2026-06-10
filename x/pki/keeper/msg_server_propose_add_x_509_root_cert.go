@@ -38,6 +38,7 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 		x509.VerifyECDSAP256SHA256,
 		x509.VerifyCAExtensions,
 		x509.VerifyNoPIDInSubject,
+		x509.VerifyAtMostOneVIDAndPID,
 	)
 	if err != nil {
 		return nil, err

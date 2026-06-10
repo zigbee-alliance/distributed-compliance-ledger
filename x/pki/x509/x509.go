@@ -19,6 +19,7 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/x509"
+	"crypto/x509/pkix"
 	"encoding/asn1"
 	"encoding/base64"
 	"encoding/hex"
@@ -351,10 +352,13 @@ func VerifyVersionV3(cert *x509.Certificate) error {
 // VerifyNoPIDInSubject is a ParseAndValidateCertificate option that asserts the
 // certificate's subject does not contain a Matter ProductID attribute. Matter
 // R1.5 §6.2.2.5 rule 8 prohibits a ProductID in the PAA's subject (and
-// equivalently issuer, since PAAs are self-signed). Wired into the PAA add
-// handler; the same logic was already enforced on the CRL revocation path.
+// equivalently issuer, since PAAs are self-signed).
 func VerifyNoPIDInSubject(cert *x509.Certificate) error {
-	pid, err := GetPidFromSubject(ToSubjectAsText(cert.Subject.String()))
+	subjectAsText, err := ToSubjectAsText(cert.Subject.String())
+	if err != nil {
+		return pkitypes.NewErrInvalidCertificate(err)
+	}
+	pid, err := GetPidFromSubject(subjectAsText)
 	if err != nil {
 		return pkitypes.NewErrInvalidPidFormat(err)
 	}
@@ -378,6 +382,57 @@ func VerifyNoEKU(cert *x509.Certificate) error {
 				"ExtendedKeyUsage extension SHALL NOT be present on RCAC/ICAC certificates",
 			)
 		}
+	}
+
+	return nil
+}
+
+// Matter OID strings used by the at-most-one-VID/PID walker. Kept as strings
+// (matching asn1.ObjectIdentifier.String() output) so we don't need to allocate
+// an asn1.ObjectIdentifier on every comparison.
+const (
+	matterVIDOIDString = "1.3.6.1.4.1.37244.2.1"
+	matterPIDOIDString = "1.3.6.1.4.1.37244.2.2"
+)
+
+// VerifyAtMostOneVIDAndPID is a ParseAndValidateCertificate option that asserts
+// the certificate's subject and issuer each contain AT MOST one matter-vid
+// (1.3.6.1.4.1.37244.2.1) and AT MOST one matter-pid (1.3.6.1.4.1.37244.2.2)
+// attribute. Implements Matter R1.5 §6.2.2.3 rules 4/5 (DAC), §6.2.2.4 rules
+// 4/8 (PAI), and §6.2.2.5 rules 4/6 (PAA).
+//
+// The stricter "exactly 1 VendorID" rule (§6.2.2.3 rule 4 for DAC issuer,
+// §6.2.2.4 for PAI subject) is not asserted here — enforcing it would require
+// regenerating the long-lived DA-chain fixtures that currently encode no VID
+// (LeafCertPem, IntermediateCertPem, IntermediateCertWithoutVidPid). That gap
+// is tracked separately as part of the Matter-DN parsing remediation.
+func VerifyAtMostOneVIDAndPID(cert *x509.Certificate) error {
+	if err := matterAttrAtMostOne(cert.Subject.Names, "subject"); err != nil {
+		return err
+	}
+
+	return matterAttrAtMostOne(cert.Issuer.Names, "issuer")
+}
+
+func matterAttrAtMostOne(names []pkix.AttributeTypeAndValue, field string) error {
+	vidCount, pidCount := 0, 0
+	for _, n := range names {
+		switch n.Type.String() {
+		case matterVIDOIDString:
+			vidCount++
+		case matterPIDOIDString:
+			pidCount++
+		}
+	}
+	if vidCount > 1 {
+		return pkitypes.NewErrInvalidCertificate(
+			fmt.Sprintf("%s SHALL contain at most one matter-vid attribute, found %d", field, vidCount),
+		)
+	}
+	if pidCount > 1 {
+		return pkitypes.NewErrInvalidCertificate(
+			fmt.Sprintf("%s SHALL contain at most one matter-pid attribute, found %d", field, pidCount),
+		)
 	}
 
 	return nil
@@ -507,11 +562,16 @@ func DecodeX509Certificate(pemCertificate string, options ...DecodeX509CertVerif
 		}
 	}
 
+	subjectAsText, err := ToSubjectAsText(cert.Subject.String())
+	if err != nil {
+		return nil, pkitypes.NewErrInvalidCertificate(err)
+	}
+
 	certificate := Certificate{
 		Issuer:         ToBase64String(cert.RawIssuer),
 		SerialNumber:   cert.SerialNumber.String(),
 		Subject:        ToBase64String(cert.RawSubject),
-		SubjectAsText:  ToSubjectAsText(cert.Subject.String()),
+		SubjectAsText:  subjectAsText,
 		SubjectKeyID:   BytesToHex(cert.SubjectKeyId),
 		AuthorityKeyID: BytesToHex(cert.AuthorityKeyId),
 		Certificate:    cert,
@@ -520,18 +580,26 @@ func DecodeX509Certificate(pemCertificate string, options ...DecodeX509CertVerif
 	return &certificate, nil
 }
 
-func ToSubjectAsText(subject string) string {
-	oldVIDKey := "1.3.6.1.4.1.37244.2.1"
-	oldPIDKey := "1.3.6.1.4.1.37244.2.2"
+// ToSubjectAsText projects crypto/x509 pkix.Name.String() output into the
+// canonical DCL form by rewriting Matter VID / PID OID entries to their
+// readable `vid=0x..` / `pid=0x..` shorthand. Returns an error if either
+// OID's DER-encoded value is malformed — silently accepting a malformed VID
+// or PID would make the downstream GetVidFromSubject / GetPidFromSubject
+// lookups return 0 and bypass every VID/PID-based check.
+func ToSubjectAsText(subject string) (string, error) {
+	const (
+		oldVIDKey = "1.3.6.1.4.1.37244.2.1"
+		oldPIDKey = "1.3.6.1.4.1.37244.2.2"
+		newVIDKey = "vid"
+		newPIDKey = "pid"
+	)
 
-	newVIDKey := "vid"
-	newPIDKey := "pid"
+	subjectAsText, err := FormatOID(subject, oldVIDKey, newVIDKey)
+	if err != nil {
+		return "", err
+	}
 
-	subjectAsText := subject
-	subjectAsText = FormatOID(subjectAsText, oldVIDKey, newVIDKey)
-	subjectAsText = FormatOID(subjectAsText, oldPIDKey, newPIDKey)
-
-	return subjectAsText
+	return FormatOID(subjectAsText, oldPIDKey, newPIDKey)
 }
 
 var (
@@ -580,26 +648,60 @@ func getIntValueFromSubject(subjectAsText string, key string) (int32, error) {
 	return 0, nil
 }
 
-// This function is needed to patch the Issuer/Subject(vid/pid) field of certificate to hex format.
+// FormatOID rewrites every comma-separated entry in `header` whose attribute
+// type is exactly `oldKey` into the form `<newKey>=0x<value>`, where `<value>`
+// is the printable ASCII content of the DER-encoded attribute value. Used to
+// translate Matter VID / PID OID entries (`1.3.6.1.4.1.37244.2.{1,2}`) into
+// the readable `vid=0x6006` / `pid=0x8000` form callers downstream consume.
 // https://github.com/zigbee-alliance/distributed-compliance-ledger/issues/270
-func FormatOID(header, oldKey, newKey string) string {
+//
+// The input format comes from crypto/x509's pkix.Name.String(), which emits
+// unknown OIDs as `<oid>=#<hexDER>`, where `<hexDER>` is the hex encoding of a
+// DER-encoded string. We decode the DER properly (tag + length + value) and
+// accept both PrintableString (0x13) and UTF8String (0x0c). Returns error when
+// `oldKey` matches an entry but its value is malformed (wrong tag, truncated, non-hex)
+//
+// Entries whose attribute type does not match `oldKey` are returned untouched.
+func FormatOID(header, oldKey, newKey string) (string, error) {
 	subjectValues := strings.Split(header, ",")
-
-	// When translating a string number into a hexadecimal number,
-	// we must take 8 numbers of this string number from the end so that it needs to fit into an integer number.
-	hexStringIntegerLength := 8
+	// Match `oldKey=` exactly so e.g. matter-vid (1.3.6.1.4.1.37244.2.1) does
+	// not also match a hypothetical 1.3.6.1.4.1.37244.2.10.
+	prefix := oldKey + "="
 	for index, value := range subjectValues {
-		if strings.HasPrefix(value, oldKey) {
-			// get value from header
-			value = value[len(value)-hexStringIntegerLength:]
-
-			decoded, _ := hex.DecodeString(value)
-
-			subjectValues[index] = fmt.Sprintf("%s=0x%s", newKey, decoded)
+		if !strings.HasPrefix(value, prefix) {
+			continue
 		}
+		encoded := value[len(prefix):]
+		// pkix.Name.String emits `#<hex>` only when the attribute value is not
+		// a recognized printable type. If we see anything else, the value is
+		// already in readable form — accept it as is.
+		if !strings.HasPrefix(encoded, "#") {
+			continue
+		}
+		derBytes, err := hex.DecodeString(encoded[1:])
+		if err != nil {
+			return "", fmt.Errorf("FormatOID: %s value is not valid hex: %w", oldKey, err)
+		}
+		if len(derBytes) < 2 {
+			return "", fmt.Errorf("FormatOID: %s value DER is too short (%d bytes)", oldKey, len(derBytes))
+		}
+		// Matter encodes matter-vid / matter-pid as PrintableString or
+		// UTF8String. Reject anything else: we cannot safely project a
+		// BMPString / BIT STRING / OCTET STRING into the `<newKey>=0x...` form
+		// callers expect.
+		tag := derBytes[0]
+		if tag != 0x13 && tag != 0x0c {
+			return "", fmt.Errorf("FormatOID: %s value SHALL be PrintableString or UTF8String, got DER tag 0x%02x", oldKey, tag)
+		}
+		length := int(derBytes[1])
+		if 2+length > len(derBytes) {
+			return "", fmt.Errorf("FormatOID: %s value DER length (%d) exceeds remaining bytes (%d)", oldKey, length, len(derBytes)-2)
+		}
+		printable := derBytes[2 : 2+length]
+		subjectValues[index] = fmt.Sprintf("%s=0x%s", newKey, printable)
 	}
 
-	return strings.Join(subjectValues, ",")
+	return strings.Join(subjectValues, ","), nil
 }
 
 func ToBase64String(subject []byte) string {

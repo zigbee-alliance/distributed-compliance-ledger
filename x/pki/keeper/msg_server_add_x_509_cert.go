@@ -34,6 +34,7 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 		x509.VerifyVersionV3,
 		x509.VerifyECDSAP256SHA256,
 		x509.VerifyDAChainNonRoot,
+		x509.VerifyAtMostOneVIDAndPID,
 	)
 	if err != nil {
 		return nil, err
@@ -152,7 +153,15 @@ func (k msgServer) verifyImmediateIssuerVidPid(ctx sdk.Context, childCert *x509.
 	}
 	parent := parents.Certs[0]
 
-	return x509.VerifyVidPidConsistency(childCert.SubjectAsText, x509.ToSubjectAsText(parent.SubjectAsText))
+	// Stored SubjectAsText is already in the readable `vid=0x..` form, so this
+	// re-projection is a no-op in practice — but propagate any error in case
+	// the row was written before FormatOID started validating its input.
+	parentSubjectAsText, err := x509.ToSubjectAsText(parent.SubjectAsText)
+	if err != nil {
+		return pkitypes.NewErrInvalidCertificate(err)
+	}
+
+	return x509.VerifyVidPidConsistency(childCert.SubjectAsText, parentSubjectAsText)
 }
 
 func (k msgServer) ensureVidMatches(
@@ -162,7 +171,11 @@ func (k msgServer) ensureVidMatches(
 	signerAddr sdk.AccAddress,
 ) error {
 	// Check Root and Intermediate certs for VID scoping
-	rootVid, err := x509.GetVidFromSubject(x509.ToSubjectAsText(rootCert.SubjectAsText))
+	rootSubjectAsText, err := x509.ToSubjectAsText(rootCert.SubjectAsText)
+	if err != nil {
+		return pkitypes.NewErrInvalidCertificate(err)
+	}
+	rootVid, err := x509.GetVidFromSubject(rootSubjectAsText)
 	if err != nil {
 		return pkitypes.NewErrInvalidVidFormat(err)
 	}
