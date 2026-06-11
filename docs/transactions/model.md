@@ -15,8 +15,8 @@ Not all fields can be edited (see `EDIT_MODEL`).
   - pid: `uint16` -  model product ID (positive non-zero)
   - deviceTypeID: `uint16` -  DeviceTypeID is the device type identifier. For example, DeviceTypeID 10 (0x000a), is the device type identifier for a Door Lock.
   - productName: `string` -  model name
-  - productLabel: `optional(string)` -  model description (string or path to file containing data)
-  - partNumber: `optional(string)` -  stock keeping unit
+  - productLabel: `string` -  model description (string or path to file containing data) — **required**
+  - partNumber: `string` -  stock keeping unit — **required**
   - commissioningCustomFlow: `optional(uint8)` - A value of 1 indicates that user interaction with the device (pressing a button, for example) is required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end user with the necessary details for how to configure the product for initial commissioning
   - commissioningCustomFlowURL: `optional(string)` - commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the device model when the commissioningCustomFlow field is set to '2'
   - commissioningModeInitialStepsHint: `optional(uint32)` - commissioningModeInitialStepsHint SHALL identify a hint for the steps that can be used to put into commissioning mode a device that has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle (default 1).
@@ -38,7 +38,7 @@ Not all fields can be edited (see `EDIT_MODEL`).
   - enhancedSetupFlowTCFileSize: `optional(uint32)` - enhancedSetupFlowTCFileSize SHALL indicate the total size of the Enhanced Setup Flow Terms and Conditions file in bytes, and SHALL be used to ensure the downloaded file size is within the bounds of EnhancedSetupFlowTCFileSize. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
   - maintenanceUrl: `optional(string)` - maintenanceUrl SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
   - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
-  - discoveryCapabilitiesBitmask: `optional(uint16)` - Identifies the device's available technologies for device discovery (default 0). This field SHALL be populated if CommissioningFallbackUrl is populated
+  - discoveryCapabilitiesBitmask: `optional(uint16)` - Identifies the device's available technologies for device discovery (default 0; valid range 0–30). This field SHALL be populated if CommissioningFallbackUrl is populated
   - commissioningFallbackURL: `optional(string)` - This field SHALL identify a vendor-specific commissioning-fallback URL for the device model, which can be used by a Commissioner in case commissioning fails to direct the user to a manufacturer-provided mechanism to provide resolution to commissioning issues.
 - In State:
   - `model/Model/value/<vid>/<pid>`
@@ -154,8 +154,8 @@ If one of `OTA_URl`, `OTA_checksum` or `OTA_checksum_type` fields is set, then t
   - softwareVersionValid `optional(bool)` - Flag to indicate whether the software version is valid or not (default true)
   - otaURL `optional(string)` - URL where to obtain the OTA image
   - otaFileSize `optional(string)`  - OtaFileSize is the total size of the OTA software image in bytes
-  - otaChecksum `optional(string)` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation. The digest SHALL have been computed using the algorithm specified in OtaChecksumType
-  - otaChecksumType `optional(string)` - Numeric identifier as defined in IANA Named Information Hash Algorithm Registry for the type of otaChecksum. For example, a value of 1 would match the sha-256 identifier, which maps to the SHA-256 digest algorithm
+  - otaChecksum `optional(string)` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation (max 88 characters). The digest SHALL have been computed using the algorithm specified in OtaChecksumType.
+  - otaChecksumType `optional(int32)` - Numeric identifier as defined in the [IANA Named Information Hash Algorithm Registry](https://www.iana.org/assignments/named-information/named-information.xhtml#hash-alg) for the type of otaChecksum. The chosen digest algorithm SHALL have a minimum length of 256 bits. To increase interoperability, this field SHALL be one of `1` (sha-256), `7` (sha-384), `8` (sha-512), `10` (sha3-256), `11` (sha3-384), `12` (sha3-512).
   - releaseNotesURL `optional(string)` - URL that contains product specific web page that contains release notes for the device model.
   - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
   - specificationVersion `optional(uint32)` - **Deprecated.** Will be stated/stored in the `ComplianceInfo` record (set via `compliance certify-model` / `provision-model` / `update-compliance-info`). SpecificationVersion SHALL identify the specification version applicable to the device model.

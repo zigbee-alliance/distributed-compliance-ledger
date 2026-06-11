@@ -2,8 +2,21 @@
 
 <!-- markdownlint-disable MD036 -->
 
-**NOTE**: X.509 v3 certificates are only supported (all certificates MUST contain `Subject Key ID` field).
-All PKI related methods are based on this restriction.
+**NOTE**: Every certificate accepted by the PKI add transactions SHALL satisfy the Matter R1.5 structural profile for its type. Specifically, every accepted certificate SHALL:
+
+* be X.509 **v3**.
+* be signed with **ecdsa-with-SHA256**; the subject public key SHALL be an **ECDSA key on `prime256v1` (P-256)**.
+* carry a critical **BasicConstraints** extension (`cA=TRUE` for PAA / PAI / RCAC / ICAC, `cA=FALSE` for DAC / NOC).
+* carry a critical **KeyUsage** extension with the profile-specific bits — CAs require `keyCertSign + cRLSign` (plus optional `digitalSignature`) and nothing else; DAC / NOC require exactly `digitalSignature`.
+* carry a **SubjectKeyIdentifier**; non-self-signed CAs (PAI / ICAC) SHALL also carry an **AuthorityKeyIdentifier**.
+* RCAC / ICAC: SHALL **NOT** carry an ExtendedKeyUsage extension. NOC: SHALL carry a critical EKU containing exactly `{serverAuth, clientAuth}`.
+* PAA: SHALL **NOT** carry a Matter `ProductID` attribute (per §6.2.2.5 rule 8).
+* carry at most one Matter `VendorID` and at most one Matter `ProductID` attribute in each of `Subject` and `Issuer`.
+* non-root certificates added via [ADD_PAI](#add_pai): the subject's Matter VID / PID SHALL match the immediate issuer's when the issuer carries them (§6.2.2.3 8a/9a, §6.2.2.4 7a).
+
+A certificate that does not satisfy the relevant profile is rejected with an `inappropriate certificate type` or `invalid certificate` error.
+
+**Size limits**: each PEM-encoded certificate accepted by [PROPOSE_ADD_PAA](#propose_add_paa), [ADD_PAI](#add_pai), [ADD_NOC_ROOT](#add_noc_root-rcac) and [ADD_NOC_ICA](#add_noc_ica-icac) is capped at **20 KiB**. For the PKI Revocation Distribution Point transactions ([ADD_REVOCATION_DISTRIBUTION_POINT](#add_revocation_distribution_point) and [UPDATE_REVOCATION_DISTRIBUTION_POINT](#update_revocation_distribution_point)), `label` and `issuerSubjectKeyID` are capped at 64 characters, `crlSignerCertificate` and `crlSignerDelegator` at 2 KiB each, `dataURL` at 256 characters (`http://` or `https://`), and `dataDigest` at 128 characters.
 
 * [All Certificates (DA, NOC)](#all-certificates-da-noc)
 * [Device Attestation Certificates (DA): PAA, PAI](#device-attestation-certificates-da-paa-pai)
@@ -125,6 +138,7 @@ The PAA certificate is immutable. It can only be revoked by either the owner or 
 - CLI command:
   - `dcld tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>`
 - Validation:
+  - provided certificate must satisfy the Matter R1.5 PAA structural profile (see the [top of this document](#x509-pki)).
   - provided certificate must be root:
     - `Issuer` == `Subject`
     - `Authority Key Identifier` == `Subject Key Identifier`
@@ -379,6 +393,7 @@ Adds a PAI (intermediate certificate) signed by a chain of certificates which mu
 - CLI command:
   - `dcld tx pki add-x509-cert --certificate=<string-or-path> --from=<account>`
 - Validation:
+  - provided certificate must satisfy the Matter R1.5 PAI structural profile when `cA=TRUE`, or the DAC structural profile when `cA=FALSE` (see the [top of this document](#x509-pki)). The handler dispatches on the BasicConstraints `cA` flag.
   - provided certificate must not be root:
     - `Issuer` != `Subject`
     - `Authority Key Identifier` != `Subject Key Identifier`
@@ -387,6 +402,7 @@ Adds a PAI (intermediate certificate) signed by a chain of certificates which mu
     - the existing certificate must not be NOC certificate.
     - the sender's VID must match the VID of the existing certificate's owner.
   - the signature and expiration date are valid.
+  - immediate-issuer VID / PID consistency: when the parent certificate carries a Matter `VendorID`, the child's `VendorID` must match; when the parent carries a Matter `ProductID`, the child's `ProductID` must match (§6.2.2.3 8a / 9a, §6.2.2.4 7a).
   - parent certificate must be already stored on the ledger and a valid chain to some root certificate can be built.
   - if the parent root certificate is VID scoped:
     - the provided certificate must also be VID scoped.
@@ -742,6 +758,7 @@ This transaction adds a NOC root certificate (RCAC) owned by the Vendor.
 - CLI Command:
   - `dcld tx pki add-noc-x509-root-cert --certificate=<string-or-path> --from=<account>`
 - Validation:
+  - the provided certificate must satisfy the Matter R1.5 RCAC structural profile (see the [top of this document](#x509-pki)).
   - the provided certificate must be a root certificate (RCAC):
     - `Issuer` == `Subject`
     - `Authority Key Identifier` == `Subject Key Identifier`
@@ -804,6 +821,7 @@ already present on the ledger.
 
 - Who can send: Vendor account
 - Validation:
+  - the provided certificate must satisfy the Matter R1.5 ICAC structural profile when `cA=TRUE`, or the NOC structural profile when `cA=FALSE` (see the [top of this document](#x509-pki)). The handler dispatches on the BasicConstraints `cA` flag.
   - the provided certificate must be a non-root certificate:
     - `Issuer` != `Subject`
     - `Authority Key Identifier` != `Subject Key Identifier`
