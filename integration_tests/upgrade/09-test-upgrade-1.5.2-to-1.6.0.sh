@@ -167,6 +167,32 @@ check_response "$result" "\"softwareVersion\": $software_version_for_1_5_2"
 
 test_divider
 
+# COMPLIANCE
+# After upgrade to v1.6.0, the compliance record certified in 08 must remain queryable.
+# Schema-v1 bump (#730) tightens write-path constraints but pre-existing stored records keep their values.
+
+echo "Get compliance-info created in 1.5.2 for VID: $vid_for_1_5_2 PID: $pid_1_for_1_5_2"
+result=$($DCLD_BIN_NEW query compliance compliance-info --vid=$vid_for_1_5_2 --pid=$pid_1_for_1_5_2 --softwareVersion=$software_version_for_1_5_2 --certificationType=$certification_type_for_1_5_2)
+check_response "$result" "\"vid\": $vid_for_1_5_2"
+check_response "$result" "\"pid\": $pid_1_for_1_5_2"
+check_response "$result" "\"softwareVersion\": $software_version_for_1_5_2"
+check_response "$result" "\"certificationType\": \"$certification_type_for_1_5_2\""
+check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id_for_1_5_2\""
+
+echo "Get certified-model created in 1.5.2 for VID: $vid_for_1_5_2 PID: $pid_1_for_1_5_2"
+result=$($DCLD_BIN_NEW query compliance certified-model --vid=$vid_for_1_5_2 --pid=$pid_1_for_1_5_2 --softwareVersion=$software_version_for_1_5_2 --certificationType=$certification_type_for_1_5_2)
+check_response "$result" "\"value\": true"
+check_response "$result" "\"vid\": $vid_for_1_5_2"
+check_response "$result" "\"pid\": $pid_1_for_1_5_2"
+
+echo "Get device-software-compliance created in 1.5.2 by cDCertificateId=$cd_certificate_id_for_1_5_2"
+result=$($DCLD_BIN_NEW query compliance device-software-compliance --cdCertificateId=$cd_certificate_id_for_1_5_2)
+check_response "$result" "\"cDCertificateId\": \"$cd_certificate_id_for_1_5_2\""
+check_response "$result" "\"vid\": $vid_for_1_5_2"
+check_response "$result" "\"pid\": $pid_1_for_1_5_2"
+
+test_divider
+
 ########################################################################################
 
 # after upgrade constants
@@ -274,6 +300,47 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
+# Model with discoveryCapabilitiesBitmask=20 — allowed range widened from 0-14 to 0-30 in v1.6.0.
+pid_widened_bitmask_for_1_6_0=$((pid_3_for_1_6_0 + 100))
+echo "Add model with widened discoveryCapabilitiesBitmask=20 vid=$vid_for_1_6_0 pid=$pid_widened_bitmask_for_1_6_0"
+result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model --vid=$vid_for_1_6_0 --pid=$pid_widened_bitmask_for_1_6_0 \
+  --deviceTypeID=$device_type_id_for_1_6_0 --productName=$product_name_for_1_6_0 --productLabel=$product_label_for_1_6_0 --partNumber=$part_number_for_1_6_0 \
+  --commissioningCustomFlow=$commissioning_custom_flow_for_1_6_0 --discoveryCapabilitiesBitmask=20 \
+  --from=$vendor_account_for_1_6_0 --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+# Compliance writes after upgrade — schemaVersion=1 (default), specificationVersion required by #730.
+echo "Certify-model on v1.6.0 with v1 schema vid=$vid_for_1_6_0 pid=$pid_1_for_1_6_0"
+result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance certify-model \
+  --vid=$vid_for_1_6_0 --pid=$pid_1_for_1_6_0 \
+  --softwareVersion=$software_version_for_1_6_0 --softwareVersionString=$software_version_string_for_1_6_0 \
+  --cdVersionNumber=$cd_version_number_for_1_6_0 \
+  --certificationType=$certification_type_for_1_6_0 --certificationDate=$certification_date_for_1_6_0 \
+  --specificationVersion=$specification_version_for_1_6_0 \
+  --cdCertificateId=$cd_certificate_id_for_1_5_2 \
+  --schemaVersion=1 \
+  --from=$certification_center_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+echo "Provision-model on v1.6.0 with v1 schema vid=$vid_for_1_6_0 pid=$pid_2_for_1_6_0"
+result=$(echo $passphrase | $DCLD_BIN_NEW tx compliance provision-model \
+  --vid=$vid_for_1_6_0 --pid=$pid_2_for_1_6_0 \
+  --softwareVersion=$software_version_for_1_6_0 --softwareVersionString=$software_version_string_for_1_6_0 \
+  --cdVersionNumber=$cd_version_number_for_1_6_0 \
+  --certificationType=$certification_type_for_1_6_0 --provisionalDate=$provisional_date_for_1_6_0 \
+  --specificationVersion=$specification_version_for_1_6_0 \
+  --cdCertificateId=$cd_certificate_id_for_1_5_2 \
+  --schemaVersion=1 \
+  --from=$certification_center_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+test_divider
+
 echo "Verify that new data is not corrupted"
 
 test_divider
@@ -311,6 +378,29 @@ check_response "$result" "\"vid\": $vid_for_1_6_0"
 check_response "$result" "\"pid\": $pid_1_for_1_6_0"
 check_response "$result" "\"softwareVersion\": $software_version_for_1_6_0"
 check_response "$result" "\"specificationVersion\": $specification_version_for_1_6_0"
+
+echo "Get Model with widened discoveryCapabilitiesBitmask VID: $vid_for_1_6_0 PID: $pid_widened_bitmask_for_1_6_0"
+result=$($DCLD_BIN_NEW query model get-model --vid=$vid_for_1_6_0 --pid=$pid_widened_bitmask_for_1_6_0)
+check_response "$result" "\"vid\": $vid_for_1_6_0"
+check_response "$result" "\"pid\": $pid_widened_bitmask_for_1_6_0"
+check_response "$result" "\"discoveryCapabilitiesBitmask\": 20"
+
+# Verify compliance writes made after the upgrade landed under schema v1 (specificationVersion now stored on ComplianceInfo).
+
+echo "Get certified-model written after upgrade for VID: $vid_for_1_6_0 PID: $pid_1_for_1_6_0"
+result=$($DCLD_BIN_NEW query compliance certified-model --vid=$vid_for_1_6_0 --pid=$pid_1_for_1_6_0 --softwareVersion=$software_version_for_1_6_0 --certificationType=$certification_type_for_1_6_0)
+check_response "$result" "\"value\": true"
+check_response "$result" "\"vid\": $vid_for_1_6_0"
+
+echo "Get compliance-info written after upgrade for VID: $vid_for_1_6_0 PID: $pid_1_for_1_6_0"
+result=$($DCLD_BIN_NEW query compliance compliance-info --vid=$vid_for_1_6_0 --pid=$pid_1_for_1_6_0 --softwareVersion=$software_version_for_1_6_0 --certificationType=$certification_type_for_1_6_0)
+check_response "$result" "\"schemaVersion\": 1"
+check_response "$result" "\"specificationVersion\": $specification_version_for_1_6_0"
+
+echo "Get provisional-model written after upgrade for VID: $vid_for_1_6_0 PID: $pid_2_for_1_6_0"
+result=$($DCLD_BIN_NEW query compliance provisional-model --vid=$vid_for_1_6_0 --pid=$pid_2_for_1_6_0 --softwareVersion=$software_version_for_1_6_0 --certificationType=$certification_type_for_1_6_0)
+check_response "$result" "\"value\": true"
+check_response "$result" "\"vid\": $vid_for_1_6_0"
 
 test_divider
 

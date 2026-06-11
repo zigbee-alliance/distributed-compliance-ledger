@@ -146,6 +146,24 @@ check_response_and_report "$result" "ProductName is a required field" raw
 
 test_divider
 
+echo "Add model with empty productLabel"
+result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="" --partNumber=1 --commissioningCustomFlow=0 --enhancedSetupFlowOptions=0  --from $vendor_account --yes 2>&1) || true
+check_response_and_report "$result" "ProductLabel is a required field" raw
+
+test_divider
+
+echo "Add model with empty partNumber"
+result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber="" --commissioningCustomFlow=0 --enhancedSetupFlowOptions=0  --from $vendor_account --yes 2>&1) || true
+check_response_and_report "$result" "PartNumber is a required field" raw
+
+test_divider
+
+echo "Add model with discoveryCapabilitiesBitmask above the allowed range (31)"
+result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --enhancedSetupFlowOptions=0 --discoveryCapabilitiesBitmask=31 --from $vendor_account --yes 2>&1) || true
+check_response_and_report "$result" "DiscoveryCapabilitiesBitmask must not be greater than 30" raw
+
+test_divider
+
 echo "Add model with empty --from flag"
 result=$(dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --enhancedSetupFlowOptions=0  --from "" --yes 2>&1) || true
 check_response_and_report "$result" "invalid creator address (empty address string is not allowed)" raw
@@ -158,10 +176,36 @@ check_response_and_report "$result" "required flag(s) \"from\" not set" raw
 
 test_divider
 
-echo "Update model with Non Mutable fields" 
+echo "Update model with Non Mutable fields"
 pid=$RANDOM
 sv=$RANDOM
 svs=$RANDOM
-create_model_and_version $vid $pid $sv $svs $vendor_account 
+create_model_and_version $vid $pid $sv $svs $vendor_account
 result=$(dcld query model get-model --vid=$vid --pid=$pid)
 echo "$result"
+
+test_divider
+
+# Model-version negative cases for v1.5.2+ rules.
+# - otaChecksumType outside the IANA-allowed subset {1,7,8,10,11,12} is rejected at handler level.
+# - otaChecksum must not exceed 88 chars (validate tag).
+
+mv_pid=$RANDOM
+mv_sv=$RANDOM
+mv_svs=$RANDOM
+echo "Add model for ota negative-case checks vid=$vid pid=$mv_pid"
+result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$mv_pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --enhancedSetupFlowOptions=0 --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+echo "Add model-version with otaChecksumType=2 (not in IANA allow-list)"
+result=$(echo "test1234" | dcld tx model add-model-version --vid=$vid --pid=$mv_pid --softwareVersion=$mv_sv --softwareVersionString=$mv_svs --cdVersionNumber=1 --minApplicableSoftwareVersion=1 --maxApplicableSoftwareVersion=10 --otaURL="https://ota.url.com" --otaFileSize=123 --otaChecksum="MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=" --otaChecksumType=2 --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
+check_response_and_report "$result" "OtaChecksumType 2 is not supported" raw
+
+test_divider
+
+echo "Add model-version with otaChecksum longer than 88 chars"
+long_checksum=$(printf 'A%.0s' $(seq 1 89))
+result=$(echo "test1234" | dcld tx model add-model-version --vid=$vid --pid=$mv_pid --softwareVersion=$mv_sv --softwareVersionString=$mv_svs --cdVersionNumber=1 --minApplicableSoftwareVersion=1 --maxApplicableSoftwareVersion=10 --otaURL="https://ota.url.com" --otaFileSize=123 --otaChecksum="$long_checksum" --otaChecksumType=1 --from=$vendor_account --yes 2>&1) || true
+check_response_and_report "$result" "maximum length for OtaChecksum allowed is 88" raw

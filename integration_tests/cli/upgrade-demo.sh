@@ -229,6 +229,11 @@ approved_dclupgrade_query=$(dcld query dclupgrade approved-upgrade --name=$upgra
 echo "dclupgrade rejected upgrade query: $approved_dclupgrade_query"
 check_response "$approved_dclupgrade_query" "Not Found"
 
+# After reject quorum is reached, no upgrade plan must be scheduled.
+upgrade_plan_query=$(dcld query upgrade plan 2>&1) || true
+echo "upgrade plan query: $upgrade_plan_query"
+check_response_and_report "$upgrade_plan_query" "no upgrade scheduled" raw
+
 # APPROVE UPGRADE'S PLAN HEIGHT LESS THAN BLOCK HEIGHT AND RE-PROPOSE UPGRADE PLAN HEIGHT BIGGER THAN BLOCK HEIGHT
 ###########################################################################################################################################
 get_height current_height
