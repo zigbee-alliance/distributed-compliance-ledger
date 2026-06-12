@@ -24,21 +24,30 @@ func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNoc
 		return nil, pkitypes.NewErrUnauthorizedRole("MsgAddNocX509IcaCert", dclauthtypes.Vendor)
 	}
 
-	// Decode the PEM. The primary target of AddNocX509IcaCert is the Matter ICAC
-	// (cA=TRUE), enforced by the Matter R1.6 §6.5.12 ICAC profile. The same handler
-	// also accepts the cA=FALSE certs used by the IsVidVerificationSigner path
-	// (#661), where the Vendor's VID Verification Signer Certificate is encoded as
-	// a non-CA cert and stored under CertificateType_VIDSignerPKI; VerifyNOCChainNonRoot
-	// dispatches on the BasicConstraints cA flag. VerifyECDSAP256SHA256 enforces
-	// the §6.5.5/§6.5.8/§6.5.9 ecdsa-with-SHA256 + prime256v1 algorithm requirement;
-	// VerifyVersionV3 enforces v3.
-	x509Certificate, err := x509.ParseAndValidateCertificate(
-		msg.Cert,
+	// Decode the PEM. AddNocX509IcaCert handles two distinct Matter R1.6 §6.5.12
+	// certificate profiles, selected by msg.IsVidVerificationSigner:
+	//   - false → Matter ICAC profile (cA=TRUE, KU keyCertSign+cRLSign[+digitalSignature],
+	//     no EKU, SKI+AKI present), enforced by VerifyCAExtensions + VerifyNoEKU.
+	//   - true  → Matter VID Verification Signer Certificate (VVSC) profile
+	//     (cA=FALSE, KU exactly digitalSignature, SKI+AKI present), enforced by
+	//     VerifyVVSCExtensions.
+	// VerifyECDSAP256SHA256 enforces the §6.5.5/§6.5.8/§6.5.9 ecdsa-with-SHA256 +
+	// prime256v1 requirement; VerifyVersionV3 enforces v3.
+	options := []x509.ParseAndValidateCertificateOptions{
 		x509.VerifyVersionV3,
 		x509.VerifyECDSAP256SHA256,
-		x509.VerifyNOCChainNonRoot,
 		x509.VerifyAtMostOneVIDAndPID,
-	)
+	}
+
+	msgCertType := types.CertificateType_OperationalPKI
+	if msg.IsVidVerificationSigner {
+		msgCertType = types.CertificateType_VIDSignerPKI
+		options = append(options, x509.VerifyVVSCExtensions)
+	} else {
+		options = append(options, x509.VerifyCAExtensions, x509.VerifyNoEKU)
+	}
+
+	x509Certificate, err := x509.ParseAndValidateCertificate(msg.Cert, options...)
 	if err != nil {
 		return nil, err
 	}
@@ -54,11 +63,6 @@ func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNoc
 	}
 	signerAccount, _ := k.dclauthKeeper.GetAccountO(ctx, signerAddr)
 	accountVid := signerAccount.VendorID
-
-	msgCertType := types.CertificateType_OperationalPKI
-	if msg.IsVidVerificationSigner {
-		msgCertType = types.CertificateType_VIDSignerPKI
-	}
 
 	// Get list of certificates for Subject / Subject Key Id combination
 	certificates, _ := k.GetAllCertificates(ctx, x509Certificate.Subject, x509Certificate.SubjectKeyID)

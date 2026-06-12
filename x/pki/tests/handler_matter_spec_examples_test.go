@@ -19,6 +19,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/tests/utils"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 	dclx509 "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
@@ -154,7 +155,7 @@ func TestHandler_AddNocIcaCert_MatterSpecExample_ICAC(t *testing.T) {
 	require.NoError(t, err)
 }
 
-func TestHandler_AddNocIcaCert_MatterSpecExample_NOC(t *testing.T) {
+func TestHandler_AddNocIcaCert_MatterSpecExample_NOC_Rejected(t *testing.T) {
 	setup := utils.Setup(t)
 
 	addRCAC := types.NewMsgAddNocX509RootCert(
@@ -175,8 +176,6 @@ func TestHandler_AddNocIcaCert_MatterSpecExample_NOC(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, addICAC)
 	require.NoError(t, err)
 
-	// NOC end-entity (cA=FALSE) is dispatched to the §6.5.12 NOC profile branch
-	// of VerifyNOCChainNonRoot.
 	addNOC := types.NewMsgAddNocX509IcaCert(
 		setup.Vendor1.String(),
 		testconstants.MatterSpecNOC,
@@ -184,5 +183,5 @@ func TestHandler_AddNocIcaCert_MatterSpecExample_NOC(t *testing.T) {
 		false,
 	)
 	_, err = setup.Handler(setup.Ctx, addNOC)
-	require.NoError(t, err)
+	require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
 }

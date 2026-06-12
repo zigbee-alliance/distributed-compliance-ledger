@@ -804,6 +804,7 @@ already present on the ledger.
 
 - Who can send: Vendor account
 - Validation:
+  - the provided certificate must satisfy the Matter R1.6 §6.5.12 ICAC structural profile (`cA=TRUE`, KU critical with `keyCertSign` + `cRLSign`, no ExtendedKeyUsage, SKI + AKI present).
   - the provided certificate must be a non-root certificate:
     - `Issuer` != `Subject`
     - `Authority Key Identifier` != `Subject Key Identifier`
@@ -816,7 +817,7 @@ already present on the ledger.
     - the sender's VID must match the vid field of the existing certificates.
   - the signature and expiration date must be valid.
 - Parameters:
-  - cert: `string` - The NOC non-root Certificate, encoded in X.509v3 PEM format. Can be a PEM string or a file path.
+  - cert: `string` - The NOC ICA Certificate (ICAC), encoded in X.509v3 PEM format. Can be a PEM string or a file path.
   - certificate-schema-version: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
 - In State:
   - `pki/AllCertificates/value/<Subject>/<SubjectKeyID>`

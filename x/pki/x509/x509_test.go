@@ -730,36 +730,6 @@ func Test_ParseAndValidateCertificate_VerifyDAChainNonRoot(t *testing.T) {
 	})
 }
 
-// VerifyNOCChainNonRoot dispatches on cA: ICACs go to VerifyCAExtensions, NOCs
-// go to verifyNOCExtensions. Both branches must accept their respective fixtures.
-func Test_ParseAndValidateCertificate_VerifyNOCChainNonRoot(t *testing.T) {
-	t.Run("ok/NocCert1 (ICAC)", func(t *testing.T) {
-		cert, err := ParseAndValidateCertificate(testconstants.NocCert1, VerifyNOCChainNonRoot)
-		require.NoError(t, err)
-		require.NotNil(t, cert)
-	})
-
-	t.Run("ok/NocLeafCert1 (NOC end-entity)", func(t *testing.T) {
-		cert, err := ParseAndValidateCertificate(testconstants.NocLeafCert1, VerifyNOCChainNonRoot)
-		require.NoError(t, err)
-		require.NotNil(t, cert)
-	})
-
-	t.Run("ok/MatterNOCShaped", func(t *testing.T) {
-		cert, err := ParseAndValidateCertificate(testconstants.MatterNOCShaped, VerifyNOCChainNonRoot)
-		require.NoError(t, err)
-		require.NotNil(t, cert)
-	})
-
-	t.Run("reject/BC-extension-absent", func(t *testing.T) {
-		cert, err := ParseAndValidateCertificate(testconstants.LeafCertWithoutBasicConstraints, VerifyNOCChainNonRoot)
-		require.Error(t, err)
-		require.Nil(t, cert)
-		require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
-		require.Contains(t, err.Error(), "BasicConstraints extension SHALL be present")
-	})
-}
-
 // VerifyECDSAP256SHA256 must accept every fixture currently in the codebase
 // (all are ECDSA-with-SHA256 on P-256) and reject any mutation that changes
 // either the signature algorithm or the public-key curve.

@@ -100,8 +100,8 @@ type ParseAndValidateCertificateOptions = DecodeX509CertVerificationOptions
 //     (PAI / ICAC); §6.2.2.5 leaves AKI optional for self-signed PAAs, and the
 //     §6.5.12 RCAC AKI==SKI rule is enforced separately by the RCAC handler.
 //
-// Used directly by PAA and RCAC handlers, and dispatched to from the IsCA=TRUE
-// branches of VerifyDAChainNonRoot (PAI) and VerifyNOCChainNonRoot (ICAC).
+// Used directly by the PAA, RCAC and ICAC handlers, and dispatched to from the
+// IsCA=TRUE branch of VerifyDAChainNonRoot (PAI).
 func VerifyCAExtensions(cert *x509.Certificate) error {
 	if !cert.BasicConstraintsValid || !cert.IsCA {
 		return pkitypes.NewErrInappropriateCertificateType(
@@ -315,6 +315,15 @@ func verifyNOCExtensions(cert *x509.Certificate) error {
 	return nil
 }
 
+// VerifyVVSCExtensions is a ParseAndValidateCertificate option that enforces
+// the structural rules of a Matter Vendor ID Verification Signer Certificate
+// (VVSC) per Matter R1.6 §6.5.12: BasicConstraints critical with cA=FALSE,
+// KeyUsage critical with exactly digitalSignature, and SKI + AKI present.
+// §6.5.12 is silent on ExtendedKeyUsage for VVSC, so EKU is not constrained.
+func VerifyVVSCExtensions(cert *x509.Certificate) error {
+	return verifyEndEntityExtensions(cert, "VVSC")
+}
+
 // VerifyVersionV3 is a ParseAndValidateCertificate option that asserts the
 // certificate is X.509 v3, as required by Matter R1.6 §6.2.2.3 (DAC),
 // §6.2.2.4 (PAI), §6.2.2.5 (PAA), and §6.5.5/§6.5.8/§6.5.9 (NOC chain). The
@@ -437,34 +446,6 @@ func VerifyECDSAP256SHA256(cert *x509.Certificate) error {
 	}
 
 	return nil
-}
-
-// VerifyNOCChainNonRoot is a ParseAndValidateCertificate option for the
-// MsgAddNocX509IcaCert handler, which accepts both Matter ICACs (is-ca=TRUE)
-// and Matter NOCs (is-ca=FALSE). The certificate is dispatched by its
-// BasicConstraints cA flag:
-//
-//   - cA=TRUE  → Matter R1.6 §6.5.12 ICAC profile, enforced by VerifyCAExtensions
-//     plus the §6.5.12 "EKU SHALL NOT be present" rule via VerifyNoEKU.
-//   - cA=FALSE → Matter R1.6 §6.5.12 NOC profile, enforced by verifyNOCExtensions.
-//
-// BasicConstraints must be encoded either way; a missing BC extension is
-// reported as a NOC violation since crypto/x509 leaves IsCA at its zero value.
-func VerifyNOCChainNonRoot(cert *x509.Certificate) error {
-	if !cert.BasicConstraintsValid {
-		return pkitypes.NewErrInappropriateCertificateType(
-			"BasicConstraints extension SHALL be present",
-		)
-	}
-	if cert.IsCA {
-		if err := VerifyCAExtensions(cert); err != nil {
-			return err
-		}
-
-		return VerifyNoEKU(cert)
-	}
-
-	return verifyNOCExtensions(cert)
 }
 
 // VerifyVidPidConsistency enforces the immediate-parent VID/PID matching rules
