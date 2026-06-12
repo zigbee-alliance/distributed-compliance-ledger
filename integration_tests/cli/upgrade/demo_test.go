@@ -255,6 +255,15 @@ func TestUpgradeDemo(t *testing.T) {
 		out, err = QueryApprovedUpgrade(upgradeNameV121)
 		require.NoError(t, err)
 		require.Contains(t, string(out), "Not Found")
+
+		// After reject quorum, no upgrade plan must be scheduled.
+		// dcld returns a non-zero exit with "no upgrade scheduled" on stderr in this case.
+		out, err = QueryUpgradePlan()
+		combined := string(out)
+		if err != nil {
+			combined += err.Error()
+		}
+		require.Contains(t, combined, "no upgrade scheduled")
 	})
 
 	// Bash counterpart: model-validation-cases.sh lines 232-275.

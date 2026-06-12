@@ -111,6 +111,49 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 	})
 
 	// ------------------------------------------------------------------
+	// After upgrade to v1.6.0, the compliance record certified in 1.5.2
+	// must remain queryable. The schema-v1 bump (#730) only tightens
+	// write-path constraints — pre-existing stored records keep their values.
+	// ------------------------------------------------------------------
+	MustRun(t, "ComplianceCarryoverFrom_1_5_2", func(t *testing.T) {
+		t.Helper()
+		out, err := ExecuteCLIWithBin(dcldNew,
+			"query", "compliance", "compliance-info",
+			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),
+			"--pid", fmt.Sprintf("%d", PID1For1_5_2),
+			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_5_2),
+			"--certificationType", CertificationTypeFor1_5_2,
+		)
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", VIDFor1_5_2)
+		requireFieldEquals(t, out, "pid", PID1For1_5_2)
+		requireFieldEquals(t, out, "softwareVersion", SoftwareVersionFor1_5_2)
+		checkResponseContains(t, out, CertificationTypeFor1_5_2)
+		checkResponseContains(t, out, CDCertificateIDFor1_5_2)
+
+		out, err = ExecuteCLIWithBin(dcldNew,
+			"query", "compliance", "certified-model",
+			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),
+			"--pid", fmt.Sprintf("%d", PID1For1_5_2),
+			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_5_2),
+			"--certificationType", CertificationTypeFor1_5_2,
+		)
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "value", true)
+		requireFieldEquals(t, out, "vid", VIDFor1_5_2)
+		requireFieldEquals(t, out, "pid", PID1For1_5_2)
+
+		out, err = ExecuteCLIWithBin(dcldNew,
+			"query", "compliance", "device-software-compliance",
+			"--cdCertificateId", CDCertificateIDFor1_5_2,
+		)
+		require.NoError(t, err)
+		checkResponseContains(t, out, CDCertificateIDFor1_5_2)
+		requireFieldEquals(t, out, "vid", VIDFor1_5_2)
+		requireFieldEquals(t, out, "pid", PID1For1_5_2)
+	})
+
+	// ------------------------------------------------------------------
 	// Verify carry-over data from the v1.5.2 era is intact.
 	// ------------------------------------------------------------------
 	MustRun(t, "VerifyPreserved_1_5_2_Models", func(t *testing.T) {
@@ -260,6 +303,67 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 	})
 
+	// Add a model with discoveryCapabilitiesBitmask=20 — allowed range
+	// widened from 0-14 to 0-30 in v1.6.0.
+	MustRun(t, "AddModelWithWidenedBitmask_1_6_0", func(t *testing.T) {
+		t.Helper()
+		tx, err := ExecuteTxWithBin(dcldNew,
+			"tx", "model", "add-model",
+			"--vid", fmt.Sprintf("%d", VIDFor1_6_0),
+			"--pid", fmt.Sprintf("%d", PIDWidenedBitmaskFor1_6_0),
+			"--deviceTypeID", fmt.Sprintf("%d", DeviceTypeIDFor1_6_0),
+			"--productName", ProductNameFor1_6_0,
+			"--productLabel", ProductLabelFor1_6_0,
+			"--partNumber", PartNumberFor1_6_0,
+			"--commissioningCustomFlow", fmt.Sprintf("%d", CommissioningCustomFlowFor1_6),
+			"--discoveryCapabilitiesBitmask", fmt.Sprintf("%d", DiscoveryCapabilitiesBitmask),
+			"--from", VendorAccountFor1_6_0,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	})
+
+	// Compliance writes after upgrade — schemaVersion=1 (default per #730),
+	// specificationVersion now required on every write. cDCertificateId is
+	// reused across schema-v0 (carry-over) and schema-v1 records so the
+	// device-software-compliance index covers both eras.
+	MustRun(t, "ComplianceWrites_SchemaV1_1_6_0", func(t *testing.T) {
+		t.Helper()
+		tx, err := ExecuteTxWithBin(dcldNew,
+			"tx", "compliance", "certify-model",
+			"--vid", fmt.Sprintf("%d", VIDFor1_6_0),
+			"--pid", fmt.Sprintf("%d", PID1For1_6_0),
+			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_6_0),
+			"--softwareVersionString", SoftwareVersionStringFor1_6_0,
+			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_6_0),
+			"--certificationType", CertificationTypeFor1_6_0,
+			"--certificationDate", CertificationDateFor1_6_0,
+			"--specificationVersion", fmt.Sprintf("%d", SpecificationVersionFor1_6_0),
+			"--cdCertificateId", CDCertificateIDFor1_5_2,
+			"--schemaVersion", "1",
+			"--from", CertificationCenterAccountFor1_2,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+
+		tx, err = ExecuteTxWithBin(dcldNew,
+			"tx", "compliance", "provision-model",
+			"--vid", fmt.Sprintf("%d", VIDFor1_6_0),
+			"--pid", fmt.Sprintf("%d", PID2For1_6_0),
+			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_6_0),
+			"--softwareVersionString", SoftwareVersionStringFor1_6_0,
+			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_6_0),
+			"--certificationType", CertificationTypeFor1_6_0,
+			"--provisionalDate", ProvisionalDateFor1_6_0,
+			"--specificationVersion", fmt.Sprintf("%d", SpecificationVersionFor1_6_0),
+			"--cdCertificateId", CDCertificateIDFor1_5_2,
+			"--schemaVersion", "1",
+			"--from", CertificationCenterAccountFor1_2,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	})
+
 	MustRun(t, "VerifyNewModels_1_6_0", func(t *testing.T) {
 		t.Helper()
 		out, err := ExecuteCLIWithBin(dcldNew,
@@ -306,5 +410,57 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 		requireFieldEquals(t, out, "pid", PID1For1_6_0)
 		requireFieldEquals(t, out, "softwareVersion", SoftwareVersionFor1_6_0)
 		requireFieldEquals(t, out, "specificationVersion", SpecificationVersionFor1_6_0)
+	})
+
+	// Verify the widened-bitmask model landed with its requested value.
+	MustRun(t, "VerifyWidenedBitmaskModel_1_6_0", func(t *testing.T) {
+		t.Helper()
+		out, err := ExecuteCLIWithBin(dcldNew,
+			"query", "model", "get-model",
+			"--vid", fmt.Sprintf("%d", VIDFor1_6_0),
+			"--pid", fmt.Sprintf("%d", PIDWidenedBitmaskFor1_6_0),
+		)
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", VIDFor1_6_0)
+		requireFieldEquals(t, out, "pid", PIDWidenedBitmaskFor1_6_0)
+		requireFieldEquals(t, out, "discoveryCapabilitiesBitmask", DiscoveryCapabilitiesBitmask)
+	})
+
+	// Verify the schema-v1 compliance writes landed with specificationVersion
+	// now persisted on ComplianceInfo.
+	MustRun(t, "VerifyComplianceWrites_SchemaV1_1_6_0", func(t *testing.T) {
+		t.Helper()
+		out, err := ExecuteCLIWithBin(dcldNew,
+			"query", "compliance", "certified-model",
+			"--vid", fmt.Sprintf("%d", VIDFor1_6_0),
+			"--pid", fmt.Sprintf("%d", PID1For1_6_0),
+			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_6_0),
+			"--certificationType", CertificationTypeFor1_6_0,
+		)
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "value", true)
+		requireFieldEquals(t, out, "vid", VIDFor1_6_0)
+
+		out, err = ExecuteCLIWithBin(dcldNew,
+			"query", "compliance", "compliance-info",
+			"--vid", fmt.Sprintf("%d", VIDFor1_6_0),
+			"--pid", fmt.Sprintf("%d", PID1For1_6_0),
+			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_6_0),
+			"--certificationType", CertificationTypeFor1_6_0,
+		)
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "schemaVersion", 1)
+		requireFieldEquals(t, out, "specificationVersion", SpecificationVersionFor1_6_0)
+
+		out, err = ExecuteCLIWithBin(dcldNew,
+			"query", "compliance", "provisional-model",
+			"--vid", fmt.Sprintf("%d", VIDFor1_6_0),
+			"--pid", fmt.Sprintf("%d", PID2For1_6_0),
+			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_6_0),
+			"--certificationType", CertificationTypeFor1_6_0,
+		)
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "value", true)
+		requireFieldEquals(t, out, "vid", VIDFor1_6_0)
 	})
 }

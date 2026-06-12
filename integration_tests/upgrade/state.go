@@ -469,6 +469,11 @@ const (
 	MinApplicableSoftwareVersionFor1_5_2        = 8
 	MaxApplicableSoftwareVersionFor1_5_2        = 8000
 
+	CertificationTypeFor1_5_2 = "matter"
+	CertificationDateFor1_5_2 = "2024-01-01T00:00:00Z"
+	ProvisionalDateFor1_5_2   = "2016-12-12T00:00:00Z"
+	CDCertificateIDFor1_5_2   = "12345678910abcdefgh"
+
 	VendorAccountFor1_5_2 = "vendor_account_1_5_2"
 )
 
@@ -493,6 +498,16 @@ const (
 	CDVersionNumberFor1_6_0                     = 514
 	MinApplicableSoftwareVersionFor1_6_0        = 9
 	MaxApplicableSoftwareVersionFor1_6_0        = 9000
+
+	CertificationTypeFor1_6_0 = "matter"
+	CertificationDateFor1_6_0 = "2024-02-01T00:00:00Z"
+	ProvisionalDateFor1_6_0   = "2017-01-01T00:00:00Z"
+
+	// PIDWidenedBitmaskFor1_6_0 holds a pid used by the v1.6.0 widened
+	// discoveryCapabilitiesBitmask test (range 0-14 → 0-30).
+	PIDWidenedBitmaskFor1_6_0     = PID3For1_6_0 + 100
+	DiscoveryCapabilitiesBitmask  = 20
+	CommissioningCustomFlowFor1_6 = 0
 
 	VendorAccountFor1_6_0 = "vendor_account_1_6_0"
 )

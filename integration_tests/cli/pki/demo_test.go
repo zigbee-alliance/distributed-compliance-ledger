@@ -2,6 +2,8 @@ package pki
 
 import (
 	"fmt"
+	"math/rand"
+	"os"
 	"strings"
 	"testing"
 
@@ -1156,4 +1158,42 @@ func TestPKIDemo(t *testing.T) {
 	})
 
 	_, _ = bob, alice
+}
+
+// TestPKIRejectOversizedCertPEM covers the 20480-char PEM cap added in commit 147904e9
+// (CHANGELOG entry: every cert-add transaction caps inbound PEM at 20480 chars).
+func TestPKIRejectOversizedCertPEM(t *testing.T) {
+	trustee := testconstants.JackAccount
+
+	// 30 KiB of base64-shaped padding wrapped in PEM markers — > 20480 chars.
+	const padBytes = 30000
+	pad := make([]byte, padBytes)
+	for i := range pad {
+		// Use letters/digits so each byte stays as a single base64-ish char,
+		// keeping the total well over the 20480 cap.
+		pad[i] = byte('A' + (i % 26))
+	}
+	pem := "-----BEGIN CERTIFICATE-----\n" + string(pad) + "\n-----END CERTIFICATE-----\n"
+
+	certFile, err := os.CreateTemp("", "oversized_cert_*.pem")
+	require.NoError(t, err)
+	defer os.Remove(certFile.Name())
+	_, err = certFile.WriteString(pem)
+	require.NoError(t, err)
+	require.NoError(t, certFile.Close())
+
+	oversizedVid := rand.Intn(65534) + 1
+
+	out, cliErr := utils.ExecuteCLI(
+		"tx", "pki", "propose-add-x509-root-cert",
+		"--certificate", certFile.Name(),
+		"--vid", fmt.Sprintf("%d", oversizedVid),
+		"--from", trustee,
+		"--yes", "-o", "json", "--keyring-backend", "test",
+	)
+	combined := string(out)
+	if cliErr != nil {
+		combined += cliErr.Error()
+	}
+	require.Contains(t, combined, "maximum length for Cert allowed is 20480")
 }

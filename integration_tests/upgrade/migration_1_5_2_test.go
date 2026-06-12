@@ -291,6 +291,26 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 		require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
 	})
 
+	// Seed compliance state for pid_1 — the v1.6.0 upgrade phase reads this
+	// back to confirm pre-#730 records survive the schema-v1 bump intact.
+	MustRun(t, "ComplianceFor1_5_2", func(t *testing.T) {
+		t.Helper()
+		tx, err := ExecuteTxWithBin(dcldNew,
+			"tx", "compliance", "certify-model",
+			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),
+			"--pid", fmt.Sprintf("%d", PID1For1_5_2),
+			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_5_2),
+			"--softwareVersionString", SoftwareVersionStringFor1_5_2,
+			"--certificationType", CertificationTypeFor1_5_2,
+			"--certificationDate", CertificationDateFor1_5_2,
+			"--cdCertificateId", CDCertificateIDFor1_5_2,
+			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_5_2),
+			"--from", CertificationCenterAccountFor1_2,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	})
+
 	MustRun(t, "VerifyNewModels_1_5_2", func(t *testing.T) {
 		t.Helper()
 		out, err := ExecuteCLIWithBin(dcldNew,
