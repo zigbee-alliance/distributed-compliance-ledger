@@ -37,13 +37,22 @@ import (
 // parsed fields, because we need to inspect the Critical flag — which
 // crypto/x509 only surfaces via the raw Extensions slice.
 var (
-	oidBasicConstraints = asn1.ObjectIdentifier{2, 5, 29, 19}
-	oidKeyUsage         = asn1.ObjectIdentifier{2, 5, 29, 15}
+	OIDBasicConstraints = asn1.ObjectIdentifier{2, 5, 29, 19}
+	OIDKeyUsage         = asn1.ObjectIdentifier{2, 5, 29, 15}
+	OIDExtKeyUsage      = asn1.ObjectIdentifier{2, 5, 29, 37}
 )
 
-// findExtCritical reports whether the extension with the given OID is present
+// Matter OID strings used by the at-most-one-VID/PID walker. Kept as strings
+// (matching asn1.ObjectIdentifier.String() output) so we don't need to allocate
+// an asn1.ObjectIdentifier on every comparison.
+const (
+	matterVIDOIDString = "1.3.6.1.4.1.37244.2.1"
+	matterPIDOIDString = "1.3.6.1.4.1.37244.2.2"
+)
+
+// FindExtCritical reports whether the extension with the given OID is present
 // and, if so, whether it was marked critical.
-func findExtCritical(cert *x509.Certificate, oid asn1.ObjectIdentifier) (present, critical bool) {
+func FindExtCritical(cert *x509.Certificate, oid asn1.ObjectIdentifier) (present, critical bool) {
 	for _, e := range cert.Extensions {
 		if e.Id.Equal(oid) {
 			return true, e.Critical
@@ -79,7 +88,7 @@ type DecodeX509CertVerificationOptions func(cert *x509.Certificate) error
 type ParseAndValidateCertificateOptions = DecodeX509CertVerificationOptions
 
 // VerifyCAExtensions is a ParseAndValidateCertificate option that enforces the
-// full structural CA profile mandated by Matter R1.5 §6.2.2.4/5 and §6.5.12:
+// full structural CA profile mandated by Matter R1.6 §6.2.2.4/5 and §6.5.12:
 //
 //   - BasicConstraints extension SHALL be present and marked critical.
 //   - BasicConstraints cA flag SHALL be set to TRUE.
@@ -100,13 +109,13 @@ func VerifyCAExtensions(cert *x509.Certificate) error {
 		)
 	}
 
-	if _, critical := findExtCritical(cert, oidBasicConstraints); !critical {
+	if _, critical := FindExtCritical(cert, OIDBasicConstraints); !critical {
 		return pkitypes.NewErrInappropriateCertificateType(
 			"BasicConstraints extension SHALL be marked critical",
 		)
 	}
 
-	kuPresent, kuCritical := findExtCritical(cert, oidKeyUsage)
+	kuPresent, kuCritical := FindExtCritical(cert, OIDKeyUsage)
 	if !kuPresent {
 		return pkitypes.NewErrInappropriateCertificateType(
 			"KeyUsage extension SHALL be present for CA certificates",
@@ -156,7 +165,7 @@ func VerifyCAExtensions(cert *x509.Certificate) error {
 // (ICAC) and is-ca=false (NOC, DAC, CRL signer).
 //
 // Pass it on paths that take leaf certificates or paths that take both CAs and
-// leaves — Matter R1.5 §6.2.2.3 (DAC) and §6.5.12 (NOC) both require the
+// leaves — Matter R1.6 §6.2.2.3 (DAC) and §6.5.12 (NOC) both require the
 // BasicConstraints extension to be encoded. The NOC-ICA handler accepts both
 // ICACs and NOCs, so a "BC encoded" check is the right gate there
 //
@@ -180,7 +189,7 @@ func VerifyBasicConstraintsPresent(cert *x509.Certificate) error {
 //   - SubjectKeyIdentifier SHALL be present.
 //   - AuthorityKeyIdentifier SHALL be present.
 //
-// VerifyDACExtensions and VerifyNOCExtensions layer additional rules on top of
+// verifyDACExtensions and verifyNOCExtensions layer additional rules on top of
 // this helper (notably the NOC ExtendedKeyUsage check).
 func verifyEndEntityExtensions(cert *x509.Certificate, certKind string) error {
 	if !cert.BasicConstraintsValid {
@@ -193,13 +202,13 @@ func verifyEndEntityExtensions(cert *x509.Certificate, certKind string) error {
 			certKind + ": BasicConstraints cA SHALL be set to FALSE",
 		)
 	}
-	if _, critical := findExtCritical(cert, oidBasicConstraints); !critical {
+	if _, critical := FindExtCritical(cert, OIDBasicConstraints); !critical {
 		return pkitypes.NewErrInappropriateCertificateType(
 			certKind + ": BasicConstraints extension SHALL be marked critical",
 		)
 	}
 
-	kuPresent, kuCritical := findExtCritical(cert, oidKeyUsage)
+	kuPresent, kuCritical := FindExtCritical(cert, OIDKeyUsage)
 	if !kuPresent {
 		return pkitypes.NewErrInappropriateCertificateType(
 			certKind + ": KeyUsage extension SHALL be present",
@@ -230,11 +239,11 @@ func verifyEndEntityExtensions(cert *x509.Certificate, certKind string) error {
 	return nil
 }
 
-// VerifyDACExtensions is a ParseAndValidateCertificate option that enforces
+// verifyDACExtensions is a ParseAndValidateCertificate option that enforces
 // the structural rules of a Matter Device Attestation Certificate (DAC) per
-// Matter R1.5 §6.2.2.3: BasicConstraints critical with cA=FALSE, KeyUsage
+// Matter R1.6 §6.2.2.3: BasicConstraints critical with cA=FALSE, KeyUsage
 // critical with exactly digitalSignature, and SKI + AKI present.
-func VerifyDACExtensions(cert *x509.Certificate) error {
+func verifyDACExtensions(cert *x509.Certificate) error {
 	return verifyEndEntityExtensions(cert, "DAC")
 }
 
@@ -243,8 +252,8 @@ func VerifyDACExtensions(cert *x509.Certificate) error {
 // DACs (cA=FALSE). The certificate is dispatched by its BasicConstraints cA
 // flag:
 //
-//   - cA=TRUE  → Matter R1.5 §6.2.2.4 PAI profile, enforced by VerifyCAExtensions.
-//   - cA=FALSE → Matter R1.5 §6.2.2.3 DAC profile, enforced by VerifyDACExtensions.
+//   - cA=TRUE  → Matter R1.6 §6.2.2.4 PAI profile, enforced by VerifyCAExtensions.
+//   - cA=FALSE → Matter R1.6 §6.2.2.3 DAC profile, enforced by verifyDACExtensions.
 //
 // BasicConstraints must be encoded either way; a missing BC extension is
 // reported as a DAC violation since crypto/x509 leaves IsCA at its zero value.
@@ -263,29 +272,20 @@ func VerifyDAChainNonRoot(cert *x509.Certificate) error {
 		return VerifyCAExtensions(cert)
 	}
 
-	return VerifyDACExtensions(cert)
+	return verifyDACExtensions(cert)
 }
 
-// VerifyNOCExtensions is a ParseAndValidateCertificate option that enforces
+// verifyNOCExtensions is a ParseAndValidateCertificate option that enforces
 // the structural rules of a Matter Node Operational Certificate (NOC) per
-// Matter R1.5 §6.5.12: BasicConstraints critical with is-ca=FALSE, KeyUsage
+// Matter R1.6 §6.5.12: BasicConstraints critical with is-ca=FALSE, KeyUsage
 // critical with exactly digitalSignature, ExtendedKeyUsage critical with
 // exactly {serverAuth, clientAuth}, and SKI + AKI present.
-func VerifyNOCExtensions(cert *x509.Certificate) error {
+func verifyNOCExtensions(cert *x509.Certificate) error {
 	if err := verifyEndEntityExtensions(cert, "NOC"); err != nil {
 		return err
 	}
 
-	const oidExtKeyUsageStr = "2.5.29.37"
-	ekuPresent, ekuCritical := false, false
-	for _, e := range cert.Extensions {
-		if e.Id.String() == oidExtKeyUsageStr {
-			ekuPresent = true
-			ekuCritical = e.Critical
-
-			break
-		}
-	}
+	ekuPresent, ekuCritical := FindExtCritical(cert, OIDExtKeyUsage)
 	if !ekuPresent {
 		return pkitypes.NewErrInappropriateCertificateType(
 			"NOC: ExtendedKeyUsage extension SHALL be present",
@@ -316,7 +316,7 @@ func VerifyNOCExtensions(cert *x509.Certificate) error {
 }
 
 // VerifyVersionV3 is a ParseAndValidateCertificate option that asserts the
-// certificate is X.509 v3, as required by Matter R1.5 §6.2.2.3 (DAC),
+// certificate is X.509 v3, as required by Matter R1.6 §6.2.2.3 (DAC),
 // §6.2.2.4 (PAI), §6.2.2.5 (PAA), and §6.5.5/§6.5.8/§6.5.9 (NOC chain). The
 // DER-level INTEGER 2 maps to crypto/x509's Version=3.
 func VerifyVersionV3(cert *x509.Certificate) error {
@@ -331,7 +331,7 @@ func VerifyVersionV3(cert *x509.Certificate) error {
 
 // VerifyNoPIDInSubject is a ParseAndValidateCertificate option that asserts the
 // certificate's subject does not contain a Matter ProductID attribute. Matter
-// R1.5 §6.2.2.5 rule 8 prohibits a ProductID in the PAA's subject (and
+// R1.6 §6.2.2.5 rule 8 prohibits a ProductID in the PAA's subject (and
 // equivalently issuer, since PAAs are self-signed).
 func VerifyNoPIDInSubject(cert *x509.Certificate) error {
 	subjectAsText, err := ToSubjectAsText(cert.Subject.String())
@@ -350,14 +350,14 @@ func VerifyNoPIDInSubject(cert *x509.Certificate) error {
 }
 
 // VerifyNoEKU is a ParseAndValidateCertificate option that fails if the
-// certificate encodes an ExtendedKeyUsage extension. Matter R1.5 §6.5.12 says
+// certificate encodes an ExtendedKeyUsage extension. Matter R1.6 §6.5.12 says
 // "The ExtendedKeyUsage extension SHALL NOT be present" for RCAC and ICAC.
 // PAA / PAI are NOT constrained by this rule (§6.2.2.5 rule 11 explicitly
 // allows EKU on PAA), so this helper is wired only on the NOC-chain CA paths.
 func VerifyNoEKU(cert *x509.Certificate) error {
-	const oidExtKeyUsageStr = "2.5.29.37"
+	const OIDExtKeyUsageStr = "2.5.29.37"
 	for _, e := range cert.Extensions {
-		if e.Id.String() == oidExtKeyUsageStr {
+		if e.Id.String() == OIDExtKeyUsageStr {
 			return pkitypes.NewErrInappropriateCertificateType(
 				"ExtendedKeyUsage extension SHALL NOT be present on RCAC/ICAC certificates",
 			)
@@ -367,18 +367,10 @@ func VerifyNoEKU(cert *x509.Certificate) error {
 	return nil
 }
 
-// Matter OID strings used by the at-most-one-VID/PID walker. Kept as strings
-// (matching asn1.ObjectIdentifier.String() output) so we don't need to allocate
-// an asn1.ObjectIdentifier on every comparison.
-const (
-	matterVIDOIDString = "1.3.6.1.4.1.37244.2.1"
-	matterPIDOIDString = "1.3.6.1.4.1.37244.2.2"
-)
-
 // VerifyAtMostOneVIDAndPID is a ParseAndValidateCertificate option that asserts
 // the certificate's subject and issuer each contain AT MOST one matter-vid
 // (1.3.6.1.4.1.37244.2.1) and AT MOST one matter-pid (1.3.6.1.4.1.37244.2.2)
-// attribute. Implements Matter R1.5 §6.2.2.3 rules 4/5 (DAC), §6.2.2.4 rules
+// attribute. Implements Matter R1.6 §6.2.2.3 rules 4/5 (DAC), §6.2.2.4 rules
 // 4/8 (PAI), and §6.2.2.5 rules 4/6 (PAA).
 //
 // The stricter "exactly 1 VendorID" rule (§6.2.2.3 rule 4 for DAC issuer,
@@ -421,7 +413,7 @@ func matterAttrAtMostOne(names []pkix.AttributeTypeAndValue, field string) error
 // VerifyECDSAP256SHA256 is a ParseAndValidateCertificate option that asserts
 // the certificate is signed with ecdsa-with-SHA256 and that its subject public
 // key is an ECDSA key on the prime256v1 (P-256 / secp256r1) curve, per Matter
-// R1.5 §6.2.2.3 (DAC), §6.2.2.4 (PAI), §6.2.2.5 (PAA), and §6.5.5/§6.5.8/§6.5.9
+// R1.6 §6.2.2.3 (DAC), §6.2.2.4 (PAI), §6.2.2.5 (PAA), and §6.5.5/§6.5.8/§6.5.9
 // (NOC chain). Mirrors the long-standing check in VerifyCRLSignerCertFormat —
 // before this helper existed, the CRL signer path was the only place these
 // rules were enforced.
@@ -452,9 +444,9 @@ func VerifyECDSAP256SHA256(cert *x509.Certificate) error {
 // and Matter NOCs (is-ca=FALSE). The certificate is dispatched by its
 // BasicConstraints cA flag:
 //
-//   - cA=TRUE  → Matter R1.5 §6.5.12 ICAC profile, enforced by VerifyCAExtensions
+//   - cA=TRUE  → Matter R1.6 §6.5.12 ICAC profile, enforced by VerifyCAExtensions
 //     plus the §6.5.12 "EKU SHALL NOT be present" rule via VerifyNoEKU.
-//   - cA=FALSE → Matter R1.5 §6.5.12 NOC profile, enforced by VerifyNOCExtensions.
+//   - cA=FALSE → Matter R1.6 §6.5.12 NOC profile, enforced by verifyNOCExtensions.
 //
 // BasicConstraints must be encoded either way; a missing BC extension is
 // reported as a NOC violation since crypto/x509 leaves IsCA at its zero value.
@@ -472,11 +464,11 @@ func VerifyNOCChainNonRoot(cert *x509.Certificate) error {
 		return VerifyNoEKU(cert)
 	}
 
-	return VerifyNOCExtensions(cert)
+	return verifyNOCExtensions(cert)
 }
 
 // VerifyVidPidConsistency enforces the immediate-parent VID/PID matching rules
-// from Matter R1.5 §6.2.2.3 (DAC) 8a and 9a, and §6.2.2.4 (PAI) 7a:
+// from Matter R1.6 §6.2.2.3 (DAC) 8a and 9a, and §6.2.2.4 (PAI) 7a:
 //
 //   - When the parent's subject carries a Matter VID, the child's subject SHALL
 //     carry the same Matter VID.

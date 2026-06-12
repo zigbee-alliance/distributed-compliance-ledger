@@ -28,7 +28,7 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 		)
 	}
 
-	// decode pem certificate — must satisfy the Matter R1.5 PAA structural
+	// decode pem certificate — must satisfy the Matter R1.6 PAA structural
 	// profile: v3, BC critical with cA=TRUE, KU critical with keyCertSign+cRLSign
 	// (and optionally digitalSignature), no ProductID in subject, and signed with
 	// ecdsa-with-SHA256 on a prime256v1 subject public key

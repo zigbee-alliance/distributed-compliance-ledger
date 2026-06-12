@@ -442,15 +442,13 @@ func NewErrCertificateVidNotEqualMsgVid(e interface{}) error {
 
 func NewErrCertVidNotEqualToIssuerVid(certVID, issuerVID int32) error {
 	return errors.Wrapf(ErrCertVidNotEqualToIssuerVid,
-		"Matter R1.5 §6.2.2.3/§6.2.2.4: child certificate VID SHALL match issuer's VID. "+
-			"Certificate VID=%v, Issuer VID=%v",
+		"Child certificate VID must match the issuer's VID: certificate VID=%v, issuer VID=%v",
 		certVID, issuerVID)
 }
 
 func NewErrCertPidNotEqualToIssuerPid(certPID, issuerPID int32) error {
 	return errors.Wrapf(ErrCertPidNotEqualToIssuerPid,
-		"Matter R1.5 §6.2.2.3: when issuer has a PID, child certificate SHALL have a matching PID. "+
-			"Certificate PID=%v, Issuer PID=%v",
+		"When the issuer has a PID the child certificate must carry a matching PID: certificate PID=%v, issuer PID=%v",
 		certPID, issuerPID)
 }
 

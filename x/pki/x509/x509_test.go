@@ -452,7 +452,7 @@ func Test_ParseAndValidateCertificate_VerifyBasicConstraintsPresent(t *testing.T
 }
 
 func Test_ParseAndValidateCertificate_VerifyCAExtensions(t *testing.T) {
-	// Positive fixtures: known CA certs that comply with the full Matter R1.5
+	// Positive fixtures: known CA certs that comply with the full Matter R1.6
 	// CA profile (BC critical + cA=TRUE, KU critical with at least keyCertSign
 	// and cRLSign, no disallowed bits).
 	positiveTests := []struct {
@@ -570,19 +570,19 @@ func Test_ParseAndValidateCertificate_VerifyCAExtensions(t *testing.T) {
 	}
 }
 
-func Test_ParseAndValidateCertificate_VerifyDACExtensions(t *testing.T) {
+func Test_ParseAndValidateCertificate_verifyDACExtensions(t *testing.T) {
 	// Positive case: a DAC-shaped cert (BC critical + cA=FALSE, KU critical
 	// with exactly digitalSignature, SKI + AKI present).
 	t.Run("ok/DAC-shaped leaf", func(t *testing.T) {
-		cert, err := ParseAndValidateCertificate(testconstants.MatterDACShaped, VerifyDACExtensions)
+		cert, err := ParseAndValidateCertificate(testconstants.MatterDACShaped, verifyDACExtensions)
 		require.NoError(t, err)
 		require.NotNil(t, cert)
 	})
 
 	// LeafCertPem was regenerated to satisfy the DAC profile so the DA-chain
-	// handler can dispatch on cA and apply VerifyDACExtensions to leaves.
+	// handler can dispatch on cA and apply verifyDACExtensions to leaves.
 	t.Run("ok/LeafCertPem", func(t *testing.T) {
-		cert, err := ParseAndValidateCertificate(testconstants.LeafCertPem, VerifyDACExtensions)
+		cert, err := ParseAndValidateCertificate(testconstants.LeafCertPem, verifyDACExtensions)
 		require.NoError(t, err)
 		require.NotNil(t, cert)
 	})
@@ -636,7 +636,7 @@ func Test_ParseAndValidateCertificate_VerifyDACExtensions(t *testing.T) {
 	for _, tt := range negativeTests {
 		t.Run("reject/"+tt.name, func(t *testing.T) {
 			if tt.mutate == nil {
-				cert, err := ParseAndValidateCertificate(tt.certPem, VerifyDACExtensions)
+				cert, err := ParseAndValidateCertificate(tt.certPem, verifyDACExtensions)
 				require.Error(t, err)
 				require.Nil(t, cert)
 				require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
@@ -647,7 +647,7 @@ func Test_ParseAndValidateCertificate_VerifyDACExtensions(t *testing.T) {
 			cert, err := ParseAndValidateCertificate(tt.certPem)
 			require.NoError(t, err)
 			tt.mutate(cert.Certificate)
-			err = VerifyDACExtensions(cert.Certificate)
+			err = verifyDACExtensions(cert.Certificate)
 			require.Error(t, err)
 			require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
 			require.Contains(t, err.Error(), tt.expectSubstr)
@@ -655,17 +655,17 @@ func Test_ParseAndValidateCertificate_VerifyDACExtensions(t *testing.T) {
 	}
 }
 
-func Test_ParseAndValidateCertificate_VerifyNOCExtensions(t *testing.T) {
+func Test_ParseAndValidateCertificate_verifyNOCExtensions(t *testing.T) {
 	// Positive: a NOC-shaped cert with EKU critical and {serverAuth, clientAuth}.
 	t.Run("ok/NOC-shaped leaf", func(t *testing.T) {
-		cert, err := ParseAndValidateCertificate(testconstants.MatterNOCShaped, VerifyNOCExtensions)
+		cert, err := ParseAndValidateCertificate(testconstants.MatterNOCShaped, verifyNOCExtensions)
 		require.NoError(t, err)
 		require.NotNil(t, cert)
 	})
 
 	// Negative: DAC-shaped leaf has no EKU → fails at the EKU presence check.
 	t.Run("reject/DAC-shaped (no EKU)", func(t *testing.T) {
-		cert, err := ParseAndValidateCertificate(testconstants.MatterDACShaped, VerifyNOCExtensions)
+		cert, err := ParseAndValidateCertificate(testconstants.MatterDACShaped, verifyNOCExtensions)
 		require.Error(t, err)
 		require.Nil(t, cert)
 		require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
@@ -677,7 +677,7 @@ func Test_ParseAndValidateCertificate_VerifyNOCExtensions(t *testing.T) {
 		cert, err := ParseAndValidateCertificate(testconstants.MatterNOCShaped)
 		require.NoError(t, err)
 		cert.Certificate.ExtKeyUsage = append(cert.Certificate.ExtKeyUsage, x509std.ExtKeyUsageCodeSigning)
-		err = VerifyNOCExtensions(cert.Certificate)
+		err = verifyNOCExtensions(cert.Certificate)
 		require.Error(t, err)
 		require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
 		require.Contains(t, err.Error(), "NOC: ExtendedKeyUsage SHALL be exactly {serverAuth, clientAuth}")
@@ -685,7 +685,7 @@ func Test_ParseAndValidateCertificate_VerifyNOCExtensions(t *testing.T) {
 
 	// Negative: CA cert with cA=TRUE.
 	t.Run("reject/CA cert", func(t *testing.T) {
-		cert, err := ParseAndValidateCertificate(testconstants.PAACertWithNumericVid, VerifyNOCExtensions)
+		cert, err := ParseAndValidateCertificate(testconstants.PAACertWithNumericVid, verifyNOCExtensions)
 		require.Error(t, err)
 		require.Nil(t, cert)
 		require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
@@ -694,7 +694,7 @@ func Test_ParseAndValidateCertificate_VerifyNOCExtensions(t *testing.T) {
 }
 
 // VerifyDAChainNonRoot dispatches on cA: PAIs go to VerifyCAExtensions + the
-// §6.2.2.4 pathLen=0 rule, DACs go to VerifyDACExtensions. Both branches must
+// §6.2.2.4 pathLen=0 rule, DACs go to verifyDACExtensions. Both branches must
 // accept their respective fixtures and reject the opposite shape.
 func Test_ParseAndValidateCertificate_VerifyDAChainNonRoot(t *testing.T) {
 	t.Run("ok/PAI (cA=TRUE, pathLen=0)", func(t *testing.T) {
@@ -731,7 +731,7 @@ func Test_ParseAndValidateCertificate_VerifyDAChainNonRoot(t *testing.T) {
 }
 
 // VerifyNOCChainNonRoot dispatches on cA: ICACs go to VerifyCAExtensions, NOCs
-// go to VerifyNOCExtensions. Both branches must accept their respective fixtures.
+// go to verifyNOCExtensions. Both branches must accept their respective fixtures.
 func Test_ParseAndValidateCertificate_VerifyNOCChainNonRoot(t *testing.T) {
 	t.Run("ok/NocCert1 (ICAC)", func(t *testing.T) {
 		cert, err := ParseAndValidateCertificate(testconstants.NocCert1, VerifyNOCChainNonRoot)

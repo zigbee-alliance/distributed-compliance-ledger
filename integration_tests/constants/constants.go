@@ -549,7 +549,7 @@ nT1SO4vp46SzmvdrGRUhDb7gB91i
 -----END CERTIFICATE-----`
 
 	// MatterDACShaped is a synthetic ECDSA P-256 leaf that satisfies the
-	// Matter R1.5 §6.2.2.3 DAC structural profile: BasicConstraints critical
+	// Matter R1.6 §6.2.2.3 DAC structural profile: BasicConstraints critical
 	// with cA=FALSE, KeyUsage critical with exactly digitalSignature, plus SKI
 	// and AKI.
 	MatterDACShaped = `-----BEGIN CERTIFICATE-----
@@ -565,7 +565,7 @@ v/w6GteWAiAFUPvSjKa+YudRxdFhm8QmZJik8cS3gkUiCFO55F1DYg==
 -----END CERTIFICATE-----`
 
 	// MatterNOCShaped is a synthetic ECDSA P-256 leaf that satisfies the Matter
-	// R1.5 §6.5.12 NOC extension profile: BasicConstraints critical with
+	// R1.6 §6.5.12 NOC extension profile: BasicConstraints critical with
 	// is-ca=FALSE, KeyUsage critical with exactly digitalSignature,
 	// ExtendedKeyUsage critical with exactly {serverAuth, clientAuth}, plus
 	// SKI and AKI.

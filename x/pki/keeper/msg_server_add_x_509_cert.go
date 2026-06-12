@@ -26,7 +26,7 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 
 	// Decode pem certificate. This handler accepts both Matter PAIs (cA=TRUE) and Matter
 	// DACs (cA=FALSE); VerifyDAChainNonRoot dispatches by the BasicConstraints cA flag
-	// and enforces the Matter R1.5 §6.2.2.4 PAI profile for ICAs and the §6.2.2.3 DAC
+	// and enforces the Matter R1.6 §6.2.2.4 PAI profile for ICAs and the §6.2.2.3 DAC
 	// profile for end-entities. VerifyECDSAP256SHA256 enforces the §6.2.2.3/4 ecdsa-
 	// with-SHA256 + prime256v1 algorithm requirement; VerifyVersionV3 enforces v3.
 	x509Certificate, err := x509.ParseAndValidateCertificate(
@@ -96,7 +96,7 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 		return nil, err
 	}
 
-	// Matter R1.5 §6.2.2.3 (DAC) 8a + 9a and §6.2.2.4 (PAI) 7a require the new
+	// Matter R1.6 §6.2.2.3 (DAC) 8a + 9a and §6.2.2.4 (PAI) 7a require the new
 	// cert's subject VID/PID to match the immediate issuer's. We look up the
 	// parent by (Issuer, AuthorityKeyID) — the chain was just verified, so the
 	// parent is guaranteed to exist in the store. This runs after
@@ -136,7 +136,7 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 	return &types.MsgAddX509CertResponse{}, nil
 }
 
-// verifyImmediateIssuerVidPid enforces Matter R1.5 §6.2.2.3 8a/9a and §6.2.2.4
+// verifyImmediateIssuerVidPid enforces Matter R1.6 §6.2.2.3 8a/9a and §6.2.2.4
 // 7a against the certificate's *immediate* issuer (one hop up in the chain),
 // distinct from ensureVidMatches which compares against the root.
 //

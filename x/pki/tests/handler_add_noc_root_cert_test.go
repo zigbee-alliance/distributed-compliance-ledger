@@ -215,11 +215,6 @@ func TestHandler_AddNocRootCert_InvalidCertificate(t *testing.T) {
 			err:         pkitypes.ErrInvalidCertificate,
 		},
 		{
-			// NocCert2 satisfies the strict CA extension profile but is not
-			// self-signed — so it passes VerifyCAExtensions and is rejected at
-			// the IsSelfSigned check, exactly as the original test intended.
-			// IntermediateCertPem can no longer be used here because it lacks
-			// critical BC/KU and would fail at parse instead.
 			name:        "NonRootCertificate",
 			accountVid:  testconstants.Vid,
 			accountRole: dclauthtypes.Vendor,
@@ -227,9 +222,6 @@ func TestHandler_AddNocRootCert_InvalidCertificate(t *testing.T) {
 			err:         pkitypes.ErrRootCertificateIsNotSelfSigned,
 		},
 		{
-			// Leaf cert is BasicConstraintsValid=true but IsCA=false;
-			// VerifyCAExtensions must reject it before the self-signed check
-			// runs.
 			name:        "NonCACertificate",
 			accountVid:  testconstants.Vid,
 			accountRole: dclauthtypes.Vendor,
@@ -279,11 +271,6 @@ func TestHandler_AddNocRootCert_CertificateExist(t *testing.T) {
 		nocRoorCert  string
 		err          error
 	}{
-		// These sub-cases switched from RootCertPem to NocRootCert3 because
-		// RootCertPem currently fails the strict VerifyCAExtensions profile
-		// at parse time (no critical KeyUsage extension), so the test could
-		// no longer reach the duplicate/ownership checks below. NocRootCert3
-		// is a regenerated, profile-compliant NOC root.
 		{
 			name: "Duplicate",
 			existingCert: &types.Certificate{

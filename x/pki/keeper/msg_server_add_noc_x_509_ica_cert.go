@@ -24,11 +24,13 @@ func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNoc
 		return nil, pkitypes.NewErrUnauthorizedRole("MsgAddNocX509IcaCert", dclauthtypes.Vendor)
 	}
 
-	// Decode the PEM. AddNocX509IcaCert accepts both Matter ICACs (is-ca=TRUE) and
-	// Matter NOCs (is-ca=FALSE); VerifyNOCChainNonRoot dispatches by the
-	// BasicConstraints cA flag and enforces the Matter R1.5 §6.5.12 ICAC profile for
-	// CAs and the NOC profile for end-entities. VerifyECDSAP256SHA256 enforces the
-	// §6.5.5/§6.5.8/§6.5.9 ecdsa-with-SHA256 + prime256v1 algorithm requirement;
+	// Decode the PEM. The primary target of AddNocX509IcaCert is the Matter ICAC
+	// (cA=TRUE), enforced by the Matter R1.6 §6.5.12 ICAC profile. The same handler
+	// also accepts the cA=FALSE certs used by the IsVidVerificationSigner path
+	// (#661), where the Vendor's VID Verification Signer Certificate is encoded as
+	// a non-CA cert and stored under CertificateType_VIDSignerPKI; VerifyNOCChainNonRoot
+	// dispatches on the BasicConstraints cA flag. VerifyECDSAP256SHA256 enforces
+	// the §6.5.5/§6.5.8/§6.5.9 ecdsa-with-SHA256 + prime256v1 algorithm requirement;
 	// VerifyVersionV3 enforces v3.
 	x509Certificate, err := x509.ParseAndValidateCertificate(
 		msg.Cert,

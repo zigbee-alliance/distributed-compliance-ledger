@@ -23,7 +23,7 @@ func (k msgServer) AddNocX509RootCert(goCtx context.Context, msg *types.MsgAddNo
 		return nil, pkitypes.NewErrUnauthorizedRole("MsgAddNocX509RootCert", dclauthtypes.Vendor)
 	}
 
-	// decode pem certificate (must satisfy the Matter R1.5 RCAC structural
+	// decode pem certificate (must satisfy the Matter R1.6 RCAC structural
 	// profile: v3, BC critical with cA=TRUE, KU critical with keyCertSign+cRLSign
 	// and at most an extra digitalSignature, no ExtendedKeyUsage, signed with
 	// ecdsa-with-SHA256 on a prime256v1 subject public key)
