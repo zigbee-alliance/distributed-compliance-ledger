@@ -33,10 +33,19 @@ intermediate_cert_subject_key_id="06:9F:5A:E0:1F:23:3E:9F:C7:4F:B6:F9:A2:33:47:3
 intermediate_cert_1_serial_number="577430346509479530103103319788179390906984119670"
 intermediate_cert_2_serial_number="617357865778805507017637943649984133152592305888"
 
-leaf_cert_path="integration_tests/constants/noc_leaf_cert_1"
-leaf_cert_subject="MIGBMQswCQYDVQQGEwJVWjETMBEGA1UECBMKU29tZSBTdGF0ZTETMBEGA1UEBxMKU29tZSBTdGF0ZTEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMRMwEQYDVQQDEwpOT0MtbGVhZi0x"
-leaf_cert_subject_key_id="F0:3A:A5:96:8F:60:63:F0:15:21:24:0C:DA:0A:E6:2B:CC:A0:58:F9"
-leaf_cert_serial_number="201294310322324358101935163941973786245732555938"
+# NocLeafCert1 (NOC end-entity, cA=FALSE / KU=digitalSignature + EKU=
+# {serverAuth,clientAuth}) is no longer accepted by the strict §6.5.12
+# add-noc-x509-ica-cert handler. The fixture is replaced with the Matter
+# §6.5.12 VVSC leaf chained under VvscRoot1 → VvscIca1 (path length 3, the
+# §6.4.10 step 12.a.iii cap), submitted with --is-vid-verification-signer=true.
+# Variable names are kept as `leaf_cert_*` so downstream assertions don't
+# need to be renamed.
+vvsc_root_path="integration_tests/constants/vvsc_root_cert_1"
+vvsc_ica_path="integration_tests/constants/vvsc_ica_cert_1"
+leaf_cert_path="integration_tests/constants/vvsc_leaf_cert_1"
+leaf_cert_subject="MIGYMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtWVlNDLUxlYWYtMTEUMBIGCisGAQQBgqJ8AgEMBDAwMDE="
+leaf_cert_subject_key_id="42:24:A6:34:C8:C1:2F:88:9D:9C:7F:BE:8A:7A:6E:40:DB:C8:2B:F1"
+leaf_cert_serial_number="5068329979159654449"
 
 trustee_account="jack"
 
@@ -67,8 +76,19 @@ result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
-echo "Add a leaf ICA certificate"
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$leaf_cert_path" --from $vendor_account_65521 --yes)
+echo "Add the self-issued VVSC root (Matter §6.4.5.4) used as the trust anchor"
+echo "for the VVSC leaf below — registered as VIDSignerPKI."
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$vvsc_root_path" --is-vid-verification-signer=true --from $vendor_account_65521 --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+echo "Add the VVSC ICA chained under the VVSC root"
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$vvsc_ica_path" --is-vid-verification-signer=true --from $vendor_account_65521 --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+echo "Add a VVSC leaf (full chain VvscRoot1 → VvscIca1 → VvscLeaf1 — §6.4.10 path length 3)"
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$leaf_cert_path" --is-vid-verification-signer=true --from $vendor_account_65521 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 

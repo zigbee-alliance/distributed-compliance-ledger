@@ -60,19 +60,19 @@ noc_leaf_cert_1_serial_number="201294310322324358101935163941973786245732555938"
 # is VvscRoot1 → VvscIca1 → VvscLeaf1 (path length 3).
 vvsc_root_cert_1_path="integration_tests/constants/vvsc_root_cert_1"
 vvsc_root_cert_1_subject="MIGWMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTERMA8GA1UEBwwIVGFzaGtlbnQxGDAWBgNVBAoMD0V4YW1wbGUgQ29tcGFueTEZMBcGA1UECwwQVGVzdGluZyBEaXZpc2lvbjEUMBIGA1UEAwwLVlZTQy1Sb290LTExFDASBgorBgEEAYKifAIBDAQwMDAx"
-vvsc_root_cert_1_subject_key_id="AD:82:E3:CD:59:53:5F:B8:4C:71:50:79:CF:5C:4D:76:73:D3:30:9C"
+vvsc_root_cert_1_subject_key_id="21:B9:21:60:2D:53:8B:86:DA:A4:16:5C:AA:40:90:25:EB:FE:7E:28"
 vvsc_root_cert_1_serial_number="5068329979261235249"
 vvsc_root_cert_1_subject_as_text="CN=VVSC-Root-1,OU=Testing Division,O=Example Company,L=Tashkent,ST=Some State,C=UZ,vid=0x0001"
 
 vvsc_ica_cert_1_path="integration_tests/constants/vvsc_ica_cert_1"
 vvsc_ica_cert_1_subject="MIGXMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRMwEQYDVQQDDApWVlNDLUlDQS0xMRQwEgYKKwYBBAGConwCAQwEMDAwMQ=="
-vvsc_ica_cert_1_subject_key_id="88:A3:9E:F6:36:05:F7:DD:49:03:D8:D5:F1:11:4D:48:28:14:79:53"
+vvsc_ica_cert_1_subject_key_id="98:4B:EE:D7:40:A2:FE:29:CB:AF:C0:0A:67:B7:AE:FF:12:A5:DA:DD"
 vvsc_ica_cert_1_serial_number="5068329979109130545"
 vvsc_ica_cert_1_subject_as_text="CN=VVSC-ICA-1,OU=Testing Division,O=Example Company,L=Some State,ST=Some State,C=UZ,vid=0x0001"
 
 vvsc_leaf_cert_1_path="integration_tests/constants/vvsc_leaf_cert_1"
 vvsc_leaf_cert_1_subject="MIGYMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtWVlNDLUxlYWYtMTEUMBIGCisGAQQBgqJ8AgEMBDAwMDE="
-vvsc_leaf_cert_1_subject_key_id="34:A6:DA:A5:C9:34:F1:E0:41:91:50:90:25:0A:31:08:7A:DF:EC:A9"
+vvsc_leaf_cert_1_subject_key_id="42:24:A6:34:C8:C1:2F:88:9D:9C:7F:BE:8A:7A:6E:40:DB:C8:2B:F1"
 vvsc_leaf_cert_1_serial_number="5068329979159654449"
 vvsc_leaf_cert_1_subject_as_text="CN=VVSC-Leaf-1,OU=Testing Division,O=Example Company,L=Some State,ST=Some State,C=UZ,vid=0x0001"
 

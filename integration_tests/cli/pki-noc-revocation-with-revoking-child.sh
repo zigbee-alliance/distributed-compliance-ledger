@@ -34,10 +34,24 @@ noc_cert_1_subject="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECBMKU29tZSBTdGF0ZTETMBEGA1UE
 noc_cert_1_subject_key_id="06:9F:5A:E0:1F:23:3E:9F:C7:4F:B6:F9:A2:33:47:33:62:7A:07:C5"
 noc_cert_1_serial_number="577430346509479530103103319788179390906984119670"
 
-noc_leaf_cert_1_path="integration_tests/constants/noc_leaf_cert_1"
-noc_leaf_cert_1_subject="MIGBMQswCQYDVQQGEwJVWjETMBEGA1UECBMKU29tZSBTdGF0ZTETMBEGA1UEBxMKU29tZSBTdGF0ZTEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMRMwEQYDVQQDEwpOT0MtbGVhZi0x"
-noc_leaf_cert_1_subject_key_id="F0:3A:A5:96:8F:60:63:F0:15:21:24:0C:DA:0A:E6:2B:CC:A0:58:F9"
-noc_leaf_cert_1_serial_number="201294310322324358101935163941973786245732555938"
+# Matter §6.5.12 §6.4.10 chain: VvscRoot1 → VvscIca1 → noc_leaf_cert_1 (
+# repurposed as the VVSC leaf so downstream assertions keep their names).
+# noc_leaf_cert_1 was originally a NOC end-entity chained under noc_cert_1;
+# the strict §6.5.12 ICA handler no longer accepts that profile. The VVSC
+# chain runs in parallel with the OperationalPKI chain (noc_root_cert_1 →
+# noc_cert_1) so the existing assertions about each chain still hold.
+vvsc_root_path="integration_tests/constants/vvsc_root_cert_1"
+vvsc_root_subject="MIGWMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTERMA8GA1UEBwwIVGFzaGtlbnQxGDAWBgNVBAoMD0V4YW1wbGUgQ29tcGFueTEZMBcGA1UECwwQVGVzdGluZyBEaXZpc2lvbjEUMBIGA1UEAwwLVlZTQy1Sb290LTExFDASBgorBgEEAYKifAIBDAQwMDAx"
+vvsc_root_subject_key_id="21:B9:21:60:2D:53:8B:86:DA:A4:16:5C:AA:40:90:25:EB:FE:7E:28"
+vvsc_root_serial_number="5068329979261235249"
+vvsc_ica_1_path="integration_tests/constants/vvsc_ica_cert_1"
+vvsc_ica_1_subject="MIGXMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRMwEQYDVQQDDApWVlNDLUlDQS0xMRQwEgYKKwYBBAGConwCAQwEMDAwMQ=="
+vvsc_ica_1_subject_key_id="98:4B:EE:D7:40:A2:FE:29:CB:AF:C0:0A:67:B7:AE:FF:12:A5:DA:DD"
+vvsc_ica_1_serial_number="5068329979109130545"
+noc_leaf_cert_1_path="integration_tests/constants/vvsc_leaf_cert_1"
+noc_leaf_cert_1_subject="MIGYMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtWVlNDLUxlYWYtMTEUMBIGCisGAQQBgqJ8AgEMBDAwMDE="
+noc_leaf_cert_1_subject_key_id="42:24:A6:34:C8:C1:2F:88:9D:9C:7F:BE:8A:7A:6E:40:DB:C8:2B:F1"
+noc_leaf_cert_1_serial_number="5068329979159654449"
 
 noc_cert_2_path="integration_tests/constants/noc_cert_2"
 noc_cert_2_subject="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECBMKU29tZSBTdGF0ZTETMBEGA1UEBxMKU29tZSBTdGF0ZTEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDEwtOT0MtY2hpbGQtMg=="
@@ -47,10 +61,16 @@ noc_cert_2_serial_number="634591262660314610068979921875981241084684028375"
 noc_cert_2_copy_path="integration_tests/constants/noc_cert_2_copy"
 noc_cert_2_copy_serial_number="252687488758567844896720928536709119387931444024"
 
-noc_leaf_cert_2_path="integration_tests/constants/noc_leaf_cert_2"
-noc_leaf_cert_2_subject="MIGBMQswCQYDVQQGEwJVWjETMBEGA1UECBMKU29tZSBTdGF0ZTETMBEGA1UEBxMKU29tZSBTdGF0ZTEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMRMwEQYDVQQDEwpOT0MtbGVhZi0y"
-noc_leaf_cert_2_subject_key_id="4E:D8:7A:62:C8:51:37:DA:18:A0:BD:D6:CF:F6:8D:76:51:26:C0:68"
-noc_leaf_cert_2_serial_number="716244327755811150625520974153363972854612123543"
+# Second VVSC chain (VvscRoot1 → VvscIca2 → VvscLeaf2) repurposed as
+# noc_leaf_cert_2 so the second cascade-revoke section keeps its assertions.
+vvsc_ica_2_path="integration_tests/constants/vvsc_ica_cert_2"
+vvsc_ica_2_subject="MIGXMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRMwEQYDVQQDDApWVlNDLUlDQS0yMRQwEgYKKwYBBAGConwCAQwEMDAwMQ=="
+vvsc_ica_2_subject_key_id="ED:8C:5B:36:E7:3C:E4:54:09:A2:59:D4:E8:0A:D6:6C:99:C6:A2:CC"
+vvsc_ica_2_serial_number="5068329979109130546"
+noc_leaf_cert_2_path="integration_tests/constants/vvsc_leaf_cert_2"
+noc_leaf_cert_2_subject="MIGYMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtWVlNDLUxlYWYtMjEUMBIGCisGAQQBgqJ8AgEMBDAwMDE="
+noc_leaf_cert_2_subject_key_id="8D:F6:2A:9C:24:D0:92:36:83:32:38:47:35:3A:0B:E9:19:CD:90:B3"
+noc_leaf_cert_2_serial_number="5068329979159654450"
 
 vid_in_hex_format=0x6006
 vid=24582
@@ -78,8 +98,18 @@ result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
-echo "Add NOC leaf certificate by vendor with VID = $vid"
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_leaf_cert_1_path" --from $vendor_account --yes)
+echo "Pre-seed the VVSC chain (Matter §6.4.5.4) so the leaf below has a"
+echo "§6.4.10 step 12.a.iii path-length-3 chain to validate against."
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$vvsc_root_path" --is-vid-verification-signer=true --from $vendor_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$vvsc_ica_1_path" --is-vid-verification-signer=true --from $vendor_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+echo "Add VVSC leaf certificate (replaces the legacy NocLeafCert1) by vendor with VID = $vid"
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_leaf_cert_1_path" --is-vid-verification-signer=true --from $vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -97,8 +127,14 @@ echo $result | jq
 check_response "$result" "\"serialNumber\": \"$noc_cert_1_serial_number\""
 check_response "$result" "\"serialNumber\": \"$noc_leaf_cert_1_serial_number\""
 
-echo "$vendor_account Vendor revokes root NOC certificate by setting \"revoke-child\" flag to true, it should revoke child certificates too"
+echo "$vendor_account Vendor revokes the OperationalPKI root NOC certificate with revoke-child=true."
+echo "Cascade hits NocCert1 only — VVSC chain is structurally disjoint (Matter §6.5.12)."
 result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-root-cert --subject="$noc_root_cert_1_subject" --subject-key-id="$noc_root_cert_1_subject_key_id" --revoke-child=true --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+echo "Also revoke the VVSC root with revoke-child=true so the cascade also picks up VvscIca1 + the VVSC leaf."
+result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-root-cert --subject="$vvsc_root_subject" --subject-key-id="$vvsc_root_subject_key_id" --revoke-child=true --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -216,8 +252,15 @@ result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
-echo "Add leaf certificate by vendor with VID = $vid"
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_leaf_cert_2_path" --from $vendor_account --yes)
+echo "Pre-seed the second VVSC intermediate (VvscIca2 under VvscRoot1) so the"
+echo "leaf-2 chain VvscRoot1 → VvscIca2 → noc_leaf_cert_2 resolves through"
+echo "verifyVVSCCertificate."
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$vvsc_ica_2_path" --is-vid-verification-signer=true --from $vendor_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+echo "Add VVSC leaf certificate 2 (replaces the legacy NocLeafCert2) by vendor with VID = $vid"
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_leaf_cert_2_path" --is-vid-verification-signer=true --from $vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -233,8 +276,14 @@ check_response "$result" "\"serialNumber\": \"$noc_cert_2_serial_number\""
 check_response "$result" "\"serialNumber\": \"$noc_cert_2_copy_serial_number\""
 check_response "$result" "\"serialNumber\": \"$noc_leaf_cert_2_serial_number\""
 
-echo "$vendor_account Vendor revokes non-root NOC certificate by setting \"revoke-child\" flag to true, it should revoke child certificates too"
+echo "$vendor_account Vendor revokes the OperationalPKI ICA with revoke-child=true."
+echo "Cascade hits NocCert2 / NocCert2Copy but, per Matter §6.5.12, does not reach the VVSC leaf."
 result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-ica-cert --subject="$noc_cert_2_subject" --subject-key-id="$noc_cert_2_subject_key_id" --revoke-child=true --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+echo "Also revoke VvscIca2 with revoke-child=true so the cascade also picks up the VVSC leaf 2."
+result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-ica-cert --subject="$vvsc_ica_2_subject" --subject-key-id="$vvsc_ica_2_subject_key_id" --revoke-child=true --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
