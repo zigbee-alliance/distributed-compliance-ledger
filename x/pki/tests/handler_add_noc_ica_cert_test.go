@@ -452,7 +452,7 @@ func vvscIntermediateFixture() intermediateCertificateExistFixture {
 		submitPem:            testconstants.VvscIcaCert1,
 		crtType:              types.CertificateType_VIDSignerPKI,
 		isVVSC:               true,
-		rootCertificateAdder: func(addr sdk.AccAddress) types.Certificate { return utils.RootVvscCertificate1(addr) },
+		rootCertificateAdder: utils.RootVvscCertificate1,
 	}
 }
 

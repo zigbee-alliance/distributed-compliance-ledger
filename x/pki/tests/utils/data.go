@@ -271,6 +271,7 @@ func RootNocCertificate1(address sdk.AccAddress, certificateType types.Certifica
 	if certificateType == types.CertificateType_VIDSignerPKI {
 		return RootVvscCertificate1(address)
 	}
+
 	return types.NewNocRootCertificate(
 		testconstants.NocRootCert1,
 		testconstants.NocRootCert1Subject,
@@ -288,6 +289,7 @@ func RootNocCertificate1Copy(address sdk.AccAddress, certificateType types.Certi
 	if certificateType == types.CertificateType_VIDSignerPKI {
 		return RootVvscCertificate1Copy(address)
 	}
+
 	return types.NewNocRootCertificate(
 		testconstants.NocRootCert1Copy,
 		testconstants.NocRootCert1CopySubject,
@@ -305,6 +307,7 @@ func RootNocCertificate2(address sdk.AccAddress, certificateType types.Certifica
 	if certificateType == types.CertificateType_VIDSignerPKI {
 		return RootVvscCertificate2(address)
 	}
+
 	return types.NewNocRootCertificate(
 		testconstants.NocRootCert2,
 		testconstants.NocRootCert2Subject,
@@ -322,6 +325,7 @@ func IntermediateNocCertificate1(address sdk.AccAddress, certificateType types.C
 	if certificateType == types.CertificateType_VIDSignerPKI {
 		return IntermediateVvscCertificate1(address)
 	}
+
 	return types.NewNocCertificate(
 		testconstants.NocCert1,
 		testconstants.NocCert1Subject,
@@ -343,6 +347,7 @@ func IntermediateNocCertificate1Copy(address sdk.AccAddress, certificateType typ
 	if certificateType == types.CertificateType_VIDSignerPKI {
 		return IntermediateVvscCertificate1Copy(address)
 	}
+
 	return types.NewNocCertificate(
 		testconstants.NocCert1Copy,
 		testconstants.NocCert1CopySubject,
@@ -382,6 +387,7 @@ func LeafNocCertificate1(address sdk.AccAddress, certificateType types.Certifica
 	if certificateType == types.CertificateType_VIDSignerPKI {
 		return LeafVvscCertificate1(address)
 	}
+
 	return types.NewNocCertificate(
 		testconstants.NocLeafCert1,
 		testconstants.NocLeafCert1Subject,
