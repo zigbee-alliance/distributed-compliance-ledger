@@ -252,6 +252,13 @@ result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
+echo "Re-add the self-issued VVSC root. Revocation is a soft delete (cert moves"
+echo "to the revoked list), so the active store no longer contains it and"
+echo "verifyVVSCCertificate would fail the chain walk for VvscIca2."
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$vvsc_root_path" --is-vid-verification-signer=true --from $vendor_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
 echo "Pre-seed the second VVSC intermediate (VvscIca2 under VvscRoot1) so the"
 echo "leaf-2 chain VvscRoot1 → VvscIca2 → noc_leaf_cert_2 resolves through"
 echo "verifyVVSCCertificate."
