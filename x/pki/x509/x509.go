@@ -700,6 +700,43 @@ func (c Certificate) Verify(parent *Certificate, blockTime time.Time) error {
 	return nil
 }
 
+// VerifyVVSCSignature is the Matter R1.6 §6.4.10 step 12.a.iii equivalent of
+// Verify for VVSC chains. It checks the validity window and verifies that c
+// was signed by parent's public key, but does NOT require parent to have
+// BasicConstraints cA=TRUE or KeyUsage keyCertSign — a §6.5.12 VVSC has
+// cA=FALSE and KU exactly digitalSignature, so a VVSC parent would never pass
+// crypto/x509's CheckSignatureFrom.
+//
+// Callers must have validated both child and parent against VerifyVVSCExtensions
+// before invoking this; this method does not re-check the structural profile.
+//
+// A zero blockTime defaults to time.Now(), matching crypto/x509.Verify's
+// behavior. The keeper invokes this with ctx.BlockTime(), which is the zero
+// time in unit-test contexts (where tmproto.Header{} is unset).
+func (c Certificate) VerifyVVSCSignature(parent *Certificate, blockTime time.Time) error {
+	if blockTime.IsZero() {
+		blockTime = time.Now()
+	}
+	if blockTime.Before(c.Certificate.NotBefore) {
+		return pkitypes.NewErrInvalidCertificate(
+			fmt.Sprintf("certificate is not yet valid (NotBefore=%v)", c.Certificate.NotBefore))
+	}
+	if blockTime.After(c.Certificate.NotAfter) {
+		return pkitypes.NewErrInvalidCertificate(
+			fmt.Sprintf("certificate has expired (NotAfter=%v)", c.Certificate.NotAfter))
+	}
+
+	if err := parent.Certificate.CheckSignature(
+		c.Certificate.SignatureAlgorithm,
+		c.Certificate.RawTBSCertificate,
+		c.Certificate.Signature,
+	); err != nil {
+		return pkitypes.NewErrInvalidCertificate(fmt.Sprintf("VVSC signature verification failed: %v", err))
+	}
+
+	return nil
+}
+
 func (c Certificate) IsSelfSigned() bool {
 	if len(c.AuthorityKeyID) > 0 {
 		return c.Issuer == c.Subject && c.AuthorityKeyID == c.SubjectKeyID

@@ -261,7 +261,16 @@ func LeafCertificate(address sdk.AccAddress) types.Certificate {
 	)
 }
 
+// RootNocCertificate1 returns the on-ledger row for either an OperationalPKI
+// RCAC or a VIDSignerPKI VVSC root, selected by certificateType. The two
+// branches use structurally distinct PEMs because Matter R1.6 §6.5.12 mandates
+// different profiles (RCAC: cA=TRUE / KU=keyCertSign+cRLSign; VVSC: cA=FALSE /
+// KU=digitalSignature). Lets the table-driven OperationalPKI / VIDSignerPKI
+// tests share the same fixture entry point.
 func RootNocCertificate1(address sdk.AccAddress, certificateType types.CertificateType) types.Certificate {
+	if certificateType == types.CertificateType_VIDSignerPKI {
+		return RootVvscCertificate1(address)
+	}
 	return types.NewNocRootCertificate(
 		testconstants.NocRootCert1,
 		testconstants.NocRootCert1Subject,
@@ -276,6 +285,9 @@ func RootNocCertificate1(address sdk.AccAddress, certificateType types.Certifica
 }
 
 func RootNocCertificate1Copy(address sdk.AccAddress, certificateType types.CertificateType) types.Certificate {
+	if certificateType == types.CertificateType_VIDSignerPKI {
+		return RootVvscCertificate1Copy(address)
+	}
 	return types.NewNocRootCertificate(
 		testconstants.NocRootCert1Copy,
 		testconstants.NocRootCert1CopySubject,
@@ -290,6 +302,9 @@ func RootNocCertificate1Copy(address sdk.AccAddress, certificateType types.Certi
 }
 
 func RootNocCertificate2(address sdk.AccAddress, certificateType types.CertificateType) types.Certificate {
+	if certificateType == types.CertificateType_VIDSignerPKI {
+		return RootVvscCertificate2(address)
+	}
 	return types.NewNocRootCertificate(
 		testconstants.NocRootCert2,
 		testconstants.NocRootCert2Subject,
@@ -304,6 +319,9 @@ func RootNocCertificate2(address sdk.AccAddress, certificateType types.Certifica
 }
 
 func IntermediateNocCertificate1(address sdk.AccAddress, certificateType types.CertificateType) types.Certificate {
+	if certificateType == types.CertificateType_VIDSignerPKI {
+		return IntermediateVvscCertificate1(address)
+	}
 	return types.NewNocCertificate(
 		testconstants.NocCert1,
 		testconstants.NocCert1Subject,
@@ -322,6 +340,9 @@ func IntermediateNocCertificate1(address sdk.AccAddress, certificateType types.C
 }
 
 func IntermediateNocCertificate1Copy(address sdk.AccAddress, certificateType types.CertificateType) types.Certificate {
+	if certificateType == types.CertificateType_VIDSignerPKI {
+		return IntermediateVvscCertificate1Copy(address)
+	}
 	return types.NewNocCertificate(
 		testconstants.NocCert1Copy,
 		testconstants.NocCert1CopySubject,
@@ -358,6 +379,9 @@ func IntermediateNocCertificate2(address sdk.AccAddress, certificateType types.C
 }
 
 func LeafNocCertificate1(address sdk.AccAddress, certificateType types.CertificateType) types.Certificate {
+	if certificateType == types.CertificateType_VIDSignerPKI {
+		return LeafVvscCertificate1(address)
+	}
 	return types.NewNocCertificate(
 		testconstants.NocLeafCert1,
 		testconstants.NocLeafCert1Subject,
@@ -372,5 +396,101 @@ func LeafNocCertificate1(address sdk.AccAddress, certificateType types.Certifica
 		testconstants.Vid,
 		testconstants.SchemaVersion,
 		certificateType,
+	)
+}
+
+func RootVvscCertificate1(address sdk.AccAddress) types.Certificate {
+	return types.NewNocRootCertificate(
+		testconstants.VvscRootCert1,
+		testconstants.VvscRootCert1Subject,
+		testconstants.VvscRootCert1SubjectAsText,
+		testconstants.VvscRootCert1SubjectKeyID,
+		testconstants.VvscRootCert1SerialNumber,
+		address.String(),
+		testconstants.Vid,
+		testconstants.SchemaVersion,
+		types.CertificateType_VIDSignerPKI,
+	)
+}
+
+func RootVvscCertificate1Copy(address sdk.AccAddress) types.Certificate {
+	return types.NewNocRootCertificate(
+		testconstants.VvscRootCert1Copy,
+		testconstants.VvscRootCert1CopySubject,
+		testconstants.VvscRootCert1CopySubjectAsText,
+		testconstants.VvscRootCert1CopySubjectKeyID,
+		testconstants.VvscRootCert1CopySerialNumber,
+		address.String(),
+		testconstants.Vid,
+		testconstants.SchemaVersion,
+		types.CertificateType_VIDSignerPKI,
+	)
+}
+
+func RootVvscCertificate2(address sdk.AccAddress) types.Certificate {
+	return types.NewNocRootCertificate(
+		testconstants.VvscRootCert2,
+		testconstants.VvscRootCert2Subject,
+		testconstants.VvscRootCert2SubjectAsText,
+		testconstants.VvscRootCert2SubjectKeyID,
+		testconstants.VvscRootCert2SerialNumber,
+		address.String(),
+		testconstants.Vid,
+		testconstants.SchemaVersion,
+		types.CertificateType_VIDSignerPKI,
+	)
+}
+
+func IntermediateVvscCertificate1(address sdk.AccAddress) types.Certificate {
+	return types.NewNocCertificate(
+		testconstants.VvscIcaCert1,
+		testconstants.VvscIcaCert1Subject,
+		testconstants.VvscIcaCert1SubjectAsText,
+		testconstants.VvscIcaCert1SubjectKeyID,
+		testconstants.VvscIcaCert1SerialNumber,
+		testconstants.VvscIcaCert1Issuer,
+		testconstants.VvscIcaCert1AuthorityKeyID,
+		testconstants.VvscRootCert1Subject,
+		testconstants.VvscRootCert1SubjectKeyID,
+		address.String(),
+		testconstants.Vid,
+		testconstants.SchemaVersion,
+		types.CertificateType_VIDSignerPKI,
+	)
+}
+
+func IntermediateVvscCertificate1Copy(address sdk.AccAddress) types.Certificate {
+	return types.NewNocCertificate(
+		testconstants.VvscIcaCert1Copy,
+		testconstants.VvscIcaCert1CopySubject,
+		testconstants.VvscIcaCert1CopySubjectAsText,
+		testconstants.VvscIcaCert1CopySubjectKeyID,
+		testconstants.VvscIcaCert1CopySerialNumber,
+		testconstants.VvscIcaCert1CopyIssuer,
+		testconstants.VvscIcaCert1CopyAuthorityKeyID,
+		testconstants.VvscRootCert1Subject,
+		testconstants.VvscRootCert1SubjectKeyID,
+		address.String(),
+		testconstants.Vid,
+		testconstants.SchemaVersion,
+		types.CertificateType_VIDSignerPKI,
+	)
+}
+
+func LeafVvscCertificate1(address sdk.AccAddress) types.Certificate {
+	return types.NewNocCertificate(
+		testconstants.VvscLeafCert1,
+		testconstants.VvscLeafCert1Subject,
+		testconstants.VvscLeafCert1SubjectAsText,
+		testconstants.VvscLeafCert1SubjectKeyID,
+		testconstants.VvscLeafCert1SerialNumber,
+		testconstants.VvscLeafCert1Issuer,
+		testconstants.VvscLeafCert1AuthorityKeyID,
+		testconstants.VvscRootCert1Subject,
+		testconstants.VvscRootCert1SubjectKeyID,
+		address.String(),
+		testconstants.Vid,
+		testconstants.SchemaVersion,
+		types.CertificateType_VIDSignerPKI,
 	)
 }

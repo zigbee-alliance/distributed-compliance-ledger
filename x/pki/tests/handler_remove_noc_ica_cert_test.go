@@ -198,8 +198,8 @@ func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID_ParentExist(t *testi
 			utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 			// add leaf certificate
-			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, types.CertificateType_VIDSignerPKI)
-			utils.AddNocIntermediateCertificate(setup, leafCertificate)
+			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
+			utils.AddMokedNocCertificate(setup, leafCertificate)
 
 			// check total number of certificates
 			nocCerts := setup.Keeper.GetAllNocCertificates(setup.Ctx)
@@ -274,8 +274,8 @@ func TestHandler_RemoveNocIntermediateCert_BySerialNumber_ParentExist(t *testing
 			utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 			// Add a leaf certificate
-			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, types.CertificateType_VIDSignerPKI)
-			utils.AddNocIntermediateCertificate(setup, leafCertificate)
+			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
+			utils.AddMokedNocCertificate(setup, leafCertificate)
 
 			// remove ICA certificate by serial number
 			utils.RemoveNocIntermediateCertificate(
@@ -338,8 +338,8 @@ func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID_ApprovedChildExist(t
 			utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 			// add leaf certificate
-			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, types.CertificateType_VIDSignerPKI)
-			utils.AddNocIntermediateCertificate(setup, leafCertificate)
+			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
+			utils.AddMokedNocCertificate(setup, leafCertificate)
 
 			// check total number of certificates
 			nocCerts := setup.Keeper.GetAllNocCertificates(setup.Ctx)
@@ -415,8 +415,8 @@ func TestHandler_RemoveNocIntermediateCert_BySerialNumber_ApprovedChildExist(t *
 			utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 			// Add a leaf certificate
-			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, types.CertificateType_VIDSignerPKI)
-			utils.AddNocIntermediateCertificate(setup, leafCertificate)
+			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
+			utils.AddMokedNocCertificate(setup, leafCertificate)
 
 			// remove ICA certificate by serial number
 			utils.RemoveNocIntermediateCertificate(
@@ -480,8 +480,8 @@ func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID_RevokedChildExist(t 
 			utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 			// add leaf certificate
-			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, types.CertificateType_VIDSignerPKI)
-			utils.AddNocIntermediateCertificate(setup, leafCertificate)
+			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
+			utils.AddMokedNocCertificate(setup, leafCertificate)
 
 			// check total number of certificates
 			nocCerts := setup.Keeper.GetAllNocCertificates(setup.Ctx)
@@ -559,8 +559,8 @@ func TestHandler_RemoveNocIntermediateCert_BySerialNumber_RevokedChildExist(t *t
 			utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 			// Add a leaf certificate
-			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, types.CertificateType_VIDSignerPKI)
-			utils.AddNocIntermediateCertificate(setup, leafCertificate)
+			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
+			utils.AddMokedNocCertificate(setup, leafCertificate)
 
 			// revoke leaf certificate
 			utils.RevokeNocIntermediateCertificate(

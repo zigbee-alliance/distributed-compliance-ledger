@@ -88,8 +88,19 @@ func (k msgServer) AddNocX509IcaCert(goCtx context.Context, msg *types.MsgAddNoc
 		}
 	}
 
-	// Valid certificate chain must be built for new certificate
-	rootCert, err := k.verifyCertificate(ctx, x509Certificate)
+	// A valid certificate chain must be built for a new certificate. The VVSC path
+	// uses a Matter R1.6 §6.4.10 step 12.a.iii walker: crypto/x509.Verify would
+	// reject any chain step into a VVSC parent because §6.5.12 mandates
+	// cA=FALSE / KU=digitalSignature, which fails stdlib's CheckSignatureFrom
+	// cA + keyCertSign requirements. Depth starts at 1 — the cert being added
+	// is the first link, the §6.4.10 path-length-3 cap applies to the entire
+	// chain including the trust anchor.
+	var rootCert *x509.Certificate
+	if msg.IsVidVerificationSigner {
+		rootCert, err = k.verifyVVSCCertificate(ctx, x509Certificate, 1)
+	} else {
+		rootCert, err = k.verifyCertificate(ctx, x509Certificate)
+	}
 	if err != nil {
 		return nil, err
 	}

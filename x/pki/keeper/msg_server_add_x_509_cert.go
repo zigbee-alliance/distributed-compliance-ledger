@@ -55,8 +55,8 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 	if found && len(certificates.Certs) > 0 {
 		existingCertificate := certificates.Certs[0]
 
-		// Issuer and authorityKeyID must be the same as ones of exisiting certificates with the same subject and
-		// subjectKeyID. Since new certificate is not self-signed, we have to ensure that the exisiting certificates
+		// Issuer and authorityKeyID must be the same as ones of existing certificates with the same subject and
+		// subjectKeyID. Since the new certificate is not self-signed, we have to ensure that the existing certificates
 		// are not self-signed too, consequently are non-root certificates, before to match issuer and authorityKeyID.
 		if existingCertificate.IsRoot || x509Certificate.Issuer != existingCertificate.Issuer ||
 			x509Certificate.AuthorityKeyID != certificates.Certs[0].AuthorityKeyId {

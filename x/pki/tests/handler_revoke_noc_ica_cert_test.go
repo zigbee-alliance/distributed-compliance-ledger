@@ -291,8 +291,8 @@ func TestHandler_RevokeNocIntermediateCert_BySubjectAndSKID_KeepChild(t *testing
 			utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 			// add the NOC leaf certificate
-			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, types.CertificateType_VIDSignerPKI)
-			utils.AddNocIntermediateCertificate(setup, leafCertificate)
+			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
+			utils.AddMokedNocCertificate(setup, leafCertificate)
 
 			// Revoke NOC with subject and subject key id only
 			utils.RevokeNocIntermediateCertificate(
@@ -360,8 +360,8 @@ func TestHandler_RevokeNocIntermediateCert_BySerialNumber_KeepChild(t *testing.T
 			utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 			// add the NOC leaf certificate
-			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, types.CertificateType_VIDSignerPKI)
-			utils.AddNocIntermediateCertificate(setup, leafCertificate)
+			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
+			utils.AddMokedNocCertificate(setup, leafCertificate)
 
 			// Revoke NOC by serial number only
 			utils.RevokeNocIntermediateCertificate(
@@ -429,8 +429,8 @@ func TestHandler_RevokeNocIntermediateCert_BySubjectAndSKID_RevokeChild(t *testi
 			utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 			// add the NOC leaf certificate
-			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, types.CertificateType_VIDSignerPKI)
-			utils.AddNocIntermediateCertificate(setup, leafCertificate)
+			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
+			utils.AddMokedNocCertificate(setup, leafCertificate)
 
 			// Revoke noc with subject and subject key id and its child too
 			utils.RevokeNocIntermediateCertificate(
@@ -496,8 +496,8 @@ func TestHandler_RevokeNocIntermediateCert_BySerialNumber_RevokeChild(t *testing
 			utils.AddNocIntermediateCertificate(setup, icaCertificate2)
 
 			// add the NOC leaf certificate
-			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, types.CertificateType_VIDSignerPKI)
-			utils.AddNocIntermediateCertificate(setup, leafCertificate)
+			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
+			utils.AddMokedNocCertificate(setup, leafCertificate)
 
 			// Revoke noc with subject and subject key id and its child too
 			utils.RevokeNocIntermediateCertificate(

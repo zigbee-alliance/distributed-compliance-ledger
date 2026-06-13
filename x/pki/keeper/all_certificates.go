@@ -140,6 +140,71 @@ func (k Keeper) _removeAllCertificatesBySerialNumber(ctx sdk.Context, subject st
 	}
 }
 
+// matterVVSCMaxPathLength caps VVSC chain depth at the Matter R1.6 §6.4.10
+// step 12.a.iii bound ("The path length SHALL NOT be longer than 3"): the
+// trust anchor (self-signed VVSC) plus at most two non-self-issued VVSCs
+// below it.
+const matterVVSCMaxPathLength = 3
+
+// verifyVVSCCertificate is the Matter R1.6 §6.4.10 step 12.a.iii equivalent
+// of verifyCertificate, scoped to the VVSC chain semantics:
+//
+//   - Chain walks up via (Issuer, AuthorityKeyID) like verifyCertificate.
+//   - Each parent step is validated with VerifyVVSCSignature, which bypasses
+//     crypto/x509's BasicConstraints cA=TRUE + KeyUsage keyCertSign checks
+//     (a §6.5.12 VVSC has cA=FALSE / KU=digitalSignature, so a VVSC parent
+//     would never pass stdlib CheckSignatureFrom).
+//   - Only stored entries with CertificateType_VIDSignerPKI are considered as
+//     parents; "Only the self-signed certificates among the set SHALL be
+//     considered as trust anchors during certificate path validation" — the
+//     "set" being the Operational Trust Anchors entries under the VID, all of
+//     which are VIDSignerPKI by construction.
+//   - Total chain length (this cert + ancestors) is bounded by 3.
+func (k Keeper) verifyVVSCCertificate(ctx sdk.Context,
+	x509Certificate *x509.Certificate,
+	depth int,
+) (*x509.Certificate, error) {
+	if depth > matterVVSCMaxPathLength {
+		return nil, pkitypes.NewErrInvalidCertificate(
+			fmt.Sprintf("VVSC chain length exceeds Matter R1.6 §6.4.10 limit of %d", matterVVSCMaxPathLength))
+	}
+
+	if x509Certificate.IsSelfSigned() {
+		if err := x509Certificate.VerifyVVSCSignature(x509Certificate, ctx.BlockTime()); err == nil {
+			return x509Certificate, nil
+		}
+
+		return nil, pkitypes.NewErrInvalidCertificate(
+			fmt.Sprintf("VVSC trust anchor self-signature verification failed for subject=%v subjectKeyID=%v",
+				x509Certificate.Subject, x509Certificate.SubjectKeyID))
+	}
+
+	parentCertificates, found := k.GetAllCertificates(ctx, x509Certificate.Issuer, x509Certificate.AuthorityKeyID)
+	if !found {
+		return nil, pkitypes.NewErrRootCertificateDoesNotExist(x509Certificate.Issuer, x509Certificate.AuthorityKeyID)
+	}
+
+	for _, cert := range parentCertificates.Certs {
+		if cert.CertificateType != types.CertificateType_VIDSignerPKI {
+			continue
+		}
+		parentX509Certificate, err := x509.DecodeX509Certificate(cert.PemCert)
+		if err != nil {
+			continue
+		}
+		if err := x509Certificate.VerifyVVSCSignature(parentX509Certificate, ctx.BlockTime()); err != nil {
+			continue
+		}
+		if rootCertificate, err := k.verifyVVSCCertificate(ctx, parentX509Certificate, depth+1); err == nil {
+			return rootCertificate, nil
+		}
+	}
+
+	return nil, pkitypes.NewErrInvalidCertificate(
+		fmt.Sprintf("VVSC chain verification failed for subject=%v subjectKeyID=%v",
+			x509Certificate.Subject, x509Certificate.SubjectKeyID))
+}
+
 // Tries to build a valid certificate chain for the given certificate.
 // Returns the RootSubject/RootSubjectKeyID combination or an error in case no valid certificate chain can be built.
 func (k Keeper) verifyCertificate(ctx sdk.Context,

@@ -16,156 +16,208 @@ import (
 // Main
 
 func TestHandler_AddNocRootCert(t *testing.T) {
-	cases := []CertificateTestCase{
-		{
-			name:    "OperationalPKI_AddNocRootCert",
-			crtType: types.CertificateType_OperationalPKI,
+	setup := utils.Setup(t)
+
+	// add NOC root certificate
+	rootCertificate := utils.RootNocCertificate1(setup.Vendor1, types.CertificateType_OperationalPKI)
+	utils.AddNocRootCertificate(setup, rootCertificate)
+
+	// check state indexes
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+			{Key: types.NocRootCertificatesKeyPrefix},
+			{Key: types.UniqueCertificateKeyPrefix},
 		},
-		{
-			name:    "VIDSignerPKI_AddNocRootCert",
-			crtType: types.CertificateType_VIDSignerPKI,
+		Missing: []utils.TestIndex{
+			{Key: types.NocIcaCertificatesKeyPrefix},
+			{Key: types.ProposedCertificateKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedRootCertificatesKeyPrefix},
 		},
 	}
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
+}
 
-	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			setup := utils.Setup(t)
+// TestHandler_AddNocRootCert_VVSC exercises the IsVidVerificationSigner=true
+// branch of AddNocX509RootCert. The cert profile, fixture PEM, and on-ledger
+// row shape differ from the OperationalPKI path (Matter R1.6 §6.5.12 VVSC vs
+// §6.5.12 RCAC), so the VVSC case is broken out of the table-driven test
+// rather than sharing OperationalPKI's RCAC fixture.
+func TestHandler_AddNocRootCert_VVSC(t *testing.T) {
+	setup := utils.Setup(t)
 
-			// add NOC root certificate
-			rootCertificate := utils.RootNocCertificate1(setup.Vendor1, tc.crtType)
-			utils.AddNocRootCertificate(setup, rootCertificate)
+	rootCertificate := utils.RootVvscCertificate1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, rootCertificate)
 
-			// check state indexes
-			indexes := utils.TestIndexes{
-				Present: []utils.TestIndex{
-					{Key: types.AllCertificatesKeyPrefix},
-					{Key: types.AllCertificatesBySubjectKeyPrefix},
-					{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
-					{Key: types.NocCertificatesKeyPrefix},
-					{Key: types.NocCertificatesBySubjectKeyPrefix},
-					{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
-					{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
-					{Key: types.NocRootCertificatesKeyPrefix},
-					{Key: types.UniqueCertificateKeyPrefix},
-				},
-				Missing: []utils.TestIndex{
-					{Key: types.NocIcaCertificatesKeyPrefix},
-					{Key: types.ProposedCertificateKeyPrefix},
-					{Key: types.ApprovedCertificatesKeyPrefix},
-					{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
-					{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
-					{Key: types.ApprovedRootCertificatesKeyPrefix},
-				},
-			}
-			utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
-		})
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.NocCertificatesByVidAndSkidKeyPrefix},
+			{Key: types.NocRootCertificatesKeyPrefix},
+			{Key: types.UniqueCertificateKeyPrefix},
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.NocIcaCertificatesKeyPrefix},
+			{Key: types.ProposedCertificateKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedRootCertificatesKeyPrefix},
+		},
 	}
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
 }
 
 func TestHandler_AddNocRootCert_SameSubjectAndSkid_DifferentSerialNumber(t *testing.T) {
-	cases := []CertificateTestCase{
-		{
-			name:    "OperationalPKI_AddNocRootCert_SameSubjectAndSkid_DifferentSerialNumber",
-			crtType: types.CertificateType_OperationalPKI,
+	setup := utils.Setup(t)
+
+	rootCertificate1 := utils.RootNocCertificate1(setup.Vendor1, types.CertificateType_OperationalPKI)
+	utils.AddNocRootCertificate(setup, rootCertificate1)
+
+	rootCertificate2 := utils.RootNocCertificate1Copy(setup.Vendor1, types.CertificateType_OperationalPKI)
+	utils.AddNocRootCertificate(setup, rootCertificate2)
+
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix, Count: 2},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
+			{Key: types.NocCertificatesKeyPrefix, Count: 2},
+			{Key: types.NocCertificatesBySubjectKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
+			{Key: types.NocRootCertificatesKeyPrefix, Count: 2},
+			{Key: types.UniqueCertificateKeyPrefix},
 		},
-		{
-			name:    "VIDSignerPKI_AddNocRootCert_SameSubjectAndSkid_DifferentSerialNumber",
-			crtType: types.CertificateType_VIDSignerPKI,
+		Missing: []utils.TestIndex{
+			{Key: types.NocIcaCertificatesKeyPrefix},
+			{Key: types.ProposedCertificateKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedRootCertificatesKeyPrefix},
 		},
 	}
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate1, indexes)
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate2, indexes)
+}
 
-	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			setup := utils.Setup(t)
+func TestHandler_AddNocRootCert_SameSubjectAndSkid_DifferentSerialNumber_VVSC(t *testing.T) {
+	setup := utils.Setup(t)
 
-			// Store the NOC root certificate
-			rootCertificate1 := utils.RootNocCertificate1(setup.Vendor1, tc.crtType)
-			utils.AddNocRootCertificate(setup, rootCertificate1)
+	rootCertificate1 := utils.RootVvscCertificate1(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, rootCertificate1)
 
-			// add second NOC root certificate
-			rootCertificate2 := utils.RootNocCertificate1Copy(setup.Vendor1, tc.crtType)
-			utils.AddNocRootCertificate(setup, rootCertificate2)
+	rootCertificate2 := utils.RootVvscCertificate1Copy(setup.Vendor1)
+	utils.AddNocRootCertificate(setup, rootCertificate2)
 
-			// Check state indexes
-			indexes := utils.TestIndexes{
-				Present: []utils.TestIndex{
-					{Key: types.AllCertificatesKeyPrefix, Count: 2},
-					{Key: types.AllCertificatesBySubjectKeyPrefix},
-					{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
-					{Key: types.NocCertificatesKeyPrefix, Count: 2},
-					{Key: types.NocCertificatesBySubjectKeyPrefix},
-					{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
-					{Key: types.NocRootCertificatesKeyPrefix, Count: 2},
-					{Key: types.UniqueCertificateKeyPrefix},
-				},
-				Missing: []utils.TestIndex{
-					{Key: types.NocIcaCertificatesKeyPrefix},
-					{Key: types.ProposedCertificateKeyPrefix},
-					{Key: types.ApprovedCertificatesKeyPrefix},
-					{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
-					{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
-					{Key: types.ApprovedRootCertificatesKeyPrefix},
-				},
-			}
-			utils.CheckCertificateStateIndexes(t, setup, rootCertificate1, indexes)
-			utils.CheckCertificateStateIndexes(t, setup, rootCertificate2, indexes)
-		})
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix, Count: 2},
+			{Key: types.AllCertificatesBySubjectKeyPrefix},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
+			{Key: types.NocCertificatesKeyPrefix, Count: 2},
+			{Key: types.NocCertificatesBySubjectKeyPrefix},
+			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
+			{Key: types.NocRootCertificatesKeyPrefix, Count: 2},
+			{Key: types.UniqueCertificateKeyPrefix},
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.NocIcaCertificatesKeyPrefix},
+			{Key: types.ProposedCertificateKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedRootCertificatesKeyPrefix},
+		},
 	}
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate1, indexes)
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate2, indexes)
 }
 
 func TestHandler_AddNocRootCert_ByNotOwnerButSameVendor(t *testing.T) {
-	cases := []CertificateTestCase{
-		{
-			name:    "OperationalPKI_AddNocRootCert_ByNotOwnerButSameVendor",
-			crtType: types.CertificateType_OperationalPKI,
+	setup := utils.Setup(t)
+
+	vendorAccAddress1 := setup.CreateVendorAccount(testconstants.Vid)
+	vendorAccAddress2 := setup.CreateVendorAccount(testconstants.Vid)
+
+	rootCertificate1 := utils.RootNocCertificate1(vendorAccAddress1, types.CertificateType_OperationalPKI)
+	utils.AddNocRootCertificate(setup, rootCertificate1)
+
+	rootCertificate2 := utils.RootNocCertificate1Copy(vendorAccAddress2, types.CertificateType_OperationalPKI)
+	utils.AddNocRootCertificate(setup, rootCertificate2)
+
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix, Count: 2},
+			{Key: types.AllCertificatesBySubjectKeyPrefix, Count: 1},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
+			{Key: types.NocCertificatesKeyPrefix, Count: 2},
+			{Key: types.NocCertificatesBySubjectKeyPrefix, Count: 1},
+			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
+			{Key: types.NocRootCertificatesKeyPrefix, Count: 2},
+			{Key: types.UniqueCertificateKeyPrefix},
 		},
-		{
-			name:    "VIDSignerPKI_AddNocRootCert_ByNotOwnerButSameVendor",
-			crtType: types.CertificateType_VIDSignerPKI,
+		Missing: []utils.TestIndex{
+			{Key: types.NocIcaCertificatesKeyPrefix},
+			{Key: types.ProposedCertificateKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedRootCertificatesKeyPrefix},
 		},
 	}
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate1, indexes)
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate2, indexes)
+}
 
-	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			setup := utils.Setup(t)
+func TestHandler_AddNocRootCert_ByNotOwnerButSameVendor_VVSC(t *testing.T) {
+	setup := utils.Setup(t)
 
-			// add two vendors with the same VID
-			vendorAccAddress1 := setup.CreateVendorAccount(testconstants.Vid)
-			vendorAccAddress2 := setup.CreateVendorAccount(testconstants.Vid)
+	vendorAccAddress1 := setup.CreateVendorAccount(testconstants.Vid)
+	vendorAccAddress2 := setup.CreateVendorAccount(testconstants.Vid)
 
-			// add NOC root certificate
-			rootCertificate1 := utils.RootNocCertificate1(vendorAccAddress1, tc.crtType)
-			utils.AddNocRootCertificate(setup, rootCertificate1)
+	rootCertificate1 := utils.RootVvscCertificate1(vendorAccAddress1)
+	utils.AddNocRootCertificate(setup, rootCertificate1)
 
-			// add second NOC root certificate by other vendor
-			rootCertificate2 := utils.RootNocCertificate1Copy(vendorAccAddress2, tc.crtType)
-			utils.AddNocRootCertificate(setup, rootCertificate2)
+	rootCertificate2 := utils.RootVvscCertificate1Copy(vendorAccAddress2)
+	utils.AddNocRootCertificate(setup, rootCertificate2)
 
-			// Check state indexes
-			indexes := utils.TestIndexes{
-				Present: []utils.TestIndex{
-					{Key: types.AllCertificatesKeyPrefix, Count: 2},
-					{Key: types.AllCertificatesBySubjectKeyPrefix, Count: 1},
-					{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
-					{Key: types.NocCertificatesKeyPrefix, Count: 2},
-					{Key: types.NocCertificatesBySubjectKeyPrefix, Count: 1},
-					{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
-					{Key: types.NocRootCertificatesKeyPrefix, Count: 2},
-					{Key: types.UniqueCertificateKeyPrefix},
-				},
-				Missing: []utils.TestIndex{
-					{Key: types.NocIcaCertificatesKeyPrefix},
-					{Key: types.ProposedCertificateKeyPrefix},
-					{Key: types.ApprovedCertificatesKeyPrefix},
-					{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
-					{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
-					{Key: types.ApprovedRootCertificatesKeyPrefix},
-				},
-			}
-			utils.CheckCertificateStateIndexes(t, setup, rootCertificate1, indexes)
-			utils.CheckCertificateStateIndexes(t, setup, rootCertificate2, indexes)
-		})
+	indexes := utils.TestIndexes{
+		Present: []utils.TestIndex{
+			{Key: types.AllCertificatesKeyPrefix, Count: 2},
+			{Key: types.AllCertificatesBySubjectKeyPrefix, Count: 1},
+			{Key: types.AllCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
+			{Key: types.NocCertificatesKeyPrefix, Count: 2},
+			{Key: types.NocCertificatesBySubjectKeyPrefix, Count: 1},
+			{Key: types.NocCertificatesBySubjectKeyIDKeyPrefix, Count: 2},
+			{Key: types.NocRootCertificatesKeyPrefix, Count: 2},
+			{Key: types.UniqueCertificateKeyPrefix},
+		},
+		Missing: []utils.TestIndex{
+			{Key: types.NocIcaCertificatesKeyPrefix},
+			{Key: types.ProposedCertificateKeyPrefix},
+			{Key: types.ApprovedCertificatesKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyPrefix},
+			{Key: types.ApprovedCertificatesBySubjectKeyIDKeyPrefix},
+			{Key: types.ApprovedRootCertificatesKeyPrefix},
+		},
 	}
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate1, indexes)
+	utils.CheckCertificateStateIndexes(t, setup, rootCertificate2, indexes)
 }
 
 // Error cases
@@ -237,139 +289,208 @@ func TestHandler_AddNocRootCert_InvalidCertificate(t *testing.T) {
 		},
 	}
 
-	crtCases := []CertificateTestCase{
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			setup := utils.Setup(t)
+			setup.AddAccount(accAddress, []dclauthtypes.AccountRole{tc.accountRole}, tc.accountVid)
+
+			addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), tc.nocRoorCert, testconstants.CertSchemaVersion, false)
+			_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
+			require.ErrorIs(t, err, tc.err)
+		})
+	}
+}
+
+// TestHandler_AddNocRootCert_InvalidCertificate_VVSC mirrors the OperationalPKI
+// invalid-certificate cases for the IsVidVerificationSigner=true branch. The
+// expected errors differ because the VVSC profile (Matter R1.6 §6.5.12,
+// cA=FALSE / KU=digitalSignature) accepts and rejects different shapes than
+// the RCAC profile:
+//
+//   - NonRootCertificate uses a non-self-signed VVSC (VvscIcaCert1) to reach
+//     ErrRootCertificateIsNotSelfSigned (NocCert2 would now fail the VVSC
+//     profile check first with ErrInappropriateCertificateType).
+//   - NonCACertificate uses NocCert2 (cA=TRUE) so it actually fails the VVSC
+//     cA=FALSE check (LeafCertPem would now structurally pass VVSC and fall
+//     through to a different error).
+func TestHandler_AddNocRootCert_InvalidCertificate_VVSC(t *testing.T) {
+	accAddress := utils.GenerateAccAddress()
+
+	cases := []struct {
+		name        string
+		accountVid  int32
+		accountRole dclauthtypes.AccountRole
+		nocRoorCert string
+		err         error
+	}{
 		{
-			name:                    "OperationalPKI",
-			isVidVerificationSigner: false,
+			name:        "NotValidPemCertificate",
+			accountVid:  testconstants.Vid,
+			accountRole: dclauthtypes.Vendor,
+			nocRoorCert: testconstants.StubCertPem,
+			err:         pkitypes.ErrInvalidCertificate,
 		},
 		{
-			name:                    "VIDSignerPKI",
-			isVidVerificationSigner: true,
+			name:        "NonRootCertificate",
+			accountVid:  testconstants.Vid,
+			accountRole: dclauthtypes.Vendor,
+			nocRoorCert: testconstants.VvscIcaCert1,
+			err:         pkitypes.ErrRootCertificateIsNotSelfSigned,
 		},
+		{
+			name:        "NonVVSCProfile_CA_True",
+			accountVid:  testconstants.Vid,
+			accountRole: dclauthtypes.Vendor,
+			nocRoorCert: testconstants.NocCert2,
+			err:         pkitypes.ErrInappropriateCertificateType,
+		},
+		// ExpiredCertificate (PAACertExpired) is covered by the OperationalPKI
+		// variant. Here it would short-circuit at the VVSC profile check
+		// (PAACertExpired has cA=TRUE) and never reach the expiry test, so
+		// asserting ErrInvalidCertificate would be misleading.
 	}
 
 	for _, tc := range cases {
-		for _, tcc := range crtCases {
-			t.Run(tcc.name+"_"+tc.name, func(t *testing.T) {
-				setup := utils.Setup(t)
-				setup.AddAccount(accAddress, []dclauthtypes.AccountRole{tc.accountRole}, tc.accountVid)
+		t.Run(tc.name, func(t *testing.T) {
+			setup := utils.Setup(t)
+			setup.AddAccount(accAddress, []dclauthtypes.AccountRole{tc.accountRole}, tc.accountVid)
 
-				addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), tc.nocRoorCert, testconstants.CertSchemaVersion, tcc.isVidVerificationSigner)
-				_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
-				require.ErrorIs(t, err, tc.err)
-			})
-		}
+			addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), tc.nocRoorCert, testconstants.CertSchemaVersion, true)
+			_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
+			require.ErrorIs(t, err, tc.err)
+		})
 	}
 }
 
 func TestHandler_AddNocRootCert_CertificateExist(t *testing.T) {
+	runCertificateExistCases(t,
+		certificateExistCase{
+			subject:       testconstants.NocRootCert3Subject,
+			subjectAsText: testconstants.NocRootCert3SubjectAsText,
+			subjectKeyID:  testconstants.NocRootCert3SubjectKeyID,
+			serialNumber:  testconstants.NocRootCert3SerialNumber,
+			submitPem:     testconstants.NocRootCert3,
+			crtType:       types.CertificateType_OperationalPKI,
+			isVVSC:        false,
+		})
+}
+
+// TestHandler_AddNocRootCert_CertificateExist_VVSC re-runs the existing-row
+// collision cases for the IsVidVerificationSigner=true branch. The pre-seeded
+// existing cert needs the VVSC-shape SubjectKeyID and a VIDSignerPKI cert
+// type; the submitted PEM is a self-signed VVSC instead of NocRootCert3 so
+// the request reaches the existence checks instead of failing at
+// VerifyVVSCExtensions.
+func TestHandler_AddNocRootCert_CertificateExist_VVSC(t *testing.T) {
+	runCertificateExistCases(t,
+		certificateExistCase{
+			subject:       testconstants.VvscRootCert2Subject,
+			subjectAsText: testconstants.VvscRootCert2SubjectAsText,
+			subjectKeyID:  testconstants.VvscRootCert2SubjectKeyID,
+			serialNumber:  testconstants.VvscRootCert2SerialNumber,
+			submitPem:     testconstants.VvscRootCert2,
+			crtType:       types.CertificateType_VIDSignerPKI,
+			isVVSC:        true,
+		})
+}
+
+type certificateExistCase struct {
+	subject       string
+	subjectAsText string
+	subjectKeyID  string
+	serialNumber  string
+	submitPem     string
+	crtType       types.CertificateType
+	isVVSC        bool
+}
+
+func runCertificateExistCases(t *testing.T, base certificateExistCase) {
+	t.Helper()
 	accAddress := utils.GenerateAccAddress()
 
 	cases := []struct {
 		name         string
 		existingCert *types.Certificate
-		nocRoorCert  string
 		err          error
 	}{
 		{
 			name: "Duplicate",
 			existingCert: &types.Certificate{
-				Issuer:        testconstants.NocRootCert3Subject,
-				Subject:       testconstants.NocRootCert3Subject,
-				SubjectAsText: testconstants.NocRootCert3SubjectAsText,
-				SubjectKeyId:  testconstants.NocRootCert3SubjectKeyID,
-				SerialNumber:  testconstants.NocRootCert3SerialNumber,
+				Issuer:        base.subject,
+				Subject:       base.subject,
+				SubjectAsText: base.subjectAsText,
+				SubjectKeyId:  base.subjectKeyID,
+				SerialNumber:  base.serialNumber,
 				IsRoot:        true,
 				Vid:           testconstants.Vid,
 			},
-			nocRoorCert: testconstants.NocRootCert3,
-			err:         pkitypes.ErrCertificateAlreadyExists,
+			err: pkitypes.ErrCertificateAlreadyExists,
 		},
 		{
 			name: "ExistingNonRootCert",
 			existingCert: &types.Certificate{
 				Issuer:        testconstants.TestIssuer,
-				Subject:       testconstants.NocRootCert3Subject,
-				SubjectAsText: testconstants.NocRootCert3SubjectAsText,
-				SubjectKeyId:  testconstants.NocRootCert3SubjectKeyID,
+				Subject:       base.subject,
+				SubjectAsText: base.subjectAsText,
+				SubjectKeyId:  base.subjectKeyID,
 				SerialNumber:  testconstants.TestSerialNumber,
 				IsRoot:        false,
 				Vid:           testconstants.Vid,
 			},
-			nocRoorCert: testconstants.NocRootCert3,
-			err:         sdkerrors.ErrUnauthorized,
+			err: sdkerrors.ErrUnauthorized,
 		},
 		{
 			name: "ExistingNotNocCert",
 			existingCert: &types.Certificate{
-				Issuer:        testconstants.NocRootCert3Subject,
-				Subject:       testconstants.NocRootCert3Subject,
-				SubjectAsText: testconstants.NocRootCert3SubjectAsText,
-				SubjectKeyId:  testconstants.NocRootCert3SubjectKeyID,
+				Issuer:        base.subject,
+				Subject:       base.subject,
+				SubjectAsText: base.subjectAsText,
+				SubjectKeyId:  base.subjectKeyID,
 				SerialNumber:  testconstants.TestSerialNumber,
 				IsRoot:        true,
 				Vid:           testconstants.Vid,
 			},
-			nocRoorCert: testconstants.NocRootCert3,
-			err:         pkitypes.ErrInappropriateCertificateType,
+			err: pkitypes.ErrInappropriateCertificateType,
 		},
 		{
 			name: "ExistingCertWithDifferentVid",
 			existingCert: &types.Certificate{
-				Issuer:        testconstants.NocRootCert3Subject,
-				Subject:       testconstants.NocRootCert3Subject,
-				SubjectAsText: testconstants.NocRootCert3SubjectAsText,
-				SubjectKeyId:  testconstants.NocRootCert3SubjectKeyID,
+				Issuer:        base.subject,
+				Subject:       base.subject,
+				SubjectAsText: base.subjectAsText,
+				SubjectKeyId:  base.subjectKeyID,
 				SerialNumber:  testconstants.GoogleSerialNumber,
 				IsRoot:        true,
 				Vid:           testconstants.VendorID1,
 			},
-			nocRoorCert: testconstants.NocRootCert3,
-			err:         sdkerrors.ErrUnauthorized,
-		},
-	}
-
-	crtCases := []CertificateTestCase{
-		{
-			name:                    "OperationalPKI",
-			crtType:                 types.CertificateType_OperationalPKI,
-			isVidVerificationSigner: false,
-		},
-		{
-			name:                    "VIDSignerPKI",
-			crtType:                 types.CertificateType_VIDSignerPKI,
-			isVidVerificationSigner: true,
+			err: sdkerrors.ErrUnauthorized,
 		},
 	}
 
 	for _, tc := range cases {
-		for _, tcc := range crtCases {
-			t.Run(tcc.name+"_"+tc.name, func(t *testing.T) {
-				setup := utils.Setup(t)
-				setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
+		t.Run(tc.name, func(t *testing.T) {
+			setup := utils.Setup(t)
+			setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.Vid)
 
-				existingCert := *tc.existingCert
+			existingCert := *tc.existingCert
 
-				// the test for this error requires different types
-				if errors.Is(tc.err, pkitypes.ErrInappropriateCertificateType) {
-					existingCert.CertificateType = types.CertificateType_DeviceAttestationPKI
-				} else {
-					existingCert.CertificateType = tcc.crtType
-				}
+			if errors.Is(tc.err, pkitypes.ErrInappropriateCertificateType) {
+				existingCert.CertificateType = types.CertificateType_DeviceAttestationPKI
+			} else {
+				existingCert.CertificateType = base.crtType
+			}
 
-				// add the existing certificate
-				setup.Keeper.AddAllCertificate(setup.Ctx, existingCert)
-				uniqueCertificate := types.UniqueCertificate{
-					Issuer:       existingCert.Issuer,
-					SerialNumber: existingCert.SerialNumber,
-					Present:      true,
-				}
-				setup.Keeper.SetUniqueCertificate(setup.Ctx, uniqueCertificate)
+			setup.Keeper.AddAllCertificate(setup.Ctx, existingCert)
+			uniqueCertificate := types.UniqueCertificate{
+				Issuer:       existingCert.Issuer,
+				SerialNumber: existingCert.SerialNumber,
+				Present:      true,
+			}
+			setup.Keeper.SetUniqueCertificate(setup.Ctx, uniqueCertificate)
 
-				addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), tc.nocRoorCert, testconstants.CertSchemaVersion, tcc.isVidVerificationSigner)
-				_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
-				require.ErrorIs(t, err, tc.err)
-			})
-		}
+			addNocX509RootCert := types.NewMsgAddNocX509RootCert(accAddress.String(), base.submitPem, testconstants.CertSchemaVersion, base.isVVSC)
+			_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
+			require.ErrorIs(t, err, tc.err)
+		})
 	}
 }
