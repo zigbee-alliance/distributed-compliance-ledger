@@ -44,6 +44,13 @@ vvsc_root_path="integration_tests/constants/vvsc_root_cert_1"
 vvsc_root_subject="MIGWMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTERMA8GA1UEBwwIVGFzaGtlbnQxGDAWBgNVBAoMD0V4YW1wbGUgQ29tcGFueTEZMBcGA1UECwwQVGVzdGluZyBEaXZpc2lvbjEUMBIGA1UEAwwLVlZTQy1Sb290LTExFDASBgorBgEEAYKifAIBDAQwMDAx"
 vvsc_root_subject_key_id="21:B9:21:60:2D:53:8B:86:DA:A4:16:5C:AA:40:90:25:EB:FE:7E:28"
 vvsc_root_serial_number="5068329979261235249"
+# VvscRootCert1Copy reuses VvscRootCert1's key (so the same Subject + SKID), but
+# with a different serial number — used to re-establish an active VVSC root after
+# revocation soft-deletes VvscRootCert1 (the UniqueCertificate record keyed by
+# Issuer+SerialNumber survives revocation, so re-adding the same serial fails
+# with "certificate already exists").
+vvsc_root_copy_path="integration_tests/constants/vvsc_root_cert_1_copy"
+vvsc_root_copy_serial_number="5068329979260121137"
 vvsc_ica_1_path="integration_tests/constants/vvsc_ica_cert_1"
 vvsc_ica_1_subject="MIGXMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRMwEQYDVQQDDApWVlNDLUlDQS0xMRQwEgYKKwYBBAGConwCAQwEMDAwMQ=="
 vvsc_ica_1_subject_key_id="98:4B:EE:D7:40:A2:FE:29:CB:AF:C0:0A:67:B7:AE:FF:12:A5:DA:DD"
@@ -252,10 +259,13 @@ result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
-echo "Re-add the self-issued VVSC root. Revocation is a soft delete (cert moves"
-echo "to the revoked list), so the active store no longer contains it and"
-echo "verifyVVSCCertificate would fail the chain walk for VvscIca2."
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$vvsc_root_path" --is-vid-verification-signer=true --from $vendor_account --yes)
+echo "Re-establish an active VVSC root via VvscRootCert1Copy. Revocation is a"
+echo "soft delete (cert moves to the revoked list) but the (Issuer, SerialNumber)"
+echo "UniqueCertificate record survives — re-adding the same PEM would fail with"
+echo "ErrCertificateAlreadyExists. The Copy shares VvscRoot1's key (same Subject"
+echo "and SubjectKeyID) so VvscIca2's AuthorityKeyID still resolves to a present"
+echo "VIDSignerPKI entry during verifyVVSCCertificate's chain walk."
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$vvsc_root_copy_path" --is-vid-verification-signer=true --from $vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
