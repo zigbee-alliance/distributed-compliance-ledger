@@ -39,6 +39,8 @@ noc_cert_1_serial_number="577430346509479530103103319788179390906984119670"
 # VvscRoot1 → VvscIca1 (path length 3, the §6.4.10 step 12.a.iii cap),
 # submitted with --is-vid-verification-signer=true.
 vvsc_root_path="integration_tests/constants/vvsc_root_cert_1"
+vvsc_root_subject="MIGWMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTERMA8GA1UEBwwIVGFzaGtlbnQxGDAWBgNVBAoMD0V4YW1wbGUgQ29tcGFueTEZMBcGA1UECwwQVGVzdGluZyBEaXZpc2lvbjEUMBIGA1UEAwwLVlZTQy1Sb290LTExFDASBgorBgEEAYKifAIBDAQwMDAx"
+vvsc_root_subject_key_id="21:B9:21:60:2D:53:8B:86:DA:A4:16:5C:AA:40:90:25:EB:FE:7E:28"
 vvsc_ica_1_path="integration_tests/constants/vvsc_ica_cert_1"
 noc_leaf_cert_1_path="integration_tests/constants/vvsc_leaf_cert_1"
 noc_leaf_cert_1_subject="MIGYMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtWVlNDLUxlYWYtMTEUMBIGCisGAQQBgqJ8AgEMBDAwMDE="
@@ -222,6 +224,15 @@ result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-root-cert --subject="$
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
+echo "Also revoke the VVSC root with revoke-child=true. The VVSC chain"
+echo "VvscRoot1 → VvscIca1 → VvscLeaf1 is structurally disjoint from the"
+echo "OperationalPKI cascade (Matter §6.5.12 / §6.4.10) — without an explicit"
+echo "VVSC root revocation the leaf would remain active and the revoked-ICA"
+echo "assertion below would fail."
+result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-root-cert --subject="$vvsc_root_subject" --subject-key-id="$vvsc_root_subject_key_id" --revoke-child=true --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
 echo "Request all revoked NOC root certificates should contain two root certificates"
 result=$(dcld query pki all-revoked-noc-x509-root-certs)
 echo $result | jq
@@ -402,6 +413,14 @@ echo $result | jq
 
 echo "$vendor_account Vendor revokes NOC certificate with serialNumber=$noc_cert_2_serial_number with \"revoke-child\" flag set to true, it should revoke child certificates too"
 result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-ica-cert --subject="$noc_cert_2_subject" --subject-key-id="$noc_cert_2_subject_key_id" --serial-number="$noc_cert_2_copy_serial_number" --revoke-child=true --from=$vendor_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+echo "Also revoke VvscIca2 with revoke-child=true so the VVSC leaf is cascaded."
+echo "noc_leaf_cert_2 now lives in the VVSC chain (VvscRoot1 → VvscIca2 →"
+echo "VvscLeaf2), which is disjoint from the OperationalPKI chain that the"
+echo "previous revoke just walked."
+result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-ica-cert --subject="$vvsc_ica_2_subject" --subject-key-id="$vvsc_ica_2_subject_key_id" --revoke-child=true --from=$vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
