@@ -41,6 +41,12 @@ noc_cert_1_serial_number="577430346509479530103103319788179390906984119670"
 vvsc_root_path="integration_tests/constants/vvsc_root_cert_1"
 vvsc_root_subject="MIGWMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTERMA8GA1UEBwwIVGFzaGtlbnQxGDAWBgNVBAoMD0V4YW1wbGUgQ29tcGFueTEZMBcGA1UECwwQVGVzdGluZyBEaXZpc2lvbjEUMBIGA1UEAwwLVlZTQy1Sb290LTExFDASBgorBgEEAYKifAIBDAQwMDAx"
 vvsc_root_subject_key_id="21:B9:21:60:2D:53:8B:86:DA:A4:16:5C:AA:40:90:25:EB:FE:7E:28"
+# VvscRootCert1Copy reuses VvscRootCert1's key (so the same Subject + SKID), but
+# with a different serial number — used to re-establish an active VVSC root after
+# section 1 soft-deletes VvscRootCert1 (the UniqueCertificate record keyed by
+# Issuer+SerialNumber survives revocation, so re-adding the same serial fails
+# with "certificate already exists").
+vvsc_root_copy_path="integration_tests/constants/vvsc_root_cert_1_copy"
 vvsc_ica_1_path="integration_tests/constants/vvsc_ica_cert_1"
 noc_leaf_cert_1_path="integration_tests/constants/vvsc_leaf_cert_1"
 noc_leaf_cert_1_subject="MIGYMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtWVlNDLUxlYWYtMTEUMBIGCisGAQQBgqJ8AgEMBDAwMDE="
@@ -327,6 +333,16 @@ check_response "$result" "\"code\": 0"
 
 echo "Add second intermidiate NOC certificate by vendor with VID = $vid"
 result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_cert_2_copy_path" --from $vendor_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+echo "Re-establish an active VVSC root via VvscRootCert1Copy. Revocation is a"
+echo "soft delete (cert moves to the revoked list) but the (Issuer, SerialNumber)"
+echo "UniqueCertificate record survives — re-adding the same PEM would fail with"
+echo "ErrCertificateAlreadyExists. The Copy shares VvscRoot1's key (same Subject"
+echo "and SubjectKeyID) so VvscIca2's AuthorityKeyID still resolves to a present"
+echo "VIDSignerPKI entry during verifyVVSCCertificate's chain walk."
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$vvsc_root_copy_path" --is-vid-verification-signer=true --from $vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
