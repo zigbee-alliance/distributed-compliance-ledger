@@ -368,12 +368,7 @@ func TestHandler_AddDaIntermediateCert_ForDuplicate(t *testing.T) {
 func TestHandler_AddDaIntermediateCert_RootIsNoc(t *testing.T) {
 	setup := utils.Setup(t)
 
-	// Add a NOC root certificate.  Switched from RootCertPem/IntermediateCertPem
-	// to the NOC-1 chain because RootCertPem no longer passes the strict
-	// VerifyCAExtensions profile applied to MsgAddNocX509RootCert. NocRootCert1
-	// is profile-compliant, and NocCert1 chains to it so we can submit a real
-	// chained cert through the DA intermediate handler and still demonstrate
-	// the "DA intermediate under a NOC root" rejection.
+	// Add NOC root certificate
 	addNocX509RootCert := types.NewMsgAddNocX509RootCert(
 		setup.Vendor1.String(),
 		testconstants.NocRootCert1,
@@ -381,8 +376,7 @@ func TestHandler_AddDaIntermediateCert_RootIsNoc(t *testing.T) {
 	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
 	require.NoError(t, err)
 
-	// Add intermediate certificate (chained to the NOC root above) via the DA
-	// handler — must be rejected because the chain ends at a NOC root.
+	// Add intermediate certificate
 	addX509Cert := types.NewMsgAddX509Cert(
 		setup.Vendor1.String(),
 		testconstants.NocCert1,

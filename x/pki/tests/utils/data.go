@@ -261,12 +261,6 @@ func LeafCertificate(address sdk.AccAddress) types.Certificate {
 	)
 }
 
-// RootNocCertificate1 returns the on-ledger row for either an OperationalPKI
-// RCAC or a VIDSignerPKI VVSC root, selected by certificateType. The two
-// branches use structurally distinct PEMs because Matter R1.6 §6.5.12 mandates
-// different profiles (RCAC: cA=TRUE / KU=keyCertSign+cRLSign; VVSC: cA=FALSE /
-// KU=digitalSignature). Lets the table-driven OperationalPKI / VIDSignerPKI
-// tests share the same fixture entry point.
 func RootNocCertificate1(address sdk.AccAddress, certificateType types.CertificateType) types.Certificate {
 	if certificateType == types.CertificateType_VIDSignerPKI {
 		return RootVvscCertificate1(address)

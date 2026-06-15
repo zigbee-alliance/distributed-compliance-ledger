@@ -47,11 +47,6 @@ func TestHandler_AddNocRootCert(t *testing.T) {
 	utils.CheckCertificateStateIndexes(t, setup, rootCertificate, indexes)
 }
 
-// TestHandler_AddNocRootCert_VVSC exercises the IsVidVerificationSigner=true
-// branch of AddNocX509RootCert. The cert profile, fixture PEM, and on-ledger
-// row shape differ from the OperationalPKI path (Matter R1.6 §6.5.12 VVSC vs
-// §6.5.12 RCAC), so the VVSC case is broken out of the table-driven test
-// rather than sharing OperationalPKI's RCAC fixture.
 func TestHandler_AddNocRootCert_VVSC(t *testing.T) {
 	setup := utils.Setup(t)
 
@@ -301,18 +296,6 @@ func TestHandler_AddNocRootCert_InvalidCertificate(t *testing.T) {
 	}
 }
 
-// TestHandler_AddNocRootCert_InvalidCertificate_VVSC mirrors the OperationalPKI
-// invalid-certificate cases for the IsVidVerificationSigner=true branch. The
-// expected errors differ because the VVSC profile (Matter R1.6 §6.5.12,
-// cA=FALSE / KU=digitalSignature) accepts and rejects different shapes than
-// the RCAC profile:
-//
-//   - NonRootCertificate uses a non-self-signed VVSC (VvscIcaCert1) to reach
-//     ErrRootCertificateIsNotSelfSigned (NocCert2 would now fail the VVSC
-//     profile check first with ErrInappropriateCertificateType).
-//   - NonCACertificate uses NocCert2 (cA=TRUE) so it actually fails the VVSC
-//     cA=FALSE check (LeafCertPem would now structurally pass VVSC and fall
-//     through to a different error).
 func TestHandler_AddNocRootCert_InvalidCertificate_VVSC(t *testing.T) {
 	accAddress := utils.GenerateAccAddress()
 
@@ -344,10 +327,6 @@ func TestHandler_AddNocRootCert_InvalidCertificate_VVSC(t *testing.T) {
 			nocRoorCert: testconstants.NocCert2,
 			err:         pkitypes.ErrInappropriateCertificateType,
 		},
-		// ExpiredCertificate (PAACertExpired) is covered by the OperationalPKI
-		// variant. Here it would short-circuit at the VVSC profile check
-		// (PAACertExpired has cA=TRUE) and never reach the expiry test, so
-		// asserting ErrInvalidCertificate would be misleading.
 	}
 
 	for _, tc := range cases {

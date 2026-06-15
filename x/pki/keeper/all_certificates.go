@@ -166,7 +166,7 @@ func (k Keeper) verifyVVSCCertificate(ctx sdk.Context,
 ) (*x509.Certificate, error) {
 	if depth > matterVVSCMaxPathLength {
 		return nil, pkitypes.NewErrInvalidCertificate(
-			fmt.Sprintf("VVSC chain length exceeds Matter R1.6 §6.4.10 limit of %d", matterVVSCMaxPathLength))
+			fmt.Sprintf("VVSC chain length exceeds limit of %d", matterVVSCMaxPathLength))
 	}
 
 	if x509Certificate.IsSelfSigned() {

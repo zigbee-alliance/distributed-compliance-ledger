@@ -448,9 +448,7 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Add a self-issued VVSC by the first vendor — registers
-	// it under CertificateType_VIDSignerPKI. The cert PEM must satisfy the §6.5.12
-	// VVSC profile (cA=FALSE / KU=digitalSignature), so a real RCAC PEM cannot
-	// be reused here.
+	// it under CertificateType_VIDSignerPKI.
 	msgAddNocRootCertificate = pkitypes.MsgAddNocX509RootCert{
 		Signer:                  vendor1Account.Address,
 		Cert:                    testconstants.VvscRootCert1,
@@ -606,9 +604,8 @@ func NocCertDemo(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddNocCertificate}, vendor2Name, vendor2Account)
 	require.Error(suite.T, err)
 
-	// Add a Matter R1.6 §6.5.12 VVSC intermediate (CertificateType_VIDSignerPKI)
-	// chained under the self-issued VvscRootCert1 registered above. The keeper
-	// uses the §6.4.10 step 12.a.iii chain walker for this submission.
+	// Add a VVSC intermediate (CertificateType_VIDSignerPKI)
+	// chained under the self-issued VvscRootCert1 registered above
 	msgAddNocCertificate = pkitypes.MsgAddNocX509IcaCert{
 		Signer:                  vendor1Account.Address,
 		Cert:                    testconstants.VvscIcaCert1,
@@ -662,8 +659,7 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, float32(1), nocCertificatesByVidAndSkid.Tq)
 
 	// Add VVSC end-entity chained under VvscIcaCert1 — the
-	// full chain VvscRootCert1 → VvscIcaCert1 → VvscLeafCert1 sits at the
-	// §6.4.10 step 12.a.iii path-length-3 cap.
+	// full chain VvscRootCert1 → VvscIcaCert1 → VvscLeafCert1
 	msgAddNocCert := pkitypes.MsgAddNocX509IcaCert{
 		Signer:                  vendor1Account.Address,
 		Cert:                    testconstants.VvscLeafCert1,
@@ -876,9 +872,7 @@ func NocCertDemo(suite *utils.TestSuite) {
 
 	// Revoke root cert and its child. RevokeChild cascades along the chain rooted
 	// at NocRootCert1 — that's NocCert1 (OperationalPKI ICA) and the copies, but
-	// NOT VvscLeafCert1. VvscLeafCert1 is chained under VvscRootCert1 (a §6.4.10
-	// VVSC trust anchor) — Matter R1.6 §6.5.12 makes the VVSC chain disjoint
-	// from the OperationalPKI chain, so it is not touched here.
+	// NOT VvscLeafCert1. VvscLeafCert1 is chained under VvscRootCert1
 	msgRevokeRootCert = pkitypes.MsgRevokeNocX509RootCert{
 		Signer:       vendor1Account.Address,
 		Subject:      testconstants.NocRootCert1Subject,
