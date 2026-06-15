@@ -89,7 +89,7 @@ func (k Keeper) GetAllApprovedCertificates(ctx sdk.Context) (list []types.Approv
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
-	defer iterator.Close()
+	defer func() { _ = iterator.Close() }()
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.ApprovedCertificates

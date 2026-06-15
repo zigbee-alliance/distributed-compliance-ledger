@@ -1626,7 +1626,7 @@ func TestHandler_UpdateModelVersion(t *testing.T) {
 	require.Equal(t, receivedModelVersion.CdVersionNumber, msgCreateModelVersion.CdVersionNumber)
 	require.Equal(t, receivedModelVersion.FirmwareInformation, msgCreateModelVersion.FirmwareInformation)
 	require.Equal(t, receivedModelVersion.OtaChecksumType, msgCreateModelVersion.OtaChecksumType)
-	require.Equal(t, receivedModelVersion.SpecificationVersion, msgCreateModelVersion.SpecificationVersion)
+	require.Equal(t, receivedModelVersion.SpecificationVersion, msgCreateModelVersion.SpecificationVersion) //nolint:staticcheck // ignore SA1019: use of deprecated field
 	require.Equal(t, newSchemaVersion, receivedModelVersion.SchemaVersion)
 
 	// query model versions

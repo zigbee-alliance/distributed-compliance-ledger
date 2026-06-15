@@ -58,7 +58,7 @@ func GetAccount(suite *utils.TestSuite, address sdk.AccAddress) (*dclauthtypes.A
 		res = resp.GetAccount()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/dclauth service.
 		accClient := dclauthtypes.NewQueryClient(grpcConn)
@@ -85,7 +85,7 @@ func GetAccounts(suite *utils.TestSuite) (res []dclauthtypes.Account, err error)
 		res = resp.GetAccount()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/dclauth service.
 		accClient := dclauthtypes.NewQueryClient(grpcConn)
@@ -112,7 +112,7 @@ func GetProposedAccounts(suite *utils.TestSuite) (res []dclauthtypes.PendingAcco
 		res = resp.GetPendingAccount()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/dclauth service.
 		accClient := dclauthtypes.NewQueryClient(grpcConn)
@@ -141,7 +141,7 @@ func GetProposedAccount(suite *utils.TestSuite, address sdk.AccAddress) (*dclaut
 		res = resp.GetPendingAccount()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/dclauth service.
 		accClient := dclauthtypes.NewQueryClient(grpcConn)
@@ -170,7 +170,7 @@ func GetProposedAccountsToRevoke(suite *utils.TestSuite) (
 		res = resp.GetPendingAccountRevocation()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/dclauth service.
 		accClient := dclauthtypes.NewQueryClient(grpcConn)
@@ -199,7 +199,7 @@ func GetProposedAccountToRevoke(suite *utils.TestSuite, address sdk.AccAddress) 
 		res = resp.GetPendingAccountRevocation()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/dclauth service.
 		accClient := dclauthtypes.NewQueryClient(grpcConn)
@@ -228,7 +228,7 @@ func GetRevokedAccount(suite *utils.TestSuite, address sdk.AccAddress) (*dclauth
 		res = resp.GetRevokedAccount()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC cliennt to query the x/dclauth service.
 		accClient := dclauthtypes.NewQueryClient(grpcConn)
@@ -255,7 +255,7 @@ func GetRevokedAccounts(suite *utils.TestSuite) (res []dclauthtypes.RevokedAccou
 		res = resp.GetRevokedAccount()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/dclauth service.
 		accClient := dclauthtypes.NewQueryClient(grpcConn)
@@ -284,7 +284,7 @@ func GetRejectedAccount(suite *utils.TestSuite, address sdk.AccAddress) (*dclaut
 		res = resp.GetRejectedAccount()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC cliennt to query the x/dclauth service.
 		accClient := dclauthtypes.NewQueryClient(grpcConn)
@@ -311,7 +311,7 @@ func GetRejectedAccounts(suite *utils.TestSuite) (res []dclauthtypes.RejectedAcc
 		res = resp.GetRejectedAccount()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/dclauth service.
 		accClient := dclauthtypes.NewQueryClient(grpcConn)

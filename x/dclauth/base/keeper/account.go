@@ -52,7 +52,7 @@ func (k Keeper) IterateAccounts(ctx sdk.Context, cb func(account types.Account) 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AccountKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
-	defer iterator.Close()
+	defer func() { _ = iterator.Close() }()
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.Account

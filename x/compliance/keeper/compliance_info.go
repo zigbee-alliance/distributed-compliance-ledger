@@ -73,7 +73,7 @@ func (k Keeper) GetAllComplianceInfo(ctx sdk.Context) (list []types.ComplianceIn
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ComplianceInfoKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
-	defer iterator.Close()
+	defer func() { _ = iterator.Close() }()
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.ComplianceInfo

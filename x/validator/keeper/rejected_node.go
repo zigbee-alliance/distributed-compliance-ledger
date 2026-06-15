@@ -56,7 +56,7 @@ func (k Keeper) GetAllRejectedDisableValidator(ctx sdk.Context) (list []types.Re
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedNodeKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
-	defer iterator.Close()
+	defer func() { _ = iterator.Close() }()
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.RejectedDisableValidator
