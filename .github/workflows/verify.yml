@@ -96,7 +96,7 @@ jobs:
     steps:
       - uses: actions/setup-go@v5
         with:
-          go-version: 1.20.14
+          go-version: 1.26.4
       - uses: actions/checkout@v4
       - uses: actions/cache@v4
         if: ${{ !env.ACT }}
@@ -131,7 +131,7 @@ jobs:
     steps:
       - uses: actions/setup-go@v5
         with:
-          go-version: 1.20.14
+          go-version: 1.26.4
       - uses: actions/checkout@v4
       - uses: actions/cache@v4
         with:
@@ -180,11 +180,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: 1.20.14
+          go-version: 1.26.4
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v4
+        uses: golangci/golangci-lint-action@v7
         with:
-          version: v1.55
+          version: v2.12.2
           args: --timeout 5m0s
   cover:
     if: needs.changes.outputs.src == 'true'
@@ -199,13 +199,13 @@ jobs:
       - uses: actions/download-artifact@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: 1.20.14
-      - name: Gocovmerge build
+          go-version: 1.26.4
+      - name: Install gocovmerge
         shell: bash
-        run: go build github.com/wadey/gocovmerge
+        run: go install github.com/wadey/gocovmerge@b5bfa59ec0adc420475f97f89b58045c721d761c
       - name: Merge test coverage
         shell: bash
-        run: ./gocovmerge unit_cover/cover.out integration_cover/cover.out > cover.out
+        run: gocovmerge unit_cover/cover.out integration_cover/cover.out > cover.out
       - name: Filter test coverage
         shell: bash
         run: .github/workflows/filter_coverage.sh

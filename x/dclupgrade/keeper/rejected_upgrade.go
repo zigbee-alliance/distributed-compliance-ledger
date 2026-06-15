@@ -50,7 +50,7 @@ func (k Keeper) GetAllRejectedUpgrade(ctx sdk.Context) (list []types.RejectedUpg
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedUpgradeKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
-	defer iterator.Close()
+	defer func() { _ = iterator.Close() }()
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.RejectedUpgrade

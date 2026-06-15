@@ -3,8 +3,6 @@ package types
 // DONTCOVER
 
 import (
-	"fmt"
-
 	"cosmossdk.io/errors"
 )
 
@@ -23,32 +21,32 @@ var (
 
 func ErrAccountAlreadyExists(address interface{}) error {
 	return errors.Wrapf(AccountAlreadyExists,
-		fmt.Sprintf("Account associated with the address=%v already exists on the ledger", address))
+		"Account associated with the address=%v already exists on the ledger", address)
 }
 
 func ErrAccountDoesNotExist(address interface{}) error {
 	return errors.Wrapf(AccountDoesNotExist,
-		fmt.Sprintf("No account associated with the address=%v on the ledger", address))
+		"No account associated with the address=%v on the ledger", address)
 }
 
 func ErrPendingAccountAlreadyExists(address interface{}) error {
 	return errors.Wrapf(PendingAccountAlreadyExists,
-		fmt.Sprintf("Pending account associated with the address=%v already exists on the ledger", address))
+		"Pending account associated with the address=%v already exists on the ledger", address)
 }
 
 func ErrPendingAccountDoesNotExist(address interface{}) error {
 	return errors.Wrapf(PendingAccountDoesNotExist,
-		fmt.Sprintf("No pending account associated with the address=%v on the ledger", address))
+		"No pending account associated with the address=%v on the ledger", address)
 }
 
 func ErrPendingAccountRevocationAlreadyExists(address interface{}) error {
 	return errors.Wrapf(PendingAccountRevocationAlreadyExists,
-		fmt.Sprintf("Pending account revocation associated with the address=%v already exists on the ledger", address))
+		"Pending account revocation associated with the address=%v already exists on the ledger", address)
 }
 
 func ErrPendingAccountRevocationDoesNotExist(address interface{}) error {
 	return errors.Wrapf(PendingAccountRevocationDoesNotExist,
-		fmt.Sprintf("No pending account revocation associated with the address=%v on the ledger", address))
+		"No pending account revocation associated with the address=%v on the ledger", address)
 }
 
 func ErrMissingVendorIDForVendorAccount() error {

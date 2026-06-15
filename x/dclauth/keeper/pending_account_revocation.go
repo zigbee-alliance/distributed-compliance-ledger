@@ -79,7 +79,7 @@ func (k Keeper) IteratePendingAccountRevocations(ctx sdk.Context, cb func(accoun
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PendingAccountRevocationKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
-	defer iterator.Close()
+	defer func() { _ = iterator.Close() }()
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.PendingAccountRevocation
