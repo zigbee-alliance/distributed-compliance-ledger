@@ -2,7 +2,6 @@ package validator
 
 import (
 	"context"
-	"fmt"
 
 	tmrand "github.com/cometbft/cometbft/libs/rand"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -33,7 +32,7 @@ func GetDisabledValidator(suite *utils.TestSuite, address sdk.ValAddress) (*vali
 		res = resp.GetDisabledValidator()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/validator service.
 		validatorClient := validatortypes.NewQueryClient(grpcConn)
@@ -60,7 +59,7 @@ func GetDisabledValidators(suite *utils.TestSuite) (res []validatortypes.Disable
 		res = resp.GetDisabledValidator()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/validator service.
 		validatorClient := validatortypes.NewQueryClient(grpcConn)
@@ -82,14 +81,14 @@ func GetProposedValidatorToDisable(suite *utils.TestSuite, address sdk.ValAddres
 
 	if suite.Rest {
 		var resp validatortypes.QueryGetProposedDisableValidatorResponse
-		err := suite.QueryREST(fmt.Sprintf(DCLValidatorProposedDisableNodeEndpoint+address.String()), &resp)
+		err := suite.QueryREST(DCLValidatorProposedDisableNodeEndpoint+address.String(), &resp)
 		if err != nil {
 			return nil, err
 		}
 		res = resp.GetProposedDisableValidator()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/validator service.
 		validatorClient := validatortypes.NewQueryClient(grpcConn)
@@ -118,7 +117,7 @@ func GetProposedValidatorsToDisable(suite *utils.TestSuite) (
 		res = resp.GetProposedDisableValidator()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/validator service.
 		validatorClient := validatortypes.NewQueryClient(grpcConn)
@@ -142,14 +141,14 @@ func GetRejectedValidatorToDisable(
 
 	if suite.Rest {
 		var resp validatortypes.QueryGetRejectedDisableValidatorResponse
-		err := suite.QueryREST(fmt.Sprintf(DCLValidatorRejectedDisableNodeEndpoint+address.String()), &resp)
+		err := suite.QueryREST(DCLValidatorRejectedDisableNodeEndpoint+address.String(), &resp)
 		if err != nil {
 			return nil, err
 		}
 		res = resp.GetRejectedValidator()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/validator service.
 		validatorClient := validatortypes.NewQueryClient(grpcConn)
@@ -178,7 +177,7 @@ func GetRejectedValidatorsToDisable(suite *utils.TestSuite) (
 		res = resp.GetRejectedValidator()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/validator service.
 		validatorClient := validatortypes.NewQueryClient(grpcConn)

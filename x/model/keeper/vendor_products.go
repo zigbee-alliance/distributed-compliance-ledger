@@ -50,7 +50,7 @@ func (k Keeper) GetAllVendorProducts(ctx sdk.Context) (list []types.VendorProduc
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.VendorProductsKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
-	defer iterator.Close()
+	defer func() { _ = iterator.Close() }()
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.VendorProducts

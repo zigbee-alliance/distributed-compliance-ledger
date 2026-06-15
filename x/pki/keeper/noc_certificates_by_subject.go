@@ -59,7 +59,7 @@ func (k Keeper) GetAllNocCertificatesBySubject(ctx sdk.Context) (list []types.No
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.NocCertificatesBySubjectKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
-	defer iterator.Close()
+	defer func() { _ = iterator.Close() }()
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.NocCertificatesBySubject

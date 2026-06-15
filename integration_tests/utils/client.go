@@ -77,7 +77,7 @@ func sendRequest(uri string, method string, body []byte, account string, passphr
 		req.SetBasicAuth(account, passphrase)
 	}
 
-	resp, err := client.Do(req)
+	resp, err := client.Do(req) //nolint:bodyclose // closed by ReadResponseBody below
 	if err != nil {
 		fmt.Printf("Error received from server: %v", err)
 
@@ -101,7 +101,7 @@ func sendRequest(uri string, method string, body []byte, account string, passphr
 }
 
 func ReadResponseBody(resp *http.Response) ([]byte, error) {
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	return io.ReadAll(resp.Body)
 }
