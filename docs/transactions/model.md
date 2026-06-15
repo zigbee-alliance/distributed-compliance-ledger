@@ -45,6 +45,7 @@ Not all fields can be edited (see `EDIT_MODEL`).
   - `model/VendorProducts/value/<vid>`
 - Who can send:
   - Vendor account who is associated with the given vid
+  - VendorAdmin account (can add a model for any vid/pid)
 - CLI command minimal:
 
 ```bash
@@ -108,6 +109,7 @@ If one of EnhancedSetupFlow or MaintenanceUrl fields needs to be updated, ALL En
 - In State: `model/Model/value/<vid>/<pid>`
 - Who can send:
   - Vendor account associated with the same vid who has created the model
+  - VendorAdmin account (can edit any model)
 - CLI command:
   - `dcld tx model update-model --vid=<uint16> --pid=<uint16> ... --from=<account>`
 
@@ -126,6 +128,7 @@ If one of Model Versions associated with the Model is certified then Model can n
 - In State: `model/Model/value/<vid>/<pid>`
 - Who can send:
   - Vendor account associated with the same vid who has created the model
+  - VendorAdmin account (can delete any model)
 - CLI command:
   - `dcld tx model delete-model --vid=<uint16> --pid=<uint16> --from=<account>`
 
@@ -164,6 +167,7 @@ If one of `OTA_URl`, `OTA_checksum` or `OTA_checksum_type` fields is set, then t
   - `model/ModelVersions/value/<vid>/<pid>`
 - Who can send:
   - Vendor with same vid who created the Model
+  - VendorAdmin account (can add a model version for any vid/pid)
 - CLI command minimal:
 
 ```bash
@@ -176,7 +180,7 @@ dcld tx model add-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=
 ```bash
 dcld tx model add-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --cdVersionNumber=<uint32>
 --minApplicableSoftwareVersion=<uint32> --maxApplicableSoftwareVersion=<uint32>
---firmwareInformation=<string> --softwareVersionValid=<bool> --otaURL=<string> --otaFileSize=<string> --otaChecksum=<string> --otaChecksumType=<string> --releaseNotesURL=<string> 
+--firmwareInformation=<string> --softwareVersionValid=<bool> --otaURL=<string> --otaFileSize=<uint64> --otaChecksum=<string> --otaChecksumType=<int32> --releaseNotesURL=<string> 
 --from=<account>
 ```
 
@@ -191,7 +195,10 @@ Only the fields listed below (except `vid` `pid` and `softwareVersion`)  can be 
 
 All non-edited fields remain the same.
 
-`otaURL` can be edited only if  `otaFileSize`, `otaChecksum` and `otaChecksumType` are already set.
+**OTA update semantics**:
+
+- if the existing Model Version has no `otaURL` yet, providing `otaURL` in the update SHALL be accompanied by `otaFileSize`, `otaChecksum` and `otaChecksumType` (all three) — these can only be set once, together with the URL;
+- if the existing Model Version already has an `otaURL`, providing `otaURL` in the update replaces the URL only. The `otaFileSize`, `otaChecksum` and `otaChecksumType` fields MUST NOT be provided in this case — they are immutable after the OTA image is first published.
 
 - Parameters:
   - vid: `uint16` -  model vendor ID (positive non-zero)
@@ -199,17 +206,18 @@ All non-edited fields remain the same.
   - softwareVersion: `uint32` - model software version (positive non-zero)
   - softwareVersionValid `optional(bool)` - Flag to indicate whether the software version is valid or not (default true)
   - otaURL `optional(string)` - URL where to obtain the OTA image
+  - otaFileSize `optional(uint64)`  - OtaFileSize is the total size of the OTA software image in bytes. Only accepted alongside the first `otaURL` (see OTA update semantics above).
+  - otaChecksum `optional(string)` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation (max 88 characters). Only accepted alongside the first `otaURL` (see OTA update semantics above).
+  - otaChecksumType `optional(int32)` - Numeric identifier as defined in the [IANA Named Information Hash Algorithm Registry](https://www.iana.org/assignments/named-information/named-information.xhtml#hash-alg) for the type of otaChecksum. Must be one of `1` (sha-256), `7` (sha-384), `8` (sha-512), `10` (sha3-256), `11` (sha3-384), `12` (sha3-512). Only accepted alongside the first `otaURL` (see OTA update semantics above).
   - maxApplicableSoftwareVersion `optional(uint32)` - MaxApplicableSoftwareVersion should specify the highest SoftwareVersion for which this image can be applied
   - minApplicableSoftwareVersion `optional(uint32)` - MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied
   - releaseNotesURL `optional(string)` - URL that contains product specific web page that contains release notes for the device model.
-  - otaURL `optional(string)` - URL where to obtain the OTA image
-  - otaFileSize `optional(string)`  - OtaFileSize is the total size of the OTA software image in bytes
-  - otaChecksum `optional(string)` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation. The digest SHALL have been computed using the algorithm specified in OtaChecksumType
   - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 
 - In State: `model/ModelVersion/value/<vid>/<pid>/<softwareVersion>`
 - Who can send:
   - Vendor associated with the same vid who created the Model
+  - VendorAdmin account (can edit any model version)
 - CLI command:
   - `dcld tx model update-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> ... --from=<account>`
 
@@ -229,6 +237,7 @@ Model Version can be deleted only before it is certified.
 - In State: `model/ModelVersion/value/<vid>/<pid>/<softwareVersion>`
 - Who can send:
   - Vendor account associated with the same vid who has created the model version
+  - VendorAdmin account (can delete any model version)
 - CLI command:
   - `dcld tx model delete-model-version --vid=< uint16 > --pid=< uint16 > --softwareVersion=<uint32> --from=<account>`
 

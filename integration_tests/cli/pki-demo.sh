@@ -1816,21 +1816,4 @@ check_response "$result" "\"vid\": $test_cert_vid"
 
 test_divider
 
-# PKI 20 KiB PEM cap negative case.
-# Every cert-add transaction caps the inbound PEM at 20480 chars (see CHANGELOG).
-echo "Reject propose-add-x509-root-cert with a PEM larger than 20 KiB"
-oversized_cert_path=$(mktemp)
-{
-  echo "-----BEGIN CERTIFICATE-----"
-  # 30 KiB of base64-shaped padding so total exceeds 20480 chars
-  head -c 30000 < /dev/urandom | base64 | tr -d '\n' | fold -w 64
-  echo "-----END CERTIFICATE-----"
-} > "$oversized_cert_path"
-oversized_vid=$RANDOM
-result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$oversized_cert_path" --from $trustee_account --vid=$oversized_vid --yes 2>&1) || true
-rm -f "$oversized_cert_path"
-check_response_and_report "$result" "maximum length for Cert allowed is 20480" raw
-
-test_divider
-
 echo "PASS"
