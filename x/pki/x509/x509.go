@@ -78,6 +78,11 @@ const (
 	MaxCertSize      = 20 * 1024 // 20 KB
 	MaxSANCount      = 100
 	MaxSubjectFields = 50
+
+	// matterKeyIdentifierLen is the required length of the SubjectKeyIdentifier
+	// and AuthorityKeyIdentifier keyIdentifier fields per Matter R1.6 §6.5.11.2:
+	// the 160-bit SHA-1 hash of the subjectPublicKey BIT STRING — 20 octets.
+	matterKeyIdentifierLen = 20
 )
 
 type DecodeX509CertVerificationOptions func(cert *x509.Certificate) error
@@ -146,14 +151,28 @@ func VerifyCAExtensions(cert *x509.Certificate) error {
 			"SubjectKeyIdentifier extension SHALL be present for CA certificates",
 		)
 	}
+	if len(cert.SubjectKeyId) != matterKeyIdentifierLen {
+		return pkitypes.NewErrInappropriateCertificateType(
+			fmt.Sprintf("SubjectKeyIdentifier SHALL be %d octets (160-bit SHA-1), got %d",
+				matterKeyIdentifierLen, len(cert.SubjectKeyId)),
+		)
+	}
 
 	// crypto/x509 exposes RawIssuer/RawSubject as the DER bytes of the Name
 	// sequence, so byte-equality is the structural "self-signed" test.
 	selfSigned := bytes.Equal(cert.RawIssuer, cert.RawSubject)
-	if !selfSigned && len(cert.AuthorityKeyId) == 0 {
-		return pkitypes.NewErrInappropriateCertificateType(
-			"AuthorityKeyIdentifier extension SHALL be present for non-self-signed CA certificates",
-		)
+	if !selfSigned {
+		if len(cert.AuthorityKeyId) == 0 {
+			return pkitypes.NewErrInappropriateCertificateType(
+				"AuthorityKeyIdentifier extension SHALL be present for non-self-signed CA certificates",
+			)
+		}
+		if len(cert.AuthorityKeyId) != matterKeyIdentifierLen {
+			return pkitypes.NewErrInappropriateCertificateType(
+				fmt.Sprintf("AuthorityKeyIdentifier keyIdentifier SHALL be %d octets (160-bit SHA-1), got %d",
+					matterKeyIdentifierLen, len(cert.AuthorityKeyId)),
+			)
+		}
 	}
 
 	return nil
@@ -230,9 +249,21 @@ func verifyEndEntityExtensions(cert *x509.Certificate, certKind string) error {
 			certKind + ": SubjectKeyIdentifier extension SHALL be present",
 		)
 	}
+	if len(cert.SubjectKeyId) != matterKeyIdentifierLen {
+		return pkitypes.NewErrInappropriateCertificateType(
+			fmt.Sprintf("%s: SubjectKeyIdentifier SHALL be %d octets (160-bit SHA-1), got %d",
+				certKind, matterKeyIdentifierLen, len(cert.SubjectKeyId)),
+		)
+	}
 	if len(cert.AuthorityKeyId) == 0 {
 		return pkitypes.NewErrInappropriateCertificateType(
 			certKind + ": AuthorityKeyIdentifier extension SHALL be present",
+		)
+	}
+	if len(cert.AuthorityKeyId) != matterKeyIdentifierLen {
+		return pkitypes.NewErrInappropriateCertificateType(
+			fmt.Sprintf("%s: AuthorityKeyIdentifier keyIdentifier SHALL be %d octets (160-bit SHA-1), got %d",
+				certKind, matterKeyIdentifierLen, len(cert.AuthorityKeyId)),
 		)
 	}
 
@@ -364,9 +395,8 @@ func VerifyNoPIDInSubject(cert *x509.Certificate) error {
 // PAA / PAI are NOT constrained by this rule (§6.2.2.5 rule 11 explicitly
 // allows EKU on PAA), so this helper is wired only on the NOC-chain CA paths.
 func VerifyNoEKU(cert *x509.Certificate) error {
-	const OIDExtKeyUsageStr = "2.5.29.37"
 	for _, e := range cert.Extensions {
-		if e.Id.String() == OIDExtKeyUsageStr {
+		if e.Id.String() == OIDExtKeyUsage.String() {
 			return pkitypes.NewErrInappropriateCertificateType(
 				"ExtendedKeyUsage extension SHALL NOT be present on RCAC/ICAC certificates",
 			)
