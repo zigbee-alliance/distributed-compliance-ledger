@@ -546,19 +546,6 @@ result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model \
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
-echo "Reject add-model-version with otaChecksumType=2 (must be in {1,7,8,10,11,12} after #727)"
-result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model-version \
-  --vid=$vid_for_1_6_0 --pid=$pid_ota_for_1_6_0 \
-  --softwareVersion=$sv_neg_for_1_6_0 --softwareVersionString=$svs_neg_for_1_6_0 \
-  --cdVersionNumber=$cd_version_number_for_1_6_0 \
-  --minApplicableSoftwareVersion=$min_applicable_software_version_for_1_6_0 \
-  --maxApplicableSoftwareVersion=$max_applicable_software_version_for_1_6_0 \
-  --otaURL="https://example.org" --otaFileSize=123 \
-  --otaChecksum="MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=" \
-  --otaChecksumType=2 \
-  --from=$vendor_account_for_1_6_0 --yes)
-check_response_and_report "$result" "OtaChecksumType 2 is not supported" raw
-
 echo "Reject add-model-version with otaChecksum longer than 88 chars (#726)"
 long_ota_checksum=$(printf 'A%.0s' {1..89})
 result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model-version \
@@ -572,6 +559,19 @@ result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model-version \
   --otaChecksumType=1 \
   --from=$vendor_account_for_1_6_0 --yes 2>&1) || true
 check_response_and_report "$result" "maximum length for OtaChecksum allowed is 88" raw
+
+echo "Reject add-model-version with otaChecksumType=2 (must be in {1,7,8,10,11,12} after #727)"
+result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model-version \
+  --vid=$vid_for_1_6_0 --pid=$pid_ota_for_1_6_0 \
+  --softwareVersion=$sv_neg_for_1_6_0 --softwareVersionString=$svs_neg_for_1_6_0 \
+  --cdVersionNumber=$cd_version_number_for_1_6_0 \
+  --minApplicableSoftwareVersion=$min_applicable_software_version_for_1_6_0 \
+  --maxApplicableSoftwareVersion=$max_applicable_software_version_for_1_6_0 \
+  --otaURL="https://example.org" --otaFileSize=123 \
+  --otaChecksum="MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=" \
+  --otaChecksumType=2 \
+  --from=$vendor_account_for_1_6_0 --yes 2>&1) || true
+check_response_and_report "$result" "OtaChecksumType 2 is not supported" raw
 
 echo "Accept add-model-version with valid OTA metadata (otaChecksumType=1, all OTA fields together)"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model-version \
