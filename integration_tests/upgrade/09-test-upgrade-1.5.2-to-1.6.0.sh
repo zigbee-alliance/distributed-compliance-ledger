@@ -557,7 +557,6 @@ result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model-version \
   --otaChecksum="MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=" \
   --otaChecksumType=2 \
   --from=$vendor_account_for_1_6_0 --yes)
-result=$(get_txn_result "$result")
 check_response_and_report "$result" "OtaChecksumType 2 is not supported" raw
 
 echo "Reject add-model-version with otaChecksum longer than 88 chars (#726)"
