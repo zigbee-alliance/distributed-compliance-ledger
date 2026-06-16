@@ -520,7 +520,7 @@ result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model \
   --partNumber=$part_number_for_1_6_0 \
   --commissioningCustomFlow=$commissioning_custom_flow_for_1_6_0 \
   --from=$vendor_account_for_1_6_0 --yes 2>&1) || true
-check_response_and_report "$result" "ProductLabel is a required field" raw
+check_response_and_report "$result" 'required flag(s) "productLabel" not set' raw
 
 echo "Reject add-model without partNumber (now required by #718)"
 result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model \
@@ -529,7 +529,7 @@ result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model \
   --productLabel=$product_label_for_1_6_0 \
   --commissioningCustomFlow=$commissioning_custom_flow_for_1_6_0 \
   --from=$vendor_account_for_1_6_0 --yes 2>&1) || true
-check_response_and_report "$result" "PartNumber is a required field" raw
+check_response_and_report "$result" 'required flag(s) "partNumber" not set' raw
 
 test_divider
 
