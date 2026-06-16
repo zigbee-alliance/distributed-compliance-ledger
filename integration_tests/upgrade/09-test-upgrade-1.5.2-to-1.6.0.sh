@@ -553,7 +553,7 @@ result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model-version \
   --cdVersionNumber=$cd_version_number_for_1_6_0 \
   --minApplicableSoftwareVersion=$min_applicable_software_version_for_1_6_0 \
   --maxApplicableSoftwareVersion=$max_applicable_software_version_for_1_6_0 \
-  --otaURL="https://ota.dcl.dsr.test/img" --otaFileSize=123 \
+  --otaURL="https://example.org" --otaFileSize=123 \
   --otaChecksum="MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=" \
   --otaChecksumType=2 \
   --from=$vendor_account_for_1_6_0 --yes)
@@ -568,7 +568,7 @@ result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model-version \
   --cdVersionNumber=$cd_version_number_for_1_6_0 \
   --minApplicableSoftwareVersion=$min_applicable_software_version_for_1_6_0 \
   --maxApplicableSoftwareVersion=$max_applicable_software_version_for_1_6_0 \
-  --otaURL="https://ota.dcl.dsr.test/img" --otaFileSize=123 \
+  --otaURL="https://example.org" --otaFileSize=123 \
   --otaChecksum="$long_ota_checksum" \
   --otaChecksumType=1 \
   --from=$vendor_account_for_1_6_0 --yes 2>&1) || true
@@ -581,7 +581,7 @@ result=$(echo $passphrase | $DCLD_BIN_NEW tx model add-model-version \
   --cdVersionNumber=$cd_version_number_for_1_6_0 \
   --minApplicableSoftwareVersion=$min_applicable_software_version_for_1_6_0 \
   --maxApplicableSoftwareVersion=$max_applicable_software_version_for_1_6_0 \
-  --otaURL="https://ota.dcl.dsr.test/img" --otaFileSize=123 \
+  --otaURL="https://example.org" --otaFileSize=123 \
   --otaChecksum="MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=" \
   --otaChecksumType=1 \
   --from=$vendor_account_for_1_6_0 --yes)
