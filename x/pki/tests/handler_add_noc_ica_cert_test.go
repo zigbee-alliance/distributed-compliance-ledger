@@ -322,17 +322,27 @@ func TestHandler_AddNocIntermediateCert_ForInvalidCertificate(t *testing.T) {
 }
 
 func TestHandler_AddNocIntermediateCert_ForNonCACertificate(t *testing.T) {
-	// LeafCertWithoutBasicConstraints has no BC extension; the OperationalPKI
-	// path fails at VerifyCAExtensions and the VIDSignerPKI path fails at
-	// VerifyVVSCExtensions — same error code, different rule.
-	cases := []CertificateTestCase{
+	// LeafCertWithoutBasicConstraints has no BC extension. The two profiles
+	// report this differently:
+	//   - OperationalPKI (VerifyCAExtensions) treats a missing BC as "not a CA"
+	//     and returns ErrInappropriateCertificateType (wrong cert TYPE).
+	//   - VIDSignerPKI (VerifyVVSCExtensions → verifyEndEntityExtensions)
+	//     treats a missing BC as a structural defect and returns
+	//     ErrInvalidCertificate.
+	cases := []struct {
+		name                    string
+		isVidVerificationSigner bool
+		expectedErr             error
+	}{
 		{
 			name:                    "OperationalPKI_AddNocIntermediateCert_ForNonCACertificate",
 			isVidVerificationSigner: false,
+			expectedErr:             pkitypes.ErrInappropriateCertificateType,
 		},
 		{
 			name:                    "VIDSignerPKI_AddNocIntermediateCert_ForNonCACertificate",
 			isVidVerificationSigner: true,
+			expectedErr:             pkitypes.ErrInvalidCertificate,
 		},
 	}
 
@@ -342,7 +352,7 @@ func TestHandler_AddNocIntermediateCert_ForNonCACertificate(t *testing.T) {
 
 			addX509Cert := types.NewMsgAddNocX509IcaCert(setup.Vendor1.String(), testconstants.LeafCertWithoutBasicConstraints, testconstants.CertSchemaVersion, tc.isVidVerificationSigner)
 			_, err := setup.Handler(setup.Ctx, addX509Cert)
-			require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+			require.ErrorIs(t, err, tc.expectedErr)
 		})
 	}
 }

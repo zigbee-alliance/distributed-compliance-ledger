@@ -115,44 +115,44 @@ func VerifyCAExtensions(cert *x509.Certificate) error {
 	}
 
 	if _, critical := FindExtCritical(cert, OIDBasicConstraints); !critical {
-		return pkitypes.NewErrInappropriateCertificateType(
+		return pkitypes.NewErrInvalidCertificate(
 			"BasicConstraints extension SHALL be marked critical",
 		)
 	}
 
 	kuPresent, kuCritical := FindExtCritical(cert, OIDKeyUsage)
 	if !kuPresent {
-		return pkitypes.NewErrInappropriateCertificateType(
+		return pkitypes.NewErrInvalidCertificate(
 			"KeyUsage extension SHALL be present for CA certificates",
 		)
 	}
 	if !kuCritical {
-		return pkitypes.NewErrInappropriateCertificateType(
+		return pkitypes.NewErrInvalidCertificate(
 			"KeyUsage extension SHALL be marked critical",
 		)
 	}
 
 	const requiredCAKU = x509.KeyUsageCertSign | x509.KeyUsageCRLSign
 	if cert.KeyUsage&requiredCAKU != requiredCAKU {
-		return pkitypes.NewErrInappropriateCertificateType(
+		return pkitypes.NewErrInvalidCertificate(
 			"KeyUsage SHALL include both keyCertSign and cRLSign bits",
 		)
 	}
 
 	const allowedCAKU = requiredCAKU | x509.KeyUsageDigitalSignature
 	if cert.KeyUsage&^allowedCAKU != 0 {
-		return pkitypes.NewErrInappropriateCertificateType(
+		return pkitypes.NewErrInvalidCertificate(
 			"KeyUsage SHALL NOT include bits other than keyCertSign, cRLSign, and digitalSignature",
 		)
 	}
 
 	if len(cert.SubjectKeyId) == 0 {
-		return pkitypes.NewErrInappropriateCertificateType(
+		return pkitypes.NewErrInvalidCertificate(
 			"SubjectKeyIdentifier extension SHALL be present for CA certificates",
 		)
 	}
 	if len(cert.SubjectKeyId) != matterKeyIdentifierLen {
-		return pkitypes.NewErrInappropriateCertificateType(
+		return pkitypes.NewErrInvalidCertificate(
 			fmt.Sprintf("SubjectKeyIdentifier SHALL be %d octets (160-bit SHA-1), got %d",
 				matterKeyIdentifierLen, len(cert.SubjectKeyId)),
 		)
@@ -163,12 +163,12 @@ func VerifyCAExtensions(cert *x509.Certificate) error {
 	selfSigned := bytes.Equal(cert.RawIssuer, cert.RawSubject)
 	if !selfSigned {
 		if len(cert.AuthorityKeyId) == 0 {
-			return pkitypes.NewErrInappropriateCertificateType(
+			return pkitypes.NewErrInvalidCertificate(
 				"AuthorityKeyIdentifier extension SHALL be present for non-self-signed CA certificates",
 			)
 		}
 		if len(cert.AuthorityKeyId) != matterKeyIdentifierLen {
-			return pkitypes.NewErrInappropriateCertificateType(
+			return pkitypes.NewErrInvalidCertificate(
 				fmt.Sprintf("AuthorityKeyIdentifier keyIdentifier SHALL be %d octets (160-bit SHA-1), got %d",
 					matterKeyIdentifierLen, len(cert.AuthorityKeyId)),
 			)
@@ -192,7 +192,7 @@ func VerifyCAExtensions(cert *x509.Certificate) error {
 // was found and parsed.
 func VerifyBasicConstraintsPresent(cert *x509.Certificate) error {
 	if !cert.BasicConstraintsValid {
-		return pkitypes.NewErrInappropriateCertificateType(
+		return pkitypes.NewErrInvalidCertificate(
 			"BasicConstraints extension SHALL be present",
 		)
 	}
@@ -212,7 +212,7 @@ func VerifyBasicConstraintsPresent(cert *x509.Certificate) error {
 // this helper (notably the NOC ExtendedKeyUsage check).
 func verifyEndEntityExtensions(cert *x509.Certificate, certKind string) error {
 	if !cert.BasicConstraintsValid {
-		return pkitypes.NewErrInappropriateCertificateType(
+		return pkitypes.NewErrInvalidCertificate(
 			certKind + ": BasicConstraints extension SHALL be present",
 		)
 	}
@@ -222,46 +222,46 @@ func verifyEndEntityExtensions(cert *x509.Certificate, certKind string) error {
 		)
 	}
 	if _, critical := FindExtCritical(cert, OIDBasicConstraints); !critical {
-		return pkitypes.NewErrInappropriateCertificateType(
+		return pkitypes.NewErrInvalidCertificate(
 			certKind + ": BasicConstraints extension SHALL be marked critical",
 		)
 	}
 
 	kuPresent, kuCritical := FindExtCritical(cert, OIDKeyUsage)
 	if !kuPresent {
-		return pkitypes.NewErrInappropriateCertificateType(
+		return pkitypes.NewErrInvalidCertificate(
 			certKind + ": KeyUsage extension SHALL be present",
 		)
 	}
 	if !kuCritical {
-		return pkitypes.NewErrInappropriateCertificateType(
+		return pkitypes.NewErrInvalidCertificate(
 			certKind + ": KeyUsage extension SHALL be marked critical",
 		)
 	}
 	if cert.KeyUsage != x509.KeyUsageDigitalSignature {
-		return pkitypes.NewErrInappropriateCertificateType(
+		return pkitypes.NewErrInvalidCertificate(
 			certKind + ": KeyUsage SHALL be exactly digitalSignature",
 		)
 	}
 
 	if len(cert.SubjectKeyId) == 0 {
-		return pkitypes.NewErrInappropriateCertificateType(
+		return pkitypes.NewErrInvalidCertificate(
 			certKind + ": SubjectKeyIdentifier extension SHALL be present",
 		)
 	}
 	if len(cert.SubjectKeyId) != matterKeyIdentifierLen {
-		return pkitypes.NewErrInappropriateCertificateType(
+		return pkitypes.NewErrInvalidCertificate(
 			fmt.Sprintf("%s: SubjectKeyIdentifier SHALL be %d octets (160-bit SHA-1), got %d",
 				certKind, matterKeyIdentifierLen, len(cert.SubjectKeyId)),
 		)
 	}
 	if len(cert.AuthorityKeyId) == 0 {
-		return pkitypes.NewErrInappropriateCertificateType(
+		return pkitypes.NewErrInvalidCertificate(
 			certKind + ": AuthorityKeyIdentifier extension SHALL be present",
 		)
 	}
 	if len(cert.AuthorityKeyId) != matterKeyIdentifierLen {
-		return pkitypes.NewErrInappropriateCertificateType(
+		return pkitypes.NewErrInvalidCertificate(
 			fmt.Sprintf("%s: AuthorityKeyIdentifier keyIdentifier SHALL be %d octets (160-bit SHA-1), got %d",
 				certKind, matterKeyIdentifierLen, len(cert.AuthorityKeyId)),
 		)
@@ -295,7 +295,7 @@ func verifyDACExtensions(cert *x509.Certificate) error {
 // will require regenerating those fixtures.
 func VerifyDAChainNonRoot(cert *x509.Certificate) error {
 	if !cert.BasicConstraintsValid {
-		return pkitypes.NewErrInappropriateCertificateType(
+		return pkitypes.NewErrInvalidCertificate(
 			"BasicConstraints extension SHALL be present",
 		)
 	}
@@ -318,12 +318,12 @@ func verifyNOCExtensions(cert *x509.Certificate) error {
 
 	ekuPresent, ekuCritical := FindExtCritical(cert, OIDExtKeyUsage)
 	if !ekuPresent {
-		return pkitypes.NewErrInappropriateCertificateType(
+		return pkitypes.NewErrInvalidCertificate(
 			"NOC: ExtendedKeyUsage extension SHALL be present",
 		)
 	}
 	if !ekuCritical {
-		return pkitypes.NewErrInappropriateCertificateType(
+		return pkitypes.NewErrInvalidCertificate(
 			"NOC: ExtendedKeyUsage extension SHALL be marked critical",
 		)
 	}
@@ -338,7 +338,7 @@ func verifyNOCExtensions(cert *x509.Certificate) error {
 		}
 	}
 	if !hasServerAuth || !hasClientAuth || len(cert.ExtKeyUsage) != 2 {
-		return pkitypes.NewErrInappropriateCertificateType(
+		return pkitypes.NewErrInvalidCertificate(
 			"NOC: ExtendedKeyUsage SHALL be exactly {serverAuth, clientAuth}",
 		)
 	}
@@ -397,7 +397,7 @@ func VerifyNoPIDInSubject(cert *x509.Certificate) error {
 func VerifyNoEKU(cert *x509.Certificate) error {
 	for _, e := range cert.Extensions {
 		if e.Id.String() == OIDExtKeyUsage.String() {
-			return pkitypes.NewErrInappropriateCertificateType(
+			return pkitypes.NewErrInvalidCertificate(
 				"ExtendedKeyUsage extension SHALL NOT be present on RCAC/ICAC certificates",
 			)
 		}

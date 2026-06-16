@@ -447,7 +447,7 @@ func Test_ParseAndValidateCertificate_VerifyBasicConstraintsPresent(t *testing.T
 
 		err = VerifyBasicConstraintsPresent(cert.Certificate)
 		require.Error(t, err)
-		require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
 	})
 }
 
@@ -564,7 +564,7 @@ func Test_ParseAndValidateCertificate_VerifyCAExtensions(t *testing.T) {
 
 			err = VerifyCAExtensions(cert.Certificate)
 			require.Error(t, err)
-			require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+			require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
 			require.Contains(t, err.Error(), tt.expectSubstr)
 		})
 	}
@@ -592,16 +592,19 @@ func Test_ParseAndValidateCertificate_verifyDACExtensions(t *testing.T) {
 		name         string
 		certPem      string
 		mutate       func(*x509std.Certificate) // optional; applied after parse
+		expectErr    error
 		expectSubstr string
 	}{
 		{
 			name:         "CA cert (cA=TRUE)",
 			certPem:      testconstants.PAACertWithNumericVid,
+			expectErr:    pkitypes.ErrInappropriateCertificateType,
 			expectSubstr: "DAC: BasicConstraints cA SHALL be set to FALSE",
 		},
 		{
 			name:         "BC extension absent",
 			certPem:      testconstants.LeafCertWithoutBasicConstraints,
+			expectErr:    pkitypes.ErrInvalidCertificate,
 			expectSubstr: "DAC: BasicConstraints extension SHALL be present",
 		},
 		{
@@ -614,6 +617,7 @@ func Test_ParseAndValidateCertificate_verifyDACExtensions(t *testing.T) {
 			mutate: func(c *x509std.Certificate) {
 				c.KeyUsage |= x509std.KeyUsageCRLSign
 			},
+			expectErr:    pkitypes.ErrInvalidCertificate,
 			expectSubstr: "DAC: KeyUsage SHALL be exactly digitalSignature",
 		},
 		{
@@ -622,6 +626,7 @@ func Test_ParseAndValidateCertificate_verifyDACExtensions(t *testing.T) {
 			mutate: func(c *x509std.Certificate) {
 				c.SubjectKeyId = nil
 			},
+			expectErr:    pkitypes.ErrInvalidCertificate,
 			expectSubstr: "DAC: SubjectKeyIdentifier extension SHALL be present",
 		},
 		{
@@ -630,6 +635,7 @@ func Test_ParseAndValidateCertificate_verifyDACExtensions(t *testing.T) {
 			mutate: func(c *x509std.Certificate) {
 				c.AuthorityKeyId = nil
 			},
+			expectErr:    pkitypes.ErrInvalidCertificate,
 			expectSubstr: "DAC: AuthorityKeyIdentifier extension SHALL be present",
 		},
 	}
@@ -639,7 +645,7 @@ func Test_ParseAndValidateCertificate_verifyDACExtensions(t *testing.T) {
 				cert, err := ParseAndValidateCertificate(tt.certPem, verifyDACExtensions)
 				require.Error(t, err)
 				require.Nil(t, cert)
-				require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+				require.ErrorIs(t, err, tt.expectErr)
 				require.Contains(t, err.Error(), tt.expectSubstr)
 
 				return
@@ -649,7 +655,7 @@ func Test_ParseAndValidateCertificate_verifyDACExtensions(t *testing.T) {
 			tt.mutate(cert.Certificate)
 			err = verifyDACExtensions(cert.Certificate)
 			require.Error(t, err)
-			require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+			require.ErrorIs(t, err, tt.expectErr)
 			require.Contains(t, err.Error(), tt.expectSubstr)
 		})
 	}
@@ -668,7 +674,7 @@ func Test_ParseAndValidateCertificate_verifyNOCExtensions(t *testing.T) {
 		cert, err := ParseAndValidateCertificate(testconstants.MatterDACShaped, verifyNOCExtensions)
 		require.Error(t, err)
 		require.Nil(t, cert)
-		require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
 		require.Contains(t, err.Error(), "NOC: ExtendedKeyUsage extension SHALL be present")
 	})
 
@@ -679,11 +685,11 @@ func Test_ParseAndValidateCertificate_verifyNOCExtensions(t *testing.T) {
 		cert.Certificate.ExtKeyUsage = append(cert.Certificate.ExtKeyUsage, x509std.ExtKeyUsageCodeSigning)
 		err = verifyNOCExtensions(cert.Certificate)
 		require.Error(t, err)
-		require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
 		require.Contains(t, err.Error(), "NOC: ExtendedKeyUsage SHALL be exactly {serverAuth, clientAuth}")
 	})
 
-	// Negative: CA cert with cA=TRUE.
+	// Negative: CA cert with cA=TRUE → wrong cert TYPE, not a structural defect.
 	t.Run("reject/CA cert", func(t *testing.T) {
 		cert, err := ParseAndValidateCertificate(testconstants.PAACertWithNumericVid, verifyNOCExtensions)
 		require.Error(t, err)
@@ -725,7 +731,7 @@ func Test_ParseAndValidateCertificate_VerifyDAChainNonRoot(t *testing.T) {
 		cert, err := ParseAndValidateCertificate(testconstants.LeafCertWithoutBasicConstraints, VerifyDAChainNonRoot)
 		require.Error(t, err)
 		require.Nil(t, cert)
-		require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
 		require.Contains(t, err.Error(), "BasicConstraints extension SHALL be present")
 	})
 }
@@ -844,7 +850,7 @@ func Test_VerifyCAExtensions_SKIAndAKI(t *testing.T) {
 		cert.Certificate.SubjectKeyId = nil
 		err = VerifyCAExtensions(cert.Certificate)
 		require.Error(t, err)
-		require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
 		require.Contains(t, err.Error(), "SubjectKeyIdentifier extension SHALL be present")
 	})
 
@@ -856,7 +862,7 @@ func Test_VerifyCAExtensions_SKIAndAKI(t *testing.T) {
 		cert.Certificate.AuthorityKeyId = nil
 		err = VerifyCAExtensions(cert.Certificate)
 		require.Error(t, err)
-		require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
 		require.Contains(t, err.Error(), "AuthorityKeyIdentifier extension SHALL be present")
 	})
 
@@ -894,7 +900,7 @@ func Test_VerifyNoEKU(t *testing.T) {
 		})
 		err = VerifyNoEKU(cert.Certificate)
 		require.Error(t, err)
-		require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
 		require.Contains(t, err.Error(), "ExtendedKeyUsage extension SHALL NOT be present")
 	})
 }
