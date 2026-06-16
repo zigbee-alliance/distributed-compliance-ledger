@@ -374,7 +374,7 @@ func NocCertDemo(suite *utils.TestSuite) {
 
 	_, err = GetNocX509CertsByVidAndSkid(suite, vid1, testconstants.NocRootCert1SubjectKeyID)
 	suite.AssertNotFound(err)
-	_, err = GetNocX509CertsByVidAndSkid(suite, vid1, testconstants.NocRootCert2SubjectKeyID)
+	_, err = GetNocX509CertsByVidAndSkid(suite, vid1, testconstants.VvscRootCert2SubjectKeyID)
 	suite.AssertNotFound(err)
 	_, err = GetNocX509CertsByVidAndSkid(suite, vid2, testconstants.NocRootCert3SubjectKeyID)
 	suite.AssertNotFound(err)
@@ -447,10 +447,10 @@ func NocCertDemo(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddNocRootCertificate}, vendor1Name, vendor1Account)
 	require.NoError(suite.T, err)
 
-	// Add second NOC certificate by first vendor
+	// Add second NOC certificate by first vendor — a self-signed VVSC.
 	msgAddNocRootCertificate = pkitypes.MsgAddNocX509RootCert{
 		Signer:                  vendor1Account.Address,
-		Cert:                    testconstants.NocRootCert2,
+		Cert:                    testconstants.VvscRootCert2,
 		IsVidVerificationSigner: true,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddNocRootCertificate}, vendor1Name, vendor1Account)
@@ -471,8 +471,8 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, nocCertificates.Certs[0].SubjectKeyId)
 	require.Equal(suite.T, testconstants.SchemaVersion, nocCertificates.Certs[0].SchemaVersion)
 	require.Equal(suite.T, crttypes.CertificateType_OperationalPKI, nocCertificates.Certs[0].CertificateType)
-	require.Equal(suite.T, testconstants.NocRootCert2Subject, nocCertificates.Certs[1].Subject)
-	require.Equal(suite.T, testconstants.NocRootCert2SubjectKeyID, nocCertificates.Certs[1].SubjectKeyId)
+	require.Equal(suite.T, testconstants.VvscRootCert2Subject, nocCertificates.Certs[1].Subject)
+	require.Equal(suite.T, testconstants.VvscRootCert2SubjectKeyID, nocCertificates.Certs[1].SubjectKeyId)
 	require.Equal(suite.T, crttypes.CertificateType_VIDSignerPKI, nocCertificates.Certs[1].CertificateType)
 	require.Equal(suite.T, testconstants.SchemaVersion, nocCertificates.SchemaVersion)
 
@@ -484,10 +484,10 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.InDelta(suite.T, float32(1), nocCertificatesByVidAndSkid.Tq, 0)
 
 	// Request NOC root certificate by VID1 and SKID2
-	nocCertificatesByVidAndSkid, _ = GetNocX509CertsByVidAndSkid(suite, vid1, testconstants.NocRootCert2SubjectKeyID)
+	nocCertificatesByVidAndSkid, _ = GetNocX509CertsByVidAndSkid(suite, vid1, testconstants.VvscRootCert2SubjectKeyID)
 	require.Len(suite.T, nocCertificatesByVidAndSkid.Certs, 1)
-	require.Equal(suite.T, testconstants.NocRootCert2Subject, nocCertificatesByVidAndSkid.Certs[0].Subject)
-	require.Equal(suite.T, testconstants.NocRootCert2SubjectKeyID, nocCertificatesByVidAndSkid.Certs[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.VvscRootCert2Subject, nocCertificatesByVidAndSkid.Certs[0].Subject)
+	require.Equal(suite.T, testconstants.VvscRootCert2SubjectKeyID, nocCertificatesByVidAndSkid.Certs[0].SubjectKeyId)
 	require.InDelta(suite.T, float32(1), nocCertificatesByVidAndSkid.Tq, 0)
 
 	// Request NOC root certificate by VID2 and SKID3
@@ -519,8 +519,8 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.NocRootCert1Subject, certsWithVid1[0].Subject)
 	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, certsWithVid1[0].SubjectKeyId)
 	require.Equal(suite.T, crttypes.CertificateType_OperationalPKI, certsWithVid1[0].CertificateType)
-	require.Equal(suite.T, testconstants.NocRootCert2Subject, certsWithVid1[1].Subject)
-	require.Equal(suite.T, testconstants.NocRootCert2SubjectKeyID, certsWithVid1[1].SubjectKeyId)
+	require.Equal(suite.T, testconstants.VvscRootCert2Subject, certsWithVid1[1].Subject)
+	require.Equal(suite.T, testconstants.VvscRootCert2SubjectKeyID, certsWithVid1[1].SubjectKeyId)
 	require.Equal(suite.T, crttypes.CertificateType_VIDSignerPKI, certsWithVid1[1].CertificateType)
 	require.Equal(suite.T, testconstants.NocRootCert3Subject, certsWithVid2[0].Subject)
 	require.Equal(suite.T, testconstants.NocRootCert3SubjectKeyID, certsWithVid2[0].SubjectKeyId)
