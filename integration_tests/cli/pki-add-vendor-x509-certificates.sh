@@ -150,12 +150,12 @@ check_response "$result" "\"serialNumber\": \"$intermediate_cert_with_vid_65522_
 test_divider
 
 root_cert_subject="MIGCMQswCQYDVQQGEwJVUzERMA8GA1UECBMITmV3IFlvcmsxETAPBgNVBAcTCE5ldyBZb3JrMRgwFgYDVQQKEw9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsTEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMTD3d3dy5leGFtcGxlLmNvbQ=="
-root_cert_subject_key_id="76:16:85:A1:B2:F9:C0:5A:03:A4:5B:70:CE:18:BC:78:9E:3A:9B:68"
+root_cert_subject_key_id="C1:48:66:ED:6F:23:D8:28:1A:D9:37:7C:58:AC:3F:DA:04:C1:41:E8"
 root_cert_path="integration_tests/constants/root_with_same_subject_and_skid_1"
 root_cert_serial_number="1"
 
 intermediate_cert_subject="MEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIEwpTb21lLVN0YXRlMSEwHwYDVQQKExhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQ="
-intermediate_cert_subject_key_id="4C:C8:CA:45:F6:0F:FA:C8:9B:9B:80:89:23:A9:CA:6A:79:B1:E7:EC"
+intermediate_cert_subject_key_id="A1:E0:92:89:FA:18:82:12:14:9D:B8:AE:19:43:BE:44:31:6B:F1:F5"
 intermediate_cert_1_path="integration_tests/constants/intermediate_with_same_subject_and_skid_1"
 intermediate_cert_1_serial_number="3"
 intermediate_cert_2_path="integration_tests/constants/intermediate_with_same_subject_and_skid_2"
