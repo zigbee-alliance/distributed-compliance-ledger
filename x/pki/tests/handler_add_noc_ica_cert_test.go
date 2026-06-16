@@ -360,10 +360,14 @@ func TestHandler_AddNocIntermediateCert_ForNonCACertificate(t *testing.T) {
 func TestHandler_AddNocIntermediateCert_ForNocRootCertificate(t *testing.T) {
 	setup := utils.Setup(t)
 
-	// try to add root certificate x509 certificate
+	// try to add root certificate x509 certificate. NocRootCert1 is a NOC root
+	// (cA=TRUE without pathLenConstraint), so the §6.2.2.4 PAI rule 9 check
+	// rejects it before the IsSelfSigned check can fire. Either rejection mode
+	// is acceptable as the cert is unfit for the DA chain either way.
 	addX509Cert := types.NewMsgAddX509Cert(setup.Vendor1.String(), testconstants.NocRootCert1, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
-	require.ErrorIs(t, err, pkitypes.ErrNonRootCertificateSelfSigned)
+	require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+	require.Contains(t, err.Error(), "PAI: BasicConstraints pathLenConstraint SHALL be present and set to 0")
 }
 
 func TestHandler_AddNocIntermediateCert_ForRootNonNocCertificate(t *testing.T) {

@@ -283,16 +283,12 @@ func verifyDACExtensions(cert *x509.Certificate) error {
 // DACs (cA=FALSE). The certificate is dispatched by its BasicConstraints cA
 // flag:
 //
-//   - cA=TRUE  → Matter R1.6 §6.2.2.4 PAI profile, enforced by VerifyCAExtensions.
+//   - cA=TRUE  → Matter R1.6 §6.2.2.4 PAI profile, enforced by VerifyCAExtensions
+//     plus VerifyPAIPathLen for the §6.2.2.4 rule 9 pathLenConstraint=0 requirement.
 //   - cA=FALSE → Matter R1.6 §6.2.2.3 DAC profile, enforced by verifyDACExtensions.
 //
 // BasicConstraints must be encoded either way; a missing BC extension is
 // reported as a DAC violation since crypto/x509 leaves IsCA at its zero value.
-//
-// Note: §6.2.2.4 also requires PAI BasicConstraints pathLenConstraint=0. That
-// rule is not yet enforced here because several long-lived test fixtures encode
-// PAIs without pathLenConstraint; tightening it is tracked as a follow-up and
-// will require regenerating those fixtures.
 func VerifyDAChainNonRoot(cert *x509.Certificate) error {
 	if !cert.BasicConstraintsValid {
 		return pkitypes.NewErrInvalidCertificate(
@@ -300,10 +296,51 @@ func VerifyDAChainNonRoot(cert *x509.Certificate) error {
 		)
 	}
 	if cert.IsCA {
-		return VerifyCAExtensions(cert)
+		if err := VerifyCAExtensions(cert); err != nil {
+			return err
+		}
+
+		return VerifyPAIPathLen(cert)
 	}
 
 	return verifyDACExtensions(cert)
+}
+
+// VerifyPAAPathLen is a ParseAndValidateCertificate option that enforces the
+// Matter R1.6 §6.2.2.5 rule 9 pathLenConstraint constraint for Product
+// Attestation Authority (PAA) certificates: the field MAY be omitted, but if
+// present SHALL equal 1.
+//
+// crypto/x509 reports a present-and-zero pathLen as MaxPathLen=0 with
+// MaxPathLenZero=true, and an absent pathLen as MaxPathLen=0 with
+// MaxPathLenZero=false, so "present" is (MaxPathLen > 0 || MaxPathLenZero).
+func VerifyPAAPathLen(cert *x509.Certificate) error {
+	present := cert.MaxPathLen > 0 || cert.MaxPathLenZero
+	if present && cert.MaxPathLen != 1 {
+		return pkitypes.NewErrInvalidCertificate(
+			fmt.Sprintf("PAA: BasicConstraints pathLenConstraint MAY be omitted; if present SHALL be 1, got %d", cert.MaxPathLen),
+		)
+	}
+
+	return nil
+}
+
+// VerifyPAIPathLen is a ParseAndValidateCertificate option that enforces the
+// Matter R1.6 §6.2.2.4 rule 9 pathLenConstraint constraint for Product
+// Attestation Intermediate (PAI) certificates: the field SHALL be present and
+// SHALL be set to 0.
+//
+// crypto/x509 reports a present-and-zero pathLen as MaxPathLen=0 with
+// MaxPathLenZero=true; any other shape (absent, or present with a non-zero
+// value) fails the check.
+func VerifyPAIPathLen(cert *x509.Certificate) error {
+	if !cert.MaxPathLenZero {
+		return pkitypes.NewErrInvalidCertificate(
+			"PAI: BasicConstraints pathLenConstraint SHALL be present and set to 0",
+		)
+	}
+
+	return nil
 }
 
 // verifyNOCExtensions is a ParseAndValidateCertificate option that enforces
