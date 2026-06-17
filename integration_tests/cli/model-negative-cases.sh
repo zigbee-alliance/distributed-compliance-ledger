@@ -199,8 +199,7 @@ result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
 echo "Add model-version with otaChecksumType=2 (not in IANA allow-list)"
-result=$(echo "test1234" | dcld tx model add-model-version --vid=$vid --pid=$mv_pid --softwareVersion=$mv_sv --softwareVersionString=$mv_svs --cdVersionNumber=1 --minApplicableSoftwareVersion=1 --maxApplicableSoftwareVersion=10 --otaURL="https://ota.url.com" --otaFileSize=123 --otaChecksum="MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=" --otaChecksumType=2 --from=$vendor_account --yes)
-result=$(get_txn_result "$result")
+result=$(echo "test1234" | dcld tx model add-model-version --vid=$vid --pid=$mv_pid --softwareVersion=$mv_sv --softwareVersionString=$mv_svs --cdVersionNumber=1 --minApplicableSoftwareVersion=1 --maxApplicableSoftwareVersion=10 --otaURL="https://ota.url.com" --otaFileSize=123 --otaChecksum="MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=" --otaChecksumType=2 --from=$vendor_account --yes 2>&1)  || true
 check_response_and_report "$result" "OtaChecksumType 2 is not supported" raw
 
 test_divider
