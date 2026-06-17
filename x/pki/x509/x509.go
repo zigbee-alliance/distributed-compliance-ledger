@@ -178,28 +178,6 @@ func VerifyCAExtensions(cert *x509.Certificate) error {
 	return nil
 }
 
-// VerifyBasicConstraintsPresent is a ParseAndValidateCertificate option that fails
-// if the certificate does not encode the BasicConstraints extension at all.
-// It does NOT dictate the value of the cA flag, so it accepts both is-ca=true
-// (ICAC) and is-ca=false (NOC, DAC, CRL signer).
-//
-// Pass it on paths that take leaf certificates or paths that take both CAs and
-// leaves — Matter R1.6 §6.2.2.3 (DAC) and §6.5.12 (NOC) both require the
-// BasicConstraints extension to be encoded. The NOC-ICA handler accepts both
-// ICACs and NOCs, so a "BC encoded" check is the right gate there
-//
-// crypto/x509 sets BasicConstraintsValid = true if and only if the BC extension
-// was found and parsed.
-func VerifyBasicConstraintsPresent(cert *x509.Certificate) error {
-	if !cert.BasicConstraintsValid {
-		return pkitypes.NewErrInvalidCertificate(
-			"BasicConstraints extension SHALL be present",
-		)
-	}
-
-	return nil
-}
-
 // verifyEndEntityExtensions implements the structural rules shared by Matter
 // end-entity certificates (DAC per §6.2.2.3 and NOC per §6.5.12):
 //
@@ -207,9 +185,6 @@ func VerifyBasicConstraintsPresent(cert *x509.Certificate) error {
 //   - KeyUsage SHALL be encoded, marked critical, exactly digitalSignature.
 //   - SubjectKeyIdentifier SHALL be present.
 //   - AuthorityKeyIdentifier SHALL be present.
-//
-// verifyDACExtensions and verifyNOCExtensions layer additional rules on top of
-// this helper (notably the NOC ExtendedKeyUsage check).
 func verifyEndEntityExtensions(cert *x509.Certificate, certKind string) error {
 	if !cert.BasicConstraintsValid {
 		return pkitypes.NewErrInvalidCertificate(
@@ -337,46 +312,6 @@ func VerifyPAIPathLen(cert *x509.Certificate) error {
 	if !cert.MaxPathLenZero {
 		return pkitypes.NewErrInvalidCertificate(
 			"PAI: BasicConstraints pathLenConstraint SHALL be present and set to 0",
-		)
-	}
-
-	return nil
-}
-
-// verifyNOCExtensions is a ParseAndValidateCertificate option that enforces
-// the structural rules of a Matter Node Operational Certificate (NOC) per
-// Matter R1.6 §6.5.12: BasicConstraints critical with is-ca=FALSE, KeyUsage
-// critical with exactly digitalSignature, ExtendedKeyUsage critical with
-// exactly {serverAuth, clientAuth}, and SKI + AKI present.
-func verifyNOCExtensions(cert *x509.Certificate) error {
-	if err := verifyEndEntityExtensions(cert, "NOC"); err != nil {
-		return err
-	}
-
-	ekuPresent, ekuCritical := FindExtCritical(cert, OIDExtKeyUsage)
-	if !ekuPresent {
-		return pkitypes.NewErrInvalidCertificate(
-			"NOC: ExtendedKeyUsage extension SHALL be present",
-		)
-	}
-	if !ekuCritical {
-		return pkitypes.NewErrInvalidCertificate(
-			"NOC: ExtendedKeyUsage extension SHALL be marked critical",
-		)
-	}
-
-	var hasServerAuth, hasClientAuth bool
-	for _, eu := range cert.ExtKeyUsage {
-		switch eu {
-		case x509.ExtKeyUsageServerAuth:
-			hasServerAuth = true
-		case x509.ExtKeyUsageClientAuth:
-			hasClientAuth = true
-		}
-	}
-	if !hasServerAuth || !hasClientAuth || len(cert.ExtKeyUsage) != 2 {
-		return pkitypes.NewErrInvalidCertificate(
-			"NOC: ExtendedKeyUsage SHALL be exactly {serverAuth, clientAuth}",
 		)
 	}
 

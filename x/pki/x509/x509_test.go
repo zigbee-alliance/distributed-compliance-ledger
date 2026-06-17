@@ -421,36 +421,6 @@ func Test_ParseAndValidateCertificate(t *testing.T) {
 	}
 }
 
-func Test_ParseAndValidateCertificate_VerifyBasicConstraintsPresent(t *testing.T) {
-	positiveTests := []struct {
-		name    string
-		certPem string
-	}{
-		{name: "root CA (BC encoded, cA=true)", certPem: testconstants.RootCertPem},
-		{name: "intermediate CA (BC encoded, cA=true)", certPem: testconstants.IntermediateCertPem},
-		{name: "leaf (BC encoded, cA=false)", certPem: testconstants.LeafCertPem},
-		{name: "PAA with VID (BC encoded, cA=true)", certPem: testconstants.PAACertWithNumericVid},
-	}
-	for _, tt := range positiveTests {
-		t.Run("ok/"+tt.name, func(t *testing.T) {
-			cert, err := ParseAndValidateCertificate(tt.certPem, VerifyBasicConstraintsPresent)
-			require.NoError(t, err)
-			require.NotNil(t, cert)
-		})
-	}
-
-	// A cert that has no BasicConstraints extension at all must be rejected.
-	t.Run("reject/BC-extension-absent", func(t *testing.T) {
-		cert, err := ParseAndValidateCertificate(testconstants.LeafCertPem)
-		require.NoError(t, err)
-		cert.Certificate.BasicConstraintsValid = false
-
-		err = VerifyBasicConstraintsPresent(cert.Certificate)
-		require.Error(t, err)
-		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
-	})
-}
-
 func Test_ParseAndValidateCertificate_VerifyCAExtensions(t *testing.T) {
 	// Positive fixtures: known CA certs that comply with the full Matter R1.6
 	// CA profile (BC critical + cA=TRUE, KU critical with at least keyCertSign
@@ -659,44 +629,6 @@ func Test_ParseAndValidateCertificate_verifyDACExtensions(t *testing.T) {
 			require.Contains(t, err.Error(), tt.expectSubstr)
 		})
 	}
-}
-
-func Test_ParseAndValidateCertificate_verifyNOCExtensions(t *testing.T) {
-	// Positive: a NOC-shaped cert with EKU critical and {serverAuth, clientAuth}.
-	t.Run("ok/NOC-shaped leaf", func(t *testing.T) {
-		cert, err := ParseAndValidateCertificate(testconstants.MatterNOCShaped, verifyNOCExtensions)
-		require.NoError(t, err)
-		require.NotNil(t, cert)
-	})
-
-	// Negative: DAC-shaped leaf has no EKU → fails at the EKU presence check.
-	t.Run("reject/DAC-shaped (no EKU)", func(t *testing.T) {
-		cert, err := ParseAndValidateCertificate(testconstants.MatterDACShaped, verifyNOCExtensions)
-		require.Error(t, err)
-		require.Nil(t, cert)
-		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
-		require.Contains(t, err.Error(), "NOC: ExtendedKeyUsage extension SHALL be present")
-	})
-
-	// Negative synthetic: NOC with extra EKU entry.
-	t.Run("reject/synthetic NOC with 3 EKUs", func(t *testing.T) {
-		cert, err := ParseAndValidateCertificate(testconstants.MatterNOCShaped)
-		require.NoError(t, err)
-		cert.Certificate.ExtKeyUsage = append(cert.Certificate.ExtKeyUsage, x509std.ExtKeyUsageCodeSigning)
-		err = verifyNOCExtensions(cert.Certificate)
-		require.Error(t, err)
-		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
-		require.Contains(t, err.Error(), "NOC: ExtendedKeyUsage SHALL be exactly {serverAuth, clientAuth}")
-	})
-
-	// Negative: CA cert with cA=TRUE → wrong cert TYPE, not a structural defect.
-	t.Run("reject/CA cert", func(t *testing.T) {
-		cert, err := ParseAndValidateCertificate(testconstants.PAACertWithNumericVid, verifyNOCExtensions)
-		require.Error(t, err)
-		require.Nil(t, cert)
-		require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
-		require.Contains(t, err.Error(), "NOC: BasicConstraints cA SHALL be set to FALSE")
-	})
 }
 
 // VerifyDAChainNonRoot dispatches on cA: PAIs go to VerifyCAExtensions + the
