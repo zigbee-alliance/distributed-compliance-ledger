@@ -272,7 +272,11 @@ func GetNocX509IcaCerts(suite *utils.TestSuite, vendorID int32) (*pkitypes.NocIc
 }
 
 func GetNocX509IcaCertsBySubjectAndSKID(suite *utils.TestSuite, vendorID int32, subject, subjectKeyID string) []*pkitypes.Certificate {
-	certs, _ := GetNocX509IcaCerts(suite, vendorID)
+	certs, err := GetNocX509IcaCerts(suite, vendorID)
+	if err != nil || certs == nil {
+		return nil
+	}
+
 	for i := 0; i < len(certs.Certs); {
 		cert := certs.Certs[i]
 		if cert.Subject != subject || cert.SubjectKeyId != subjectKeyID {
