@@ -106,7 +106,7 @@ Possible options when adding Validator, Observer, Sentry or Seed nodes to existi
   - The node will have a truncated block history, starting from the height of the snapshot.
 
 - References:
-  - <https://blog.cosmos.network/cosmos-sdk-state-sync-guide-99e4cf43be2f>
+  - <https://docs.cosmos.network/cometbft/latest/docs/core/state-sync>
 
 ### 2) Take the data from another node
 
