@@ -38,7 +38,7 @@ upgrade_checksum="sha256:47d91b6be0b0a15e7edde7b78e3013d4eedbbb3c2c1b164de784091
 binary_version_new="v1.6.0-0.dev.3"
 
 DCLD_BIN_OLD="/tmp/dcld_bins/dcld_v1.5.2"
-DCLD_BIN_NEW="/tmp/dcld_bins/dcld_v1.6.0-0.dev.3" # TODO it must be v1.6.0 before actual release
+DCLD_BIN_NEW="/tmp/dcld_bins/dcld_v1.6.0-0.dev.4" # TODO it must be v1.6.0 before actual release
 $DCLD_BIN_NEW config broadcast-mode sync
 ########################################################################################
 
