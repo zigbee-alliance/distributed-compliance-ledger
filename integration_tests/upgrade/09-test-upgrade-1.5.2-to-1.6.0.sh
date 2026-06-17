@@ -33,9 +33,9 @@ test_divider
 # Upgrade constants
 
 plan_name="v1.6.0"
-upgrade_checksum="sha256:47d91b6be0b0a15e7edde7b78e3013d4eedbbb3c2c1b164de78409198548a2de"
+upgrade_checksum="sha256:ab07c87f6bdd1ee903ca4a7c26c8a503b2f1d14c63acf6ebfa6968b41efb236f"
 # TODO it must be v1.6.0 before actual release
-binary_version_new="v1.6.0-0.dev.3"
+binary_version_new="v1.6.0-0.dev.4"
 
 DCLD_BIN_OLD="/tmp/dcld_bins/dcld_v1.5.2"
 DCLD_BIN_NEW="/tmp/dcld_bins/dcld_v1.6.0-0.dev.4" # TODO it must be v1.6.0 before actual release

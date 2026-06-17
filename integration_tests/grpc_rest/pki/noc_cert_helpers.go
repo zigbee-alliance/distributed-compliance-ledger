@@ -374,7 +374,7 @@ func NocCertDemo(suite *utils.TestSuite) {
 
 	_, err = GetNocX509CertsByVidAndSkid(suite, vid1, testconstants.NocRootCert1SubjectKeyID)
 	suite.AssertNotFound(err)
-	_, err = GetNocX509CertsByVidAndSkid(suite, vid1, testconstants.VvscRootCert2SubjectKeyID)
+	_, err = GetNocX509CertsByVidAndSkid(suite, vid1, testconstants.VvscRootCert1SubjectKeyID)
 	suite.AssertNotFound(err)
 	_, err = GetNocX509CertsByVidAndSkid(suite, vid2, testconstants.NocRootCert3SubjectKeyID)
 	suite.AssertNotFound(err)
@@ -448,9 +448,11 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Add second NOC certificate by first vendor — a self-signed VVSC.
+	// VvscRootCert1 (not VvscRootCert2) is used so the VVSC ICA add below can
+	// chain to it.
 	msgAddNocRootCertificate = pkitypes.MsgAddNocX509RootCert{
 		Signer:                  vendor1Account.Address,
-		Cert:                    testconstants.VvscRootCert2,
+		Cert:                    testconstants.VvscRootCert1,
 		IsVidVerificationSigner: true,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddNocRootCertificate}, vendor1Name, vendor1Account)
@@ -471,8 +473,8 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, nocCertificates.Certs[0].SubjectKeyId)
 	require.Equal(suite.T, testconstants.SchemaVersion, nocCertificates.Certs[0].SchemaVersion)
 	require.Equal(suite.T, crttypes.CertificateType_OperationalPKI, nocCertificates.Certs[0].CertificateType)
-	require.Equal(suite.T, testconstants.VvscRootCert2Subject, nocCertificates.Certs[1].Subject)
-	require.Equal(suite.T, testconstants.VvscRootCert2SubjectKeyID, nocCertificates.Certs[1].SubjectKeyId)
+	require.Equal(suite.T, testconstants.VvscRootCert1Subject, nocCertificates.Certs[1].Subject)
+	require.Equal(suite.T, testconstants.VvscRootCert1SubjectKeyID, nocCertificates.Certs[1].SubjectKeyId)
 	require.Equal(suite.T, crttypes.CertificateType_VIDSignerPKI, nocCertificates.Certs[1].CertificateType)
 	require.Equal(suite.T, testconstants.SchemaVersion, nocCertificates.SchemaVersion)
 
@@ -484,10 +486,10 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.InDelta(suite.T, float32(1), nocCertificatesByVidAndSkid.Tq, 0)
 
 	// Request NOC root certificate by VID1 and SKID2
-	nocCertificatesByVidAndSkid, _ = GetNocX509CertsByVidAndSkid(suite, vid1, testconstants.VvscRootCert2SubjectKeyID)
+	nocCertificatesByVidAndSkid, _ = GetNocX509CertsByVidAndSkid(suite, vid1, testconstants.VvscRootCert1SubjectKeyID)
 	require.Len(suite.T, nocCertificatesByVidAndSkid.Certs, 1)
-	require.Equal(suite.T, testconstants.VvscRootCert2Subject, nocCertificatesByVidAndSkid.Certs[0].Subject)
-	require.Equal(suite.T, testconstants.VvscRootCert2SubjectKeyID, nocCertificatesByVidAndSkid.Certs[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.VvscRootCert1Subject, nocCertificatesByVidAndSkid.Certs[0].Subject)
+	require.Equal(suite.T, testconstants.VvscRootCert1SubjectKeyID, nocCertificatesByVidAndSkid.Certs[0].SubjectKeyId)
 	require.InDelta(suite.T, float32(1), nocCertificatesByVidAndSkid.Tq, 0)
 
 	// Request NOC root certificate by VID2 and SKID3
@@ -519,8 +521,8 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.NocRootCert1Subject, certsWithVid1[0].Subject)
 	require.Equal(suite.T, testconstants.NocRootCert1SubjectKeyID, certsWithVid1[0].SubjectKeyId)
 	require.Equal(suite.T, crttypes.CertificateType_OperationalPKI, certsWithVid1[0].CertificateType)
-	require.Equal(suite.T, testconstants.VvscRootCert2Subject, certsWithVid1[1].Subject)
-	require.Equal(suite.T, testconstants.VvscRootCert2SubjectKeyID, certsWithVid1[1].SubjectKeyId)
+	require.Equal(suite.T, testconstants.VvscRootCert1Subject, certsWithVid1[1].Subject)
+	require.Equal(suite.T, testconstants.VvscRootCert1SubjectKeyID, certsWithVid1[1].SubjectKeyId)
 	require.Equal(suite.T, crttypes.CertificateType_VIDSignerPKI, certsWithVid1[1].CertificateType)
 	require.Equal(suite.T, testconstants.NocRootCert3Subject, certsWithVid2[0].Subject)
 	require.Equal(suite.T, testconstants.NocRootCert3SubjectKeyID, certsWithVid2[0].SubjectKeyId)
@@ -604,7 +606,7 @@ func NocCertDemo(suite *utils.TestSuite) {
 	// Add second intermediate NOC certificate
 	msgAddNocCertificate = pkitypes.MsgAddNocX509IcaCert{
 		Signer:                  vendor1Account.Address,
-		Cert:                    testconstants.NocCert2,
+		Cert:                    testconstants.VvscIcaCert1,
 		IsVidVerificationSigner: true,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddNocCertificate}, vendor1Name, vendor1Account)
@@ -625,11 +627,11 @@ func NocCertDemo(suite *utils.TestSuite) {
 	require.False(suite.T, certs.Certs[0].IsRoot)
 	require.Equal(suite.T, crttypes.CertificateType_OperationalPKI, certs.Certs[0].CertificateType)
 
-	certs, _ = GetNocX509Cert(suite, testconstants.NocCert2Subject, testconstants.NocCert2SubjectKeyID)
-	require.Equal(suite.T, testconstants.NocCert2Subject, certs.Subject)
-	require.Equal(suite.T, testconstants.NocCert2SubjectKeyID, certs.SubjectKeyId)
+	certs, _ = GetNocX509Cert(suite, testconstants.VvscIcaCert1Subject, testconstants.VvscIcaCert1SubjectKeyID)
+	require.Equal(suite.T, testconstants.VvscIcaCert1Subject, certs.Subject)
+	require.Equal(suite.T, testconstants.VvscIcaCert1SubjectKeyID, certs.SubjectKeyId)
 	require.Len(suite.T, certs.Certs, 1)
-	require.Equal(suite.T, testconstants.NocCert2, certs.Certs[0].PemCert)
+	require.Equal(suite.T, testconstants.VvscIcaCert1, certs.Certs[0].PemCert)
 	require.Equal(suite.T, vendor1Account.Address, certs.Certs[0].Owner)
 	require.False(suite.T, certs.Certs[0].IsRoot)
 	require.Equal(suite.T, crttypes.CertificateType_VIDSignerPKI, certs.Certs[0].CertificateType)
