@@ -5,7 +5,6 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	x509std "crypto/x509"
-	"encoding/asn1"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -193,8 +192,6 @@ func verifyPAA(cert *x509.Certificate, msg *types.MsgAddPkiRevocationDistributio
 	return nil
 }
 
-var oidKeyUsage = asn1.ObjectIdentifier{2, 5, 29, 15}
-
 func verifyPAI(cert *x509.Certificate, msg *types.MsgAddPkiRevocationDistributionPoint) error {
 	if cert.IsSelfSigned() {
 		return pkitypes.NewErrNonRootCertificateSelfSigned()
@@ -268,25 +265,22 @@ func VerifyCRLSignerCertFormat(certificate *x509.Certificate) error {
 		)
 	}
 
-	// Basic Constraint extension should be marked critical and have the cA field set to false
+	// Basic Constraints extension must be present and have cA = FALSE.
 	if !cert.BasicConstraintsValid || cert.IsCA {
 		return pkitypes.NewErrCRLSignerCertificateInvalidFormat(
 			"Basic Constraint extension's cA field SHALL be set to FALSE",
 		)
 	}
 
-	// Basic Constraint extension should be marked critical
-	isCritical := false
-	for _, ext := range cert.Extensions {
-		if ext.Id.Equal(oidKeyUsage) {
-			isCritical = ext.Critical
+	// Both Basic Constraints and Key Usage extensions SHALL be marked critical.
+	bcSeen, bcCritical := x509.FindExtCritical(cert, x509.OIDBasicConstraints)
+	kuSeen, kuCritical := x509.FindExtCritical(cert, x509.OIDKeyUsage)
 
-			break
-		}
-	}
-
-	if !isCritical {
+	if !bcSeen || !bcCritical {
 		return pkitypes.NewErrCRLSignerCertificateInvalidFormat("Basic Constraint extension SHALL be marked critical")
+	}
+	if !kuSeen || !kuCritical {
+		return pkitypes.NewErrCRLSignerCertificateInvalidFormat("Key Usage extension SHALL be marked critical")
 	}
 
 	if cert.KeyUsage&x509std.KeyUsageCRLSign == 0 {

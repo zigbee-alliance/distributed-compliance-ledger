@@ -130,6 +130,7 @@ The PAA certificate is immutable. It can only be revoked by either the owner or 
   - provided certificate must be root:
     - `Issuer` == `Subject`
     - `Authority Key Identifier` == `Subject Key Identifier`
+  - the certificate's structural profile must satisfy the PAA profile: `cA=TRUE`, `KeyUsage` critical with `keyCertSign` + `cRLSign` (`digitalSignature` allowed), `SubjectKeyIdentifier` present, `AuthorityKeyIdentifier` optional for self-signed PAAs.
   - no existing `Proposed` certificate with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination.
   - no existing certificate with the same `<Certificate's Issuer>:<Certificate's Serial Number>` combination.
   - if approved certificates with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination already exists:
@@ -384,6 +385,7 @@ Adds a PAI (intermediate certificate) signed by a chain of certificates which mu
   - provided certificate must not be root:
     - `Issuer` != `Subject`
     - `Authority Key Identifier` != `Subject Key Identifier`
+  - the certificate's structural profile must satisfy the PAI profile: `cA=TRUE`, `KeyUsage` critical with `keyCertSign` + `cRLSign` (`digitalSignature` allowed), `SubjectKeyIdentifier` and `AuthorityKeyIdentifier` present.
   - no existing certificate with the same `<Certificate's Issuer>:<Certificate's Serial Number>` combination.
   - if certificates with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination already exist:
     - the existing certificate must not be NOC certificate.
@@ -748,6 +750,10 @@ This transaction adds a NOC root certificate (RCAC) owned by the Vendor.
   - the provided certificate must be a root certificate (RCAC):
     - `Issuer` == `Subject`
     - `Authority Key Identifier` == `Subject Key Identifier`
+  - the certificate's structural profile is selected by `isVidVerificationSigner`:
+    - `false` (default) — RCAC profile: `cA=TRUE`, `KeyUsage` critical with `keyCertSign` + `cRLSign` (`digitalSignature` allowed), no `ExtendedKeyUsage`, `SubjectKeyIdentifier` and `AuthorityKeyIdentifier` present.
+    - `true` — VVSC profile: `cA=FALSE`, `KeyUsage` critical with exactly `digitalSignature`, `SubjectKeyIdentifier` and `AuthorityKeyIdentifier` present. This path is restricted to self-issued VVSCs; non-self-issued VVSCs go through [ADD_NOC_ICA](#add_noc_ica-icac).
+  - the certificate must use `ecdsa-with-SHA256` over a `prime256v1` public key, be X.509 v3, and carry at most one `matter-vid` and one `matter-pid` attribute in subject / issuer.
   - no existing certificate with the same `<Certificate's Issuer>:<Certificate's Serial Number>` combination.
   - if certificates with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination already exist:
     - the existing certificate must be a NOC root certificate of the same type (`OperationalPKI` ↔ `OperationalPKI`, `VIDSignerPKI` ↔ `VIDSignerPKI`).
@@ -806,15 +812,19 @@ This transaction adds a NOC ICA certificate (ICAC) — or, when `isVidVerificati
 
 - Who can send: Vendor account
 - Validation:
+  - the certificate's structural profile is selected by `isVidVerificationSigner`:
+    - `false` (default) — ICAC profile: `cA=TRUE`, `KeyUsage` critical with `keyCertSign` + `cRLSign`, no `ExtendedKeyUsage`, `SubjectKeyIdentifier` and `AuthorityKeyIdentifier` present.
+    - `true` — VVSC profile: `cA=FALSE`, `KeyUsage` critical with exactly `digitalSignature`, `SubjectKeyIdentifier` and `AuthorityKeyIdentifier` present.
   - the provided certificate must be a non-root certificate:
     - `Issuer` != `Subject`
     - `Authority Key Identifier` != `Subject Key Identifier`
-  - the root certificate must be a NOC certificate and added by the same vendor
+  - the certificate must use `ecdsa-with-SHA256` over a `prime256v1` public key, be X.509 v3, and carry at most one `matter-vid` and one `matter-pid` attribute in subject / issuer.
+  - the root certificate must be a NOC certificate of the same type (`OperationalPKI` ↔ `OperationalPKI`, `VIDSignerPKI` ↔ `VIDSignerPKI`) and added by the same vendor
     - `isNoc` field of the root certificate must be set to true
     - `VID of root certificate` == `VID of account`
-  - no existing certificate with the same `<Certificate's Issuer>:<Certificate's Serial Number>` combination.
+ - no existing certificate with the same `<Certificate's Issuer>:<Certificate's Serial Number>` combination.
   - if certificates with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination already exist:
-    - the existing certificate must be NOC non-root certificate
+    - the existing certificate must be NOC non-root certificate of the same type
     - the sender's VID must match the vid field of the existing certificates.
   - the signature and expiration date must be valid.
 - Parameters:
