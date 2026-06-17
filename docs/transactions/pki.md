@@ -5,6 +5,8 @@
 **NOTE**: X.509 v3 certificates are only supported (all certificates MUST contain `Subject Key ID` field).
 All PKI related methods are based on this restriction.
 
+**Size limits**: each PEM-encoded certificate accepted by the certificate-add transactions is capped at **20 KiB** (previously ~10 MiB). For the PKI Revocation Distribution Point transactions ([ADD_REVOCATION_DISTRIBUTION_POINT](#add_revocation_distribution_point) and [UPDATE_REVOCATION_DISTRIBUTION_POINT](#update_revocation_distribution_point)), `label` and `issuerSubjectKeyID` are capped at 64 characters, `crlSignerCertificate` and `crlSignerDelegator` at 2 KiB each, `dataURL` at 256 characters (accepts `http://` or `https://`), and `dataDigest` at 128 characters.
+
 * [All Certificates (DA, NOC)](#all-certificates-da-noc)
 * [Device Attestation Certificates (DA): PAA, PAI](#device-attestation-certificates-da-paa-pai)
 * [E2E (NOC): RCAC, ICAC](#e2e-noc-rcac-icac)
@@ -731,6 +733,7 @@ This transaction adds a NOC root certificate (RCAC) owned by the Vendor.
 - Parameters:
   - cert: `string` - The NOC Root Certificate (RCAC), encoded in X.509v3 PEM format. Can be a PEM string or a file path.
   - schemaVersion: `optional(uint16)` - Certificate's schema version to support backward/forward compatability. Should be equal to 0 (default 0)
+  - isVidVerificationSigner: `optional(bool)` - when `true`, the certificate is validated and stored as a self-issued Vendor ID Verification Signer Certificate (VVSC). Defaults to `false`, which selects the RCAC profile.
 - In State:
   - `pki/AllCertificates/value/<Subject>/<SubjectKeyID>`
   - `pki/AllCertificatesBySubject/value/<Subject>`
@@ -740,14 +743,14 @@ This transaction adds a NOC root certificate (RCAC) owned by the Vendor.
   - `pki/NocCertificatesBySubjectKeyId/value/<SubjectKeyID>`
   - `pki/NocCertificatesByVidAndSkid/value/<VID>/<SubjectKeyID>`
 - CLI Command:
-  - `dcld tx pki add-noc-x509-root-cert --certificate=<string-or-path> --from=<account>`
+  - `dcld tx pki add-noc-x509-root-cert --certificate=<string-or-path> [--is-vid-verification-signer=<bool>] --from=<account>`
 - Validation:
   - the provided certificate must be a root certificate (RCAC):
     - `Issuer` == `Subject`
     - `Authority Key Identifier` == `Subject Key Identifier`
   - no existing certificate with the same `<Certificate's Issuer>:<Certificate's Serial Number>` combination.
   - if certificates with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination already exist:
-    - the existing certificate must be NOC root certificate (RCAC)
+    - the existing certificate must be a NOC root certificate of the same type (`OperationalPKI` ↔ `OperationalPKI`, `VIDSignerPKI` ↔ `VIDSignerPKI`).
     - the sender's VID must match the `vid` field of the existing certificates.
   - the signature (self-signature) and expiration date must be valid.
 
@@ -799,8 +802,7 @@ Removed NOC root certificates (RCACs) can be re-added using the [ADD_NOC_ROOT](#
 
 **Status: Implemented**
 
-This transaction adds a NOC ICA certificate (ICAC) owned by the Vendor signed by a chain of certificates which must be
-already present on the ledger.
+This transaction adds a NOC ICA certificate (ICAC) — or, when `isVidVerificationSigner = true`, a Vendor ID Verification Signer Certificate (VVSC) — owned by the Vendor and signed by a chain of certificates which must already be present on the ledger.
 
 - Who can send: Vendor account
 - Validation:
@@ -816,8 +818,9 @@ already present on the ledger.
     - the sender's VID must match the vid field of the existing certificates.
   - the signature and expiration date must be valid.
 - Parameters:
-  - cert: `string` - The NOC non-root Certificate, encoded in X.509v3 PEM format. Can be a PEM string or a file path.
+  - cert: `string` - The NOC ICA Certificate (ICAC) or VVSC, encoded in X.509v3 PEM format. Can be a PEM string or a file path.
   - certificate-schema-version: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
+  - isVidVerificationSigner: `optional(bool)` - when `true`, the certificate is validated and stored as a VVSC. Defaults to `false` (ICAC profile).
 - In State:
   - `pki/AllCertificates/value/<Subject>/<SubjectKeyID>`
   - `pki/AllCertificatesBySubject/value/<Subject>`
@@ -828,7 +831,7 @@ already present on the ledger.
   - `pki/NocCertificatesByVidAndSkid/value/<VID>/<SubjectKeyID>`
   - `pki/ChildCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI Command:
-  - `dcld tx pki add-noc-x509-ica-cert --certificate=<string-or-path> --from=<account>`
+  - `dcld tx pki add-noc-x509-ica-cert --certificate=<string-or-path> [--is-vid-verification-signer=<bool>] --from=<account>`
 
 #### REVOKE_NOC_ICA (ICAC)
 
