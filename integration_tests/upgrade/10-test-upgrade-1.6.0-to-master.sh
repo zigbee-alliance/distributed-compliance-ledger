@@ -19,7 +19,7 @@ source integration_tests/cli/common.sh
 # Upgrade constants
 
 # TODO it must be v1.6 before actual 1.6 release
-DCLD_BIN_OLD="/tmp/dcld_bins/dcld_v1.6.0-0.dev.3"
+DCLD_BIN_OLD="/tmp/dcld_bins/dcld_v1.6.0-0.dev.4"
 DCLD_BIN_NEW="/tmp/dcld_bins/dcld_master"
 DCL_DIR="/var/lib/dcl/.dcl"
 
