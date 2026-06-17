@@ -349,4 +349,63 @@ echo "$result"
 
 test_divider
 
+# Compliance schema v1 negative cases (#730).
+# - schemaVersion must be 1 (was 0 pre-v1).
+# - cDCertificateId must be exactly 19 characters on certify-model and provision-model.
+
+vid_v1=$RANDOM
+vendor_account_v1=vendor_account_$vid_v1
+echo "Create Vendor account $vendor_account_v1 with vid $vid_v1"
+create_new_vendor_account $vendor_account_v1 $vid_v1
+pid_v1=$RANDOM
+sv_v1=$RANDOM
+svs_v1=$RANDOM
+create_model_and_version $vid_v1 $pid_v1 $sv_v1 $svs_v1 $vendor_account_v1
+
+echo "Reject certify-model with schemaVersion=0 (must be 1 after #730)"
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid_v1 --pid=$pid_v1 --softwareVersion=$sv_v1 --softwareVersionString=$svs_v1 --certificationType="$certification_type" --specificationVersion=$specification_version --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --schemaVersion=0 --from $zb_account --yes 2>&1) || true
+check_response_and_report "$result" "SchemaVersion must be equal 1" raw
+
+test_divider
+
+echo "Reject certify-model with cdCertificateId shorter than 19 chars"
+short_cd_id="1234567890abcdefgh" # 18 chars
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid_v1 --pid=$pid_v1 --softwareVersion=$sv_v1 --softwareVersionString=$svs_v1 --certificationType="$certification_type" --specificationVersion=$specification_version --certificationDate="$certification_date" --cdCertificateId="$short_cd_id" --cdVersionNumber=1 --schemaVersion=$schema_version_1 --from $zb_account --yes 2>&1) || true
+check_response_and_report "$result" "minimum length for CDCertificateId allowed is 19" raw
+
+test_divider
+
+echo "Reject certify-model with cdCertificateId longer than 19 chars"
+long_cd_id="12345678910abcdefghX" # 20 chars
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid_v1 --pid=$pid_v1 --softwareVersion=$sv_v1 --softwareVersionString=$svs_v1 --certificationType="$certification_type" --specificationVersion=$specification_version --certificationDate="$certification_date" --cdCertificateId="$long_cd_id" --cdVersionNumber=1 --schemaVersion=$schema_version_1 --from $zb_account --yes 2>&1) || true
+check_response_and_report "$result" "maximum length for CDCertificateId allowed is 19" raw
+
+test_divider
+
+echo "Reject provision-model with schemaVersion=0"
+provision_date="2020-02-02T02:20:20Z"
+result=$(echo "$passphrase" | dcld tx compliance provision-model --vid=$vid_v1 --pid=$pid_v1 --softwareVersion=$sv_v1 --softwareVersionString=$svs_v1 --certificationType="$certification_type" --specificationVersion=$specification_version --provisionalDate="$provision_date" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --schemaVersion=0 --from $zb_account --yes 2>&1) || true
+check_response_and_report "$result" "SchemaVersion must be equal 1" raw
+
+test_divider
+
+echo "Reject revoke-model with schemaVersion=0"
+result=$(echo "$passphrase" | dcld tx compliance revoke-model --vid=$vid_v1 --pid=$pid_v1 --softwareVersion=$sv_v1 --softwareVersionString=$svs_v1 --certificationType="$certification_type" --revocationDate="$revocation_date" --cdVersionNumber=1 --schemaVersion=0 --from $zb_account --yes 2>&1) || true
+check_response_and_report "$result" "SchemaVersion must be equal 1" raw
+
+test_divider
+
+echo "Reject certify-model with certificationType longer than 20 chars"
+long_certification_type="this_certification_type_is_way_too_long"
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid_v1 --pid=$pid_v1 --softwareVersion=$sv_v1 --softwareVersionString=$svs_v1 --certificationType="$long_certification_type" --specificationVersion=$specification_version --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --schemaVersion=$schema_version_1 --from $zb_account --yes 2>&1) || true
+check_response_and_report "$result" "maximum length for CertificationType allowed is 20" raw
+
+test_divider
+
+echo "Reject certify-model with specificationVersion=0 (required since #730)"
+result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid_v1 --pid=$pid_v1 --softwareVersion=$sv_v1 --softwareVersionString=$svs_v1 --certificationType="$certification_type" --specificationVersion=0 --certificationDate="$certification_date" --cdCertificateId="$cd_certificate_id" --cdVersionNumber=1 --schemaVersion=$schema_version_1 --from $zb_account --yes 2>&1) || true
+check_response_and_report "$result" "SpecificationVersion is a required field" raw
+
+test_divider
+
 echo "PASSED"

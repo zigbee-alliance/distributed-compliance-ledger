@@ -5,6 +5,8 @@
 **NOTE**: X.509 v3 certificates are only supported (all certificates MUST contain `Subject Key ID` field).
 All PKI related methods are based on this restriction.
 
+**Size limits**: each PEM-encoded certificate accepted by the certificate-add transactions is capped at **20 KiB** (previously ~10 MiB). For the PKI Revocation Distribution Point transactions ([ADD_REVOCATION_DISTRIBUTION_POINT](#add_revocation_distribution_point) and [UPDATE_REVOCATION_DISTRIBUTION_POINT](#update_revocation_distribution_point)), `label` and `issuerSubjectKeyID` are capped at 64 characters, `crlSignerCertificate` and `crlSignerDelegator` at 2 KiB each, `dataURL` at 256 characters (accepts `http://` or `https://`), and `dataDigest` at 128 characters.
+
 * [All Certificates (DA, NOC)](#all-certificates-da-noc)
 * [Device Attestation Certificates (DA): PAA, PAI](#device-attestation-certificates-da-paa-pai)
 * [E2E (NOC): RCAC, ICAC](#e2e-noc-rcac-icac)
