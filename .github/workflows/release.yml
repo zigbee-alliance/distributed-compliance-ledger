@@ -98,11 +98,14 @@ jobs:
           
               # For non-20.04, we don't want to re-check/re-upload generic assets if they are being handled by 20.04 or already exist
               # If they are missing, 20.04 job will upload them.
+              # matrix.os is the BUILD TARGET (artifact names + ubuntu:<ver> docker image in ubuntu-build.sh);
+              # matrix.runner is the GitHub-hosted runner the job runs on. ubuntu-20.04 hosted runners were
+              # retired on 2025-04-15, so ubuntu builds always run on ubuntu-24.04 regardless of target.
               if [[ "$os" == "ubuntu-20.04" ]]; then
-                # os|bin-url|tgz-url|cosmovisor-url|service-file-url|service-conf-file-url|start-script-url|preupgrade-script-url|deploy-script-url|tgz-filename
-                included+=("$os|$asset_bin_url|$asset_tgz_url|$asset_cv_url|$asset_service_url|$asset_service_conf_url|$asset_start_url|$asset_preupgrade_url|$asset_deploy_script_url|$os.tar.gz")
+                # os|bin-url|tgz-url|cosmovisor-url|service-file-url|service-conf-file-url|start-script-url|preupgrade-script-url|deploy-script-url|tgz-filename|runner
+                included+=("$os|$asset_bin_url|$asset_tgz_url|$asset_cv_url|$asset_service_url|$asset_service_conf_url|$asset_start_url|$asset_preupgrade_url|$asset_deploy_script_url|$os.tar.gz|ubuntu-24.04")
               else
-                included+=("$os|$asset_bin_url|$asset_tgz_url|$asset_cv_url|skip|skip|skip|skip|skip|$os.tar.gz")
+                included+=("$os|$asset_bin_url|$asset_tgz_url|$asset_cv_url|skip|skip|skip|skip|skip|$os.tar.gz|ubuntu-24.04")
               fi
             fi
           done
@@ -111,7 +114,7 @@ jobs:
               | jq -r '.assets[] | select(.name | match("^macos.tar.gz$")) | .browser_download_url')"
           if [[ -z "$asset_macos_tgz_url" ]]; then
             # bin, service file and deploy script are not considered for macos job
-            included+=("macos-14|-||-|-|-|-|-|-|macos.tar.gz")
+            included+=("macos-14|-||-|-|-|-|-|-|macos.tar.gz|macos-14")
           fi
 
           matrix_os="$(jq -ncR '
@@ -127,7 +130,7 @@ jobs:
                 (input | split(" ")) |
                 [ .[] | split("|") |
                 {"os": .[0], "bin": .[1] | length, "tgz": .[2] | length, "cosmovisor": .[3] | length, "service": .[4] | length, "service_conf": .[5] |
-                length, "start": .[6] | length, "preupgrade": .[7] | length, "deploy_script": .[8] | length, "tgz_filename": .[9]} ]
+                length, "start": .[6] | length, "preupgrade": .[7] | length, "deploy_script": .[8] | length, "tgz_filename": .[9], "runner": .[10]} ]
               ' <<<"${included[*]}"
             )"
             echo "$included_json"
@@ -157,7 +160,7 @@ jobs:
       matrix:
         os: ${{ fromJson(needs.checks.outputs.matrix_os) }}
         include: ${{ fromJson(needs.checks.outputs.included) }}
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.runner }}
     steps:
       - name: Set up Go 1.x
         uses: actions/setup-go@v5
