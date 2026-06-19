@@ -33,7 +33,7 @@ test_divider
 # Upgrade constants
 
 plan_name="v1.6.0"
-upgrade_checksum="sha256:6e08965aa7069018c89c736c7fa23d0dabdff3833c21de5f7566da2683e413cb"
+upgrade_checksum="sha256:2344bd20bd825075192b0d6347363a1fd5e011179adac551771bc8d466e24a51"
 # TODO it must be v1.6.0 before actual release
 binary_version_new="v1.6.0"
 
