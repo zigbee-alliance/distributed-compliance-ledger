@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	testkeeper "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
+	commontypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
@@ -398,6 +399,7 @@ func newMsgProvisionModel(
 		CertificationType:     certificationType,
 		Reason:                testconstants.Reason,
 		CDCertificateId:       testconstants.CDCertificateID,
+		SchemaVersion:         1,
 	}
 }
 
@@ -500,6 +502,7 @@ func newMsgProvisionModelWithAllOptionalFlags(
 		ParentChild:                        testconstants.ParentChild1,
 		CertificationIdOfSoftwareComponent: testconstants.CertificationIDOfSoftwareComponent,
 		SpecificationVersion:               testconstants.SpecificationVersion,
+		SchemaVersion:                      1,
 	}
 }
 
@@ -522,6 +525,7 @@ func newMsgCertifyModel(
 		CertificationType:     certificationType,
 		Reason:                testconstants.Reason,
 		CDCertificateId:       testconstants.CDCertificateID,
+		SchemaVersion:         1,
 	}
 }
 
@@ -572,6 +576,7 @@ func newMsgCertifyModelWithAllOptionalFlags(
 		ParentChild:                        testconstants.ParentChild1,
 		CertificationIdOfSoftwareComponent: testconstants.CertificationIDOfSoftwareComponent,
 		SpecificationVersion:               testconstants.SpecificationVersion,
+		SchemaVersion:                      1,
 	}
 }
 
@@ -593,6 +598,7 @@ func newMsgRevokeModel(
 		RevocationDate:        testconstants.RevocationDate,
 		CertificationType:     certificationType,
 		Reason:                testconstants.RevocationReason,
+		SchemaVersion:         1,
 	}
 }
 
@@ -625,4 +631,14 @@ func generateAccAddress() sdk.AccAddress {
 	_, _, accAddress := testdata.KeyTestPubAddr()
 
 	return accAddress
+}
+
+// seedStoredSchemaVersion overwrites the SchemaVersion field of the stored
+// ComplianceInfo by passing a guard in keeper.SetComplianceInfo.
+func (setup *TestSetup) seedStoredSchemaVersion(
+	vid int32, pid int32, softwareVersion uint32, certificationType string, schemaVersion uint32,
+) {
+	stored := queryExistingComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
+	stored.SchemaVersion = schemaVersion
+	setup.Keeper.SetComplianceInfo(setup.Ctx, stored, commontypes.SchemaVersionGuard(false))
 }

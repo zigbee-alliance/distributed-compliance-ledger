@@ -3,13 +3,18 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	commontypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
 // SetRevokedModel set a specific revokedModel in the store from its index.
-func (k Keeper) SetRevokedModel(ctx sdk.Context, revokedModel types.RevokedModel) {
+// The schema version is stamped to the current value unless any guard returns false.
+func (k Keeper) SetRevokedModel(ctx sdk.Context, revokedModel *types.RevokedModel, guards ...commontypes.SchemaVersionGuard) {
+	// Bump schema version if guards passed
+	commontypes.SetCurrentSchemaVersion(revokedModel, guards...)
+
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedModelKeyPrefix))
-	b := k.cdc.MustMarshal(&revokedModel)
+	b := k.cdc.MustMarshal(revokedModel)
 	store.Set(types.RevokedModelKey(
 		revokedModel.Vid,
 		revokedModel.Pid,
@@ -65,7 +70,7 @@ func (k Keeper) GetAllRevokedModel(ctx sdk.Context) (list []types.RevokedModel) 
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedModelKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
-	defer iterator.Close()
+	defer func() { _ = iterator.Close() }()
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.RevokedModel

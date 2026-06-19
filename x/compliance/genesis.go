@@ -2,32 +2,38 @@ package compliance
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	commontypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
+
+// preserveSchemaVersion gates Set* during genesis restoration so the loaded
+// snapshot keeps its original schema version instead of being silently re-stamped
+// to the current value.
+var preserveSchemaVersion = commontypes.SchemaVersionGuard(false)
 
 // InitGenesis initializes the capability module's state from a provided genesis
 // state.
 func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) {
 	// Set all the complianceInfo
 	for _, elem := range genState.ComplianceInfoList {
-		k.SetComplianceInfo(ctx, elem)
+		k.SetComplianceInfo(ctx, &elem, preserveSchemaVersion)
 	}
 	// Set all the certifiedModel
 	for _, elem := range genState.CertifiedModelList {
-		k.SetCertifiedModel(ctx, elem)
+		k.SetCertifiedModel(ctx, &elem, preserveSchemaVersion)
 	}
 	// Set all the revokedModel
 	for _, elem := range genState.RevokedModelList {
-		k.SetRevokedModel(ctx, elem)
+		k.SetRevokedModel(ctx, &elem, preserveSchemaVersion)
 	}
 	// Set all the provisionalModel
 	for _, elem := range genState.ProvisionalModelList {
-		k.SetProvisionalModel(ctx, elem)
+		k.SetProvisionalModel(ctx, &elem, preserveSchemaVersion)
 	}
 	// Set all the deviceSoftwareCompliance
 	for _, elem := range genState.DeviceSoftwareComplianceList {
-		k.SetDeviceSoftwareCompliance(ctx, elem)
+		k.SetDeviceSoftwareCompliance(ctx, &elem, preserveSchemaVersion)
 	}
 	// this line is used by starport scaffolding # genesis/module/init
 }

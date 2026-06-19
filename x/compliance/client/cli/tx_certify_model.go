@@ -100,7 +100,7 @@ func CmdCertifyModel() *cobra.Command {
 	cmd.Flags().StringVar(&certificationRoute, FlagCertificationRoute, "", TextCertificationRoute)
 	cmd.Flags().StringVar(&transport, FlagTransport, "", TextTransport)
 	cmd.Flags().StringVar(&parentChild, FlagParentChild, "", TextParentChild)
-	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, TextSchemaVersion)
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, types.ComplianceInfoSchemaVersion, TextSchemaVersion)
 	cmd.Flags().StringVar(&programType, FlagProgramType, "", TextProgramType)
 	cmd.Flags().StringVar(&programTypeVersion, FlagProgramTypeVersion, "", TextProgramTypeVersion)
 	// Deprecated fields

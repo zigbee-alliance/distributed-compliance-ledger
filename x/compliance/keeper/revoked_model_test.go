@@ -24,7 +24,7 @@ func createNRevokedModel(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.
 		items[i].CertificationType = strconv.Itoa(i)
 		items[i].Value = true
 
-		keeper.SetRevokedModel(ctx, items[i])
+		keeper.SetRevokedModel(ctx, &items[i])
 	}
 
 	return items

@@ -16,12 +16,16 @@
 package x509
 
 import (
+	x509std "crypto/x509"
+	"crypto/x509/pkix"
+	"encoding/asn1"
 	"testing"
 	"time"
 
 	tmrand "github.com/cometbft/cometbft/libs/rand"
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 )
 
 func Test_DecodeCertificates(t *testing.T) {
@@ -164,13 +168,15 @@ func Test_FormatVID(t *testing.T) {
 	}
 
 	for _, tt := range positiveTests {
-		result := FormatOID(tt.header, tt.oldKey, tt.newKey)
-		require.Equal(t, result, tt.result)
+		result, err := FormatOID(tt.header, tt.oldKey, tt.newKey)
+		require.NoError(t, err)
+		require.Equal(t, tt.result, result)
 	}
 
 	for _, tt := range negativeTests {
-		result := FormatOID(tt.header, tt.oldKey, tt.newKey)
-		require.Equal(t, result, tt.result)
+		result, err := FormatOID(tt.header, tt.oldKey, tt.newKey)
+		require.NoError(t, err)
+		require.Equal(t, tt.result, result)
 	}
 }
 
@@ -201,29 +207,114 @@ func Test_FormatPID(t *testing.T) {
 		},
 	}
 
-	negativeTests := []struct {
+	// "Unchanged" cases — oldKey does not match any entry, so FormatOID
+	// returns the header verbatim with no error. These cover legitimate input
+	// where the rewrite is simply not applicable.
+	unchangedTests := []struct {
 		header string
 		oldKey string
 		newKey string
 		result string
 	}{
-		// set incorrect oldKey
+		// Different OID under the same prefix tree.
 		{
 			header: "CN=Matter PAA 1,O=Google,C=US,1.3.6.1.4.1.37244.2.1=#130436303036",
 			oldKey: "1.3.6.1.4.1.37244.2.2",
 			newKey: "vid",
 			result: "CN=Matter PAA 1,O=Google,C=US,1.3.6.1.4.1.37244.2.1=#130436303036",
 		},
+		// Prefix-only match must NOT trigger rewriting: the OID
+		// 1.3.6.1.4.1.37244.2.10 (hypothetical) shares a textual prefix with
+		// 1.3.6.1.4.1.37244.2.1 but is a different attribute.
+		{
+			header: "CN=X,1.3.6.1.4.1.37244.2.10=#130436303036",
+			oldKey: "1.3.6.1.4.1.37244.2.1",
+			newKey: "vid",
+			result: "CN=X,1.3.6.1.4.1.37244.2.10=#130436303036",
+		},
+	}
+
+	// "Decoded" cases — oldKey matches and the value is well-formed but uses
+	// encodings the original FormatOID was brittle about.
+	decodedTests := []struct {
+		header string
+		oldKey string
+		newKey string
+		result string
+	}{
+		// UTF8String-tagged values (tag 0x0c) must be decoded too.
+		{
+			header: "CN=X,1.3.6.1.4.1.37244.2.2=#0c0438303030",
+			oldKey: "1.3.6.1.4.1.37244.2.2",
+			newKey: "pid",
+			result: "CN=X,pid=0x8000",
+		},
+		// 6-byte value — the hardened parser uses the DER length byte, not a
+		// hardcoded 8-hex-char slice.
+		{
+			header: "CN=X,1.3.6.1.4.1.37244.2.2=#1306414243444546",
+			oldKey: "1.3.6.1.4.1.37244.2.2",
+			newKey: "pid",
+			result: "CN=X,pid=0xABCDEF",
+		},
+	}
+
+	// "Error" cases — oldKey matches BUT the value is malformed. FormatOID
+	// must refuse to project these into the readable form: silently keeping
+	// the raw OID entry would make GetVidFromSubject / GetPidFromSubject
+	// return 0 and bypass every VID/PID-based check.
+	errorTests := []struct {
+		header       string
+		oldKey       string
+		newKey       string
+		expectSubstr string
+	}{
+		// Unknown tag (e.g. OCTET STRING 0x04).
+		{
+			header:       "CN=X,1.3.6.1.4.1.37244.2.2=#040436303036",
+			oldKey:       "1.3.6.1.4.1.37244.2.2",
+			newKey:       "pid",
+			expectSubstr: "PrintableString or UTF8String",
+		},
+		// Truncated DER: length byte says 4 but only 1 byte follows.
+		{
+			header:       "CN=X,1.3.6.1.4.1.37244.2.2=#130436",
+			oldKey:       "1.3.6.1.4.1.37244.2.2",
+			newKey:       "pid",
+			expectSubstr: "DER length",
+		},
+		// Non-hex content after `#`.
+		{
+			header:       "CN=X,1.3.6.1.4.1.37244.2.2=#13ZZZZZZ",
+			oldKey:       "1.3.6.1.4.1.37244.2.2",
+			newKey:       "pid",
+			expectSubstr: "not valid hex",
+		},
 	}
 
 	for _, tt := range positiveTests {
-		result := FormatOID(tt.header, tt.oldKey, tt.newKey)
-		require.Equal(t, result, tt.result)
+		result, err := FormatOID(tt.header, tt.oldKey, tt.newKey)
+		require.NoError(t, err)
+		require.Equal(t, tt.result, result)
 	}
 
-	for _, tt := range negativeTests {
-		result := FormatOID(tt.header, tt.oldKey, tt.newKey)
-		require.Equal(t, result, tt.result)
+	for _, tt := range unchangedTests {
+		result, err := FormatOID(tt.header, tt.oldKey, tt.newKey)
+		require.NoError(t, err)
+		require.Equal(t, tt.result, result)
+	}
+
+	for _, tt := range decodedTests {
+		result, err := FormatOID(tt.header, tt.oldKey, tt.newKey)
+		require.NoError(t, err)
+		require.Equal(t, tt.result, result)
+	}
+
+	for _, tt := range errorTests {
+		result, err := FormatOID(tt.header, tt.oldKey, tt.newKey)
+		require.Error(t, err)
+		require.Empty(t, result)
+		require.Contains(t, err.Error(), tt.expectSubstr)
 	}
 }
 
@@ -328,4 +419,514 @@ func Test_ParseAndValidateCertificate(t *testing.T) {
 			require.Contains(t, err.Error(), tt.expectErrorSubstr)
 		}
 	}
+}
+
+func Test_ParseAndValidateCertificate_VerifyCAExtensions(t *testing.T) {
+	// Positive fixtures: known CA certs that comply with the full Matter R1.6
+	// CA profile (BC critical + cA=TRUE, KU critical with at least keyCertSign
+	// and cRLSign, no disallowed bits).
+	positiveTests := []struct {
+		name    string
+		certPem string
+	}{
+		{name: "PAA with VID", certPem: testconstants.PAACertWithNumericVid},
+		{name: "PAA no VID", certPem: testconstants.PAACertNoVid},
+		{name: "Google PAA", certPem: testconstants.GoogleCertPem},
+		{name: "PAI", certPem: testconstants.PAICertWithNumericVid},
+		{name: "regenerated RCAC NocRootCert2", certPem: testconstants.NocRootCert2},
+	}
+	for _, tt := range positiveTests {
+		t.Run("ok/"+tt.name, func(t *testing.T) {
+			cert, err := ParseAndValidateCertificate(tt.certPem, VerifyCAExtensions)
+			require.NoError(t, err)
+			require.NotNil(t, cert)
+		})
+	}
+
+	// Negative fixtures: legacy roots that still violate the strict profile —
+	// they're kept on disk because many tests depend on them. They exercise the
+	// "is not a CA / missing critical / wrong KU" failure modes.
+	type negCase struct {
+		name         string
+		certPem      string
+		expectSubstr string
+	}
+	negativeTests := []negCase{
+		// NOTE: RootCertPem and NocRootCert1 were previously non-compliant
+		// fixtures (KU missing / BC not critical). They have since been
+		// regenerated to pass the strict profile so they can flow through
+		// MsgProposeAddX509RootCert and MsgAddNocX509RootCert under
+		// VerifyCAExtensions. The negative coverage for "BC not critical",
+		// "KU not critical", and "KU missing-bit" is now provided by the
+		// synthetic mutation block below.
+		{
+			name:         "leaf (cA=FALSE)",
+			certPem:      testconstants.LeafCertPem,
+			expectSubstr: "BasicConstraints extension must be present and cA must be set to TRUE",
+		},
+	}
+	for _, tt := range negativeTests {
+		t.Run("reject/"+tt.name, func(t *testing.T) {
+			cert, err := ParseAndValidateCertificate(tt.certPem, VerifyCAExtensions)
+			require.Error(t, err)
+			require.Nil(t, cert)
+			require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+			require.Contains(t, err.Error(), tt.expectSubstr)
+		})
+	}
+
+	// Synthetic edge cases — start from a compliant cert and flip just one
+	// invariant at a time, so each branch of VerifyCAExtensions has dedicated
+	// coverage independent of which fixtures happen to violate which rules.
+	flipCases := []struct {
+		name         string
+		mutate       func(*x509std.Certificate)
+		expectSubstr string
+	}{
+		{
+			name: "KU disallowed bit set",
+			mutate: func(c *x509std.Certificate) {
+				c.KeyUsage |= x509std.KeyUsageDataEncipherment
+			},
+			expectSubstr: "SHALL NOT include bits other than",
+		},
+		{
+			name: "KU keyCertSign missing",
+			mutate: func(c *x509std.Certificate) {
+				c.KeyUsage &^= x509std.KeyUsageCertSign
+			},
+			expectSubstr: "keyCertSign and cRLSign",
+		},
+		{
+			name: "BC not critical",
+			mutate: func(c *x509std.Certificate) {
+				for i := range c.Extensions {
+					if c.Extensions[i].Id.String() == "2.5.29.19" {
+						c.Extensions[i].Critical = false
+
+						return
+					}
+				}
+				panic("test fixture has no BasicConstraints extension")
+			},
+			expectSubstr: "BasicConstraints extension SHALL be marked critical",
+		},
+		{
+			name: "KU not critical",
+			mutate: func(c *x509std.Certificate) {
+				for i := range c.Extensions {
+					if c.Extensions[i].Id.String() == "2.5.29.15" {
+						c.Extensions[i].Critical = false
+
+						return
+					}
+				}
+				panic("test fixture has no KeyUsage extension")
+			},
+			expectSubstr: "KeyUsage extension SHALL be marked critical",
+		},
+	}
+	for _, tt := range flipCases {
+		t.Run("reject/synthetic/"+tt.name, func(t *testing.T) {
+			cert, err := ParseAndValidateCertificate(testconstants.PAACertWithNumericVid)
+			require.NoError(t, err)
+			tt.mutate(cert.Certificate)
+
+			err = VerifyCAExtensions(cert.Certificate)
+			require.Error(t, err)
+			require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+			require.Contains(t, err.Error(), tt.expectSubstr)
+		})
+	}
+}
+
+func Test_ParseAndValidateCertificate_verifyDACExtensions(t *testing.T) {
+	// Positive case: a DAC-shaped cert (BC critical + cA=FALSE, KU critical
+	// with exactly digitalSignature, SKI + AKI present).
+	t.Run("ok/DAC-shaped leaf", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.MatterDACShaped, verifyDACExtensions)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	// LeafCertPem was regenerated to satisfy the DAC profile so the DA-chain
+	// handler can dispatch on cA and apply verifyDACExtensions to leaves.
+	t.Run("ok/LeafCertPem", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.LeafCertPem, verifyDACExtensions)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	// Negative cases that exercise each branch of the helper.
+	negativeTests := []struct {
+		name         string
+		certPem      string
+		mutate       func(*x509std.Certificate) // optional; applied after parse
+		expectErr    error
+		expectSubstr string
+	}{
+		{
+			name:         "CA cert (cA=TRUE)",
+			certPem:      testconstants.PAACertWithNumericVid,
+			expectErr:    pkitypes.ErrInappropriateCertificateType,
+			expectSubstr: "DAC: BasicConstraints cA SHALL be set to FALSE",
+		},
+		{
+			name:         "BC extension absent",
+			certPem:      testconstants.LeafCertWithoutBasicConstraints,
+			expectErr:    pkitypes.ErrInvalidCertificate,
+			expectSubstr: "DAC: BasicConstraints extension SHALL be present",
+		},
+		{
+			// Synthetic: take a DAC-shaped leaf and OR an extra KU bit (cRLSign)
+			// — DAC profile (§6.2.2.3) bans any KU bit other than
+			// digitalSignature, so this must trip the "exactly digitalSignature"
+			// rule.
+			name:    "synthetic: KU has cRLSign bit",
+			certPem: testconstants.MatterDACShaped,
+			mutate: func(c *x509std.Certificate) {
+				c.KeyUsage |= x509std.KeyUsageCRLSign
+			},
+			expectErr:    pkitypes.ErrInvalidCertificate,
+			expectSubstr: "DAC: KeyUsage SHALL be exactly digitalSignature",
+		},
+		{
+			name:    "synthetic: SKI cleared",
+			certPem: testconstants.MatterDACShaped,
+			mutate: func(c *x509std.Certificate) {
+				c.SubjectKeyId = nil
+			},
+			expectErr:    pkitypes.ErrInvalidCertificate,
+			expectSubstr: "DAC: SubjectKeyIdentifier extension SHALL be present",
+		},
+		{
+			name:    "synthetic: AKI cleared",
+			certPem: testconstants.MatterDACShaped,
+			mutate: func(c *x509std.Certificate) {
+				c.AuthorityKeyId = nil
+			},
+			expectErr:    pkitypes.ErrInvalidCertificate,
+			expectSubstr: "DAC: AuthorityKeyIdentifier extension SHALL be present",
+		},
+	}
+	for _, tt := range negativeTests {
+		t.Run("reject/"+tt.name, func(t *testing.T) {
+			if tt.mutate == nil {
+				cert, err := ParseAndValidateCertificate(tt.certPem, verifyDACExtensions)
+				require.Error(t, err)
+				require.Nil(t, cert)
+				require.ErrorIs(t, err, tt.expectErr)
+				require.Contains(t, err.Error(), tt.expectSubstr)
+
+				return
+			}
+			cert, err := ParseAndValidateCertificate(tt.certPem)
+			require.NoError(t, err)
+			tt.mutate(cert.Certificate)
+			err = verifyDACExtensions(cert.Certificate)
+			require.Error(t, err)
+			require.ErrorIs(t, err, tt.expectErr)
+			require.Contains(t, err.Error(), tt.expectSubstr)
+		})
+	}
+}
+
+// VerifyDAChainNonRoot dispatches on cA: PAIs go to VerifyCAExtensions + the
+// §6.2.2.4 pathLen=0 rule, DACs go to verifyDACExtensions. Both branches must
+// accept their respective fixtures and reject the opposite shape.
+func Test_ParseAndValidateCertificate_VerifyDAChainNonRoot(t *testing.T) {
+	t.Run("ok/PAI (cA=TRUE, pathLen=0)", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.PAICertWithNumericVid, VerifyDAChainNonRoot)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("ok/IntermediateCertPem (DA chain ICA)", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.IntermediateCertPem, VerifyDAChainNonRoot)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("ok/LeafCertPem (DAC-shaped)", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.LeafCertPem, VerifyDAChainNonRoot)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("ok/MatterDACShaped", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.MatterDACShaped, VerifyDAChainNonRoot)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("reject/BC-extension-absent", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.LeafCertWithoutBasicConstraints, VerifyDAChainNonRoot)
+		require.Error(t, err)
+		require.Nil(t, cert)
+		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+		require.Contains(t, err.Error(), "BasicConstraints extension SHALL be present")
+	})
+}
+
+// VerifyECDSAP256SHA256 must accept every fixture currently in the codebase
+// (all are ECDSA-with-SHA256 on P-256) and reject any mutation that changes
+// either the signature algorithm or the public-key curve.
+func Test_ParseAndValidateCertificate_VerifyECDSAP256SHA256(t *testing.T) {
+	positiveTests := []struct {
+		name    string
+		certPem string
+	}{
+		{name: "PAA with VID", certPem: testconstants.PAACertWithNumericVid},
+		{name: "PAI", certPem: testconstants.PAICertWithNumericVid},
+		{name: "DAC-shaped leaf", certPem: testconstants.MatterDACShaped},
+		{name: "NOC-shaped leaf", certPem: testconstants.MatterNOCShaped},
+		{name: "RCAC NocRootCert1", certPem: testconstants.NocRootCert1},
+		{name: "ICAC NocCert1", certPem: testconstants.NocCert1},
+		{name: "NOC leaf NocLeafCert1", certPem: testconstants.NocLeafCert1},
+		{name: "LeafCertPem", certPem: testconstants.LeafCertPem},
+	}
+	for _, tt := range positiveTests {
+		t.Run("ok/"+tt.name, func(t *testing.T) {
+			cert, err := ParseAndValidateCertificate(tt.certPem, VerifyECDSAP256SHA256)
+			require.NoError(t, err)
+			require.NotNil(t, cert)
+		})
+	}
+
+	t.Run("reject/non-ECDSA-SHA256 signature", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.PAACertWithNumericVid)
+		require.NoError(t, err)
+		cert.Certificate.SignatureAlgorithm = x509std.ECDSAWithSHA384
+		err = VerifyECDSAP256SHA256(cert.Certificate)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+		require.Contains(t, err.Error(), "ecdsa-with-SHA256")
+	})
+
+	t.Run("reject/non-ECDSA public key", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.PAACertWithNumericVid)
+		require.NoError(t, err)
+		cert.Certificate.PublicKey = struct{}{}
+		err = VerifyECDSAP256SHA256(cert.Certificate)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+		require.Contains(t, err.Error(), "ECDSA on prime256v1")
+	})
+}
+
+func Test_VerifyVidPidConsistency(t *testing.T) {
+	t.Run("ok/parent has no VID — rule does not fire", func(t *testing.T) {
+		// Spec only constrains the child when the parent carries the attribute.
+		require.NoError(t, VerifyVidPidConsistency(
+			"O=child,vid=0xFFF1",
+			"O=parent",
+		))
+	})
+
+	t.Run("ok/matching VID", func(t *testing.T) {
+		require.NoError(t, VerifyVidPidConsistency(
+			"CN=Matter Test DAC,vid=0xFFF1",
+			"CN=Matter Test PAI,vid=0xFFF1",
+		))
+	})
+
+	t.Run("ok/matching VID + matching PID", func(t *testing.T) {
+		require.NoError(t, VerifyVidPidConsistency(
+			"CN=Matter Test DAC,pid=0x8000,vid=0xFFF1",
+			"CN=Matter Test PAI,pid=0x8000,vid=0xFFF1",
+		))
+	})
+
+	t.Run("ok/parent has no PID — PID rule does not fire", func(t *testing.T) {
+		require.NoError(t, VerifyVidPidConsistency(
+			"CN=DAC,pid=0x1234,vid=0xFFF1",
+			"CN=PAI,vid=0xFFF1",
+		))
+	})
+
+	t.Run("reject/child VID mismatches parent VID", func(t *testing.T) {
+		err := VerifyVidPidConsistency(
+			"CN=DAC,vid=0xFFF2",
+			"CN=PAI,vid=0xFFF1",
+		)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrCertVidNotEqualToIssuerVid)
+	})
+
+	t.Run("reject/parent has VID, child missing VID", func(t *testing.T) {
+		// Child VID parsed as 0; parent's non-zero VID means mismatch.
+		err := VerifyVidPidConsistency(
+			"O=DAC",
+			"CN=PAI,vid=0xFFF1",
+		)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrCertVidNotEqualToIssuerVid)
+	})
+
+	t.Run("reject/PID mismatch", func(t *testing.T) {
+		err := VerifyVidPidConsistency(
+			"CN=DAC,pid=0x8001,vid=0xFFF1",
+			"CN=PAI,pid=0x8000,vid=0xFFF1",
+		)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrCertPidNotEqualToIssuerPid)
+	})
+}
+
+// VerifyCAExtensions now also asserts SKI presence (always) and AKI presence
+// (only for non-self-signed CAs). Synthetic mutations exercise each branch.
+func Test_VerifyCAExtensions_SKIAndAKI(t *testing.T) {
+	t.Run("reject/SKI absent on self-signed CA", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.PAACertWithNumericVid)
+		require.NoError(t, err)
+		cert.Certificate.SubjectKeyId = nil
+		err = VerifyCAExtensions(cert.Certificate)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+		require.Contains(t, err.Error(), "SubjectKeyIdentifier extension SHALL be present")
+	})
+
+	t.Run("reject/AKI absent on non-self-signed CA", func(t *testing.T) {
+		// IntermediateCertPem is a non-self-signed PAI; clearing its AKI must
+		// trip the new presence rule.
+		cert, err := ParseAndValidateCertificate(testconstants.IntermediateCertPem)
+		require.NoError(t, err)
+		cert.Certificate.AuthorityKeyId = nil
+		err = VerifyCAExtensions(cert.Certificate)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+		require.Contains(t, err.Error(), "AuthorityKeyIdentifier extension SHALL be present")
+	})
+
+	t.Run("ok/AKI absent on self-signed CA (PAA)", func(t *testing.T) {
+		// PAAs MAY omit AKI per §6.2.2.5; the rule only fires for non-self-signed.
+		cert, err := ParseAndValidateCertificate(testconstants.RootCertWithVid, VerifyCAExtensions)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+}
+
+// VerifyNoEKU rejects certs that carry an ExtendedKeyUsage extension. All
+// current RCAC/ICAC fixtures comply (none encode EKU). Synthetic mutations
+// exercise the rejection.
+func Test_VerifyNoEKU(t *testing.T) {
+	t.Run("ok/RCAC NocRootCert1 has no EKU", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.NocRootCert1, VerifyNoEKU)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("ok/ICAC NocCert1 has no EKU", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.NocCert1, VerifyNoEKU)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("reject/synthetic EKU added", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.NocRootCert1)
+		require.NoError(t, err)
+		cert.Certificate.Extensions = append(cert.Certificate.Extensions, pkix.Extension{
+			Id:       asn1.ObjectIdentifier{2, 5, 29, 37},
+			Critical: false,
+			Value:    []byte{0x30, 0x00},
+		})
+		err = VerifyNoEKU(cert.Certificate)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+		require.Contains(t, err.Error(), "ExtendedKeyUsage extension SHALL NOT be present")
+	})
+}
+
+func Test_VerifyVersionV3(t *testing.T) {
+	t.Run("ok/RootCertPem", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.RootCertPem, VerifyVersionV3)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("reject/synthetic v1", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.PAACertWithNumericVid)
+		require.NoError(t, err)
+		cert.Certificate.Version = 1
+		err = VerifyVersionV3(cert.Certificate)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+		require.Contains(t, err.Error(), "v3")
+	})
+}
+
+func Test_VerifyAtMostOneVIDAndPID(t *testing.T) {
+	t.Run("ok/cert with one VID + one PID", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.PAICertWithNumericPidVid, VerifyAtMostOneVIDAndPID)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("ok/cert with no VID and no PID", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.RootCertPem, VerifyAtMostOneVIDAndPID)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("reject/duplicate VID in subject", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.PAACertWithNumericVid)
+		require.NoError(t, err)
+		// Duplicate the matter-vid attribute that's already in the subject.
+		var vid pkix.AttributeTypeAndValue
+		for _, n := range cert.Certificate.Subject.Names {
+			if n.Type.String() == "1.3.6.1.4.1.37244.2.1" {
+				vid = n
+
+				break
+			}
+		}
+		require.NotZero(t, vid.Type, "fixture must already carry a matter-vid")
+		cert.Certificate.Subject.Names = append(cert.Certificate.Subject.Names, vid)
+		err = VerifyAtMostOneVIDAndPID(cert.Certificate)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+		require.Contains(t, err.Error(), "subject SHALL contain at most one matter-vid")
+	})
+
+	t.Run("reject/duplicate PID in issuer", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.PAICertWithNumericPidVid)
+		require.NoError(t, err)
+		cert.Certificate.Issuer.Names = append(cert.Certificate.Issuer.Names,
+			pkix.AttributeTypeAndValue{
+				Type:  asn1.ObjectIdentifier{1, 3, 6, 1, 4, 1, 37244, 2, 2},
+				Value: "8000",
+			},
+			pkix.AttributeTypeAndValue{
+				Type:  asn1.ObjectIdentifier{1, 3, 6, 1, 4, 1, 37244, 2, 2},
+				Value: "8001",
+			},
+		)
+		err = VerifyAtMostOneVIDAndPID(cert.Certificate)
+		require.Error(t, err)
+		require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+		require.Contains(t, err.Error(), "issuer SHALL contain at most one matter-pid")
+	})
+}
+
+func Test_VerifyNoPIDInSubject(t *testing.T) {
+	t.Run("ok/PAACertWithNumericVid (no PID)", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.PAACertWithNumericVid, VerifyNoPIDInSubject)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("ok/RootCertPem (no PID)", func(t *testing.T) {
+		cert, err := ParseAndValidateCertificate(testconstants.RootCertPem, VerifyNoPIDInSubject)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+	})
+
+	t.Run("reject/PAI cert with PID is rejected if used as PAA", func(t *testing.T) {
+		// PAICertWithNumericPidVid carries pid=0x8000. The rule applies only to
+		// the PAA add path; this confirms the helper trips on a PID-bearing DN.
+		cert, err := ParseAndValidateCertificate(testconstants.PAICertWithNumericPidVid, VerifyNoPIDInSubject)
+		require.Error(t, err)
+		require.Nil(t, cert)
+		require.ErrorIs(t, err, pkitypes.ErrNotEmptyPid)
+	})
 }

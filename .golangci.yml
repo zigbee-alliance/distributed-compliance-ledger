@@ -13,79 +13,125 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+version: "2"
+
 linters:
-  enable-all: true
-  disable:
-    - golint  # The linter 'golint' is deprecated (since v1.41.0) due to: The repository of the linter has been archived by the owner.  Replaced by revive.
-    - gochecknoinits
-    - gochecknoglobals
-    - gomnd
-    - dupl
-    - varnamelen
-    - tagliatelle
-    - wrapcheck
-    - testpackage
-    - paralleltest
-    - ireturn
-    - goerr113
-    - exhaustivestruct
-    - wsl
-    - forcetypeassert
-    - exhaustive
-    - scopelint  # The linter 'scopelint' is deprecated (since v1.39.0) due to: The repository of the linter has been deprecated by the owner.  Replaced by exportloopref.
-    - lll
-    - interfacer  # The linter 'interfacer' is deprecated (since v1.38.0) due to: The repository of the linter has been archived by the owner.
-    - gosec
-    - funlen
-    - cyclop
-    - forbidigo
-    - gocognit
-    - godox
-    - gomoddirectives
-    - maligned  # The linter 'maligned' is deprecated (since v1.38.0) due to: The repository of the linter has been archived by the owner.  Replaced by govet 'fieldalignment'.
-    - gci
-    - containedctx
-    - maintidx
-    - execinquery
-    - nonamedreturns
-    - exhaustruct
-    - gofumpt
-    - depguard
-    - deadcode
-    - godot
-    - inamedparam
-    - goconst
-    - nosnakecase
-    - perfsprint
-    - unparam
-    - revive
+  # Explicit allowlist. Avoid `default: all` so future golangci-lint releases
+  # don't silently enable new noisy linters on upgrade.
+  default: none
+  enable:
+    # --- Core correctness (real bugs) ---
+    - bodyclose
+    - contextcheck
+    - durationcheck
+    - errcheck
+    - errchkjson
+    - errorlint
+    - fatcontext
+    - gocheckcompilerdirectives
+    - gochecksumtype
+    - govet
+    - ineffassign
+    - makezero
+    - nilerr
+    - nilnesserr
+    - noctx
+    - reassign
+    - rowserrcheck
+    - spancheck
+    - sqlclosecheck
+    - staticcheck
+    - unused
+    - wastedassign
 
-issues:
-  exclude-rules:
-    - path: _test\.go$
-      linters:
-        - goconst
-        - stylecheck
-        - testifylint
-        - nosnakecase
-        - perfsprint
-        - dupword
-        - testifylint
-    - path: helpers\.go$
-      linters:
-        - goconst
-        - stylecheck
-        - testifylint
-        - nosnakecase
-        - perfsprint
-        - dupword
-        - testifylint
-    - path: _test\.go$
-      linters:
-        - staticcheck
-      text: "SA1019:"
-    - path: helpers\.go$
-      linters:
-        - staticcheck
-      text: "SA1019:"
+    # --- Test correctness ---
+    - ginkgolinter
+    - testableexamples
+    - testifylint
+    - thelper
+    - tparallel
+    - usetesting
 
+    # --- API / stdlib usage ---
+    - asasalint
+    - canonicalheader
+    - exptostd
+    - importas
+    - loggercheck
+    - mirror
+    - musttag
+    - nosprintfhostport
+    - promlinter
+    - protogetter
+    - sloglint
+    - usestdlibvars
+    - zerologlint
+
+    # --- Style / quality ---
+    - asciicheck
+    - bidichk
+    - decorder
+    - dogsled
+    - dupword
+    - embeddedstructfieldcheck
+    - gocritic
+    - gocyclo
+    - goprintffuncname
+    - grouper
+    - iface
+    - interfacebloat
+    - iotamixing
+    - misspell
+    - nakedret
+    - nestif
+    - nilnil
+    - nlreturn
+    - nolintlint
+    - tagalign
+    - unconvert
+    - whitespace
+
+    # --- Niche / dependency-specific (no findings today, kept for safety nets) ---
+    - arangolint
+    - clickhouselint
+    - gomodguard
+    - gosmopolitan
+    - unqueryvet
+
+  settings:
+    staticcheck:
+      # Drop "quick fix" suggestions (QF*) and stylecheck rules (ST*).
+      # ST* used to be a separate `stylecheck` linter in v1 — kept disabled
+      # here to match the original team policy.
+      checks:
+        - all
+        - -QF*
+        - -ST*
+    govet:
+      # Disable the modernization "inline" analyzer — it nags about replacing
+      # ioutil/reflect constants with newer equivalents. Style, not bugs.
+      disable:
+        - inline
+
+  exclusions:
+    # Skip auto-generated files (e.g. *.pb.go from protoc).
+    generated: lax
+    rules:
+      - path: _test\.go$
+        linters:
+          - testifylint
+          - dupword
+      - path: ^integration_tests/.*/helpers\.go$
+        linters:
+          - testifylint
+          - dupword
+
+# In golangci-lint v2 formatters live in their own block (separate from
+# `linters:`). Keep this minimal: gofmt and goimports are the existing repo
+# baseline; gofumpt/gci can be added later if the stricter style is needed.
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  exclusions:
+    generated: lax

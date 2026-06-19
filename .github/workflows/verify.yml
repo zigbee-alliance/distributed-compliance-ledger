@@ -36,7 +36,7 @@ jobs:
       workflows: ${{ steps.filter.outputs.workflows }}
       ts_client: ${{ steps.filter.outputs.ts_client }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: dorny/paths-filter@v3
         if: ${{ !env.ACT }}
         id: filter
@@ -74,7 +74,7 @@ jobs:
     needs:
       - changes
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: gaurav-nelson/github-action-markdown-link-check@v1
         with:
           use-verbose-mode: 'yes'
@@ -86,7 +86,7 @@ jobs:
     needs:
       - changes
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: rojopolis/spellcheck-github-actions@0.35.0
   unit-tests:
     name: Check unit tests
@@ -94,11 +94,11 @@ jobs:
     needs:
       - lint
     steps:
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
-          go-version: 1.20.14
-      - uses: actions/checkout@v4
-      - uses: actions/cache@v4
+          go-version: 1.26.4
+      - uses: actions/checkout@v6
+      - uses: actions/cache@v5
         if: ${{ !env.ACT }}
         with:
           path: |
@@ -118,7 +118,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GOCOVER_MODE: set
       - name: Store test coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: unit_cover
           path: cover.out
@@ -129,11 +129,11 @@ jobs:
     needs:
       - changes
     steps:
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
-          go-version: 1.20.14
-      - uses: actions/checkout@v4
-      - uses: actions/cache@v4
+          go-version: 1.26.4
+      - uses: actions/checkout@v6
+      - uses: actions/cache@v5
         with:
           path: |
             ~/.cache/go-build
@@ -153,7 +153,7 @@ jobs:
         shell: bash
         run: go tool covdata textfmt -i=integration_tests/gocover -o cover.out
       - name: Store test coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: integration_cover
           path: cover.out
@@ -164,7 +164,7 @@ jobs:
     needs:
       - changes
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -177,14 +177,14 @@ jobs:
     needs:
       - changes
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
         with:
-          go-version: 1.20.14
+          go-version: 1.26.4
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v4
+        uses: golangci/golangci-lint-action@v7
         with:
-          version: v1.55
+          version: v2.12.2
           args: --timeout 5m0s
   cover:
     if: needs.changes.outputs.src == 'true'
@@ -195,17 +195,17 @@ jobs:
       - integration-tests
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/download-artifact@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
-          go-version: 1.20.14
-      - name: Gocovmerge build
+          go-version: 1.26.4
+      - name: Install gocovmerge
         shell: bash
-        run: go build github.com/wadey/gocovmerge
+        run: go install github.com/wadey/gocovmerge@b5bfa59ec0adc420475f97f89b58045c721d761c
       - name: Merge test coverage
         shell: bash
-        run: ./gocovmerge unit_cover/cover.out integration_cover/cover.out > cover.out
+        run: gocovmerge unit_cover/cover.out integration_cover/cover.out > cover.out
       - name: Filter test coverage
         shell: bash
         run: .github/workflows/filter_coverage.sh
@@ -220,7 +220,7 @@ jobs:
         shell: bash
         run: go tool cover -html=cover.out -o cover.html
       - name: Upload test coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test_coverage
           path: |

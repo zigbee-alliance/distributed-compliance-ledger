@@ -67,7 +67,7 @@ func CmdRevokeModel() *cobra.Command {
 	cmd.Flags().StringVarP(&certificationType, FlagCertificationType, FlagCertificationTypeShortcut, "", TextCertificationType)
 	cmd.Flags().StringVarP(&revocationDate, FlagRevocationDate, FlagDateShortcut, "", TextRevocationDate)
 	cmd.Flags().StringVar(&reason, FlagReason, "", TextRevocationReason)
-	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, TextSchemaVersion)
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, types.ComplianceInfoSchemaVersion, TextSchemaVersion)
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)

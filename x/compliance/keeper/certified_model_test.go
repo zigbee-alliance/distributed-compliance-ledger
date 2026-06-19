@@ -24,7 +24,7 @@ func createNCertifiedModel(keeper *keeper.Keeper, ctx sdk.Context, n int) []type
 		items[i].CertificationType = strconv.Itoa(i)
 		items[i].Value = true
 
-		keeper.SetCertifiedModel(ctx, items[i])
+		keeper.SetCertifiedModel(ctx, &items[i])
 	}
 
 	return items

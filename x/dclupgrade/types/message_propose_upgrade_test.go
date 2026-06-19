@@ -168,7 +168,7 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 	var expectedResponse string
 
 	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, expectedResponse)
+		_, _ = fmt.Fprint(w, expectedResponse)
 	}))
 	defer svr.Close()
 

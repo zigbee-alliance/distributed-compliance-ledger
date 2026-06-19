@@ -55,7 +55,7 @@ func (k Keeper) GetAllModelVersions(ctx sdk.Context) (list []types.ModelVersions
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ModelVersionsKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
-	defer iterator.Close()
+	defer func() { _ = iterator.Close() }()
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.ModelVersions

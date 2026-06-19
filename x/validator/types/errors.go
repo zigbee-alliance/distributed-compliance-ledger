@@ -15,8 +15,6 @@
 package types
 
 import (
-	"fmt"
-
 	"cosmossdk.io/errors"
 )
 
@@ -30,7 +28,7 @@ var (
 
 func ErrPoolIsFull() error {
 	return errors.Wrapf(PoolIsFull,
-		fmt.Sprintf("Pool ledger already contains maximum number of active nodes: \"%v\"", MaxNodes))
+		"Pool ledger already contains maximum number of active nodes: \"%v\"", MaxNodes)
 }
 
 func NewErrProposedDisableValidatorAlreadyExists(name interface{}) error {
