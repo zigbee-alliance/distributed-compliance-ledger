@@ -17,13 +17,13 @@ set -euo pipefail
 source integration_tests/cli/common.sh
 
 noc_root_cert_1_path="integration_tests/constants/noc_root_cert_1"
-noc_root_cert_1_subject="MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIDApTb21lIFN0YXRlMREwDwYDVQQHDAhUYXNoa2VudDEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDDAVOT0MtMQ=="
-noc_root_cert_1_subject_key_id="44:EB:4C:62:6B:25:48:CD:A2:B3:1C:87:41:5A:08:E7:2B:B9:83:26"
-noc_root_cert_1_serial_number="47211865327720222621302679792296833381734533449"
+noc_root_cert_1_subject="MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIEwpTb21lIFN0YXRlMREwDwYDVQQHEwhUYXNoa2VudDEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDEwVOT0MtMQ=="
+noc_root_cert_1_subject_key_id="0E:10:B8:5D:96:7A:08:33:C7:C5:44:49:0E:28:0F:C1:6E:D5:D4:7C"
+noc_root_cert_1_serial_number="313831573505791137291636389937677533381171619492"
 noc_root_cert_1_subject_as_text="CN=NOC-1,OU=Testing Division,O=Example Company,L=Tashkent,ST=Some State,C=UZ"
 
 noc_root_cert_1_copy_path="integration_tests/constants/noc_root_cert_1_copy"
-noc_root_cert_1_copy_serial_number="460647353168152946606945669687905527879095841977"
+noc_root_cert_1_copy_serial_number="12722088350714347345576486793058060481880825999"
 
 noc_root_cert_2_path="integration_tests/constants/noc_root_cert_2"
 noc_root_cert_2_subject="MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIEwpTb21lIFN0YXRlMREwDwYDVQQHEwhUYXNoa2VudDEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDEwVOT0MtMg=="
@@ -38,12 +38,12 @@ noc_root_cert_3_serial_number="620481712672111766723531823383547399894194653186"
 noc_root_cert_3_subject_as_text="CN=NOC-3,O=Internet Widgits Pty Ltd,ST=Some-State,C=AU"
 
 noc_cert_1_path="integration_tests/constants/noc_cert_1"
-noc_cert_1_subject="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtOT0MtY2hpbGQtMQ=="
-noc_cert_1_subject_key_id="02:72:6E:BC:BB:EF:D6:BD:8D:9B:42:AE:D4:3C:C0:55:5F:66:3A:B3"
-noc_cert_1_serial_number="631388393741945881054190991612463928825155142122"
+noc_cert_1_subject="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECBMKU29tZSBTdGF0ZTETMBEGA1UEBxMKU29tZSBTdGF0ZTEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDEwtOT0MtY2hpbGQtMQ=="
+noc_cert_1_subject_key_id="06:9F:5A:E0:1F:23:3E:9F:C7:4F:B6:F9:A2:33:47:33:62:7A:07:C5"
+noc_cert_1_serial_number="577430346509479530103103319788179390906984119670"
 
 noc_cert_1_copy_path="integration_tests/constants/noc_cert_1_copy"
-noc_cert_1_copy_serial_number="169445068204646961882009388640343665944683778293"
+noc_cert_1_copy_serial_number="617357865778805507017637943649984133152592305888"
 
 noc_cert_2_path="integration_tests/constants/noc_cert_2"
 noc_cert_2_subject="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECBMKU29tZSBTdGF0ZTETMBEGA1UEBxMKU29tZSBTdGF0ZTEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDEwtOT0MtY2hpbGQtMg=="
@@ -51,9 +51,30 @@ noc_cert_2_subject_key_id="17:E2:72:19:E1:7F:19:D7:0D:02:1A:B0:40:7B:04:26:CC:D4
 noc_cert_2_serial_number="634591262660314610068979921875981241084684028375"
 
 noc_leaf_cert_1_path="integration_tests/constants/noc_leaf_cert_1"
-noc_leaf_cert_1_subject="MIGBMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRMwEQYDVQQDDApOT0MtbGVhZi0x"
-noc_leaf_cert_1_subject_key_id="77:1F:DB:C4:4C:B1:29:7E:3C:EB:3E:D8:2A:38:0B:63:06:07:00:01"
-noc_leaf_cert_1_serial_number="281347277961838999749763518155363401757954575313"
+noc_leaf_cert_1_subject="MIGBMQswCQYDVQQGEwJVWjETMBEGA1UECBMKU29tZSBTdGF0ZTETMBEGA1UEBxMKU29tZSBTdGF0ZTEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMRMwEQYDVQQDEwpOT0MtbGVhZi0x"
+noc_leaf_cert_1_subject_key_id="F0:3A:A5:96:8F:60:63:F0:15:21:24:0C:DA:0A:E6:2B:CC:A0:58:F9"
+noc_leaf_cert_1_serial_number="201294310322324358101935163941973786245732555938"
+
+# Matter R1.6 §6.5.12 VVSC fixtures (CertificateType_VIDSignerPKI). All subjects
+# encode matter-vid=0001 in addition to the OperationalPKI-style DN. The chain
+# is VvscRoot1 → VvscIca1 → VvscLeaf1 (path length 3).
+vvsc_root_cert_1_path="integration_tests/constants/vvsc_root_cert_1"
+vvsc_root_cert_1_subject="MIGWMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTERMA8GA1UEBwwIVGFzaGtlbnQxGDAWBgNVBAoMD0V4YW1wbGUgQ29tcGFueTEZMBcGA1UECwwQVGVzdGluZyBEaXZpc2lvbjEUMBIGA1UEAwwLVlZTQy1Sb290LTExFDASBgorBgEEAYKifAIBDAQwMDAx"
+vvsc_root_cert_1_subject_key_id="21:B9:21:60:2D:53:8B:86:DA:A4:16:5C:AA:40:90:25:EB:FE:7E:28"
+vvsc_root_cert_1_serial_number="5068329979261235249"
+vvsc_root_cert_1_subject_as_text="CN=VVSC-Root-1,OU=Testing Division,O=Example Company,L=Tashkent,ST=Some State,C=UZ,vid=0x0001"
+
+vvsc_ica_cert_1_path="integration_tests/constants/vvsc_ica_cert_1"
+vvsc_ica_cert_1_subject="MIGXMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRMwEQYDVQQDDApWVlNDLUlDQS0xMRQwEgYKKwYBBAGConwCAQwEMDAwMQ=="
+vvsc_ica_cert_1_subject_key_id="98:4B:EE:D7:40:A2:FE:29:CB:AF:C0:0A:67:B7:AE:FF:12:A5:DA:DD"
+vvsc_ica_cert_1_serial_number="5068329979109130545"
+vvsc_ica_cert_1_subject_as_text="CN=VVSC-ICA-1,OU=Testing Division,O=Example Company,L=Some State,ST=Some State,C=UZ,vid=0x0001"
+
+vvsc_leaf_cert_1_path="integration_tests/constants/vvsc_leaf_cert_1"
+vvsc_leaf_cert_1_subject="MIGYMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtWVlNDLUxlYWYtMTEUMBIGCisGAQQBgqJ8AgEMBDAwMDE="
+vvsc_leaf_cert_1_subject_key_id="42:24:A6:34:C8:C1:2F:88:9D:9C:7F:BE:8A:7A:6E:40:DB:C8:2B:F1"
+vvsc_leaf_cert_1_serial_number="5068329979159654449"
+vvsc_leaf_cert_1_subject_as_text="CN=VVSC-Leaf-1,OU=Testing Division,O=Example Company,L=Some State,ST=Some State,C=UZ,vid=0x0001"
 
 trustee_account="jack"
 second_trustee_account="alice"
@@ -370,8 +391,22 @@ result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
-echo "Add NOC leaf certificate by vendor with VID = $vid"
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_leaf_cert_1_path" --from $vendor_account --yes)
+echo "Add a Matter §6.4.5.4 VVSC chain (self-issued VVSC root, VVSC intermediate,"
+echo "VVSC leaf) so the leaf-level operations have a §6.5.12-compliant chain to"
+echo "exercise. NocLeafCert1 is a NOC end-entity (cA=FALSE / NOC profile) and is"
+echo "no longer accepted by the stricter add-noc-x509-ica-cert handler."
+echo "Add self-issued VVSC root by vendor with VID = $vid"
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$vvsc_root_cert_1_path" --is-vid-verification-signer=true --from $vendor_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+echo "Add VVSC intermediate (chained under the self-issued VVSC root)"
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$vvsc_ica_cert_1_path" --is-vid-verification-signer=true --from $vendor_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+echo "Add VVSC leaf (chained under the VVSC intermediate — full chain length 3)"
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$vvsc_leaf_cert_1_path" --is-vid-verification-signer=true --from $vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -388,7 +423,7 @@ echo $result | jq
 check_response "$result" "\"serialNumber\": \"$noc_cert_1_serial_number\""
 check_response "$result" "\"serialNumber\": \"$noc_cert_1_copy_serial_number\""
 check_response "$result" "\"serialNumber\": \"$noc_cert_2_serial_number\""
-check_response "$result" "\"serialNumber\": \"$noc_leaf_cert_1_serial_number\""
+check_response "$result" "\"serialNumber\": \"$vvsc_leaf_cert_1_serial_number\""
 
 echo "Try to revoke NOC root certificate with different VID = $vid_2"
 result=$(echo "$passphrase" | dcld tx pki revoke-noc-x509-root-cert --subject="$noc_root_cert_1_subject" --subject-key-id="$noc_root_cert_1_subject_key_id" --from $vendor_account_2 --yes)
@@ -408,7 +443,7 @@ check_response "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$noc_root_cert_1_serial_number\""
 check_response "$result" "\"serialNumber\": \"$noc_root_cert_1_copy_serial_number\""
 response_does_not_contain "$result" "\"subject\": \"$noc_cert_1_subject\""
-response_does_not_contain "$result" "\"subject\": \"$noc_leaf_cert_1_subject\""
+response_does_not_contain "$result" "\"subject\": \"$vvsc_leaf_cert_1_subject\""
 
 echo "Request revoked noc root certificate by subject and subjectKeyId should contain two root certificates"
 result=$(dcld query pki revoked-noc-x509-root-cert --subject="$noc_root_cert_1_subject" --subject-key-id="$noc_root_cert_1_subject_key_id")
@@ -478,12 +513,12 @@ echo "Request NOC certificate by VID = $vid should contain intermediate and leaf
 result=$(dcld query pki noc-x509-ica-certs --vid="$vid")
 echo $result | jq
 check_response "$result" "\"subject\": \"$noc_cert_1_subject\""
-check_response "$result" "\"subject\": \"$noc_leaf_cert_1_subject\""
+check_response "$result" "\"subject\": \"$vvsc_leaf_cert_1_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
-check_response "$result" "\"subjectKeyId\": \"$noc_leaf_cert_1_subject_key_id\""
+check_response "$result" "\"subjectKeyId\": \"$vvsc_leaf_cert_1_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$noc_cert_1_serial_number\""
 check_response "$result" "\"serialNumber\": \"$noc_cert_1_copy_serial_number\""
-check_response "$result" "\"serialNumber\": \"$noc_leaf_cert_1_serial_number\""
+check_response "$result" "\"serialNumber\": \"$vvsc_leaf_cert_1_serial_number\""
 
 echo "Request all noc certificates should not contain revoked NOC root certificates"
 result=$(dcld query pki all-noc-x509-certs)
@@ -491,9 +526,9 @@ check_response "$result" "\"subject\": \"$noc_cert_1_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$noc_cert_1_serial_number\""
 check_response "$result" "\"serialNumber\": \"$noc_cert_1_copy_serial_number\""
-check_response "$result" "\"subject\": \"$noc_leaf_cert_1_subject\""
-check_response "$result" "\"subjectKeyId\": \"$noc_leaf_cert_1_subject_key_id\""
-check_response "$result" "\"serialNumber\": \"$noc_leaf_cert_1_serial_number\""
+check_response "$result" "\"subject\": \"$vvsc_leaf_cert_1_subject\""
+check_response "$result" "\"subjectKeyId\": \"$vvsc_leaf_cert_1_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$vvsc_leaf_cert_1_serial_number\""
 response_does_not_contain "$result" "\"subject\": \"$noc_root_cert_1_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_cert_1_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$noc_root_cert_1_serial_number\""
@@ -521,15 +556,15 @@ check_response "$result" "\"subject\": \"$noc_cert_1_subject\""
 check_response "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$noc_cert_1_serial_number"
 check_response "$result" "\"schemaVersion\": $schema_version_0"
-response_does_not_contain "$result" "\"subject\": \"$noc_leaf_cert_1_subject\""
-response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_leaf_cert_1_subject_key_id\""
-response_does_not_contain "$result" "\"serialNumber\": \"$noc_leaf_cert_1_serial_number"
+response_does_not_contain "$result" "\"subject\": \"$vvsc_leaf_cert_1_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$vvsc_leaf_cert_1_subject_key_id\""
+response_does_not_contain "$result" "\"serialNumber\": \"$vvsc_leaf_cert_1_serial_number"
 
 echo "Request all revoked noc root certificates should not contain non-root NOC certificates"
 result=$(dcld query pki all-revoked-noc-x509-root-certs)
 echo $result | jq
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id"
-response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_leaf_cert_1_subject_key_id\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$vvsc_leaf_cert_1_subject_key_id\""
 
 echo "Request all certificates by subject must be empty"
 result=$(dcld query pki all-noc-subject-x509-certs --subject="$noc_cert_1_subject")
@@ -549,8 +584,8 @@ echo $result | jq
 echo "Request NOC certificate by VID = $vid should contain one leaf certificate"
 result=$(dcld query pki noc-x509-ica-certs --vid="$vid")
 echo $result | jq
-check_response "$result" "\"subject\": \"$noc_leaf_cert_1_subject\""
-check_response "$result" "\"subjectKeyId\": \"$noc_leaf_cert_1_subject_key_id\""
+check_response "$result" "\"subject\": \"$vvsc_leaf_cert_1_subject\""
+check_response "$result" "\"subjectKeyId\": \"$vvsc_leaf_cert_1_subject_key_id\""
 response_does_not_contain "$result" "\"subject\": \"$noc_cert_1_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
 
@@ -559,17 +594,17 @@ result=$(dcld query pki noc-x509-cert --vid="$vid" --subject-key-id="$noc_cert_1
 echo $result | jq
 check_response "$result" "Not Found"
 
-echo "Request NOC certificate by VID = $vid and SKID = $noc_leaf_cert_1_subject_key_id should contain one leaf certificate"
-result=$(dcld query pki noc-x509-cert --vid="$vid" --subject-key-id="$noc_leaf_cert_1_subject_key_id")
+echo "Request NOC certificate by VID = $vid and SKID = $vvsc_leaf_cert_1_subject_key_id should contain one leaf certificate"
+result=$(dcld query pki noc-x509-cert --vid="$vid" --subject-key-id="$vvsc_leaf_cert_1_subject_key_id")
 echo $result | jq
-check_response "$result" "\"subject\": \"$noc_leaf_cert_1_subject\""
-check_response "$result" "\"subjectKeyId\": \"$noc_leaf_cert_1_subject_key_id\""
+check_response "$result" "\"subject\": \"$vvsc_leaf_cert_1_subject\""
+check_response "$result" "\"subjectKeyId\": \"$vvsc_leaf_cert_1_subject_key_id\""
 
 echo "Request all approved certificates should not contain revoked NOC certificates"
 result=$(dcld query pki all-noc-x509-certs)
-check_response "$result" "\"subject\": \"$noc_leaf_cert_1_subject\""
-check_response "$result" "\"subjectKeyId\": \"$noc_leaf_cert_1_subject_key_id\""
-check_response "$result" "\"serialNumber\": \"$noc_leaf_cert_1_serial_number\""
+check_response "$result" "\"subject\": \"$vvsc_leaf_cert_1_subject\""
+check_response "$result" "\"subjectKeyId\": \"$vvsc_leaf_cert_1_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$vvsc_leaf_cert_1_serial_number\""
 response_does_not_contain "$result" "\"subject\": \"$noc_cert_1_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_cert_1_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$noc_cert_1_serial_number\""

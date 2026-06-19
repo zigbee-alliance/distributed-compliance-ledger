@@ -18,29 +18,43 @@ source integration_tests/cli/common.sh
 
 # DA
 da_root_path="integration_tests/constants/root_cert"
-da_root_subject="MDQxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRAwDgYDVQQKDAdyb290LWNh"
-da_root_subject_key_id="5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB"
+da_root_subject="MDQxCzAJBgNVBAYTAkFVMRMwEQYDVQQIEwpzb21lLXN0YXRlMRAwDgYDVQQKEwdyb290LWNh"
+da_root_subject_key_id="DF:4E:AF:B0:8C:9C:37:78:1A:E7:53:12:CA:E4:78:6B:48:1E:AF:B0"
 
 da_intermediate_path="integration_tests/constants/intermediate_cert"
-da_intermediate_subject="MDwxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRgwFgYDVQQKDA9pbnRlcm1lZGlhdGUtY2E="
-da_intermediate_subject_key_id="4E:3B:73:F4:70:4D:C2:98:0D:DB:C8:5A:5F:02:3B:BF:86:25:56:2B"
+da_intermediate_subject="MDwxCzAJBgNVBAYTAkFVMRMwEQYDVQQIEwpzb21lLXN0YXRlMRgwFgYDVQQKEw9pbnRlcm1lZGlhdGUtY2E="
+da_intermediate_subject_key_id="1B:73:2A:91:34:46:8A:90:2A:87:19:91:E4:BD:8F:69:3A:F9:04:77"
 
 da_leaf_path="integration_tests/constants/leaf_cert"
-da_leaf_subject="MDExCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMQ0wCwYDVQQKDARsZWFm"
-da_leaf_subject_key_id="30:F4:65:75:14:20:B2:AF:3D:14:71:17:AC:49:90:93:3E:24:A0:1F"
+da_leaf_subject="MDExCzAJBgNVBAYTAkFVMRMwEQYDVQQIEwpzb21lLXN0YXRlMQ0wCwYDVQQKEwRsZWFm"
+da_leaf_subject_key_id="2A:31:8D:39:6E:50:DA:96:DF:95:C5:98:83:68:F0:58:B2:15:B3:3A"
 
 # NOC
 noc_root_path="integration_tests/constants/noc_root_cert_1"
-noc_root_subject="MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIDApTb21lIFN0YXRlMREwDwYDVQQHDAhUYXNoa2VudDEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDDAVOT0MtMQ=="
-noc_root_subject_key_id="44:EB:4C:62:6B:25:48:CD:A2:B3:1C:87:41:5A:08:E7:2B:B9:83:26"
+noc_root_subject="MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIEwpTb21lIFN0YXRlMREwDwYDVQQHEwhUYXNoa2VudDEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDEwVOT0MtMQ=="
+noc_root_subject_key_id="0E:10:B8:5D:96:7A:08:33:C7:C5:44:49:0E:28:0F:C1:6E:D5:D4:7C"
 
 noc_intermediate_path="integration_tests/constants/noc_cert_1"
-noc_intermediate_subject="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtOT0MtY2hpbGQtMQ=="
-noc_intermediate_subject_key_id="02:72:6E:BC:BB:EF:D6:BD:8D:9B:42:AE:D4:3C:C0:55:5F:66:3A:B3"
+noc_intermediate_subject="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECBMKU29tZSBTdGF0ZTETMBEGA1UEBxMKU29tZSBTdGF0ZTEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDEwtOT0MtY2hpbGQtMQ=="
+noc_intermediate_subject_key_id="06:9F:5A:E0:1F:23:3E:9F:C7:4F:B6:F9:A2:33:47:33:62:7A:07:C5"
 
-noc_leaf_path="integration_tests/constants/noc_leaf_cert_1"
-noc_leaf_subject="MIGBMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRMwEQYDVQQDDApOT0MtbGVhZi0x"
-noc_leaf_subject_key_id="77:1F:DB:C4:4C:B1:29:7E:3C:EB:3E:D8:2A:38:0B:63:06:07:00:01"
+# NocLeafCert1 (a §6.5.12 NOC end-entity, cA=FALSE / KU=digitalSignature) is no
+# longer accepted by the strict add-noc-x509-ica-cert handler — that path now
+# requires the §6.5.12 ICAC profile (cA=TRUE) or the §6.5.12 VVSC profile
+# (cA=FALSE / KU=digitalSignature, only with --is-vid-verification-signer=true).
+# Use the VVSC leaf fixture instead, chained under a VVSC root + ICA registered
+# below as VIDSignerPKI.
+vvsc_root_path="integration_tests/constants/vvsc_root_cert_1"
+vvsc_root_subject="MIGWMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTERMA8GA1UEBwwIVGFzaGtlbnQxGDAWBgNVBAoMD0V4YW1wbGUgQ29tcGFueTEZMBcGA1UECwwQVGVzdGluZyBEaXZpc2lvbjEUMBIGA1UEAwwLVlZTQy1Sb290LTExFDASBgorBgEEAYKifAIBDAQwMDAx"
+vvsc_root_subject_key_id="21:B9:21:60:2D:53:8B:86:DA:A4:16:5C:AA:40:90:25:EB:FE:7E:28"
+
+vvsc_ica_path="integration_tests/constants/vvsc_ica_cert_1"
+vvsc_ica_subject="MIGXMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRMwEQYDVQQDDApWVlNDLUlDQS0xMRQwEgYKKwYBBAGConwCAQwEMDAwMQ=="
+vvsc_ica_subject_key_id="98:4B:EE:D7:40:A2:FE:29:CB:AF:C0:0A:67:B7:AE:FF:12:A5:DA:DD"
+
+vvsc_leaf_path="integration_tests/constants/vvsc_leaf_cert_1"
+vvsc_leaf_subject="MIGYMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtWVlNDLUxlYWYtMTEUMBIGCisGAQQBgqJ8AgEMBDAwMDE="
+vvsc_leaf_subject_key_id="42:24:A6:34:C8:C1:2F:88:9D:9C:7F:BE:8A:7A:6E:40:DB:C8:2B:F1"
 
 # Accounts
 trustee_account="jack"
@@ -208,8 +222,20 @@ result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
-echo "$vendor_account adds NOC Leaf certificate"
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$noc_leaf_path" --from $vendor_account --yes)
+echo "$vendor_account adds a self-issued VVSC Root (Matter §6.4.5.4) as the"
+echo "trust anchor for the VVSC leaf below — registered as VIDSignerPKI."
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$vvsc_root_path" --is-vid-verification-signer=true --from $vendor_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+echo "$vendor_account adds a VVSC ICA chained under the VVSC root"
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$vvsc_ica_path" --is-vid-verification-signer=true --from $vendor_account --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+echo "$vendor_account adds the VVSC Leaf (replaces the legacy NOC Leaf — full"
+echo "chain VvscRoot1 → VvscIca1 → VvscLeaf1 is path length 3, the §6.4.10 cap)"
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$vvsc_leaf_path" --is-vid-verification-signer=true --from $vendor_account --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
@@ -225,7 +251,7 @@ check_response "$result" "\"subjectKeyId\": \"$da_intermediate_subject_key_id\""
 check_response "$result" "\"subjectKeyId\": \"$da_leaf_subject_key_id\""
 check_response "$result" "\"subjectKeyId\": \"$noc_root_subject_key_id\""
 check_response "$result" "\"subjectKeyId\": \"$noc_intermediate_subject_key_id\""
-check_response "$result" "\"subjectKeyId\": \"$noc_leaf_subject_key_id\""
+check_response "$result" "\"subjectKeyId\": \"$vvsc_leaf_subject_key_id\""
 
 echo "Request all approved DA certificates"
 result=$(dcld query pki all-x509-certs)
@@ -235,14 +261,14 @@ check_response "$result" "\"subjectKeyId\": \"$da_intermediate_subject_key_id\""
 check_response "$result" "\"subjectKeyId\": \"$da_leaf_subject_key_id\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_root_subject_key_id\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_intermediate_subject_key_id\""
-response_does_not_contain "$result" "\"subjectKeyId\": \"$noc_leaf_subject_key_id\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$vvsc_leaf_subject_key_id\""
 
 echo "Request all NOC certificates"
 result=$(dcld query pki all-noc-x509-certs)
 echo $result | jq
 check_response "$result" "\"subjectKeyId\": \"$noc_root_subject_key_id\""
 check_response "$result" "\"subjectKeyId\": \"$noc_intermediate_subject_key_id\""
-check_response "$result" "\"subjectKeyId\": \"$noc_leaf_subject_key_id\""
+check_response "$result" "\"subjectKeyId\": \"$vvsc_leaf_subject_key_id\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$da_root_subject_key_id\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$da_intermediate_subject_key_id\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$da_leaf_subject_key_id\""

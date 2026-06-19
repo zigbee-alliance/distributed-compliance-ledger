@@ -27,7 +27,7 @@ from the revocation list.
   - certificationType: `string` - Certification program applied to the model. Supported values are `zigbee`, `matter` or `aliro`.
   - specificationVersion: `uint32` - Specification version applicable to the device model, and it matches the SpecificationVersion attribute in the Basic Information Cluster of a device running the software certified by this DeviceModel record. For example, for `1.4.2.0` version this field should contain `0x01040200`.
   - certificationDate: `string` - The date of model certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
-  - cdCertificateId: `string` - Connectivity Standards Alliance certification's certificate ID for the Certification that applies to this record. The value of this field is used in the Certification Declaration's `certificate_id` field for products using the VendorID, ProductID and SoftwareVersion in this schema entry.
+  - cdCertificateId: `string` - Connectivity Standards Alliance certification's certificate ID for the Certification that applies to this record. The value of this field is used in the Certification Declaration's `certificate_id` field for products using the VendorID, ProductID and SoftwareVersion in this schema entry. **Must be exactly 19 characters.**
   - reason: `optional(string)` - Optional comment describing the reason of certification
   - cDVersionNumber: `optional(uint32)` - CD Version Number of the certification
   - familyId: `optional(string)` - Product family to which the certified model belongs. Typical family IDs have the prefix FAM followed by a sequence of alphanumeric characters (e.g. FAM123456).
@@ -37,7 +37,7 @@ from the revocation list.
   - programTypeVersion: `optional(string)` - Version of programType (see `programType` flag for supported programs). Can be used when `programType` is provided.
   - transport: `optional(string)` - Underlying communication technology the device uses to connect and exchange data. Supported transports are `thread`, `wi-fi`, `ethernet`, `bluetooth` and `nfc`. When multiple transports supported - should be used with comma-separator (e.g. `wi-fi,ethernet,bluetooth`).
   - parentChild: `optional(string)` - Parent vs. child characteristic when using the Product Family Certification or Portfolio Certification Program. Supported values are `parent` and `child`.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to **`1`** (default 1, the v1 schema introduces `specificationVersion` and deprecates `compliantPlatformUsed` / `compliantPlatformVersion` / `OSVersion` / `certificationIdOfSoftwareComponent`).
   - compliantPlatformUsed: `optional(string)` - **Deprecated.**  Certification ID of the compliant platform used with the product.
   - compliantPlatformVersion: `optional(string)` - **Deprecated.**  Certified firmware version of Compliant Platform.
   - certificationIDOfSoftwareComponent: `optional(string)` - **Deprecated.** Certification ID of a software component.
@@ -66,7 +66,7 @@ Updates a compliance info by VID, PID, Software Version and Certification Type.
   - certificationType: `string` - Certification program applied to the model. Supported values are `zigbee`, `matter` or `aliro`.
   - specificationVersion: `optional(uint32)` - Specification version applicable to the device model, and it matches the SpecificationVersion attribute in the Basic Information Cluster of a device running the software certified by this DeviceModel record. For example, for `1.4.2.0` version this field should contain `0x01040200`.
   - certificationDate: `optional(string)` - The date of model certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
-  - cdCertificateId: `optional(string)` - Connectivity Standards Alliance certification's certificate ID for the Certification that applies to this record. The value of this field is used in the Certification Declaration's `certificate_id` field for products using the VendorID, ProductID and SoftwareVersion in this schema entry.
+  - cdCertificateId: `optional(string)` - Connectivity Standards Alliance certification's certificate ID for the Certification that applies to this record. The value of this field is used in the Certification Declaration's `certificate_id` field for products using the VendorID, ProductID and SoftwareVersion in this schema entry. **When provided, must be exactly 19 characters.**
   - reason: `optional(string)` - Optional comment describing the reason of certification
   - cDVersionNumber: `optional(string)` - CD Version Number of the certification (uint32-parsable string), must be the same as the associated model version
   - owner: `optional(string)` - Key to sign the transaction
@@ -77,7 +77,7 @@ Updates a compliance info by VID, PID, Software Version and Certification Type.
   - programTypeVersion: `optional(string)` - Version of programType (see `programType` flag for supported programs). Can be used when `programType` is provided.
   - transport: `optional(string)` - Underlying communication technology the device uses to connect and exchange data. Supported transports are `thread`, `wi-fi`, `ethernet`, `bluetooth` and `nfc`. When multiple transports supported - should be used with comma-separator (e.g. `wi-fi,ethernet,bluetooth`).
   - parentChild: `optional(string)` - Parent vs. child characteristic when using the Product Family Certification or Portfolio Certification Program. Supported values are `parent` and `child`.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to **`1`** (default 1, the v1 schema introduces `specificationVersion` and deprecates `compliantPlatformUsed` / `compliantPlatformVersion` / `OSVersion` / `certificationIdOfSoftwareComponent`).
   - compliantPlatformUsed: `optional(string)` - **Deprecated.**  Certification ID of the compliant platform used with the product.
   - compliantPlatformVersion: `optional(string)` - **Deprecated.**  Certified firmware version of Compliant Platform.
   - certificationIDOfSoftwareComponent: `optional(string)` - **Deprecated.** Certification ID of a software component.
@@ -130,7 +130,7 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
   - revocationDate: `string` - The date of model revocation (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
   - reason: `optional(string)` - Optional comment describing the reason of revocation
   - cDVersionNumber: `optional(uint32)` - CD Version Number of the certification
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to **`1`** (default 1, the v1 schema introduces `specificationVersion` and deprecates `compliantPlatformUsed` / `compliantPlatformVersion` / `OSVersion` / `certificationIdOfSoftwareComponent`).
 - In State:
   - `compliance/ComplianceInfo/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
   - `compliance/RevokedModel/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
@@ -160,7 +160,7 @@ Can not be set if there is already a certification record on the ledger (certifi
   - certificationType: `string` - Certification program applied to the model. Supported values are `zigbee`, `matter` or `aliro`.
   - specificationVersion: `uint32` - Specification version applicable to the device model, and it matches the SpecificationVersion attribute in the Basic Information Cluster of a device running the software certified by this DeviceModel record. For example, for `1.4.2.0` version this field should contain `0x01040200`.
   - provisionalDate: `string` - The date of model provisional certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
-  - cdCertificateId: `string` - Connectivity Standards Alliance certification's certificate ID for the Certification that applies to this record. The value of this field is used in the Certification Declaration's `certificate_id` field for products using the VendorID, ProductID and SoftwareVersion in this schema entry.
+  - cdCertificateId: `string` - Connectivity Standards Alliance certification's certificate ID for the Certification that applies to this record. The value of this field is used in the Certification Declaration's `certificate_id` field for products using the VendorID, ProductID and SoftwareVersion in this schema entry. **Must be exactly 19 characters.**
   - reason: `optional(string)` - Optional comment describing the reason of provisioning
   - cDVersionNumber: `optional(uint32)` - CD Version Number of the certification
   - familyId: `optional(string)` - Product family to which the certified model belongs. Typical family IDs have the prefix FAM followed by a sequence of alphanumeric characters (e.g. FAM123456).
@@ -170,7 +170,7 @@ Can not be set if there is already a certification record on the ledger (certifi
   - programTypeVersion: `optional(string)` - Version of programType (see `programType` flag for supported programs). Can be used when `programType` is provided.
   - transport: `optional(string)` - Underlying communication technology the device uses to connect and exchange data. Supported transports are `thread`, `wi-fi`, `ethernet`, `bluetooth` and `nfc`. When multiple transports supported - should be used with comma-separator (e.g. `wi-fi,ethernet,bluetooth`).
   - parentChild: `optional(string)` - Parent vs. child characteristic when using the Product Family Certification or Portfolio Certification Program. Supported values are `parent` and `child`.
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to **`1`** (default 1, the v1 schema introduces `specificationVersion` and deprecates `compliantPlatformUsed` / `compliantPlatformVersion` / `OSVersion` / `certificationIdOfSoftwareComponent`).
   - compliantPlatformUsed: `optional(string)` - **Deprecated.**  Certification ID of the compliant platform used with the product.
   - compliantPlatformVersion: `optional(string)` - **Deprecated.**  Certified firmware version of Compliant Platform.
   - certificationIDOfSoftwareComponent: `optional(string)` - **Deprecated.** Certification ID of a software component.
