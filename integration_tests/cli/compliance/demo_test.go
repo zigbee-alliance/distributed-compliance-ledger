@@ -181,7 +181,6 @@ func TestComplianceDemo(t *testing.T) {
 			CDCertificateID:       cdCertID,
 			CDVersionNumber:       cdVersionNumber,
 			From:                  zbAccount,
-			Extra:                 []string{"--schemaVersion", "0"},
 		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
@@ -284,7 +283,7 @@ func TestComplianceDemo(t *testing.T) {
 		require.Contains(t, string(out), fmt.Sprintf(`"cDCertificateId":"%s"`, cdCertID))
 		require.Contains(t, string(out), fmt.Sprintf(`"date":"%s"`, certificationDate))
 		require.Contains(t, string(out), fmt.Sprintf(`"certificationType":"%s"`, zigbeeCertType))
-		require.Contains(t, string(out), `"schemaVersion":0`)
+		require.Contains(t, string(out), `"schemaVersion":1`)
 
 		// Compliance info — matter
 		out, err = QueryComplianceInfo(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: matterCertType})
@@ -295,7 +294,7 @@ func TestComplianceDemo(t *testing.T) {
 		require.Contains(t, string(out), fmt.Sprintf(`"cDCertificateId":"%s"`, cdCertID))
 		require.Contains(t, string(out), fmt.Sprintf(`"date":"%s"`, certificationDate))
 		require.Contains(t, string(out), fmt.Sprintf(`"certificationType":"%s"`, matterCertType))
-		require.Contains(t, string(out), `"schemaVersion":0`)
+		require.Contains(t, string(out), `"schemaVersion":1`)
 
 		// Device software compliance
 		out, err = QueryDeviceSoftwareCompliance(cdCertID)
@@ -706,7 +705,6 @@ func TestComplianceDemo(t *testing.T) {
 			"--OSVersion", "brand_new_os_version",
 			"--parentChild", "parent",
 			"--certificationIDOfSoftwareComponent", "brand_new_component",
-			"--schemaVersion", "0",
 		)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
@@ -736,7 +734,7 @@ func TestComplianceDemo(t *testing.T) {
 		require.Contains(t, string(out), `"OSVersion":"brand_new_os_version"`)
 		require.Contains(t, string(out), `"parentChild":"parent"`)
 		require.Contains(t, string(out), `"certificationIdOfSoftwareComponent":"brand_new_component"`)
-		require.Contains(t, string(out), `"schemaVersion":0`)
+		require.Contains(t, string(out), `"schemaVersion":1`)
 
 		// Device software compliance accessible under the updated cdCertificateId
 		out, err = QueryDeviceSoftwareCompliance(updCdCertID)

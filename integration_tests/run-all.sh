@@ -119,7 +119,7 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
 
     dcld config keyring-backend test
 
-    if go test -count=1 -timeout 30m -v "./$CLI_GO_TEST_PACKAGE/..." &>${DETAILED_OUTPUT_TARGET}; then
+    if go test -count=1 -timeout 30m -p 1 -v "./$CLI_GO_TEST_PACKAGE/..." &>${DETAILED_OUTPUT_TARGET}; then
       log "$CLI_GO_TEST_PACKAGE finished successfully"
     else
       log "$CLI_GO_TEST_PACKAGE failed"

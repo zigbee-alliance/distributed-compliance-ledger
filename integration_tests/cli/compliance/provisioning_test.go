@@ -74,7 +74,6 @@ func TestComplianceProvisioning(t *testing.T) {
 			CDCertificateID:       cdCertID,
 			Reason:                provisionReason,
 			From:                  zbAccount,
-			Extra:                 []string{"--schemaVersion", "0"},
 		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
