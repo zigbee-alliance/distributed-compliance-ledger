@@ -44,11 +44,6 @@ const (
 	nocCert2SubjectKeyID = "17:E2:72:19:E1:7F:19:D7:0D:02:1A:B0:40:7B:04:26:CC:D4:2B:F5"
 	nocCert2SerialNumber = "634591262660314610068979921875981241084684028375"
 
-	nocLeafCert1Path         = "../../constants/noc_leaf_cert_1"
-	nocLeafCert1Subject      = "MIGBMQswCQYDVQQGEwJVWjETMBEGA1UECBMKU29tZSBTdGF0ZTETMBEGA1UEBxMKU29tZSBTdGF0ZTEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMRMwEQYDVQQDEwpOT0MtbGVhZi0x"
-	nocLeafCert1SubjectKeyID = "F0:3A:A5:96:8F:60:63:F0:15:21:24:0C:DA:0A:E6:2B:CC:A0:58:F9"
-	nocLeafCert1SerialNumber = "201294310322324358101935163941973786245732555938"
-
 	// Matter R1.6 §6.5.12 VVSC fixtures (CertificateType_VIDSignerPKI). All
 	// subjects encode matter-vid=0001 in addition to the OperationalPKI-style
 	// DN. The chain is vvscRoot1 → vvscIca1 → vvscLeaf1 (path length 3).

@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"os/exec"
@@ -20,7 +21,7 @@ type TxResult struct {
 // It sets standard cosmos flags like --output json and keyring-backend test
 // if they are not already provided in the args for transaction commands.
 func ExecuteCLI(args ...string) ([]byte, error) {
-	cmd := exec.Command("dcld", args...)
+	cmd := exec.CommandContext(context.Background(), "dcld", args...)
 	// Provide empty newlines as stdin so commands that prompt for a passphrase
 	// (e.g. `keys add` prompts for a BIP39 passphrase) don't block on EOF.
 	cmd.Stdin = bytes.NewBufferString("\n\n")

@@ -119,7 +119,7 @@ func TestPKINocRevocationWithSerialNumber(t *testing.T) {
 		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, vvscLeafCert1Subject))
 
 		// Revoke second root cert with revoke-child=true. Cascade hits NocCert1
-		// (under the NOC chain) — the VVSC leaf is structurally disjoint.
+		// (under the NOC chain) — the VVSC chain is structurally disjoint.
 		txResult, err = RevokeNocRootCert(nocRootCert1Subject, nocRootCert1SubjectKeyID, vendorAccount,
 			"--serial-number", nocRootCert1CopySerialNumber,
 			"--revoke-child=true",
@@ -129,17 +129,33 @@ func TestPKINocRevocationWithSerialNumber(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Both root certs should be revoked
+		// Also revoke the VVSC root with revoke-child=true. The VVSC chain
+		// VvscRoot1 → VvscIca1 → VvscLeaf1 is structurally disjoint from the
+		// OperationalPKI cascade (Matter §6.5.12 / §6.4.10) — without an
+		// explicit VVSC root revocation the leaf would remain active and the
+		// revoked-ICA assertion below would fail.
+		txResult, err = RevokeNocRootCert(vvscRootCert1Subject, vvscRootCert1SubjectKeyID, vendorAccount,
+			"--revoke-child=true",
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// Both NOC root certs should be revoked
 		out, err = QueryAllRevokedNocRootCerts()
 		require.NoError(t, err)
 		require.Contains(t, string(out), nocRootCert1SerialNumber)
 		require.Contains(t, string(out), nocRootCert1CopySerialNumber)
 
-		// NOC ICA should now be revoked (cascaded); VVSC leaf remains active.
+		// Revoked ICA list now contains the cascaded NOC ICA + VVSC ICA + VVSC leaf.
 		out, err = QueryAllRevokedNocX509IcaCerts()
 		require.NoError(t, err)
 		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocCert1Subject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, vvscLeafCert1Subject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, vvscIcaCert1Subject))
+		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, vvscLeafCert1Subject))
+		require.Contains(t, string(out), nocCert1SerialNumber)
+		require.Contains(t, string(out), vvscLeafCert1SerialNumber)
 
 		// NOC certs for VID1 (nocVid) should not have root_cert_1 active any more.
 		// root_cert_2 (different chain) may still be active — that is expected.
