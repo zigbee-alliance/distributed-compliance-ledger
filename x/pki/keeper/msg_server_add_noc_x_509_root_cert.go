@@ -23,8 +23,32 @@ func (k msgServer) AddNocX509RootCert(goCtx context.Context, msg *types.MsgAddNo
 		return nil, pkitypes.NewErrUnauthorizedRole("MsgAddNocX509RootCert", dclauthtypes.Vendor)
 	}
 
-	// decode pem certificate (must be a CA: NOC root certificate)
-	x509Certificate, err := x509.ParseAndValidateCertificate(msg.Cert, x509.VerifyIsCACertificate)
+	// Decode the PEM. AddNocX509RootCert handles two distinct Matter R1.6 §6.5.12
+	// certificate profiles, selected by msg.IsVidVerificationSigner:
+	//   - false → Matter RCAC profile (cA=TRUE, KU keyCertSign+cRLSign[+digitalSignature],
+	//     no EKU, SKI+AKI present), enforced by VerifyCAExtensions + VerifyNoEKU.
+	//   - true  → Matter VID Verification Signer Certificate (VVSC) profile
+	//     (cA=FALSE, KU exactly digitalSignature, SKI+AKI present), enforced by
+	//     VerifyVVSCExtensions. The IsSelfSigned() check below restricts this path
+	//     to self-issued VVSCs registered as Operational Trust Anchors (§6.4.5.4);
+	//     non-self-issued VVSCs go through AddNocX509IcaCert.
+	// VerifyECDSAP256SHA256 enforces the §6.5.5/§6.5.8/§6.5.9 ecdsa-with-SHA256 +
+	// prime256v1 requirement; VerifyVersionV3 enforces v3.
+	options := []x509.ParseAndValidateCertificateOptions{
+		x509.VerifyVersionV3,
+		x509.VerifyECDSAP256SHA256,
+		x509.VerifyAtMostOneVIDAndPID,
+	}
+
+	msgCertType := types.CertificateType_OperationalPKI
+	if msg.IsVidVerificationSigner {
+		msgCertType = types.CertificateType_VIDSignerPKI
+		options = append(options, x509.VerifyVVSCExtensions)
+	} else {
+		options = append(options, x509.VerifyCAExtensions, x509.VerifyNoEKU)
+	}
+
+	x509Certificate, err := x509.ParseAndValidateCertificate(msg.Cert, options...)
 	if err != nil {
 		return nil, err
 	}
@@ -48,11 +72,6 @@ func (k msgServer) AddNocX509RootCert(goCtx context.Context, msg *types.MsgAddNo
 	// get signer VID
 	signerAccount, _ := k.dclauthKeeper.GetAccountO(ctx, signerAddr)
 	signerVid := signerAccount.VendorID
-
-	msgCertType := types.CertificateType_OperationalPKI
-	if msg.IsVidVerificationSigner {
-		msgCertType = types.CertificateType_VIDSignerPKI
-	}
 
 	// Get list of certificates for Subject / Subject Key Id combination
 	existingCertificates, found := k.GetAllCertificates(ctx, x509Certificate.Subject, x509Certificate.SubjectKeyID)

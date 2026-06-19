@@ -292,7 +292,7 @@ func TestHandler_RevokeNocIntermediateCert_BySubjectAndSKID_KeepChild(t *testing
 
 			// add the NOC leaf certificate
 			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
-			utils.AddNocIntermediateCertificate(setup, leafCertificate)
+			utils.AddMokedNocCertificate(setup, leafCertificate)
 
 			// Revoke NOC with subject and subject key id only
 			utils.RevokeNocIntermediateCertificate(
@@ -361,7 +361,7 @@ func TestHandler_RevokeNocIntermediateCert_BySerialNumber_KeepChild(t *testing.T
 
 			// add the NOC leaf certificate
 			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
-			utils.AddNocIntermediateCertificate(setup, leafCertificate)
+			utils.AddMokedNocCertificate(setup, leafCertificate)
 
 			// Revoke NOC by serial number only
 			utils.RevokeNocIntermediateCertificate(
@@ -430,7 +430,7 @@ func TestHandler_RevokeNocIntermediateCert_BySubjectAndSKID_RevokeChild(t *testi
 
 			// add the NOC leaf certificate
 			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
-			utils.AddNocIntermediateCertificate(setup, leafCertificate)
+			utils.AddMokedNocCertificate(setup, leafCertificate)
 
 			// Revoke noc with subject and subject key id and its child too
 			utils.RevokeNocIntermediateCertificate(
@@ -497,7 +497,7 @@ func TestHandler_RevokeNocIntermediateCert_BySerialNumber_RevokeChild(t *testing
 
 			// add the NOC leaf certificate
 			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
-			utils.AddNocIntermediateCertificate(setup, leafCertificate)
+			utils.AddMokedNocCertificate(setup, leafCertificate)
 
 			// Revoke noc with subject and subject key id and its child too
 			utils.RevokeNocIntermediateCertificate(
