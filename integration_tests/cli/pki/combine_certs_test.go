@@ -14,8 +14,8 @@ const (
 	rootWithSameSubjectAndSkid1Path = "../../constants/root_with_same_subject_and_skid_1"
 	rootWithSameSubjectAndSkid2Path = "../../constants/root_with_same_subject_and_skid_2"
 	// Subject and SKID match the actual "Example Company" cert files (not Amazon Root CA).
-	rootWithSameSubjectAndSkidSubject      = "MIGCMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbQ=="
-	rootWithSameSubjectAndSkidSubjectKeyID = "33:5E:0C:07:44:F8:B5:9C:CD:55:01:9B:6D:71:23:83:6F:D0:D4:BE"
+	rootWithSameSubjectAndSkidSubject      = "MIGCMQswCQYDVQQGEwJVUzERMA8GA1UECBMITmV3IFlvcmsxETAPBgNVBAcTCE5ldyBZb3JrMRgwFgYDVQQKEw9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsTEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMTD3d3dy5leGFtcGxlLmNvbQ=="
+	rootWithSameSubjectAndSkidSubjectKeyID = "C1:48:66:ED:6F:23:D8:28:1A:D9:37:7C:58:AC:3F:DA:04:C1:41:E8"
 )
 
 // Tests that multiple certificates with the same subject and SKID can coexist.

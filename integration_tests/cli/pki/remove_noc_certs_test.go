@@ -14,20 +14,25 @@ const (
 	removeNocRootCertVid = 65521
 	removeNocOtherVid    = 65522
 
-	removeNocRootCert1SerialNumber = "47211865327720222621302679792296833381734533449"
-	removeNocRootCert1CopySerial   = "460647353168152946606945669687905527879095841977"
-	removeNocIntermCert1Serial     = "631388393741945881054190991612463928825155142122"
-	removeNocIntermCert2Serial     = "169445068204646961882009388640343665944683778293"
-	removeNocLeafCertSerial        = "281347277961838999749763518155363401757954575313"
+	removeNocRootCert1SerialNumber = "313831573505791137291636389937677533381171619492"
+	removeNocRootCert1CopySerial   = "12722088350714347345576486793058060481880825999"
+	removeNocIntermCert1Serial     = "577430346509479530103103319788179390906984119670"
+	removeNocIntermCert2Serial     = "617357865778805507017637943649984133152592305888"
+	// removeNocLeafCertSerial holds the VVSC leaf 1 serial number — NocLeafCert1
+	// (NOC end-entity) is no longer accepted by the strict §6.5.12 ICA handler
+	// so we use the Matter VVSC leaf instead. Variable names keep the "leaf"
+	// terminology so downstream assertions read naturally.
+	removeNocLeafCertSerial = "5068329979159654449"
 
-	removeNocRootCertSubject      = "MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIDApTb21lIFN0YXRlMREwDwYDVQQHDAhUYXNoa2VudDEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDDAVOT0MtMQ=="
-	removeNocRootCertSubjectKeyID = "44:EB:4C:62:6B:25:48:CD:A2:B3:1C:87:41:5A:08:E7:2B:B9:83:26"
+	removeNocRootCertSubject      = "MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIEwpTb21lIFN0YXRlMREwDwYDVQQHEwhUYXNoa2VudDEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDEwVOT0MtMQ=="
+	removeNocRootCertSubjectKeyID = "0E:10:B8:5D:96:7A:08:33:C7:C5:44:49:0E:28:0F:C1:6E:D5:D4:7C"
 
-	removeNocIntermCertSubject      = "MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtOT0MtY2hpbGQtMQ=="
-	removeNocIntermCertSubjectKeyID = "02:72:6E:BC:BB:EF:D6:BD:8D:9B:42:AE:D4:3C:C0:55:5F:66:3A:B3"
+	removeNocIntermCertSubject      = "MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECBMKU29tZSBTdGF0ZTETMBEGA1UEBxMKU29tZSBTdGF0ZTEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDEwtOT0MtY2hpbGQtMQ=="
+	removeNocIntermCertSubjectKeyID = "06:9F:5A:E0:1F:23:3E:9F:C7:4F:B6:F9:A2:33:47:33:62:7A:07:C5"
 
-	removeNocLeafCertSubject      = "MIGBMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRMwEQYDVQQDDApOT0MtbGVhZi0x"
-	removeNocLeafCertSubjectKeyID = "77:1F:DB:C4:4C:B1:29:7E:3C:EB:3E:D8:2A:38:0B:63:06:07:00:01"
+	// removeNocLeafCert* — same VVSC leaf 1 fixture as the rest of the package.
+	removeNocLeafCertSubject      = "MIGYMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtWVlNDLUxlYWYtMTEUMBIGCisGAQQBgqJ8AgEMBDAwMDE="
+	removeNocLeafCertSubjectKeyID = "42:24:A6:34:C8:C1:2F:88:9D:9C:7F:BE:8A:7A:6E:40:DB:C8:2B:F1"
 )
 
 func TestPKIRemoveNocCertificates(t *testing.T) {
@@ -39,14 +44,17 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 	vendorAccount65522 := fmt.Sprintf("vendor_account_%d", removeNocOtherVid)
 	cliputils.CreateVendorAccount(t, vendorAccount65522, removeNocOtherVid)
 
-	// Prior NOC tests add noc_root_cert_1, noc_cert_1, and noc_leaf_cert_1 under VID 24582 (nocVid)
-	// and leave them in the revoked state. The unique-cert store retains their serial entries,
-	// preventing re-addition by VID 65521. Remove them via the owning VID 24582 account first.
+	// Prior NOC tests add noc_root_cert_1, noc_cert_1, vvsc_root_cert_1, vvsc_ica_cert_1,
+	// and vvsc_leaf_cert_1 under VID 24582 (nocVid) and leave them in the revoked
+	// state. The unique-cert store retains their serial entries, preventing
+	// re-addition by VID 65521. Remove them via the owning VID 24582 account first.
 	vendorAccount24582 := fmt.Sprintf("vendor_account_%d", nocVid)
 	cliputils.CreateVendorAccount(t, vendorAccount24582, nocVid)
-	RemoveNocRootCert(nocRootCert1Subject, nocRootCert1SubjectKeyID, vendorAccount24582) //nolint:errcheck
-	RemoveNocCert(nocCert1Subject, nocCert1SubjectKeyID, vendorAccount24582)             //nolint:errcheck
-	RemoveNocCert(nocLeafCert1Subject, nocLeafCert1SubjectKeyID, vendorAccount24582)     //nolint:errcheck
+	RemoveNocRootCert(nocRootCert1Subject, nocRootCert1SubjectKeyID, vendorAccount24582)   //nolint:errcheck
+	RemoveNocCert(nocCert1Subject, nocCert1SubjectKeyID, vendorAccount24582)               //nolint:errcheck
+	RemoveNocRootCert(vvscRootCert1Subject, vvscRootCert1SubjectKeyID, vendorAccount24582) //nolint:errcheck
+	RemoveNocCert(vvscIcaCert1Subject, vvscIcaCert1SubjectKeyID, vendorAccount24582)       //nolint:errcheck
+	RemoveNocCert(vvscLeafCert1Subject, vvscLeafCert1SubjectKeyID, vendorAccount24582)     //nolint:errcheck
 
 	t.Run("SetupCerts", func(t *testing.T) {
 		// Add root cert
@@ -56,7 +64,7 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Add ICA certs
+		// Add NOC ICA certs
 		txResult, err = AddNocX509IcaCert(nocCert1Path, vendorAccount65521)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
@@ -69,8 +77,22 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Add leaf cert
-		txResult, err = AddNocX509IcaCert(nocLeafCert1Path, vendorAccount65521)
+		// Pre-seed the VVSC chain (Matter §6.4.5.4) so the leaf below has a
+		// §6.4.10 step 12.a.iii path-length-3 chain to validate against.
+		txResult, err = AddNocRootCert(vvscRootCert1Path, vendorAccount65521, "--is-vid-verification-signer=true")
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		txResult, err = AddNocX509IcaCert(vvscIcaCert1Path, vendorAccount65521, "--is-vid-verification-signer=true")
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// Add VVSC leaf certificate (replaces the legacy NocLeafCert1).
+		txResult, err = AddNocX509IcaCert(vvscLeafCert1Path, vendorAccount65521, "--is-vid-verification-signer=true")
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)

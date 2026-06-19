@@ -16,19 +16,19 @@ const (
 	intermediateCertPath = "../../constants/intermediate_cert"
 	leafCertPath         = "../../constants/leaf_cert"
 
-	rootCertSubject      = "MDQxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRAwDgYDVQQKDAdyb290LWNh"
-	rootCertSubjectKeyID = "5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB"
-	rootCertSerialNumber = "442314047376310867378175982234956458728610743315"
+	rootCertSubject      = "MDQxCzAJBgNVBAYTAkFVMRMwEQYDVQQIEwpzb21lLXN0YXRlMRAwDgYDVQQKEwdyb290LWNh"
+	rootCertSubjectKeyID = "DF:4E:AF:B0:8C:9C:37:78:1A:E7:53:12:CA:E4:78:6B:48:1E:AF:B0"
+	rootCertSerialNumber = "81311506302208030248766861785118937702312370677"
 	rootCertSubjectText  = "O=root-ca,ST=some-state,C=AU"
 
-	intermediateCertSubject      = "MDwxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRgwFgYDVQQKDA9pbnRlcm1lZGlhdGUtY2E="
-	intermediateCertSubjectKeyID = "4E:3B:73:F4:70:4D:C2:98:0D:DB:C8:5A:5F:02:3B:BF:86:25:56:2B"
-	intermediateCertSerialNumber = "169917617234879872371588777545667947720450185023"
+	intermediateCertSubject      = "MDwxCzAJBgNVBAYTAkFVMRMwEQYDVQQIEwpzb21lLXN0YXRlMRgwFgYDVQQKEw9pbnRlcm1lZGlhdGUtY2E="
+	intermediateCertSubjectKeyID = "1B:73:2A:91:34:46:8A:90:2A:87:19:91:E4:BD:8F:69:3A:F9:04:77"
+	intermediateCertSerialNumber = "486736128900935106101503663840421220667833341899"
 	intermediateCertSubjectText  = "O=intermediate-ca,ST=some-state,C=AU"
 
-	leafCertSubject      = "MDExCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMQ0wCwYDVQQKDARsZWFm"
-	leafCertSubjectKeyID = "30:F4:65:75:14:20:B2:AF:3D:14:71:17:AC:49:90:93:3E:24:A0:1F"
-	leafCertSerialNumber = "143290473708569835418599774898811724528308722063"
+	leafCertSubject      = "MDExCzAJBgNVBAYTAkFVMRMwEQYDVQQIEwpzb21lLXN0YXRlMQ0wCwYDVQQKEwRsZWFm"
+	leafCertSubjectKeyID = "2A:31:8D:39:6E:50:DA:96:DF:95:C5:98:83:68:F0:58:B2:15:B3:3A"
+	leafCertSerialNumber = "409691117370409054634487600348183880852961428328"
 	leafCertSubjectText  = "O=leaf,ST=some-state,C=AU"
 
 	googleCertPath         = "../../constants/google_root_cert"

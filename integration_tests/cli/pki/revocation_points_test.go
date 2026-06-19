@@ -26,7 +26,7 @@ const (
 
 	delegatorCertWithVid65521Path     = "../../constants/intermediate_cert_with_vid_1"
 	delegatorCertWithVid65521CopyPath = "../../constants/intermediate_cert_with_vid_1_copy"
-	delegatorCertSubjectKeyID         = "0E8CE8C8B8AA50BC258556B9B19CC2C7D9C52F17"
+	delegatorCertSubjectKeyID         = "B07B3FF14501918FC1FAEECB9A0106C7479B5DEC"
 
 	crlSignerDelegatedByPAI1Path = "../../constants/leaf_cert_with_vid_65521"
 
@@ -37,8 +37,8 @@ const (
 	revPointsTestRootCertSubjectKeyID = "E4:AF:2B:26:71:1A:2B:48:27:85:2F:52:66:2C:EF:F0:89:13:71:3E"
 
 	rootCertWithVidRevPath         = "../../constants/root_cert_with_vid"
-	rootCertWithVidRevSubject      = "MIGYMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgEMBEZGRjE="
-	rootCertWithVidRevSubjectKeyID = "CE:A8:92:66:EA:E0:80:BD:2B:B5:68:E4:0B:07:C4:FA:2C:34:6D:31"
+	rootCertWithVidRevSubject      = "MIGYMQswCQYDVQQGEwJVUzERMA8GA1UECBMITmV3IFlvcmsxETAPBgNVBAcTCE5ldyBZb3JrMRgwFgYDVQQKEw9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsTEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMTD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgETBEZGRjE="
+	rootCertWithVidRevSubjectKeyID = "6B:8C:77:1E:AD:CB:A8:3C:33:9C:2F:10:27:5F:42:03:1D:0A:F4:8E"
 
 	revPointVid          = 65521
 	revPointVid65522     = 65522
@@ -53,7 +53,7 @@ const (
 
 	revPointDataURL          = "https://url.data.dclmodel"
 	revPointDataURLNonScoped = "https://url.data.dclmodel2"
-	revPointIssuerSKID       = "5A880E6C3653D07FB08971A3F473790930E62BDB"
+	revPointIssuerSKID       = "DF4EAFB08C9C37781AE75312CAE4786B481EAFB0"
 	// SKID of google_root_cert_gsr4 (no colons) — used for non-VID-scoped PAI revocation point.
 	// intermediate_cert_gsr4 (no VID) chains to this root, which is on the ledger after TestPKIAddVendorX509Certificates.
 	revPointGsr4IssuerSKID = "54B07BAD45B8E2407FFB0A6EFBBE33C93CA384D5"
