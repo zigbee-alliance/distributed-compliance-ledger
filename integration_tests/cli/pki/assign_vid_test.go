@@ -1,7 +1,6 @@
 package pki
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -29,9 +28,7 @@ func TestPKIAssignVid(t *testing.T) {
 		// Propose and approve a root cert with an assigned VID.
 		// Use google_root_cert_r2 (no embedded Matter VID) to avoid conflicting with root_cert
 		// used by TestPKIDemo.
-		txResult, err := ProposeAddX509RootCert(assignVidTestRootCertPath, jack,
-			"--vid", fmt.Sprintf("%d", rootCertWithVid),
-		)
+		txResult, err := ProposeAddX509RootCert(assignVidTestRootCertPath, jack, X509ProposeOpts{VID: rootCertWithVid})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)

@@ -76,18 +76,14 @@ func TestPKIRevocationWithSerialNumber(t *testing.T) {
 	})
 
 	t.Run("RevokeIntermWithInvalidSerialNumber", func(t *testing.T) {
-		txResult, err := RevokeX509Cert(revSerialIntermCertSubject, revSerialIntermCertSubjectKeyID, vendorAccount,
-			"--serial-number", "invalid",
-		)
+		txResult, err := RevokeX509Cert(revSerialIntermCertSubject, revSerialIntermCertSubjectKeyID, vendorAccount, RevokeNocCertOpts{SerialNumber: "invalid"})
 		require.NoError(t, err)
 		require.NotEqual(t, uint32(0), txResult.Code)
 	})
 
 	t.Run("RevokeIntermWithSerialNumber3Only", func(t *testing.T) {
 		// Revoke with serial number 3 only — child certs should remain
-		txResult, err := RevokeX509Cert(revSerialIntermCertSubject, revSerialIntermCertSubjectKeyID, vendorAccount,
-			"--serial-number", revSerialIntermCert1SerialNumber,
-		)
+		txResult, err := RevokeX509Cert(revSerialIntermCertSubject, revSerialIntermCertSubjectKeyID, vendorAccount, RevokeNocCertOpts{SerialNumber: revSerialIntermCert1SerialNumber})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -120,10 +116,7 @@ func TestPKIRevocationWithSerialNumber(t *testing.T) {
 
 	t.Run("RevokeIntermWithSerial4AndChildFlag", func(t *testing.T) {
 		// Revoke intermediate with serial 4 and its children
-		txResult, err := RevokeX509Cert(revSerialIntermCertSubject, revSerialIntermCertSubjectKeyID, vendorAccount,
-			"--serial-number", revSerialIntermCert2SerialNumber,
-			"--revoke-child=true",
-		)
+		txResult, err := RevokeX509Cert(revSerialIntermCertSubject, revSerialIntermCertSubjectKeyID, vendorAccount, RevokeNocCertOpts{SerialNumber: revSerialIntermCert2SerialNumber, RevokeChild: true})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -195,26 +188,20 @@ func TestPKIRevocationWithSerialNumber(t *testing.T) {
 	})
 
 	t.Run("ProposeRevokeRootWithInvalidSerialNumber", func(t *testing.T) {
-		txResult, err := ProposeRevokeX509RootCert(revSerialRootCertSubject, revSerialRootCertSubjectKeyID, jack,
-			"--serial-number", "invalid",
-		)
+		txResult, err := ProposeRevokeX509RootCert(revSerialRootCertSubject, revSerialRootCertSubjectKeyID, jack, X509ActionOpts{SerialNumber: "invalid"})
 		require.NoError(t, err)
 		require.NotEqual(t, uint32(0), txResult.Code)
 	})
 
 	t.Run("ProposeAndApproveRevokeRootSerial1Only", func(t *testing.T) {
 		// Propose revoke root with serial 1 (child certs should remain).
-		txResult, err := ProposeRevokeX509RootCert(revSerialRootCertSubject, revSerialRootCertSubjectKeyID, jack,
-			"--serial-number", revSerialRootCert1SerialNumber,
-		)
+		txResult, err := ProposeRevokeX509RootCert(revSerialRootCertSubject, revSerialRootCertSubjectKeyID, jack, X509ActionOpts{SerialNumber: revSerialRootCert1SerialNumber})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		txResult, err = ApproveRevokeX509RootCert(revSerialRootCertSubject, revSerialRootCertSubjectKeyID, alice,
-			"--serial-number", revSerialRootCert1SerialNumber,
-		)
+		txResult, err = ApproveRevokeX509RootCert(revSerialRootCertSubject, revSerialRootCertSubjectKeyID, alice, X509ActionOpts{SerialNumber: revSerialRootCert1SerialNumber})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -250,18 +237,16 @@ func TestPKIRevocationWithSerialNumber(t *testing.T) {
 
 	t.Run("ProposeAndApproveRevokeRootSerial2WithChild", func(t *testing.T) {
 		// Propose revoke root with serial 2 and its children.
-		txResult, err := ProposeRevokeX509RootCert(revSerialRootCertSubject, revSerialRootCertSubjectKeyID, jack,
-			"--serial-number", revSerialRootCert2SerialNumber,
-			"--revoke-child=true",
-		)
+		txResult, err := ProposeRevokeX509RootCert(revSerialRootCertSubject, revSerialRootCertSubjectKeyID, jack, X509ActionOpts{
+			SerialNumber: revSerialRootCert2SerialNumber,
+			RevokeChild:  true,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		txResult, err = ApproveRevokeX509RootCert(revSerialRootCertSubject, revSerialRootCertSubjectKeyID, alice,
-			"--serial-number", revSerialRootCert2SerialNumber,
-		)
+		txResult, err = ApproveRevokeX509RootCert(revSerialRootCertSubject, revSerialRootCertSubjectKeyID, alice, X509ActionOpts{SerialNumber: revSerialRootCert2SerialNumber})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)

@@ -93,9 +93,7 @@ func TestPKIRevocationWithRevokingChild(t *testing.T) {
 
 	t.Run("RevokeIntermediateCertWithChildFlag", func(t *testing.T) {
 		// Revoke intermediate certs and their child certificates
-		txResult, err := RevokeX509Cert(revChildIntermCertSubject, revChildIntermCertSubjectKeyID, vendorAccount,
-			"--revoke-child=true",
-		)
+		txResult, err := RevokeX509Cert(revChildIntermCertSubject, revChildIntermCertSubjectKeyID, vendorAccount, RevokeNocCertOpts{RevokeChild: true})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)

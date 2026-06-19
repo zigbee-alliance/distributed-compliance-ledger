@@ -95,9 +95,7 @@ func TestPKINocRevocationWithRevokingChild(t *testing.T) {
 
 		// Revoke the OperationalPKI root NOC certificate with revoke-child=true.
 		// Cascade hits NocCert1 only — the VVSC chain is structurally disjoint (Matter §6.5.12).
-		txResult, err = RevokeNocRootCert(nocRootCert1Subject, nocRootCert1SubjectKeyID, vendorAccount,
-			"--revoke-child=true",
-		)
+		txResult, err = RevokeNocRootCert(nocRootCert1Subject, nocRootCert1SubjectKeyID, vendorAccount, RevokeNocCertOpts{RevokeChild: true})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -105,9 +103,7 @@ func TestPKINocRevocationWithRevokingChild(t *testing.T) {
 
 		// Also revoke the VVSC root with revoke-child=true so the cascade picks
 		// up VvscIca1 + the VVSC leaf.
-		txResult, err = RevokeNocRootCert(vvscRootCert1Subject, vvscRootCert1SubjectKeyID, vendorAccount,
-			"--revoke-child=true",
-		)
+		txResult, err = RevokeNocRootCert(vvscRootCert1Subject, vvscRootCert1SubjectKeyID, vendorAccount, RevokeNocCertOpts{RevokeChild: true})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -174,7 +170,7 @@ func TestPKINocRevocationWithRevokingChild(t *testing.T) {
 		// shares VvscRoot1's key (same Subject + SubjectKeyID) so VvscIca2's
 		// AuthorityKeyID still resolves to a present VIDSignerPKI entry during
 		// verifyVVSCCertificate's chain walk.
-		txResult, err = AddNocRootCert(vvscRootCert1CopyPath, vendorAccount, "--is-vid-verification-signer=true")
+		txResult, err = AddNocRootCert(vvscRootCert1CopyPath, vendorAccount, AddNocCertOpts{IsVidVerificationSigner: true})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -183,7 +179,7 @@ func TestPKINocRevocationWithRevokingChild(t *testing.T) {
 		// Pre-seed the second VVSC intermediate (VvscIca2 under VvscRoot1) so
 		// the leaf-2 chain VvscRoot1 → VvscIca2 → vvsc_leaf_cert_2 resolves
 		// through verifyVVSCCertificate.
-		txResult, err = AddNocX509IcaCert(vvscIcaCert2Path, vendorAccount, "--is-vid-verification-signer=true")
+		txResult, err = AddNocX509IcaCert(vvscIcaCert2Path, vendorAccount, AddNocCertOpts{IsVidVerificationSigner: true})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -191,7 +187,7 @@ func TestPKINocRevocationWithRevokingChild(t *testing.T) {
 
 		// Add VVSC leaf certificate 2 (replaces the legacy NocLeafCert2 — the
 		// nocLeafCert2* constants now hold VvscLeafCert2 values).
-		txResult, err = AddNocX509IcaCert(nocLeafCert2Path, vendorAccount, "--is-vid-verification-signer=true")
+		txResult, err = AddNocX509IcaCert(nocLeafCert2Path, vendorAccount, AddNocCertOpts{IsVidVerificationSigner: true})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -199,18 +195,14 @@ func TestPKINocRevocationWithRevokingChild(t *testing.T) {
 
 		// Revoke the OperationalPKI ICA with revoke-child=true.
 		// Cascade hits NocCert2 / NocCert2Copy but, per Matter §6.5.12, does not reach the VVSC leaf.
-		txResult, err = RevokeNocX509IcaCert(nocCert2Subject, nocCert2SubjectKeyID, vendorAccount,
-			"--revoke-child=true",
-		)
+		txResult, err = RevokeNocX509IcaCert(nocCert2Subject, nocCert2SubjectKeyID, vendorAccount, RevokeNocCertOpts{RevokeChild: true})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
 		// Also revoke VvscIca2 with revoke-child=true so the cascade picks up the VVSC leaf 2.
-		txResult, err = RevokeNocX509IcaCert(vvscIcaCert2Subject, vvscIcaCert2SubjectKeyID, vendorAccount,
-			"--revoke-child=true",
-		)
+		txResult, err = RevokeNocX509IcaCert(vvscIcaCert2Subject, vvscIcaCert2SubjectKeyID, vendorAccount, RevokeNocCertOpts{RevokeChild: true})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)

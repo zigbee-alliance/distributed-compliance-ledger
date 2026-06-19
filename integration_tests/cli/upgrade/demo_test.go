@@ -47,9 +47,7 @@ func TestUpgradeDemo(t *testing.T) {
 
 	t.Run("ProposeApproveUpgrade_v1_2_0", func(t *testing.T) {
 		// trusteeAccount proposes
-		txResult, err := ProposeUpgrade(upgradeNameV120, farFutureHeight, trusteeAccount,
-			"--upgrade-info", upgradeInfoV120,
-		)
+		txResult, err := ProposeUpgrade(upgradeNameV120, farFutureHeight, trusteeAccount, ProposeUpgradeOpts{UpgradeInfo: upgradeInfoV120})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -174,9 +172,7 @@ func TestUpgradeDemo(t *testing.T) {
 
 	t.Run("ProposeAndRejectUpgrade_v1_2_1", func(t *testing.T) {
 		// Use a fresh far-future height
-		txResult, err := ProposeUpgrade(upgradeNameV121, farFutureHeight, trusteeAccount,
-			"--upgrade-info", upgradeInfoV121,
-		)
+		txResult, err := ProposeUpgrade(upgradeNameV121, farFutureHeight, trusteeAccount, ProposeUpgradeOpts{UpgradeInfo: upgradeInfoV121})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -258,9 +254,7 @@ func TestUpgradeDemo(t *testing.T) {
 		planHeight := fmt.Sprintf("%d", h+10000000)
 
 		// jack proposes
-		txResult, err := ProposeUpgrade(upgradeNameV141, planHeight, jack,
-			"--upgrade-info", upgradeInfoV141,
-		)
+		txResult, err := ProposeUpgrade(upgradeNameV141, planHeight, jack, ProposeUpgradeOpts{UpgradeInfo: upgradeInfoV141})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)

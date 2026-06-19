@@ -51,17 +51,12 @@ func TestModelValidationCases(t *testing.T) {
 	// --- AddModel ---
 
 	t.Run("AddModel_MinimumFields", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid1),
-			"--pid", fmt.Sprintf("%d", pid1),
-			"--deviceTypeID", "1",
-			"--productName", "TestProduct",
-			"--productLabel", "Test Product",
-			"--partNumber", "1",
-			"--enhancedSetupFlowOptions", "0",
-			"--commissioningCustomFlow", "0",
-			"--from", vendorAccount1,
-		)
+		txResult, err := AddModel(AddModelOpts{
+			VID:          vid1,
+			PID:          pid1,
+			ProductLabel: "Test Product",
+			From:         vendorAccount1,
+		})
 		requireTxOK(t, txResult, err)
 
 		out, err := QueryModel(vid1, pid1)
@@ -74,30 +69,31 @@ func TestModelValidationCases(t *testing.T) {
 	})
 
 	t.Run("AddModel_AllFields", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid1),
-			"--pid", fmt.Sprintf("%d", pid2),
-			"--deviceTypeID", "2",
-			"--productName", "Test Product with All Fields",
-			"--productLabel", "Test Product with All fields",
-			"--partNumber", "23.456",
-			"--commissioningCustomFlow", "1",
-			"--commissioningCustomFlowURL", "https://customflow.url.info",
-			"--commissioningModeInitialStepsHint", "1",
-			"--commissioningModeInitialStepsInstruction", "Initial Instructions",
-			"--commissioningModeSecondaryStepsHint", "2",
-			"--commissioningModeSecondaryStepsInstruction", "Secondary Steps Instruction",
-			"--icdUserActiveModeTriggerHint", "4",
-			"--icdUserActiveModeTriggerInstruction", "ICD User Active Mode Trigger Instruction",
-			"--factoryResetStepsHint", "3",
-			"--factoryResetStepsInstruction", "Factory Reset Steps Instruction",
-			"--userManualURL", "https://usermanual.url",
-			"--productURL", "https://product.url.info",
-			"--lsfURL", "https://lsf.url.info",
-			"--supportURL", "https://support.url.info",
-			"--enhancedSetupFlowOptions", "0",
-			"--from", vendorAccount1,
-		)
+		txResult, err := AddModel(AddModelOpts{
+			VID:                     vid1,
+			PID:                     pid2,
+			DeviceTypeID:            2,
+			ProductName:             "Test Product with All Fields",
+			ProductLabel:            "Test Product with All fields",
+			PartNumber:              "23.456",
+			CommissioningCustomFlow: 1,
+			From:                    vendorAccount1,
+			Extra: []string{
+				"--commissioningCustomFlowURL", "https://customflow.url.info",
+				"--commissioningModeInitialStepsHint", "1",
+				"--commissioningModeInitialStepsInstruction", "Initial Instructions",
+				"--commissioningModeSecondaryStepsHint", "2",
+				"--commissioningModeSecondaryStepsInstruction", "Secondary Steps Instruction",
+				"--icdUserActiveModeTriggerHint", "4",
+				"--icdUserActiveModeTriggerInstruction", "ICD User Active Mode Trigger Instruction",
+				"--factoryResetStepsHint", "3",
+				"--factoryResetStepsInstruction", "Factory Reset Steps Instruction",
+				"--userManualURL", "https://usermanual.url",
+				"--productURL", "https://product.url.info",
+				"--lsfURL", "https://lsf.url.info",
+				"--supportURL", "https://support.url.info",
+			},
+		})
 		requireTxOK(t, txResult, err)
 
 		out, err := QueryModel(vid1, pid2)
@@ -127,26 +123,27 @@ func TestModelValidationCases(t *testing.T) {
 	})
 
 	t.Run("AddModel_MandatoryAndSomeOptional_Pid3", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid1),
-			"--pid", fmt.Sprintf("%d", pid3),
-			"--deviceTypeID", "2",
-			"--productName", "Test Product with All Fields",
-			"--productLabel", "Test Product with All fields",
-			"--partNumber", "23.456",
-			"--commissioningCustomFlow", "1",
-			"--commissioningCustomFlowURL", "https://customflow.url.info",
-			"--commissioningModeInitialStepsHint", "1",
-			"--commissioningModeInitialStepsInstruction", "Initial Instructions",
-			"--commissioningModeSecondaryStepsHint", "2",
-			"--commissioningModeSecondaryStepsInstruction", "Secondary Steps Instruction",
-			"--icdUserActiveModeTriggerHint", "4",
-			"--icdUserActiveModeTriggerInstruction", "ICD User Active Mode Trigger Instruction",
-			"--factoryResetStepsHint", "3",
-			"--factoryResetStepsInstruction", "Factory Reset Steps Instruction",
-			"--enhancedSetupFlowOptions", "0",
-			"--from", vendorAccount1,
-		)
+		txResult, err := AddModel(AddModelOpts{
+			VID:                     vid1,
+			PID:                     pid3,
+			DeviceTypeID:            2,
+			ProductName:             "Test Product with All Fields",
+			ProductLabel:            "Test Product with All fields",
+			PartNumber:              "23.456",
+			CommissioningCustomFlow: 1,
+			From:                    vendorAccount1,
+			Extra: []string{
+				"--commissioningCustomFlowURL", "https://customflow.url.info",
+				"--commissioningModeInitialStepsHint", "1",
+				"--commissioningModeInitialStepsInstruction", "Initial Instructions",
+				"--commissioningModeSecondaryStepsHint", "2",
+				"--commissioningModeSecondaryStepsInstruction", "Secondary Steps Instruction",
+				"--icdUserActiveModeTriggerHint", "4",
+				"--icdUserActiveModeTriggerInstruction", "ICD User Active Mode Trigger Instruction",
+				"--factoryResetStepsHint", "3",
+				"--factoryResetStepsInstruction", "Factory Reset Steps Instruction",
+			},
+		})
 		requireTxOK(t, txResult, err)
 
 		out, err := QueryModel(vid1, pid3)
@@ -286,16 +283,15 @@ func TestModelValidationCases(t *testing.T) {
 	svBasic := rand.Intn(65534) + 1
 
 	t.Run("AddModelVersion_MinimumFields", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model-version",
-			"--vid", fmt.Sprintf("%d", vid1),
-			"--pid", fmt.Sprintf("%d", pid1),
-			"--softwareVersion", fmt.Sprintf("%d", svBasic),
-			"--softwareVersionString", "1",
-			"--cdVersionNumber", "1",
-			"--maxApplicableSoftwareVersion", "20",
-			"--minApplicableSoftwareVersion", "10",
-			"--from", vendorAccount1,
-		)
+		txResult, err := AddModelVersion(AddModelVersionOpts{
+			VID:                          vid1,
+			PID:                          pid1,
+			SoftwareVersion:              svBasic,
+			SoftwareVersionString:        "1",
+			MinApplicableSoftwareVersion: 10,
+			MaxApplicableSoftwareVersion: 20,
+			From:                         vendorAccount1,
+		})
 		requireTxOK(t, txResult, err)
 
 		out, err := QueryModelVersion(vid1, pid1, svBasic)
@@ -352,24 +348,26 @@ func TestModelValidationCases(t *testing.T) {
 	svFull := rand.Intn(65534) + 1
 
 	t.Run("AddModelVersion_AllFields_Full", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model-version",
-			"--vid", fmt.Sprintf("%d", vid1),
-			"--pid", fmt.Sprintf("%d", pid1),
-			"--softwareVersion", fmt.Sprintf("%d", svFull),
-			"--softwareVersionString", "1.0",
-			"--cdVersionNumber", "21334",
-			"--firmwareInformation", "123456789012345678901234567890123456789012345678901234567890123",
-			"--softwareVersionValid=true",
-			"--otaURL", "https://ota.url.info",
-			"--otaFileSize", "123456789",
-			"--specificationVersion", "4",
-			"--otaChecksum", "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=",
-			"--releaseNotesURL", "https://release.notes.url.info",
-			"--otaChecksumType", "1",
-			"--maxApplicableSoftwareVersion", "32",
-			"--minApplicableSoftwareVersion", "5",
-			"--from", vendorAccount1,
-		)
+		txResult, err := AddModelVersion(AddModelVersionOpts{
+			VID:                          vid1,
+			PID:                          pid1,
+			SoftwareVersion:              svFull,
+			SoftwareVersionString:        "1.0",
+			CDVersionNumber:              21334,
+			MinApplicableSoftwareVersion: 5,
+			MaxApplicableSoftwareVersion: 32,
+			OtaURL:                       "https://ota.url.info",
+			OtaFileSize:                  123456789,
+			OtaChecksum:                  "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=",
+			From:                         vendorAccount1,
+			Extra: []string{
+				"--firmwareInformation", "123456789012345678901234567890123456789012345678901234567890123",
+				"--softwareVersionValid=true",
+				"--specificationVersion", "4",
+				"--releaseNotesURL", "https://release.notes.url.info",
+				"--otaChecksumType", "1",
+			},
+		})
 		requireTxOK(t, txResult, err)
 
 		out, err := QueryModelVersion(vid1, pid1, svFull)
@@ -448,23 +446,25 @@ func TestModelValidationCases(t *testing.T) {
 	svBounds := rand.Intn(65534) + 1
 
 	t.Run("AddModelVersion_WithSpecVer6", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model-version",
-			"--vid", fmt.Sprintf("%d", vid1),
-			"--pid", fmt.Sprintf("%d", pid1),
-			"--softwareVersion", fmt.Sprintf("%d", svBounds),
-			"--softwareVersionString", "1.0",
-			"--cdVersionNumber", "21334",
-			"--firmwareInformation", "123456789012345678901234567890123456789012345678901234567890123",
-			"--softwareVersionValid=true",
-			"--otaURL", "https://ota.url.info",
-			"--otaFileSize", "123456789",
-			"--specificationVersion", "6",
-			"--otaChecksum", "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=",
-			"--otaChecksumType", "1",
-			"--maxApplicableSoftwareVersion", "32",
-			"--minApplicableSoftwareVersion", "5",
-			"--from", vendorAccount1,
-		)
+		txResult, err := AddModelVersion(AddModelVersionOpts{
+			VID:                          vid1,
+			PID:                          pid1,
+			SoftwareVersion:              svBounds,
+			SoftwareVersionString:        "1.0",
+			CDVersionNumber:              21334,
+			MinApplicableSoftwareVersion: 5,
+			MaxApplicableSoftwareVersion: 32,
+			OtaURL:                       "https://ota.url.info",
+			OtaFileSize:                  123456789,
+			OtaChecksum:                  "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=",
+			From:                         vendorAccount1,
+			Extra: []string{
+				"--firmwareInformation", "123456789012345678901234567890123456789012345678901234567890123",
+				"--softwareVersionValid=true",
+				"--specificationVersion", "6",
+				"--otaChecksumType", "1",
+			},
+		})
 		requireTxOK(t, txResult, err)
 
 		out, err := QueryModelVersion(vid1, pid1, svBounds)
@@ -495,16 +495,15 @@ func TestModelValidationCases(t *testing.T) {
 	svNoOta := rand.Intn(65534) + 1
 
 	t.Run("AddModelVersion_NoOta_ThenUpdateOtaUrlOnly_Fails", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model-version",
-			"--vid", fmt.Sprintf("%d", vid1),
-			"--pid", fmt.Sprintf("%d", pid1),
-			"--softwareVersion", fmt.Sprintf("%d", svNoOta),
-			"--softwareVersionString", "1",
-			"--cdVersionNumber", "1",
-			"--maxApplicableSoftwareVersion", "20",
-			"--minApplicableSoftwareVersion", "10",
-			"--from", vendorAccount1,
-		)
+		txResult, err := AddModelVersion(AddModelVersionOpts{
+			VID:                          vid1,
+			PID:                          pid1,
+			SoftwareVersion:              svNoOta,
+			SoftwareVersionString:        "1",
+			MinApplicableSoftwareVersion: 10,
+			MaxApplicableSoftwareVersion: 20,
+			From:                         vendorAccount1,
+		})
 		requireTxOK(t, txResult, err)
 
 		txResult, err = UpdateModelVersion(vid1, pid1, svNoOta, vendorAccount1,
@@ -519,23 +518,25 @@ func TestModelValidationCases(t *testing.T) {
 	svNoSpecVer := rand.Intn(65534) + 1
 
 	t.Run("AddModelVersion_NoSpecVer_DefaultsZero", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model-version",
-			"--vid", fmt.Sprintf("%d", vid1),
-			"--pid", fmt.Sprintf("%d", pid1),
-			"--softwareVersion", fmt.Sprintf("%d", svNoSpecVer),
-			"--softwareVersionString", "1.0",
-			"--cdVersionNumber", "21334",
-			"--firmwareInformation", "123456789012345678901234567890123456789012345678901234567890123",
-			"--softwareVersionValid=true",
-			"--otaURL", "https://ota.url.info",
-			"--otaFileSize", "123456789",
-			"--otaChecksum", "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=",
-			"--releaseNotesURL", "https://release.notes.url.info",
-			"--otaChecksumType", "1",
-			"--maxApplicableSoftwareVersion", "32",
-			"--minApplicableSoftwareVersion", "5",
-			"--from", vendorAccount1,
-		)
+		txResult, err := AddModelVersion(AddModelVersionOpts{
+			VID:                          vid1,
+			PID:                          pid1,
+			SoftwareVersion:              svNoSpecVer,
+			SoftwareVersionString:        "1.0",
+			CDVersionNumber:              21334,
+			MinApplicableSoftwareVersion: 5,
+			MaxApplicableSoftwareVersion: 32,
+			OtaURL:                       "https://ota.url.info",
+			OtaFileSize:                  123456789,
+			OtaChecksum:                  "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=",
+			From:                         vendorAccount1,
+			Extra: []string{
+				"--firmwareInformation", "123456789012345678901234567890123456789012345678901234567890123",
+				"--softwareVersionValid=true",
+				"--releaseNotesURL", "https://release.notes.url.info",
+				"--otaChecksumType", "1",
+			},
+		})
 		requireTxOK(t, txResult, err)
 
 		out, err := QueryModelVersion(vid1, pid1, svNoSpecVer)
@@ -548,24 +549,26 @@ func TestModelValidationCases(t *testing.T) {
 	svSpecVerImmutable := rand.Intn(65534) + 1
 
 	t.Run("AddModelVersion_AllFields_v33", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model-version",
-			"--vid", fmt.Sprintf("%d", vid1),
-			"--pid", fmt.Sprintf("%d", pid1),
-			"--softwareVersion", fmt.Sprintf("%d", svSpecVerImmutable),
-			"--softwareVersionString", "1.0",
-			"--cdVersionNumber", "21334",
-			"--firmwareInformation", "123456789012345678901234567890123456789012345678901234567890123",
-			"--softwareVersionValid=true",
-			"--otaURL", "https://ota.url.info",
-			"--otaFileSize", "123456789",
-			"--specificationVersion", "33",
-			"--otaChecksum", "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=",
-			"--releaseNotesURL", "https://release.notes.url.info",
-			"--otaChecksumType", "1",
-			"--maxApplicableSoftwareVersion", "32",
-			"--minApplicableSoftwareVersion", "5",
-			"--from", vendorAccount1,
-		)
+		txResult, err := AddModelVersion(AddModelVersionOpts{
+			VID:                          vid1,
+			PID:                          pid1,
+			SoftwareVersion:              svSpecVerImmutable,
+			SoftwareVersionString:        "1.0",
+			CDVersionNumber:              21334,
+			MinApplicableSoftwareVersion: 5,
+			MaxApplicableSoftwareVersion: 32,
+			OtaURL:                       "https://ota.url.info",
+			OtaFileSize:                  123456789,
+			OtaChecksum:                  "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=",
+			From:                         vendorAccount1,
+			Extra: []string{
+				"--firmwareInformation", "123456789012345678901234567890123456789012345678901234567890123",
+				"--softwareVersionValid=true",
+				"--specificationVersion", "33",
+				"--releaseNotesURL", "https://release.notes.url.info",
+				"--otaChecksumType", "1",
+			},
+		})
 		requireTxOK(t, txResult, err)
 	})
 
@@ -589,18 +592,13 @@ func TestModelValidationCases(t *testing.T) {
 	// Keep the AddModel_WithSchemaVersion path for ts-client compatibility coverage.
 	t.Run("AddModel_WithSchemaVersion", func(t *testing.T) {
 		extraPid := rand.Intn(65534) + 1
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid1),
-			"--pid", fmt.Sprintf("%d", extraPid),
-			"--deviceTypeID", "1",
-			"--productName", "TestProduct",
-			"--productLabel", "Test Product",
-			"--partNumber", "1",
-			"--enhancedSetupFlowOptions", "0",
-			"--commissioningCustomFlow", "0",
-			"--schemaVersion", "0",
-			"--from", vendorAccount1,
-		)
+		txResult, err := AddModel(AddModelOpts{
+			VID:           vid1,
+			PID:           extraPid,
+			ProductLabel:  "Test Product",
+			SchemaVersion: "0",
+			From:          vendorAccount1,
+		})
 		requireTxOK(t, txResult, err)
 
 		out, err := QueryModel(vid1, extraPid)

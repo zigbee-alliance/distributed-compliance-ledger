@@ -22,17 +22,12 @@ func TestModelVersionDemoHex(t *testing.T) {
 	sv := rand.Intn(65534) + 1
 
 	t.Run("AddModel", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", vidHex,
-			"--pid", pidHex,
-			"--deviceTypeID", "1",
-			"--productName", "TestProduct",
-			"--productLabel", "Test Product",
-			"--partNumber", "1",
-			"--commissioningCustomFlow", "0",
-			"--enhancedSetupFlowOptions", "0",
-			"--from", vendorAccount,
-		)
+		txResult, err := AddModel(AddModelOpts{
+			VIDHex:       vidHex,
+			PIDHex:       pidHex,
+			ProductLabel: "Test Product",
+			From:         vendorAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -40,16 +35,13 @@ func TestModelVersionDemoHex(t *testing.T) {
 	})
 
 	t.Run("AddModelVersion_WithDecimalSV", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model-version",
-			"--cdVersionNumber", "1",
-			"--maxApplicableSoftwareVersion", "10",
-			"--minApplicableSoftwareVersion", "1",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--softwareVersion", fmt.Sprintf("%d", sv),
-			"--softwareVersionString", "1",
-			"--from", vendorAccount,
-		)
+		txResult, err := AddModelVersion(AddModelVersionOpts{
+			VID:                   vid,
+			PID:                   pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: "1",
+			From:                  vendorAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -57,12 +49,7 @@ func TestModelVersionDemoHex(t *testing.T) {
 	})
 
 	t.Run("QueryModelVersion_WithHexVID", func(t *testing.T) {
-		out, err := utils.ExecuteCLI("query", "model", "model-version",
-			"--vid", vidHex,
-			"--pid", pidHex,
-			"--softwareVersion", fmt.Sprintf("%d", sv),
-			"-o", "json",
-		)
+		out, err := QueryModelVersionHex(vidHex, pidHex, sv)
 		require.NoError(t, err)
 		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
@@ -75,11 +62,7 @@ func TestModelVersionDemoHex(t *testing.T) {
 	})
 
 	t.Run("QueryAllModelVersions_WithHexVID", func(t *testing.T) {
-		out, err := utils.ExecuteCLI("query", "model", "all-model-versions",
-			"--vid", vidHex,
-			"--pid", pidHex,
-			"-o", "json",
-		)
+		out, err := QueryAllModelVersionsHex(vidHex, pidHex)
 		require.NoError(t, err)
 		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
@@ -88,12 +71,7 @@ func TestModelVersionDemoHex(t *testing.T) {
 	})
 
 	t.Run("QueryNonExistentModelVersion_WithHexVID", func(t *testing.T) {
-		out, err := utils.ExecuteCLI("query", "model", "model-version",
-			"--vid", vidHex,
-			"--pid", pidHex,
-			"--softwareVersion", "123456",
-			"-o", "json",
-		)
+		out, err := QueryModelVersionHex(vidHex, pidHex, 123456)
 		require.NoError(t, err)
 		require.Contains(t, string(out), "Not Found")
 	})

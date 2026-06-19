@@ -18,20 +18,91 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
+// VendorOpts holds parameters for add-vendor / update-vendor.
+// VID is required for both (>0 emits --vid); other fields are only emitted
+// when non-empty.
+type VendorOpts struct {
+	VID                  int
+	VIDHex               string
+	VendorName           string
+	CompanyLegalName     string
+	CompanyPreferredName string
+	VendorLandingPageURL string
+	SchemaVersion        string
+	Extra                []string
+}
+
+func (o VendorOpts) args() []string {
+	var args []string
+	if o.VID != 0 || o.VIDHex != "" {
+		args = append(args, "--vid", flagOrHex(o.VID, o.VIDHex))
+	}
+	if o.VendorName != "" {
+		args = append(args, "--vendorName", o.VendorName)
+	}
+	if o.CompanyLegalName != "" {
+		args = append(args, "--companyLegalName", o.CompanyLegalName)
+	}
+	if o.CompanyPreferredName != "" {
+		args = append(args, "--companyPreferredName", o.CompanyPreferredName)
+	}
+	if o.VendorLandingPageURL != "" {
+		args = append(args, "--vendorLandingPageURL", o.VendorLandingPageURL)
+	}
+	if o.SchemaVersion != "" {
+		args = append(args, "--schemaVersion", o.SchemaVersion)
+	}
+
+	return append(args, o.Extra...)
+}
+
 // AddVendor adds a vendor info record.
-func AddVendor(from string, extra ...string) (*utils.TxResult, error) {
+func AddVendor(from string, opts VendorOpts) (*utils.TxResult, error) {
 	args := []string{"tx", "vendorinfo", "add-vendor", "--from", from}
-	args = append(args, extra...)
+	args = append(args, opts.args()...)
 
 	return utils.ExecuteTx(args...)
 }
 
 // UpdateVendor updates a vendor info record.
-func UpdateVendor(from string, extra ...string) (*utils.TxResult, error) {
+func UpdateVendor(from string, opts VendorOpts) (*utils.TxResult, error) {
 	args := []string{"tx", "vendorinfo", "update-vendor", "--from", from}
-	args = append(args, extra...)
+	args = append(args, opts.args()...)
 
 	return utils.ExecuteTx(args...)
+}
+
+// flagOrHex returns hex if non-empty, otherwise the decimal-formatted n.
+func flagOrHex(n int, hex string) string {
+	if hex != "" {
+		return hex
+	}
+
+	return itoa(n)
+}
+
+func itoa(n int) string {
+	if n == 0 {
+		return "0"
+	}
+	neg := false
+	if n < 0 {
+		neg = true
+		n = -n
+	}
+	var buf [20]byte
+	pos := len(buf)
+	for n > 0 {
+		pos--
+		buf[pos] = byte('0' + n%10)
+		n /= 10
+	}
+	if neg {
+		pos--
+		buf[pos] = '-'
+	}
+
+	return string(buf[pos:])
 }
 
 // QueryVendor queries a vendor info record by VID.

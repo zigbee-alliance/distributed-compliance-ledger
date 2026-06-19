@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/compliance"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
@@ -80,17 +81,11 @@ func TestModelNegativeCases(t *testing.T) {
 
 	t.Run("AddModelTwice_Fails", func(t *testing.T) {
 		// First add succeeds
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--deviceTypeID", "1",
-			"--productName", "TestProduct",
-			"--productLabel", "TestingProductLabel",
-			"--partNumber", "1",
-			"--commissioningCustomFlow", "0",
-			"--enhancedSetupFlowOptions", "0",
-			"--from", vendorAccount,
-		)
+		txResult, err := AddModel(AddModelOpts{
+			VID:  vid,
+			PID:  pid,
+			From: vendorAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -116,34 +111,28 @@ func TestModelNegativeCases(t *testing.T) {
 	sv := rand.Intn(65534) + 1
 
 	t.Run("AddModelVersion_ThenCertify_ThenDeleteCertifiedModel_Fails", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model-version",
-			"--cdVersionNumber", "1",
-			"--maxApplicableSoftwareVersion", "10",
-			"--minApplicableSoftwareVersion", "1",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--softwareVersion", fmt.Sprintf("%d", sv),
-			"--softwareVersionString", softwareVersionString,
-			"--from", vendorAccount,
-		)
+		txResult, err := AddModelVersion(AddModelVersionOpts{
+			VID:                   vid,
+			PID:                   pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: softwareVersionString,
+			From:                  vendorAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
 		certificationDate := "2020-01-01T00:00:01Z"
-		txResult, err = utils.ExecuteTx("tx", "compliance", "certify-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--softwareVersion", fmt.Sprintf("%d", sv),
-			"--cdVersionNumber", "1",
-			"--certificationType", "zigbee",
-			"--specificationVersion", "1",
-			"--certificationDate", certificationDate,
-			"--softwareVersionString", softwareVersionString,
-			"--cdCertificateId", "1230000000000000000",
-			"--from", zbAccount,
-		)
+		txResult, err = compliance.CertifyModel(compliance.CertifyModelOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: softwareVersionString,
+			CertificationType:     "zigbee",
+			CertificationDate:     certificationDate,
+			CDCertificateID:       "1230000000000000000",
+			From:                  zbAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)

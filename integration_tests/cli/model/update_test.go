@@ -24,18 +24,13 @@ func TestModelUpdate(t *testing.T) {
 	productLabel := "Device #1"
 
 	t.Run("AddModel", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--deviceTypeID", "1",
-			"--productName", "TestProduct",
-			"--productLabel", productLabel,
-			"--partNumber", "1",
-			"--commissioningCustomFlow", "0",
-			"--enhancedSetupFlowOptions", "0",
-			"--schemaVersion", "0",
-			"--from", vendorAccount,
-		)
+		txResult, err := AddModel(AddModelOpts{
+			VID:           vid,
+			PID:           pid,
+			ProductLabel:  productLabel,
+			SchemaVersion: "0",
+			From:          vendorAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -58,10 +53,7 @@ func TestModelUpdate(t *testing.T) {
 
 	t.Run("UpdateModelFields", func(t *testing.T) {
 		newDesc := "New Device Description"
-		txResult, err := utils.ExecuteTx("tx", "model", "update-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--from", vendorAccount,
+		txResult, err := UpdateModel(vid, pid, vendorAccount,
 			"--productLabel", newDesc,
 			"--schemaVersion", "0",
 			"--commissioningModeInitialStepsHint", "8",
@@ -87,10 +79,7 @@ func TestModelUpdate(t *testing.T) {
 
 	t.Run("UpdateModelSupportURL", func(t *testing.T) {
 		supportURL := "https://newsupporturl.test"
-		txResult, err := utils.ExecuteTx("tx", "model", "update-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--from", vendorAccount,
+		txResult, err := UpdateModel(vid, pid, vendorAccount,
 			"--supportURL", supportURL,
 			"--enhancedSetupFlowOptions", "0",
 		)

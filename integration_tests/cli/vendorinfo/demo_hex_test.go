@@ -45,11 +45,11 @@ func TestVendorInfoDemoHex(t *testing.T) {
 	)
 
 	t.Run("AddVendorInfoWithHexVID", func(t *testing.T) {
-		txResult, err := AddVendor(vendorAccount,
-			"--vid", hexVid,
-			"--companyLegalName", companyLegalName,
-			"--vendorName", vendorName,
-		)
+		txResult, err := AddVendor(vendorAccount, VendorOpts{
+			VIDHex:           hexVid,
+			CompanyLegalName: companyLegalName,
+			VendorName:       vendorName,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -69,12 +69,12 @@ func TestVendorInfoDemoHex(t *testing.T) {
 	vendorLandingPageURL := "https://www.w3.org/"
 
 	t.Run("UpdateVendorInfoWithHexVID", func(t *testing.T) {
-		txResult, err := UpdateVendor(vendorAccount,
-			"--vid", hexVid,
-			"--companyLegalName", updatedCompanyName,
-			"--vendorLandingPageURL", vendorLandingPageURL,
-			"--vendorName", vendorName,
-		)
+		txResult, err := UpdateVendor(vendorAccount, VendorOpts{
+			VIDHex:               hexVid,
+			CompanyLegalName:     updatedCompanyName,
+			VendorLandingPageURL: vendorLandingPageURL,
+			VendorName:           vendorName,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -89,22 +89,22 @@ func TestVendorInfoDemoHex(t *testing.T) {
 	})
 
 	t.Run("AddVendorForWrongHexVID_Fails", func(t *testing.T) {
-		txResult, err := AddVendor(vendorAccount,
-			"--vid", hexVid3,
-			"--companyLegalName", updatedCompanyName,
-			"--vendorName", vendorName,
-		)
+		txResult, err := AddVendor(vendorAccount, VendorOpts{
+			VIDHex:           hexVid3,
+			CompanyLegalName: updatedCompanyName,
+			VendorName:       vendorName,
+		})
 		if err == nil {
 			require.NotEqual(t, uint32(0), txResult.Code)
 		}
 	})
 
 	t.Run("UpdateVendorForWrongHexAccount_Fails", func(t *testing.T) {
-		txResult, err := UpdateVendor(secondVendorAccount,
-			"--vid", hexVid,
-			"--companyLegalName", updatedCompanyName,
-			"--vendorName", vendorName,
-		)
+		txResult, err := UpdateVendor(secondVendorAccount, VendorOpts{
+			VIDHex:           hexVid,
+			CompanyLegalName: updatedCompanyName,
+			VendorName:       vendorName,
+		})
 		if err == nil {
 			require.NotEqual(t, uint32(0), txResult.Code)
 		}

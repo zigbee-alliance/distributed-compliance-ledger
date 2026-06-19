@@ -44,7 +44,7 @@ func TestPKIApproval(t *testing.T) {
 	txResult, err = dclauth.ApproveAccount(fourthAddr, alice)
 	require.NoError(t, err)
 	require.Equal(t, uint32(0), txResult.Code, "approve 4th trustee (alice): %s", txResult.RawLog)
-	out, err := utils.ExecuteCLI("query", "auth", "account", "--address", fourthAddr, "-o", "json")
+	out, err := dclauth.QueryAccountRaw(fourthAddr)
 	require.NoError(t, err)
 	require.NotContains(t, string(out), "Not Found", "4th trustee should be active")
 
@@ -63,7 +63,7 @@ func TestPKIApproval(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code, "approve 5th trustee (%s): %s", approver, txResult.RawLog)
 	}
-	out, err = utils.ExecuteCLI("query", "auth", "account", "--address", fifthAddr, "-o", "json")
+	out, err = dclauth.QueryAccountRaw(fifthAddr)
 	require.NoError(t, err)
 	require.NotContains(t, string(out), "Not Found", "5th trustee should be active")
 
@@ -82,7 +82,7 @@ func TestPKIApproval(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code, "approve 6th trustee (%s): %s", approver, txResult.RawLog)
 	}
-	out, err = utils.ExecuteCLI("query", "auth", "account", "--address", sixthAddr, "-o", "json")
+	out, err = dclauth.QueryAccountRaw(sixthAddr)
 	require.NoError(t, err)
 	require.NotContains(t, string(out), "Not Found", "6th trustee should be active")
 
@@ -116,9 +116,7 @@ func TestPKIApproval(t *testing.T) {
 	})
 
 	t.Run("NonTrustee_CannotProposeRootCert", func(t *testing.T) {
-		txResult, err := ProposeAddX509RootCert(approvalTestRootCertPath, userAccount,
-			"--vid", fmt.Sprintf("%d", approvalTestVid),
-		)
+		txResult, err := ProposeAddX509RootCert(approvalTestRootCertPath, userAccount, X509ProposeOpts{VID: approvalTestVid})
 		require.NoError(t, err)
 		require.NotEqual(t, uint32(0), txResult.Code)
 	})
@@ -126,9 +124,7 @@ func TestPKIApproval(t *testing.T) {
 	t.Run("ProposeAndApproveWithQuorum", func(t *testing.T) {
 		// 6 trustees, threshold=4.
 		// 4th proposes (=1), Jack approves (=2), Alice approves (=3), Bob approves (=4) → approved.
-		txResult, err := ProposeAddX509RootCert(approvalTestRootCertPath, fourthKey,
-			"--vid", fmt.Sprintf("%d", approvalTestVid),
-		)
+		txResult, err := ProposeAddX509RootCert(approvalTestRootCertPath, fourthKey, X509ProposeOpts{VID: approvalTestVid})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 

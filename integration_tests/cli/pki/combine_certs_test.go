@@ -29,9 +29,7 @@ func TestPKICombineCerts(t *testing.T) {
 	cliputils.CreateVendorAccount(t, vendorAccount, vid)
 
 	t.Run("ProposeAndApproveFirstRootCert", func(t *testing.T) {
-		txResult, err := ProposeAddX509RootCert(rootWithSameSubjectAndSkid1Path, jack,
-			"--vid", fmt.Sprintf("%d", vid),
-		)
+		txResult, err := ProposeAddX509RootCert(rootWithSameSubjectAndSkid1Path, jack, X509ProposeOpts{VID: vid})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -50,9 +48,7 @@ func TestPKICombineCerts(t *testing.T) {
 	})
 
 	t.Run("ProposeAndApproveSecondRootCert_SameSubjectSkid", func(t *testing.T) {
-		txResult, err := ProposeAddX509RootCert(rootWithSameSubjectAndSkid2Path, jack,
-			"--vid", fmt.Sprintf("%d", vid),
-		)
+		txResult, err := ProposeAddX509RootCert(rootWithSameSubjectAndSkid2Path, jack, X509ProposeOpts{VID: vid})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)

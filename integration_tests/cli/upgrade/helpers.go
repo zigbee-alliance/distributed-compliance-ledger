@@ -18,33 +18,82 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
+// ProposeUpgradeOpts holds optional flags for propose-upgrade.
+// UpgradeInfo emits --upgrade-info; Info emits --info (proposer note).
+type ProposeUpgradeOpts struct {
+	UpgradeInfo string
+	Info        string
+	Extra       []string
+}
+
+func (o ProposeUpgradeOpts) args() []string {
+	var args []string
+	if o.UpgradeInfo != "" {
+		args = append(args, "--upgrade-info", o.UpgradeInfo)
+	}
+	if o.Info != "" {
+		args = append(args, "--info", o.Info)
+	}
+
+	return append(args, o.Extra...)
+}
+
+// UpgradeActionOpts holds optional flags for approve-upgrade / reject-upgrade.
+type UpgradeActionOpts struct {
+	Info  string
+	Extra []string
+}
+
+func (o UpgradeActionOpts) args() []string {
+	var args []string
+	if o.Info != "" {
+		args = append(args, "--info", o.Info)
+	}
+
+	return append(args, o.Extra...)
+}
+
 // ProposeUpgrade proposes a software upgrade.
-func ProposeUpgrade(name, height, from string, extra ...string) (*utils.TxResult, error) {
+func ProposeUpgrade(name, height, from string, opts ...ProposeUpgradeOpts) (*utils.TxResult, error) {
 	args := []string{
 		"tx", "dclupgrade", "propose-upgrade",
 		"--name", name,
 		"--upgrade-height", height,
 		"--from", from,
 	}
-	args = append(args, extra...)
+	for _, o := range opts {
+		args = append(args, o.args()...)
+	}
 
 	return utils.ExecuteTx(args...)
 }
 
 // ApproveUpgrade approves a proposed software upgrade.
-func ApproveUpgrade(name, from string) (*utils.TxResult, error) {
-	return utils.ExecuteTx("tx", "dclupgrade", "approve-upgrade",
+func ApproveUpgrade(name, from string, opts ...UpgradeActionOpts) (*utils.TxResult, error) {
+	args := []string{
+		"tx", "dclupgrade", "approve-upgrade",
 		"--name", name,
 		"--from", from,
-	)
+	}
+	for _, o := range opts {
+		args = append(args, o.args()...)
+	}
+
+	return utils.ExecuteTx(args...)
 }
 
 // RejectUpgrade rejects a proposed software upgrade.
-func RejectUpgrade(name, from string) (*utils.TxResult, error) {
-	return utils.ExecuteTx("tx", "dclupgrade", "reject-upgrade",
+func RejectUpgrade(name, from string, opts ...UpgradeActionOpts) (*utils.TxResult, error) {
+	args := []string{
+		"tx", "dclupgrade", "reject-upgrade",
 		"--name", name,
 		"--from", from,
-	)
+	}
+	for _, o := range opts {
+		args = append(args, o.args()...)
+	}
+
+	return utils.ExecuteTx(args...)
 }
 
 // QueryProposedUpgrade queries a proposed upgrade plan by name.

@@ -77,39 +77,29 @@ func TestPKIRemoveX509Certificates(t *testing.T) {
 
 	t.Run("RevokeAndRemoveIntermCert", func(t *testing.T) {
 		// Revoke first intermediate cert
-		txResult, err := RevokeX509Cert(removeX509IntermCertSubject, removeX509IntermCertSubjectKeyID, vendorAccount65521,
-			"--serial-number", removeX509IntermCert1SerialNum,
-		)
+		txResult, err := RevokeX509Cert(removeX509IntermCertSubject, removeX509IntermCertSubjectKeyID, vendorAccount65521, RevokeNocCertOpts{SerialNumber: removeX509IntermCert1SerialNum})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
 		// Try to remove with invalid serial
-		txResult, err = RemoveX509Cert(removeX509IntermCertSubject, removeX509IntermCertSubjectKeyID, vendorAccount65521,
-			"--serial-number", "invalid",
-		)
+		txResult, err = RemoveX509Cert(removeX509IntermCertSubject, removeX509IntermCertSubjectKeyID, vendorAccount65521, RevokeNocCertOpts{SerialNumber: "invalid"})
 		require.NoError(t, err)
 		require.Equal(t, uint32(404), txResult.Code)
 
 		// Try to remove when sender is not Vendor
-		txResult, err = RemoveX509Cert(removeX509IntermCertSubject, removeX509IntermCertSubjectKeyID, jack,
-			"--serial-number", removeX509IntermCert1SerialNum,
-		)
+		txResult, err = RemoveX509Cert(removeX509IntermCertSubject, removeX509IntermCertSubjectKeyID, jack, RevokeNocCertOpts{SerialNumber: removeX509IntermCert1SerialNum})
 		require.NoError(t, err)
 		require.Equal(t, uint32(4), txResult.Code)
 
 		// Try to remove with different VID vendor
-		txResult, err = RemoveX509Cert(removeX509IntermCertSubject, removeX509IntermCertSubjectKeyID, vendorAccount65522,
-			"--serial-number", removeX509IntermCert1SerialNum,
-		)
+		txResult, err = RemoveX509Cert(removeX509IntermCertSubject, removeX509IntermCertSubjectKeyID, vendorAccount65522, RevokeNocCertOpts{SerialNumber: removeX509IntermCert1SerialNum})
 		require.NoError(t, err)
 		require.Equal(t, uint32(4), txResult.Code)
 
 		// Remove revoked intermediate cert by serial
-		txResult, err = RemoveX509Cert(removeX509IntermCertSubject, removeX509IntermCertSubjectKeyID, vendorAccount65521,
-			"--serial-number", removeX509IntermCert1SerialNum,
-		)
+		txResult, err = RemoveX509Cert(removeX509IntermCertSubject, removeX509IntermCertSubjectKeyID, vendorAccount65521, RevokeNocCertOpts{SerialNumber: removeX509IntermCert1SerialNum})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)

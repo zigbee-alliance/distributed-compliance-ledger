@@ -24,9 +24,7 @@ func TestModelDemoHex(t *testing.T) {
 		require.NoError(t, err)
 		require.Contains(t, string(out), "Not Found")
 
-		out, err = utils.ExecuteCLI("query", "model", "vendor-models",
-			"--vid", vidHex, "-o", "json",
-		)
+		out, err = QueryVendorModelsHex(vidHex)
 		require.NoError(t, err)
 		require.Contains(t, string(out), "Not Found")
 
@@ -38,17 +36,11 @@ func TestModelDemoHex(t *testing.T) {
 	productLabel := "Device #1"
 
 	t.Run("AddModel", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", vidHex,
-			"--pid", pidHex,
-			"--deviceTypeID", "1",
-			"--productName", "TestProduct",
-			"--productLabel", productLabel,
-			"--partNumber", "1",
-			"--commissioningCustomFlow", "0",
-			"--enhancedSetupFlowOptions", "0",
-			"--from", vendorAccount,
-		)
+		txResult, err := AddModel(AddModelOpts{
+			VIDHex: vidHex, PIDHex: pidHex,
+			ProductLabel: productLabel,
+			From:         vendorAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -67,9 +59,7 @@ func TestModelDemoHex(t *testing.T) {
 		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
 
-		out, err = utils.ExecuteCLI("query", "model", "vendor-models",
-			"--vid", vidHex, "-o", "json",
-		)
+		out, err = QueryVendorModelsHex(vidHex)
 		require.NoError(t, err)
 		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
 	})
@@ -77,11 +67,8 @@ func TestModelDemoHex(t *testing.T) {
 	description := "New Device Description"
 
 	t.Run("UpdateModel", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "update-model",
-			"--vid", vidHex,
-			"--pid", pidHex,
+		txResult, err := UpdateModelHex(vidHex, pidHex, vendorAccount,
 			"--enhancedSetupFlowOptions", "2",
-			"--from", vendorAccount,
 			"--productLabel", description,
 		)
 		require.NoError(t, err)
@@ -99,11 +86,8 @@ func TestModelDemoHex(t *testing.T) {
 	supportURL := "https://newsupporturl.test"
 
 	t.Run("UpdateModelSupportURL", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "update-model",
-			"--vid", vidHex,
-			"--pid", pidHex,
+		txResult, err := UpdateModelHex(vidHex, pidHex, vendorAccount,
 			"--enhancedSetupFlowOptions", "2",
-			"--from", vendorAccount,
 			"--supportURL", supportURL,
 		)
 		require.NoError(t, err)
@@ -117,11 +101,7 @@ func TestModelDemoHex(t *testing.T) {
 	})
 
 	t.Run("DeleteModel", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "delete-model",
-			"--vid", vidHex,
-			"--pid", pidHex,
-			"--from", vendorAccount,
-		)
+		txResult, err := DeleteModelHex(vidHex, pidHex, vendorAccount)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)

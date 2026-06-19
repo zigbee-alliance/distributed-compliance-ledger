@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/compliance"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
@@ -19,17 +20,12 @@ func TestModelVersionDemo(t *testing.T) {
 	zbAccount := cliputils.CreateAccount(t, "CertificationCenter")
 
 	t.Run("AddModel", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--deviceTypeID", "1",
-			"--productName", "TestProduct",
-			"--productLabel", "Test Product",
-			"--partNumber", "1",
-			"--commissioningCustomFlow", "0",
-			"--enhancedSetupFlowOptions", "0",
-			"--from", vendorAccount,
-		)
+		txResult, err := AddModel(AddModelOpts{
+			VID:          vid,
+			PID:          pid,
+			ProductLabel: "Test Product",
+			From:         vendorAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -40,18 +36,15 @@ func TestModelVersionDemo(t *testing.T) {
 
 	t.Run("CertifyModel_BeforeVersion", func(t *testing.T) {
 		// Certify unknown SV — allowed
-		txResult, err := utils.ExecuteTx("tx", "compliance", "certify-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--softwareVersion", fmt.Sprintf("%d", sv),
-			"--cdVersionNumber", "1",
-			"--softwareVersionString", "1",
-			"--cdCertificateId", "0000000000000000001",
-			"--certificationType", "zigbee",
-			"--specificationVersion", "1",
-			"--certificationDate", "2020-01-01T00:00:01Z",
-			"--from", zbAccount,
-		)
+		txResult, err := compliance.CertifyModel(compliance.CertifyModelOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: "1",
+			CertificationType:     "zigbee",
+			CertificationDate:     "2020-01-01T00:00:01Z",
+			CDCertificateID:       "0000000000000000001",
+			From:                  zbAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -59,17 +52,14 @@ func TestModelVersionDemo(t *testing.T) {
 	})
 
 	t.Run("AddModelVersion", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model-version",
-			"--cdVersionNumber", "1",
-			"--maxApplicableSoftwareVersion", "10",
-			"--minApplicableSoftwareVersion", "1",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--softwareVersion", fmt.Sprintf("%d", sv),
-			"--softwareVersionString", "1",
-			"--schemaVersion", "0",
-			"--from", vendorAccount,
-		)
+		txResult, err := AddModelVersion(AddModelVersionOpts{
+			VID:                   vid,
+			PID:                   pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: "1",
+			SchemaVersion:         "0",
+			From:                  vendorAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -112,15 +102,11 @@ func TestModelVersionDemo(t *testing.T) {
 	})
 
 	t.Run("UpdateModelVersion", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "update-model-version",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--softwareVersion", fmt.Sprintf("%d", sv),
+		txResult, err := UpdateModelVersion(vid, pid, sv, vendorAccount,
 			"--minApplicableSoftwareVersion", "2",
 			"--maxApplicableSoftwareVersion", "10",
 			"--softwareVersionValid=false",
 			"--schemaVersion", "0",
-			"--from", vendorAccount,
 		)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
@@ -137,16 +123,13 @@ func TestModelVersionDemo(t *testing.T) {
 	sv2 := rand.Intn(65534) + 1
 
 	t.Run("AddSecondModelVersion", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model-version",
-			"--cdVersionNumber", "1",
-			"--maxApplicableSoftwareVersion", "10",
-			"--minApplicableSoftwareVersion", "1",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--softwareVersion", fmt.Sprintf("%d", sv2),
-			"--softwareVersionString", "1",
-			"--from", vendorAccount,
-		)
+		txResult, err := AddModelVersion(AddModelVersionOpts{
+			VID:                   vid,
+			PID:                   pid,
+			SoftwareVersion:       sv2,
+			SoftwareVersionString: "1",
+			From:                  vendorAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -163,16 +146,16 @@ func TestModelVersionDemo(t *testing.T) {
 		differentVendor := fmt.Sprintf("vendor_account_%d", newVid)
 		cliputils.CreateVendorAccount(t, differentVendor, newVid)
 
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model-version",
-			"--cdVersionNumber", "1",
-			"--maxApplicableSoftwareVersion", "10",
-			"--minApplicableSoftwareVersion", "1",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--softwareVersion", fmt.Sprintf("%d", sv),
-			"--softwareVersionString", "1",
-			"--from", differentVendor,
-		)
+		txResult, err := AddModelVersion(AddModelVersionOpts{
+			VID:                          vid,
+			PID:                          pid,
+			SoftwareVersion:              sv,
+			SoftwareVersionString:        "1",
+			CDVersionNumber:              1,
+			MinApplicableSoftwareVersion: 1,
+			MaxApplicableSoftwareVersion: 10,
+			From:                         differentVendor,
+		})
 		require.NoError(t, err)
 		require.Contains(t, txResult.RawLog, fmt.Sprintf("vendorID %d", vid))
 	})
@@ -182,12 +165,8 @@ func TestModelVersionDemo(t *testing.T) {
 		differentVendor := fmt.Sprintf("vendor_account_%d", newVid)
 		cliputils.CreateVendorAccount(t, differentVendor, newVid)
 
-		txResult, err := utils.ExecuteTx("tx", "model", "update-model-version",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--softwareVersion", fmt.Sprintf("%d", sv),
+		txResult, err := UpdateModelVersion(vid, pid, sv, differentVendor,
 			"--softwareVersionValid=false",
-			"--from", differentVendor,
 		)
 		require.NoError(t, err)
 		require.Contains(t, txResult.RawLog, fmt.Sprintf("vendorID %d", vid))
@@ -195,23 +174,12 @@ func TestModelVersionDemo(t *testing.T) {
 
 	t.Run("DeleteModelVersion", func(t *testing.T) {
 		// Delete compliance info first
-		txResult, err := utils.ExecuteTx("tx", "compliance", "delete-compliance-info",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--softwareVersion", fmt.Sprintf("%d", sv),
-			"--certificationType", "zigbee",
-			"--from", zbAccount,
-		)
+		txResult, err := compliance.DeleteComplianceInfo(vid, pid, sv, "zigbee", zbAccount)
 		require.NoError(t, err)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		txResult, err = utils.ExecuteTx("tx", "model", "delete-model-version",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--softwareVersion", fmt.Sprintf("%d", sv),
-			"--from", vendorAccount,
-		)
+		txResult, err = DeleteModelVersion(vid, pid, sv, vendorAccount)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)

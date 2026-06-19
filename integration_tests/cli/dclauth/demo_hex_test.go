@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/model"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
@@ -35,14 +36,7 @@ func TestAuthDemoHex(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("ProposeVendorAccountWithHexVID", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "auth", "propose-add-account",
-			"--info", "Jack is proposing this account",
-			"--address", userAddr,
-			"--pubkey", userPubkey,
-			"--roles", "Vendor",
-			"--vid", vidHex,
-			"--from", jack,
-		)
+		txResult, err := ProposeAccount(userAddr, userPubkey, "Vendor", jack, ProposeAccountOpts{Info: "Jack is proposing this account", Extra: []string{"--vid", vidHex}})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -70,17 +64,15 @@ func TestAuthDemoHex(t *testing.T) {
 
 	t.Run("AddModelWithHexVID", func(t *testing.T) {
 		productName := "Device #1"
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", vidHex,
-			"--pid", pidHex,
-			"--productName", productName,
-			"--productLabel", "Device Description",
-			"--commissioningCustomFlow", "0",
-			"--deviceTypeID", "12",
-			"--partNumber", "12",
-			"--enhancedSetupFlowOptions", "0",
-			"--from", userAddr,
-		)
+		txResult, err := model.AddModel(model.AddModelOpts{
+			VIDHex:       vidHex,
+			PIDHex:       pidHex,
+			DeviceTypeID: 12,
+			ProductName:  productName,
+			ProductLabel: "Device Description",
+			PartNumber:   "12",
+			From:         userAddr,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -91,17 +83,15 @@ func TestAuthDemoHex(t *testing.T) {
 		vidPlusOneHex := "0xA14"
 		productName := "Device #1"
 
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", vidPlusOneHex,
-			"--pid", pidHex,
-			"--productName", productName,
-			"--productLabel", "Device Description",
-			"--commissioningCustomFlow", "0",
-			"--deviceTypeID", "12",
-			"--partNumber", "12",
-			"--enhancedSetupFlowOptions", "0",
-			"--from", userAddr,
-		)
+		txResult, err := model.AddModel(model.AddModelOpts{
+			VIDHex:       vidPlusOneHex,
+			PIDHex:       pidHex,
+			DeviceTypeID: 12,
+			ProductName:  productName,
+			ProductLabel: "Device Description",
+			PartNumber:   "12",
+			From:         userAddr,
+		})
 		// With broadcast-mode sync, rejection might come at CLI level or on-chain.
 		if err != nil {
 			require.Contains(t, err.Error(), "vendorID")
@@ -116,14 +106,11 @@ func TestAuthDemoHex(t *testing.T) {
 
 	t.Run("UpdateModel", func(t *testing.T) {
 		productName := "Device #1"
-		txResult, err := utils.ExecuteTx("tx", "model", "update-model",
-			"--vid", vidHex,
-			"--pid", pidHex,
+		txResult, err := model.UpdateModelHex(vidHex, pidHex, userAddr,
 			"--productName", productName,
 			"--productLabel", "Device Description",
 			"--partNumber", "12",
 			"--enhancedSetupFlowOptions", "2",
-			"--from", userAddr,
 		)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
@@ -132,11 +119,7 @@ func TestAuthDemoHex(t *testing.T) {
 	})
 
 	t.Run("QueryModel", func(t *testing.T) {
-		out, err := utils.ExecuteCLI("query", "model", "get-model",
-			"--vid", vidHex,
-			"--pid", pidHex,
-			"-o", "json",
-		)
+		out, err := model.QueryModelHex(vidHex, pidHex)
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"vid":`+formatInt(vid))
 		require.Contains(t, string(out), `"pid":`+formatInt(pid))
@@ -146,28 +129,4 @@ func TestAuthDemoHex(t *testing.T) {
 
 func formatInt(n int) string {
 	return itoa(n)
-}
-
-func itoa(n int) string {
-	if n == 0 {
-		return "0"
-	}
-	neg := false
-	if n < 0 {
-		neg = true
-		n = -n
-	}
-	var buf [20]byte
-	pos := len(buf)
-	for n > 0 {
-		pos--
-		buf[pos] = byte('0' + n%10)
-		n /= 10
-	}
-	if neg {
-		pos--
-		buf[pos] = '-'
-	}
-
-	return string(buf[pos:])
 }

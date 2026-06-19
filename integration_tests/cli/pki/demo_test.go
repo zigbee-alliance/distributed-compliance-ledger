@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/dclauth"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
@@ -131,19 +132,17 @@ func TestPKIDemo(t *testing.T) {
 	// ── Section 2: Propose Root Cert ───────────────────────────────────────────
 
 	t.Run("ProposeRootCert_NotTrustee_Fails", func(t *testing.T) {
-		txResult, err := ProposeAddX509RootCert(rootCertPath, userAccount,
-			"--vid", fmt.Sprintf("%d", pkiDemoVid),
-		)
+		txResult, err := ProposeAddX509RootCert(rootCertPath, userAccount, X509ProposeOpts{VID: pkiDemoVid})
 		require.NoError(t, err)
 		require.NotEqual(t, uint32(0), txResult.Code)
 		_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
 	})
 
 	t.Run("ProposeRootCert_Trustee_Succeeds", func(t *testing.T) {
-		txResult, err := ProposeAddX509RootCert(rootCertPath, jack,
-			"--vid", fmt.Sprintf("%d", pkiDemoVid),
-			"--schemaVersion", "0",
-		)
+		txResult, err := ProposeAddX509RootCert(rootCertPath, jack, X509ProposeOpts{
+			VID:           pkiDemoVid,
+			SchemaVersion: "0",
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -255,7 +254,7 @@ func TestPKIDemo(t *testing.T) {
 	// ── Section 4: Add Intermediate Cert ───────────────────────────────────────
 
 	t.Run("AddIntermediateCert", func(t *testing.T) {
-		txResult, err := AddX509Cert(intermediateCertPath, vendorAccount, "--schemaVersion", "0")
+		txResult, err := AddX509Cert(intermediateCertPath, vendorAccount, X509ProposeOpts{SchemaVersion: "0"})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -706,17 +705,13 @@ func TestPKIDemo(t *testing.T) {
 
 	t.Run("ProposeGoogleRootCert", func(t *testing.T) {
 		// Non-trustee fails
-		txResult, err := ProposeAddX509RootCert(googleCertPath, userAccount,
-			"--vid", fmt.Sprintf("%d", googleCertVid),
-		)
+		txResult, err := ProposeAddX509RootCert(googleCertPath, userAccount, X509ProposeOpts{VID: googleCertVid})
 		require.NoError(t, err)
 		require.NotEqual(t, uint32(0), txResult.Code)
 		_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
 
 		// Trustee proposes
-		txResult, err = ProposeAddX509RootCert(googleCertPath, jack,
-			"--vid", fmt.Sprintf("%d", googleCertVid),
-		)
+		txResult, err = ProposeAddX509RootCert(googleCertPath, jack, X509ProposeOpts{VID: googleCertVid})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -910,9 +905,7 @@ func TestPKIDemo(t *testing.T) {
 
 	t.Run("ProposeAndRejectTestCert_SingleTrustee", func(t *testing.T) {
 		// Jack proposes
-		txResult, err := ProposeAddX509RootCert(testCertPath, jack,
-			"--vid", fmt.Sprintf("%d", testCertVid),
-		)
+		txResult, err := ProposeAddX509RootCert(testCertPath, jack, X509ProposeOpts{VID: testCertVid})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -949,17 +942,13 @@ func TestPKIDemo(t *testing.T) {
 
 	t.Run("ProposeTestRootCert", func(t *testing.T) {
 		// Non-trustee fails
-		txResult, err := ProposeAddX509RootCert(testCertPath, userAccount,
-			"--vid", fmt.Sprintf("%d", testCertVid),
-		)
+		txResult, err := ProposeAddX509RootCert(testCertPath, userAccount, X509ProposeOpts{VID: testCertVid})
 		require.NoError(t, err)
 		require.NotEqual(t, uint32(0), txResult.Code)
 		_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
 
 		// Trustee proposes
-		txResult, err = ProposeAddX509RootCert(testCertPath, jack,
-			"--vid", fmt.Sprintf("%d", testCertVid),
-		)
+		txResult, err = ProposeAddX509RootCert(testCertPath, jack, X509ProposeOpts{VID: testCertVid})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -1038,28 +1027,19 @@ func TestPKIDemo(t *testing.T) {
 		require.NoError(t, err)
 
 		// Revoke new_trustee1 (back to 3 trustees)
-		txResult, err = utils.ExecuteTx("tx", "auth", "propose-revoke-account",
-			"--address", newTrustee1Addr,
-			"--from", alice,
-		)
+		txResult, err = dclauth.ProposeRevokeAccount(newTrustee1Addr, alice)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		txResult, err = utils.ExecuteTx("tx", "auth", "approve-revoke-account",
-			"--address", newTrustee1Addr,
-			"--from", bob,
-		)
+		txResult, err = dclauth.ApproveRevokeAccount(newTrustee1Addr, bob)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		txResult, err = utils.ExecuteTx("tx", "auth", "approve-revoke-account",
-			"--address", newTrustee1Addr,
-			"--from", jack,
-		)
+		txResult, err = dclauth.ApproveRevokeAccount(newTrustee1Addr, jack)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -1095,17 +1075,13 @@ func TestPKIDemo(t *testing.T) {
 
 	t.Run("ProposeTestRootCertAgain", func(t *testing.T) {
 		// Non-trustee fails
-		txResult, err := ProposeAddX509RootCert(testCertPath, userAccount,
-			"--vid", fmt.Sprintf("%d", testCertVid),
-		)
+		txResult, err := ProposeAddX509RootCert(testCertPath, userAccount, X509ProposeOpts{VID: testCertVid})
 		require.NoError(t, err)
 		require.NotEqual(t, uint32(0), txResult.Code)
 		_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
 
 		// Trustee proposes again
-		txResult, err = ProposeAddX509RootCert(testCertPath, jack,
-			"--vid", fmt.Sprintf("%d", testCertVid),
-		)
+		txResult, err = ProposeAddX509RootCert(testCertPath, jack, X509ProposeOpts{VID: testCertVid})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)

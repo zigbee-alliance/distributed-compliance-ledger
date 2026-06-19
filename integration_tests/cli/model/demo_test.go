@@ -40,18 +40,12 @@ func TestModelDemo(t *testing.T) {
 	cdVersionNum := 10
 
 	t.Run("AddModel", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--deviceTypeID", "1",
-			"--productName", "TestProduct",
-			"--productLabel", productLabel,
-			"--partNumber", "1",
-			"--commissioningCustomFlow", "0",
-			"--enhancedSetupFlowOptions", "0",
-			"--schemaVersion", "0",
-			"--from", vendorAccount,
-		)
+		txResult, err := AddModel(AddModelOpts{
+			VID: vid, PID: pid,
+			ProductLabel:  productLabel,
+			SchemaVersion: "0",
+			From:          vendorAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -59,31 +53,19 @@ func TestModelDemo(t *testing.T) {
 	})
 
 	t.Run("AddModelWithPidRanges", func(t *testing.T) {
-		enhancedSetupFlowTCUrl := "https://example.org/file.txt"
-		enhancedSetupFlowTCRevision := 1
-		enhancedSetupFlowTCDigest := "MWRjNGE0NDA0MWRjYWYxMTU0NWI3NTQzZGZlOTQyZjQ3NDJmNTY4YmU2OGZlZTI3NTQ0MWIwOTJiYjYwZGVlZA=="
-		enhancedSetupFlowTCFileSize := 1024
-		maintenanceURL := "https://example.org"
-		commissioningFallbackUrl := "https://url.commissioningfallbackurl.dclmodel"
-
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vidWithPids),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--deviceTypeID", "1",
-			"--productName", "TestProduct",
-			"--productLabel", productLabel,
-			"--partNumber", "1",
-			"--commissioningCustomFlow", "0",
-			"--enhancedSetupFlowOptions", "1",
-			"--enhancedSetupFlowTCUrl", enhancedSetupFlowTCUrl,
-			"--enhancedSetupFlowTCRevision", fmt.Sprintf("%d", enhancedSetupFlowTCRevision),
-			"--enhancedSetupFlowTCDigest", enhancedSetupFlowTCDigest,
-			"--enhancedSetupFlowTCFileSize", fmt.Sprintf("%d", enhancedSetupFlowTCFileSize),
-			"--maintenanceUrl", maintenanceURL,
-			"--commissioningFallbackUrl", commissioningFallbackUrl,
-			"--discoveryCapabilitiesBitmask", "1",
-			"--from", vendorAccountWithPids,
-		)
+		txResult, err := AddModel(AddModelOpts{
+			VID: vidWithPids, PID: pid,
+			ProductLabel:                 productLabel,
+			EnhancedSetupFlowOptions:     1,
+			EnhancedSetupFlowTCUrl:       "https://example.org/file.txt",
+			EnhancedSetupFlowTCRevision:  1,
+			EnhancedSetupFlowTCDigest:    "MWRjNGE0NDA0MWRjYWYxMTU0NWI3NTQzZGZlOTQyZjQ3NDJmNTY4YmU2OGZlZTI3NTQ0MWIwOTJiYjYwZGVlZA==",
+			EnhancedSetupFlowTCFileSize:  1024,
+			MaintenanceURL:               "https://example.org",
+			CommissioningFallbackURL:     "https://url.commissioningfallbackurl.dclmodel",
+			DiscoveryCapabilitiesBitmask: 1,
+			From:                         vendorAccountWithPids,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -101,31 +83,28 @@ func TestModelDemo(t *testing.T) {
 	})
 
 	t.Run("AddModelVersions", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model-version",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--softwareVersion", fmt.Sprintf("%d", sv),
-			"--minApplicableSoftwareVersion", "1",
-			"--maxApplicableSoftwareVersion", "15",
-			"--softwareVersionString", fmt.Sprintf("%d", sv),
-			"--cdVersionNumber", fmt.Sprintf("%d", cdVersionNum),
-			"--from", vendorAccount,
-		)
+		svStr := fmt.Sprintf("%d", sv)
+		txResult, err := AddModelVersion(AddModelVersionOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:              sv,
+			SoftwareVersionString:        svStr,
+			CDVersionNumber:              cdVersionNum,
+			MaxApplicableSoftwareVersion: 15,
+			From:                         vendorAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		txResult, err = utils.ExecuteTx("tx", "model", "add-model-version",
-			"--vid", fmt.Sprintf("%d", vidWithPids),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--softwareVersion", fmt.Sprintf("%d", sv),
-			"--minApplicableSoftwareVersion", "1",
-			"--maxApplicableSoftwareVersion", "15",
-			"--softwareVersionString", fmt.Sprintf("%d", sv),
-			"--cdVersionNumber", fmt.Sprintf("%d", cdVersionNum),
-			"--from", vendorAccountWithPids,
-		)
+		txResult, err = AddModelVersion(AddModelVersionOpts{
+			VID: vidWithPids, PID: pid,
+			SoftwareVersion:              sv,
+			SoftwareVersionString:        svStr,
+			CDVersionNumber:              cdVersionNum,
+			MaxApplicableSoftwareVersion: 15,
+			From:                         vendorAccountWithPids,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -150,10 +129,7 @@ func TestModelDemo(t *testing.T) {
 	newFactoryResetStepsHint := 6
 
 	t.Run("UpdateModel", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "update-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--from", vendorAccount,
+		txResult, err := UpdateModel(vid, pid, vendorAccount,
 			"--productLabel", description,
 			"--schemaVersion", "0",
 			"--commissioningModeInitialStepsHint", fmt.Sprintf("%d", newCommissioningModeInitialStepsHint),
@@ -185,10 +161,7 @@ func TestModelDemo(t *testing.T) {
 	supportURL := "https://newsupporturl.test"
 
 	t.Run("UpdateModelSupportURL", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "update-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--from", vendorAccount,
+		txResult, err := UpdateModel(vid, pid, vendorAccount,
 			"--supportURL", supportURL,
 			"--enhancedSetupFlowOptions", "0",
 		)

@@ -33,9 +33,7 @@ func TestPKIAddVendorX509Certificates(t *testing.T) {
 	cliputils.CreateVendorAccount(t, vendorAccount1, pkiDemoVid)
 
 	t.Run("ProposeAndApproveRootCert", func(t *testing.T) {
-		txResult, err := ProposeAddX509RootCert(addVendorRootCertPath, jack,
-			"--vid", fmt.Sprintf("%d", pkiDemoVid),
-		)
+		txResult, err := ProposeAddX509RootCert(addVendorRootCertPath, jack, X509ProposeOpts{VID: pkiDemoVid})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)

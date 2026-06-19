@@ -34,11 +34,16 @@ func TestComplianceRevocation(t *testing.T) {
 	revocationReason := "some reason"
 
 	t.Run("RevokeUncertifiedModel_ZB_Success", func(t *testing.T) {
-		txResult, err := RevokeModel(vid, pid, sv, svs, certType, revocationDate, zbAccount,
-			"--reason", revocationReason,
-			"--cdVersionNumber", "1",
-			"--schemaVersion", "0",
-		)
+		txResult, err := RevokeModel(RevokeModelOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: svs,
+			CertificationType:     certType,
+			RevocationDate:        revocationDate,
+			Reason:                revocationReason,
+			From:                  zbAccount,
+			Extra:                 []string{"--schemaVersion", "0"},
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -46,28 +51,43 @@ func TestComplianceRevocation(t *testing.T) {
 	})
 
 	t.Run("ReRevoke_DifferentAccount_Fails", func(t *testing.T) {
-		txResult, err := RevokeModel(vid, pid, sv, svs, certType, revocationDate, secondZbAccount,
-			"--cdVersionNumber", "1",
-		)
+		txResult, err := RevokeModel(RevokeModelOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: svs,
+			CertificationType:     certType,
+			RevocationDate:        revocationDate,
+			From:                  secondZbAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(304), txResult.Code)
 		require.Contains(t, txResult.RawLog, "already revoked on the ledger")
 	})
 
 	t.Run("ReRevoke_SameAccount_Fails", func(t *testing.T) {
-		txResult, err := RevokeModel(vid, pid, sv, svs, certType, revocationDate, zbAccount,
-			"--cdVersionNumber", "1",
-		)
+		txResult, err := RevokeModel(RevokeModelOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: svs,
+			CertificationType:     certType,
+			RevocationDate:        revocationDate,
+			From:                  zbAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(304), txResult.Code)
 		require.Contains(t, txResult.RawLog, "already revoked on the ledger")
 	})
 
 	t.Run("RevokeUncertifiedModel_Matter_Success", func(t *testing.T) {
-		txResult, err := RevokeModel(vid, pid, sv, svs, certTypeMatter, revocationDate, zbAccount,
-			"--reason", revocationReason,
-			"--cdVersionNumber", "1",
-		)
+		txResult, err := RevokeModel(RevokeModelOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: svs,
+			CertificationType:     certTypeMatter,
+			RevocationDate:        revocationDate,
+			Reason:                revocationReason,
+			From:                  zbAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -75,30 +95,30 @@ func TestComplianceRevocation(t *testing.T) {
 	})
 
 	t.Run("QueryAfterRevocation", func(t *testing.T) {
-		out, err := QueryCertifiedModel(vid, pid, sv, certType)
+		out, err := QueryCertifiedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), "Not Found")
 
-		out, err = QueryCertifiedModel(vid, pid, sv, certTypeMatter)
+		out, err = QueryCertifiedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certTypeMatter})
 		require.NoError(t, err)
 		require.Contains(t, string(out), "Not Found")
 
-		out, err = QueryRevokedModel(vid, pid, sv, certType)
+		out, err = QueryRevokedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"value":true`)
 		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
 		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 
-		out, err = QueryRevokedModel(vid, pid, sv, certTypeMatter)
+		out, err = QueryRevokedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certTypeMatter})
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"value":true`)
 
 		// Never provisioned — record doesn't exist, so "Not Found"
-		out, err = QueryProvisionalModel(vid, pid, sv, certType)
+		out, err = QueryProvisionalModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), "Not Found")
 
-		out, err = QueryComplianceInfo(vid, pid, sv, certType)
+		out, err = QueryComplianceInfo(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"softwareVersionCertificationStatus":3`)
 		require.Contains(t, string(out), fmt.Sprintf(`"date":"%s"`, revocationDate))
@@ -116,19 +136,25 @@ func TestComplianceRevocation(t *testing.T) {
 
 	t.Run("CertifyAfterRevoke_Success", func(t *testing.T) {
 		certificationDate := "2020-02-02T02:20:21Z"
-		txResult, err := CertifyModel(vid, pid, sv, svs, certType, certificationDate, cdCertID, zbAccount,
-			"--cdVersionNumber", "1",
-		)
+		txResult, err := CertifyModel(CertifyModelOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: svs,
+			CertificationType:     certType,
+			CertificationDate:     certificationDate,
+			CDCertificateID:       cdCertID,
+			From:                  zbAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryCertifiedModel(vid, pid, sv, certType)
+		out, err := QueryCertifiedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"value":true`)
 
-		out, err = QueryRevokedModel(vid, pid, sv, certType)
+		out, err = QueryRevokedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"value":false`)
 	})

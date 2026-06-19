@@ -145,7 +145,7 @@ func TestPKINocCerts(t *testing.T) {
 		require.Equal(t, uint32(414), txResult.Code)
 
 		// Add first NOC root certificate
-		txResult, err = AddNocRootCert(nocRootCert1Path, vendorAccount, "--schemaVersion", "0")
+		txResult, err = AddNocRootCert(nocRootCert1Path, vendorAccount, AddNocCertOpts{SchemaVersion: "0"})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -282,7 +282,7 @@ func TestPKINocCerts(t *testing.T) {
 		require.Equal(t, uint32(439), txResult.Code)
 
 		// Add second ICA cert
-		txResult, err = AddNocX509IcaCert(nocCert2Path, vendorAccount, "--schemaVersion", "0")
+		txResult, err = AddNocX509IcaCert(nocCert2Path, vendorAccount, AddNocCertOpts{SchemaVersion: "0"})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -345,19 +345,19 @@ func TestPKINocCerts(t *testing.T) {
 		// VVSC leaf) so the leaf-level operations have a §6.5.12-compliant chain to
 		// exercise. NocLeafCert1 is a NOC end-entity (cA=FALSE / NOC profile) and is
 		// no longer accepted by the stricter add-noc-x509-ica-cert handler.
-		txResult, err = AddNocRootCert(vvscRootCert1Path, vendorAccount, "--is-vid-verification-signer=true")
+		txResult, err = AddNocRootCert(vvscRootCert1Path, vendorAccount, AddNocCertOpts{IsVidVerificationSigner: true})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		txResult, err = AddNocX509IcaCert(vvscIcaCert1Path, vendorAccount, "--is-vid-verification-signer=true")
+		txResult, err = AddNocX509IcaCert(vvscIcaCert1Path, vendorAccount, AddNocCertOpts{IsVidVerificationSigner: true})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		txResult, err = AddNocX509IcaCert(vvscLeafCert1Path, vendorAccount, "--is-vid-verification-signer=true")
+		txResult, err = AddNocX509IcaCert(vvscLeafCert1Path, vendorAccount, AddNocCertOpts{IsVidVerificationSigner: true})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)

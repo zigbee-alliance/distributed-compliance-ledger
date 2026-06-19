@@ -158,6 +158,10 @@ func CreateVendorAccount(t *testing.T, name string, vid int, pidRanges ...string
 
 // CreateModelAndVersion adds a model and a model version for the given vid/pid/sv/svs
 // using the provided userAddr (account name) as the signer.
+// NOTE: Kept as inline ExecuteTx calls (rather than the typed model.AddModel /
+// model.AddModelVersion helpers) to avoid an import cycle: tests in
+// integration_tests/cli/model import this cliputils package, so cliputils must
+// not import integration_tests/cli/model.
 func CreateModelAndVersion(t *testing.T, vid, pid, sv int, svs, userAddr string) {
 	t.Helper()
 

@@ -28,15 +28,21 @@ func TestComplianceProvisioning(t *testing.T) {
 	cdCertID := fmt.Sprintf("cert-%014d", rand.Intn(1<<30))
 
 	t.Run("ProvisionUnknownModel_Succeeds", func(t *testing.T) {
-		txResult, err := ProvisionModel(vid, pid, sv, svs, certTypeZb, provisionDate, cdCertID, zbAccount,
-			"--cdVersionNumber", "1",
-		)
+		txResult, err := ProvisionModel(ProvisionModelOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: svs,
+			CertificationType:     certTypeZb,
+			ProvisionalDate:       provisionDate,
+			CDCertificateID:       cdCertID,
+			From:                  zbAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryComplianceInfo(vid, pid, sv, certTypeZb)
+		out, err := QueryComplianceInfo(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certTypeZb})
 		require.NoError(t, err)
 		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
@@ -59,11 +65,17 @@ func TestComplianceProvisioning(t *testing.T) {
 	})
 
 	t.Run("ProvisionZB_Success", func(t *testing.T) {
-		txResult, err := ProvisionModel(vid, pid, sv, svs, certTypeZb, provisionDate, cdCertID, zbAccount,
-			"--reason", provisionReason,
-			"--cdVersionNumber", "1",
-			"--schemaVersion", "0",
-		)
+		txResult, err := ProvisionModel(ProvisionModelOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: svs,
+			CertificationType:     certTypeZb,
+			ProvisionalDate:       provisionDate,
+			CDCertificateID:       cdCertID,
+			Reason:                provisionReason,
+			From:                  zbAccount,
+			Extra:                 []string{"--schemaVersion", "0"},
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -71,10 +83,16 @@ func TestComplianceProvisioning(t *testing.T) {
 	})
 
 	t.Run("ProvisionMatter_Success", func(t *testing.T) {
-		txResult, err := ProvisionModel(vid, pid, sv, svs, certTypeMatter, provisionDate, cdCertID, zbAccount,
-			"--reason", provisionReason,
-			"--cdVersionNumber", "1",
-		)
+		txResult, err := ProvisionModel(ProvisionModelOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: svs,
+			CertificationType:     certTypeMatter,
+			ProvisionalDate:       provisionDate,
+			CDCertificateID:       cdCertID,
+			Reason:                provisionReason,
+			From:                  zbAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -82,49 +100,61 @@ func TestComplianceProvisioning(t *testing.T) {
 	})
 
 	t.Run("ReProvision_SameState_Fails", func(t *testing.T) {
-		txResult, err := ProvisionModel(vid, pid, sv, svs, certTypeZb, provisionDate, cdCertID, zbAccount,
-			"--reason", provisionReason,
-			"--cdVersionNumber", "1",
-		)
+		txResult, err := ProvisionModel(ProvisionModelOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: svs,
+			CertificationType:     certTypeZb,
+			ProvisionalDate:       provisionDate,
+			CDCertificateID:       cdCertID,
+			Reason:                provisionReason,
+			From:                  zbAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(305), txResult.Code)
 		require.Contains(t, txResult.RawLog, "already in provisional state")
 	})
 
 	t.Run("QueryProvisional", func(t *testing.T) {
-		out, err := QueryProvisionalModel(vid, pid, sv, certTypeZb)
+		out, err := QueryProvisionalModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certTypeZb})
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"value":true`)
 
-		out, err = QueryProvisionalModel(vid, pid, sv, certTypeMatter)
+		out, err = QueryProvisionalModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certTypeMatter})
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"value":true`)
 
 		// Never certified or revoked — records don't exist yet, so "Not Found"
-		out, err = QueryCertifiedModel(vid, pid, sv, certTypeZb)
+		out, err = QueryCertifiedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certTypeZb})
 		require.NoError(t, err)
 		require.Contains(t, string(out), "Not Found")
 
-		out, err = QueryRevokedModel(vid, pid, sv, certTypeZb)
+		out, err = QueryRevokedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certTypeZb})
 		require.NoError(t, err)
 		require.Contains(t, string(out), "Not Found")
 	})
 
 	t.Run("CertifyAfterProvisioning_Success", func(t *testing.T) {
 		certificationDate := "2020-02-02T02:20:21Z"
-		txResult, err := CertifyModel(vid, pid, sv, svs, certTypeZb, certificationDate, cdCertID, zbAccount,
-			"--cdVersionNumber", "1",
-		)
+		txResult, err := CertifyModel(CertifyModelOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: svs,
+			CertificationType:     certTypeZb,
+			CertificationDate:     certificationDate,
+			CDCertificateID:       cdCertID,
+			From:                  zbAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryCertifiedModel(vid, pid, sv, certTypeZb)
+		out, err := QueryCertifiedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certTypeZb})
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"value":true`)
 
-		out, err = QueryProvisionalModel(vid, pid, sv, certTypeZb)
+		out, err = QueryProvisionalModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certTypeZb})
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"value":false`)
 	})

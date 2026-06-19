@@ -79,20 +79,20 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 
 		// Pre-seed the VVSC chain (Matter §6.4.5.4) so the leaf below has a
 		// §6.4.10 step 12.a.iii path-length-3 chain to validate against.
-		txResult, err = AddNocRootCert(vvscRootCert1Path, vendorAccount65521, "--is-vid-verification-signer=true")
+		txResult, err = AddNocRootCert(vvscRootCert1Path, vendorAccount65521, AddNocCertOpts{IsVidVerificationSigner: true})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		txResult, err = AddNocX509IcaCert(vvscIcaCert1Path, vendorAccount65521, "--is-vid-verification-signer=true")
+		txResult, err = AddNocX509IcaCert(vvscIcaCert1Path, vendorAccount65521, AddNocCertOpts{IsVidVerificationSigner: true})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
 		// Add VVSC leaf certificate (replaces the legacy NocLeafCert1).
-		txResult, err = AddNocX509IcaCert(vvscLeafCert1Path, vendorAccount65521, "--is-vid-verification-signer=true")
+		txResult, err = AddNocX509IcaCert(vvscLeafCert1Path, vendorAccount65521, AddNocCertOpts{IsVidVerificationSigner: true})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -108,39 +108,29 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 
 	t.Run("RevokeAndRemoveIcaCert", func(t *testing.T) {
 		// Revoke first ICA cert
-		txResult, err := RevokeNocX509IcaCert(removeNocIntermCertSubject, removeNocIntermCertSubjectKeyID, vendorAccount65521,
-			"--serial-number", removeNocIntermCert1Serial,
-		)
+		txResult, err := RevokeNocX509IcaCert(removeNocIntermCertSubject, removeNocIntermCertSubjectKeyID, vendorAccount65521, RevokeNocCertOpts{SerialNumber: removeNocIntermCert1Serial})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
 		// Try to remove with invalid serial
-		txResult, err = RemoveNocCert(removeNocIntermCertSubject, removeNocIntermCertSubjectKeyID, vendorAccount65521,
-			"--serial-number", "invalid",
-		)
+		txResult, err = RemoveNocCert(removeNocIntermCertSubject, removeNocIntermCertSubjectKeyID, vendorAccount65521, RevokeNocCertOpts{SerialNumber: "invalid"})
 		require.NoError(t, err)
 		require.Equal(t, uint32(404), txResult.Code)
 
 		// Try to remove when sender is not Vendor
-		txResult, err = RemoveNocCert(removeNocIntermCertSubject, removeNocIntermCertSubjectKeyID, jack,
-			"--serial-number", removeNocIntermCert1Serial,
-		)
+		txResult, err = RemoveNocCert(removeNocIntermCertSubject, removeNocIntermCertSubjectKeyID, jack, RevokeNocCertOpts{SerialNumber: removeNocIntermCert1Serial})
 		require.NoError(t, err)
 		require.Equal(t, uint32(4), txResult.Code)
 
 		// Try to remove with different VID vendor (returns 439 ErrCertVidNotEqualAccountVid, not 4)
-		txResult, err = RemoveNocCert(removeNocIntermCertSubject, removeNocIntermCertSubjectKeyID, vendorAccount65522,
-			"--serial-number", removeNocIntermCert1Serial,
-		)
+		txResult, err = RemoveNocCert(removeNocIntermCertSubject, removeNocIntermCertSubjectKeyID, vendorAccount65522, RevokeNocCertOpts{SerialNumber: removeNocIntermCert1Serial})
 		require.NoError(t, err)
 		require.Equal(t, uint32(439), txResult.Code)
 
 		// Remove revoked ICA cert by serial
-		txResult, err = RemoveNocCert(removeNocIntermCertSubject, removeNocIntermCertSubjectKeyID, vendorAccount65521,
-			"--serial-number", removeNocIntermCert1Serial,
-		)
+		txResult, err = RemoveNocCert(removeNocIntermCertSubject, removeNocIntermCertSubjectKeyID, vendorAccount65521, RevokeNocCertOpts{SerialNumber: removeNocIntermCert1Serial})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -198,39 +188,29 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 		require.NoError(t, err)
 
 		// Try to remove root with invalid serial
-		txResult, err = RemoveNocRootCert(removeNocRootCertSubject, removeNocRootCertSubjectKeyID, vendorAccount65521,
-			"--serial-number", "invalid",
-		)
+		txResult, err = RemoveNocRootCert(removeNocRootCertSubject, removeNocRootCertSubjectKeyID, vendorAccount65521, RevokeNocCertOpts{SerialNumber: "invalid"})
 		require.NoError(t, err)
 		require.Equal(t, uint32(404), txResult.Code)
 
 		// Try to remove when sender is not Vendor
-		txResult, err = RemoveNocRootCert(removeNocRootCertSubject, removeNocRootCertSubjectKeyID, jack,
-			"--serial-number", removeNocRootCert1SerialNumber,
-		)
+		txResult, err = RemoveNocRootCert(removeNocRootCertSubject, removeNocRootCertSubjectKeyID, jack, RevokeNocCertOpts{SerialNumber: removeNocRootCert1SerialNumber})
 		require.NoError(t, err)
 		require.Equal(t, uint32(4), txResult.Code)
 
 		// Try to remove with different VID vendor (returns 439 ErrCertVidNotEqualAccountVid, not 4)
-		txResult, err = RemoveNocRootCert(removeNocRootCertSubject, removeNocRootCertSubjectKeyID, vendorAccount65522,
-			"--serial-number", removeNocRootCert1SerialNumber,
-		)
+		txResult, err = RemoveNocRootCert(removeNocRootCertSubject, removeNocRootCertSubjectKeyID, vendorAccount65522, RevokeNocCertOpts{SerialNumber: removeNocRootCert1SerialNumber})
 		require.NoError(t, err)
 		require.Equal(t, uint32(439), txResult.Code)
 
 		// Revoke root cert
-		txResult, err = RevokeNocRootCert(removeNocRootCertSubject, removeNocRootCertSubjectKeyID, vendorAccount65521,
-			"--serial-number", removeNocRootCert1SerialNumber,
-		)
+		txResult, err = RevokeNocRootCert(removeNocRootCertSubject, removeNocRootCertSubjectKeyID, vendorAccount65521, RevokeNocCertOpts{SerialNumber: removeNocRootCert1SerialNumber})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
 		// Remove revoked root cert by serial
-		txResult, err = RemoveNocRootCert(removeNocRootCertSubject, removeNocRootCertSubjectKeyID, vendorAccount65521,
-			"--serial-number", removeNocRootCert1SerialNumber,
-		)
+		txResult, err = RemoveNocRootCert(removeNocRootCertSubject, removeNocRootCertSubjectKeyID, vendorAccount65521, RevokeNocCertOpts{SerialNumber: removeNocRootCert1SerialNumber})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)

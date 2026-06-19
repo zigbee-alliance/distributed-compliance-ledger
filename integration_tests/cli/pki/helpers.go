@@ -4,204 +4,392 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
+// X509ProposeOpts holds optional flags for propose-add-x509-root-cert /
+// add-x509-cert. VID > 0 emits --vid; SchemaVersion / Info / Time are sent
+// only when non-empty.
+type X509ProposeOpts struct {
+	VID           int
+	VIDHex        string
+	SchemaVersion string
+	Info          string
+	Time          string
+	Extra         []string
+}
+
+func (o X509ProposeOpts) args() []string {
+	var args []string
+	if o.VID != 0 || o.VIDHex != "" {
+		args = append(args, "--vid", flagOrHex(o.VID, o.VIDHex))
+	}
+	if o.SchemaVersion != "" {
+		args = append(args, "--schemaVersion", o.SchemaVersion)
+	}
+	if o.Info != "" {
+		args = append(args, "--info", o.Info)
+	}
+	if o.Time != "" {
+		args = append(args, "--time", o.Time)
+	}
+
+	return append(args, o.Extra...)
+}
+
+// X509ActionOpts holds optional flags for approve / reject /
+// propose-revoke / approve-revoke X509 root cert. Reason emits --reason;
+// Info emits --info; RevokeChild emits --revoke-child=true.
+type X509ActionOpts struct {
+	Reason       string
+	Info         string
+	RevokeChild  bool
+	SerialNumber string
+	Extra        []string
+}
+
+func (o X509ActionOpts) args() []string {
+	var args []string
+	if o.Info != "" {
+		args = append(args, "--info", o.Info)
+	}
+	if o.Reason != "" {
+		args = append(args, "--reason", o.Reason)
+	}
+	if o.SerialNumber != "" {
+		args = append(args, "--serial-number", o.SerialNumber)
+	}
+	if o.RevokeChild {
+		args = append(args, "--revoke-child=true")
+	}
+
+	return append(args, o.Extra...)
+}
+
 // ProposeAddX509RootCert proposes adding an x509 root certificate.
-func ProposeAddX509RootCert(certFile, from string, extra ...string) (*utils.TxResult, error) {
+func ProposeAddX509RootCert(certFile, from string, opts ...X509ProposeOpts) (*utils.TxResult, error) {
 	args := []string{
 		"tx", "pki", "propose-add-x509-root-cert",
 		"--certificate", certFile,
 		"--from", from,
 	}
-	args = append(args, extra...)
+	for _, o := range opts {
+		args = append(args, o.args()...)
+	}
 
 	return utils.ExecuteTx(args...)
 }
 
 // ApproveAddX509RootCert approves adding an x509 root certificate.
-func ApproveAddX509RootCert(subject, subjectKeyID, from string, extra ...string) (*utils.TxResult, error) {
+func ApproveAddX509RootCert(subject, subjectKeyID, from string, opts ...X509ActionOpts) (*utils.TxResult, error) {
 	args := []string{
 		"tx", "pki", "approve-add-x509-root-cert",
 		"--subject", subject,
 		"--subject-key-id", subjectKeyID,
 		"--from", from,
 	}
-	args = append(args, extra...)
+	for _, o := range opts {
+		args = append(args, o.args()...)
+	}
 
 	return utils.ExecuteTx(args...)
 }
 
 // RejectAddX509RootCert rejects adding an x509 root certificate.
-func RejectAddX509RootCert(subject, subjectKeyID, from string, extra ...string) (*utils.TxResult, error) {
+func RejectAddX509RootCert(subject, subjectKeyID, from string, opts ...X509ActionOpts) (*utils.TxResult, error) {
 	args := []string{
 		"tx", "pki", "reject-add-x509-root-cert",
 		"--subject", subject,
 		"--subject-key-id", subjectKeyID,
 		"--from", from,
 	}
-	args = append(args, extra...)
+	for _, o := range opts {
+		args = append(args, o.args()...)
+	}
 
 	return utils.ExecuteTx(args...)
 }
 
 // AddX509Cert adds a non-root x509 certificate.
-func AddX509Cert(certFile, from string, extra ...string) (*utils.TxResult, error) {
+func AddX509Cert(certFile, from string, opts ...X509ProposeOpts) (*utils.TxResult, error) {
 	args := []string{
 		"tx", "pki", "add-x509-cert",
 		"--certificate", certFile,
 		"--from", from,
 	}
-	args = append(args, extra...)
+	for _, o := range opts {
+		args = append(args, o.args()...)
+	}
 
 	return utils.ExecuteTx(args...)
 }
 
 // ProposeRevokeX509RootCert proposes revoking an x509 root certificate.
-func ProposeRevokeX509RootCert(subject, subjectKeyID, from string, extra ...string) (*utils.TxResult, error) {
+func ProposeRevokeX509RootCert(subject, subjectKeyID, from string, opts ...X509ActionOpts) (*utils.TxResult, error) {
 	args := []string{
 		"tx", "pki", "propose-revoke-x509-root-cert",
 		"--subject", subject,
 		"--subject-key-id", subjectKeyID,
 		"--from", from,
 	}
-	args = append(args, extra...)
+	for _, o := range opts {
+		args = append(args, o.args()...)
+	}
 
 	return utils.ExecuteTx(args...)
 }
 
 // ApproveRevokeX509RootCert approves revoking an x509 root certificate.
-func ApproveRevokeX509RootCert(subject, subjectKeyID, from string, extra ...string) (*utils.TxResult, error) {
+func ApproveRevokeX509RootCert(subject, subjectKeyID, from string, opts ...X509ActionOpts) (*utils.TxResult, error) {
 	args := []string{
 		"tx", "pki", "approve-revoke-x509-root-cert",
 		"--subject", subject,
 		"--subject-key-id", subjectKeyID,
 		"--from", from,
 	}
-	args = append(args, extra...)
+	for _, o := range opts {
+		args = append(args, o.args()...)
+	}
 
 	return utils.ExecuteTx(args...)
 }
 
 // RevokeX509Cert revokes an x509 certificate.
-func RevokeX509Cert(subject, subjectKeyID, from string, extra ...string) (*utils.TxResult, error) {
+func RevokeX509Cert(subject, subjectKeyID, from string, opts ...RevokeNocCertOpts) (*utils.TxResult, error) {
 	args := []string{
 		"tx", "pki", "revoke-x509-cert",
 		"--subject", subject,
 		"--subject-key-id", subjectKeyID,
 		"--from", from,
 	}
-	args = append(args, extra...)
+	for _, o := range opts {
+		args = append(args, o.args()...)
+	}
 
 	return utils.ExecuteTx(args...)
 }
 
+// AddNocCertOpts is shared by AddNocRootCert / AddNocX509IcaCert.
+// IsVidVerificationSigner emits --is-vid-verification-signer=true (Matter §6.5.12
+// VVSC flow). SchemaVersion is sent only when non-empty.
+type AddNocCertOpts struct {
+	IsVidVerificationSigner bool
+	SchemaVersion           string
+	Extra                   []string
+}
+
+func (o AddNocCertOpts) args() []string {
+	var extra []string
+	if o.IsVidVerificationSigner {
+		extra = append(extra, "--is-vid-verification-signer=true")
+	}
+	if o.SchemaVersion != "" {
+		extra = append(extra, "--schemaVersion", o.SchemaVersion)
+	}
+
+	return append(extra, o.Extra...)
+}
+
 // AddNocRootCert adds a NOC root certificate.
-func AddNocRootCert(certFile, from string, extra ...string) (*utils.TxResult, error) {
+func AddNocRootCert(certFile, from string, opts ...AddNocCertOpts) (*utils.TxResult, error) {
 	args := []string{
 		"tx", "pki", "add-noc-x509-root-cert",
 		"--certificate", certFile,
 		"--from", from,
 	}
-	args = append(args, extra...)
+	for _, o := range opts {
+		args = append(args, o.args()...)
+	}
 
 	return utils.ExecuteTx(args...)
 }
 
 // AddNocX509IcaCert adds a NOC ICA certificate.
-func AddNocX509IcaCert(certFile, from string, extra ...string) (*utils.TxResult, error) {
+func AddNocX509IcaCert(certFile, from string, opts ...AddNocCertOpts) (*utils.TxResult, error) {
 	args := []string{
 		"tx", "pki", "add-noc-x509-ica-cert",
 		"--certificate", certFile,
 		"--from", from,
 	}
-	args = append(args, extra...)
+	for _, o := range opts {
+		args = append(args, o.args()...)
+	}
 
 	return utils.ExecuteTx(args...)
 }
 
+// RevokeNocCertOpts is shared by RevokeNocRootCert / RevokeNocX509IcaCert.
+// SerialNumber narrows the revocation to a single serial (default: all).
+// RevokeChild cascades revocation to child certificates.
+type RevokeNocCertOpts struct {
+	SerialNumber string
+	RevokeChild  bool
+	Extra        []string
+}
+
+func (o RevokeNocCertOpts) args() []string {
+	var extra []string
+	if o.SerialNumber != "" {
+		extra = append(extra, "--serial-number", o.SerialNumber)
+	}
+	if o.RevokeChild {
+		extra = append(extra, "--revoke-child=true")
+	}
+
+	return append(extra, o.Extra...)
+}
+
 // RevokeNocRootCert revokes a NOC root certificate.
-func RevokeNocRootCert(subject, subjectKeyID, from string, extra ...string) (*utils.TxResult, error) {
+func RevokeNocRootCert(subject, subjectKeyID, from string, opts ...RevokeNocCertOpts) (*utils.TxResult, error) {
 	args := []string{
 		"tx", "pki", "revoke-noc-x509-root-cert",
 		"--subject", subject,
 		"--subject-key-id", subjectKeyID,
 		"--from", from,
 	}
-	args = append(args, extra...)
+	for _, o := range opts {
+		args = append(args, o.args()...)
+	}
 
 	return utils.ExecuteTx(args...)
 }
 
 // RevokeNocX509IcaCert revokes a NOC ICA certificate.
-func RevokeNocX509IcaCert(subject, subjectKeyID, from string, extra ...string) (*utils.TxResult, error) {
+func RevokeNocX509IcaCert(subject, subjectKeyID, from string, opts ...RevokeNocCertOpts) (*utils.TxResult, error) {
 	args := []string{
 		"tx", "pki", "revoke-noc-x509-ica-cert",
 		"--subject", subject,
 		"--subject-key-id", subjectKeyID,
 		"--from", from,
 	}
-	args = append(args, extra...)
+	for _, o := range opts {
+		args = append(args, o.args()...)
+	}
 
 	return utils.ExecuteTx(args...)
 }
 
 // RemoveX509Cert removes an x509 certificate.
-func RemoveX509Cert(subject, subjectKeyID, from string, extra ...string) (*utils.TxResult, error) {
+func RemoveX509Cert(subject, subjectKeyID, from string, opts ...RevokeNocCertOpts) (*utils.TxResult, error) {
 	args := []string{
 		"tx", "pki", "remove-x509-cert",
 		"--subject", subject,
 		"--subject-key-id", subjectKeyID,
 		"--from", from,
 	}
-	args = append(args, extra...)
+	for _, o := range opts {
+		args = append(args, o.args()...)
+	}
 
 	return utils.ExecuteTx(args...)
 }
 
 // RemoveNocCert removes a NOC ICA certificate.
-func RemoveNocCert(subject, subjectKeyID, from string, extra ...string) (*utils.TxResult, error) {
+func RemoveNocCert(subject, subjectKeyID, from string, opts ...RevokeNocCertOpts) (*utils.TxResult, error) {
 	args := []string{
 		"tx", "pki", "remove-noc-x509-ica-cert",
 		"--subject", subject,
 		"--subject-key-id", subjectKeyID,
 		"--from", from,
 	}
-	args = append(args, extra...)
+	for _, o := range opts {
+		args = append(args, o.args()...)
+	}
 
 	return utils.ExecuteTx(args...)
 }
 
 // RemoveNocRootCert removes a NOC root certificate.
-func RemoveNocRootCert(subject, subjectKeyID, from string, extra ...string) (*utils.TxResult, error) {
+func RemoveNocRootCert(subject, subjectKeyID, from string, opts ...RevokeNocCertOpts) (*utils.TxResult, error) {
 	args := []string{
 		"tx", "pki", "remove-noc-x509-root-cert",
 		"--subject", subject,
 		"--subject-key-id", subjectKeyID,
 		"--from", from,
 	}
-	args = append(args, extra...)
+	for _, o := range opts {
+		args = append(args, o.args()...)
+	}
 
 	return utils.ExecuteTx(args...)
 }
 
+// RevocationPointOpts holds parameters for add/update/delete-revocation-point.
+// Each field is sent only when non-zero/non-empty; the boolean IsPAA emits
+// --is-paa=true when set. Use Extra for unmodeled flags.
+type RevocationPointOpts struct {
+	VID                  int
+	VIDHex               string
+	PID                  int
+	PIDHex               string
+	IsPAA                bool
+	Certificate          string
+	CertificateDelegator string
+	Label                string
+	DataURL              string
+	IssuerSubjectKeyID   string
+	RevocationType       string
+	CRLSignerCertificate string
+	SchemaVersion        string
+	Extra                []string
+}
+
+func (o RevocationPointOpts) args() []string {
+	var args []string
+	if o.VID != 0 || o.VIDHex != "" {
+		args = append(args, "--vid", flagOrHex(o.VID, o.VIDHex))
+	}
+	if o.PID != 0 || o.PIDHex != "" {
+		args = append(args, "--pid", flagOrHex(o.PID, o.PIDHex))
+	}
+	if o.IsPAA {
+		args = append(args, "--is-paa=true")
+	}
+	if o.Certificate != "" {
+		args = append(args, "--certificate", o.Certificate)
+	}
+	if o.CertificateDelegator != "" {
+		args = append(args, "--certificate-delegator", o.CertificateDelegator)
+	}
+	if o.Label != "" {
+		args = append(args, "--label", o.Label)
+	}
+	if o.DataURL != "" {
+		args = append(args, "--data-url", o.DataURL)
+	}
+	if o.IssuerSubjectKeyID != "" {
+		args = append(args, "--issuer-subject-key-id", o.IssuerSubjectKeyID)
+	}
+	if o.RevocationType != "" {
+		args = append(args, "--revocation-type", o.RevocationType)
+	}
+	if o.CRLSignerCertificate != "" {
+		args = append(args, "--crl-signer-certificate", o.CRLSignerCertificate)
+	}
+	if o.SchemaVersion != "" {
+		args = append(args, "--schemaVersion", o.SchemaVersion)
+	}
+
+	return append(args, o.Extra...)
+}
+
 // AddRevocationPoint adds a PKI revocation distribution point.
-func AddRevocationPoint(from string, extra ...string) (*utils.TxResult, error) {
+func AddRevocationPoint(from string, opts RevocationPointOpts) (*utils.TxResult, error) {
 	args := []string{"tx", "pki", "add-revocation-point", "--from", from}
-	args = append(args, extra...)
+	args = append(args, opts.args()...)
 
 	return utils.ExecuteTx(args...)
 }
 
 // UpdateRevocationPoint updates a PKI revocation distribution point.
-func UpdateRevocationPoint(from string, extra ...string) (*utils.TxResult, error) {
+func UpdateRevocationPoint(from string, opts RevocationPointOpts) (*utils.TxResult, error) {
 	args := []string{"tx", "pki", "update-revocation-point", "--from", from}
-	args = append(args, extra...)
+	args = append(args, opts.args()...)
 
 	return utils.ExecuteTx(args...)
 }
 
 // DeleteRevocationPoint deletes a PKI revocation distribution point.
-func DeleteRevocationPoint(from string, extra ...string) (*utils.TxResult, error) {
+func DeleteRevocationPoint(from string, opts RevocationPointOpts) (*utils.TxResult, error) {
 	args := []string{"tx", "pki", "delete-revocation-point", "--from", from}
-	args = append(args, extra...)
+	args = append(args, opts.args()...)
 
 	return utils.ExecuteTx(args...)
 }
@@ -214,30 +402,6 @@ func AssignVid(subject, subjectKeyID string, vid int, from string) (*utils.TxRes
 		"--vid", itoa(vid),
 		"--from", from,
 	)
-}
-
-// AddPkiRevocationDistributionPoint adds a PKI revocation distribution point.
-func AddPkiRevocationDistributionPoint(from string, extra ...string) (*utils.TxResult, error) {
-	args := []string{"tx", "pki", "add-pki-revocation-distribution-point", "--from", from}
-	args = append(args, extra...)
-
-	return utils.ExecuteTx(args...)
-}
-
-// UpdatePkiRevocationDistributionPoint updates a PKI revocation distribution point.
-func UpdatePkiRevocationDistributionPoint(from string, extra ...string) (*utils.TxResult, error) {
-	args := []string{"tx", "pki", "update-pki-revocation-distribution-point", "--from", from}
-	args = append(args, extra...)
-
-	return utils.ExecuteTx(args...)
-}
-
-// DeletePkiRevocationDistributionPoint deletes a PKI revocation distribution point.
-func DeletePkiRevocationDistributionPoint(from string, extra ...string) (*utils.TxResult, error) {
-	args := []string{"tx", "pki", "delete-pki-revocation-distribution-point", "--from", from}
-	args = append(args, extra...)
-
-	return utils.ExecuteTx(args...)
 }
 
 // QueryX509Cert queries an approved x509 certificate.
@@ -444,6 +608,15 @@ func QueryX509CertsBySubject(subject string) ([]byte, error) {
 		"--subject", subject,
 		"-o", "json",
 	)
+}
+
+// flagOrHex returns hex if non-empty, otherwise the decimal-formatted n.
+func flagOrHex(n int, hex string) string {
+	if hex != "" {
+		return hex
+	}
+
+	return itoa(n)
 }
 
 func itoa(n int) string {

@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/model"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
@@ -28,8 +29,16 @@ func TestComplianceDemo(t *testing.T) {
 	cdVersionNumber := 1
 
 	t.Run("CertifyUnknownModel_Succeeds", func(t *testing.T) {
-		txResult, err := CertifyModel(vid, pid, sv, svs, zigbeeCertType, certificationDate, cdCertID, zbAccount,
-			"--cdVersionNumber", fmt.Sprintf("%d", cdVersionNumber))
+		txResult, err := CertifyModel(CertifyModelOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: svs,
+			CertificationType:     zigbeeCertType,
+			CertificationDate:     certificationDate,
+			CDCertificateID:       cdCertID,
+			CDVersionNumber:       cdVersionNumber,
+			From:                  zbAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -52,32 +61,21 @@ func TestComplianceDemo(t *testing.T) {
 	})
 
 	t.Run("CreateModelAndVersion", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--deviceTypeID", "1",
-			"--productName", "TestProduct",
-			"--productLabel", "TestingProductLabel",
-			"--partNumber", "1",
-			"--commissioningCustomFlow", "0",
-			"--enhancedSetupFlowOptions", "0",
-			"--from", vendorAccount,
-		)
+		txResult, err := model.AddModel(model.AddModelOpts{
+			VID: vid, PID: pid, From: vendorAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		txResult, err = utils.ExecuteTx("tx", "model", "add-model-version",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--softwareVersion", fmt.Sprintf("%d", sv),
-			"--softwareVersionString", svs,
-			"--cdVersionNumber", fmt.Sprintf("%d", cdVersionNumber),
-			"--maxApplicableSoftwareVersion", "10",
-			"--minApplicableSoftwareVersion", "1",
-			"--from", vendorAccount,
-		)
+		txResult, err = model.AddModelVersion(model.AddModelVersionOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: svs,
+			CDVersionNumber:       cdVersionNumber,
+			From:                  vendorAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -85,7 +83,7 @@ func TestComplianceDemo(t *testing.T) {
 	})
 
 	t.Run("QueryBeforeCertification_NotFound", func(t *testing.T) {
-		out, err := QueryComplianceInfo(vid, pid, sv, zigbeeCertType)
+		out, err := QueryComplianceInfo(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: zigbeeCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), "Not Found")
 		require.NotContains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
@@ -97,19 +95,19 @@ func TestComplianceDemo(t *testing.T) {
 		require.NotContains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
 		require.NotContains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 
-		out, err = QueryCertifiedModel(vid, pid, sv, zigbeeCertType)
+		out, err = QueryCertifiedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: zigbeeCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), "Not Found")
 		require.NotContains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
 		require.NotContains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 
-		out, err = QueryRevokedModel(vid, pid, sv, zigbeeCertType)
+		out, err = QueryRevokedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: zigbeeCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), "Not Found")
 		require.NotContains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
 		require.NotContains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 
-		out, err = QueryProvisionalModel(vid, pid, sv, zigbeeCertType)
+		out, err = QueryProvisionalModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: zigbeeCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), "Not Found")
 		require.NotContains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
@@ -139,15 +137,34 @@ func TestComplianceDemo(t *testing.T) {
 
 	t.Run("CertifyWithInvalidSVS_Fails", func(t *testing.T) {
 		invalidSvs := fmt.Sprintf("%d", rand.Intn(65534)+1)
-		txResult, err := CertifyModel(vid, pid, sv, invalidSvs, zigbeeCertType, certificationDate, cdCertID, zbAccount,
-			"--cdVersionNumber", fmt.Sprintf("%d", cdVersionNumber))
+		txResult, err := CertifyModel(CertifyModelOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: invalidSvs,
+			CertificationType:     zigbeeCertType,
+			CertificationDate:     certificationDate,
+			CDCertificateID:       cdCertID,
+			CDVersionNumber:       cdVersionNumber,
+			From:                  zbAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(306), txResult.Code)
 		_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
 	})
 
 	t.Run("CertifyWithInvalidCDVersionNumber_Fails", func(t *testing.T) {
-		txResult, err := CertifyModel(vid, pid, sv, svs, zigbeeCertType, certificationDate, cdCertID, zbAccount)
+		// Override CDVersionNumber to 0 explicitly (default would be 1) — the
+		// handler must reject an unknown version.
+		txResult, err := CertifyModel(CertifyModelOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: svs,
+			CertificationType:     zigbeeCertType,
+			CertificationDate:     certificationDate,
+			CDCertificateID:       cdCertID,
+			From:                  zbAccount,
+			Extra:                 []string{"--cdVersionNumber", "0"},
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(306), txResult.Code)
 		require.Contains(t, txResult.RawLog, "ledger does not have matching CDVersionNumber=0")
@@ -155,10 +172,17 @@ func TestComplianceDemo(t *testing.T) {
 	})
 
 	t.Run("CertifyZigbee_Success", func(t *testing.T) {
-		txResult, err := CertifyModel(vid, pid, sv, svs, zigbeeCertType, certificationDate, cdCertID, zbAccount,
-			"--cdVersionNumber", fmt.Sprintf("%d", cdVersionNumber),
-			"--schemaVersion", "0",
-		)
+		txResult, err := CertifyModel(CertifyModelOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: svs,
+			CertificationType:     zigbeeCertType,
+			CertificationDate:     certificationDate,
+			CDCertificateID:       cdCertID,
+			CDVersionNumber:       cdVersionNumber,
+			From:                  zbAccount,
+			Extra:                 []string{"--schemaVersion", "0"},
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -166,9 +190,16 @@ func TestComplianceDemo(t *testing.T) {
 	})
 
 	t.Run("CertifyMatter_Success", func(t *testing.T) {
-		txResult, err := CertifyModel(vid, pid, sv, svs, matterCertType, certificationDate, cdCertID, zbAccount,
-			"--cdVersionNumber", fmt.Sprintf("%d", cdVersionNumber),
-		)
+		txResult, err := CertifyModel(CertifyModelOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: svs,
+			CertificationType:     matterCertType,
+			CertificationDate:     certificationDate,
+			CDCertificateID:       cdCertID,
+			CDVersionNumber:       cdVersionNumber,
+			From:                  zbAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -176,9 +207,16 @@ func TestComplianceDemo(t *testing.T) {
 	})
 
 	t.Run("ReCertify_DifferentAccount_Fails", func(t *testing.T) {
-		txResult, err := CertifyModel(vid, pid, sv, svs, zigbeeCertType, certificationDate, cdCertID, secondZbAccount,
-			"--cdVersionNumber", fmt.Sprintf("%d", cdVersionNumber),
-		)
+		txResult, err := CertifyModel(CertifyModelOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: svs,
+			CertificationType:     zigbeeCertType,
+			CertificationDate:     certificationDate,
+			CDCertificateID:       cdCertID,
+			CDVersionNumber:       cdVersionNumber,
+			From:                  secondZbAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(303), txResult.Code)
 		require.Contains(t, txResult.RawLog, "already certified on the ledger")
@@ -186,9 +224,16 @@ func TestComplianceDemo(t *testing.T) {
 	})
 
 	t.Run("ReCertify_SameAccount_Fails", func(t *testing.T) {
-		txResult, err := CertifyModel(vid, pid, sv, svs, zigbeeCertType, certificationDate, cdCertID, zbAccount,
-			"--cdVersionNumber", fmt.Sprintf("%d", cdVersionNumber),
-		)
+		txResult, err := CertifyModel(CertifyModelOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: svs,
+			CertificationType:     zigbeeCertType,
+			CertificationDate:     certificationDate,
+			CDCertificateID:       cdCertID,
+			CDVersionNumber:       cdVersionNumber,
+			From:                  zbAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(303), txResult.Code)
 		require.Contains(t, txResult.RawLog, "already certified on the ledger")
@@ -197,41 +242,41 @@ func TestComplianceDemo(t *testing.T) {
 
 	t.Run("QueryAfterCertification", func(t *testing.T) {
 		// Certified model checks
-		out, err := QueryCertifiedModel(vid, pid, sv, matterCertType)
+		out, err := QueryCertifiedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: matterCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"value":true`)
 		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
 		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 
-		out, err = QueryCertifiedModel(vid, pid, sv, zigbeeCertType)
+		out, err = QueryCertifiedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: zigbeeCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"value":true`)
 		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
 		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 
 		// After certifying, revoked/provisional records exist with value=false
-		out, err = QueryRevokedModel(vid, pid, sv, matterCertType)
+		out, err = QueryRevokedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: matterCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"value":false`)
 		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
 		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 
-		out, err = QueryRevokedModel(vid, pid, sv, zigbeeCertType)
+		out, err = QueryRevokedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: zigbeeCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"value":false`)
 
-		out, err = QueryProvisionalModel(vid, pid, sv, matterCertType)
+		out, err = QueryProvisionalModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: matterCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"value":false`)
 		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
 		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 
-		out, err = QueryProvisionalModel(vid, pid, sv, zigbeeCertType)
+		out, err = QueryProvisionalModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: zigbeeCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"value":false`)
 
 		// Compliance info — zigbee
-		out, err = QueryComplianceInfo(vid, pid, sv, zigbeeCertType)
+		out, err = QueryComplianceInfo(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: zigbeeCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
@@ -242,7 +287,7 @@ func TestComplianceDemo(t *testing.T) {
 		require.Contains(t, string(out), `"schemaVersion":0`)
 
 		// Compliance info — matter
-		out, err = QueryComplianceInfo(vid, pid, sv, matterCertType)
+		out, err = QueryComplianceInfo(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: matterCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
@@ -300,10 +345,16 @@ func TestComplianceDemo(t *testing.T) {
 
 	t.Run("RevokeFromPast_Fails", func(t *testing.T) {
 		pastDate := "2020-01-01T00:00:00Z"
-		txResult, err := RevokeModel(vid, pid, sv, svs, zigbeeCertType, pastDate, zbAccount,
-			"--reason", "some reason",
-			"--cdVersionNumber", fmt.Sprintf("%d", cdVersionNumber),
-		)
+		txResult, err := RevokeModel(RevokeModelOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: svs,
+			CertificationType:     zigbeeCertType,
+			RevocationDate:        pastDate,
+			Reason:                "some reason",
+			CDVersionNumber:       cdVersionNumber,
+			From:                  zbAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(302), txResult.Code)
 		require.Contains(t, txResult.RawLog, "must be after")
@@ -314,10 +365,16 @@ func TestComplianceDemo(t *testing.T) {
 	revocationReason := "some reason"
 
 	t.Run("RevokeZigbee_Success", func(t *testing.T) {
-		txResult, err := RevokeModel(vid, pid, sv, svs, zigbeeCertType, revocationDate, zbAccount,
-			"--reason", revocationReason,
-			"--cdVersionNumber", fmt.Sprintf("%d", cdVersionNumber),
-		)
+		txResult, err := RevokeModel(RevokeModelOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: svs,
+			CertificationType:     zigbeeCertType,
+			RevocationDate:        revocationDate,
+			Reason:                revocationReason,
+			CDVersionNumber:       cdVersionNumber,
+			From:                  zbAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -325,7 +382,7 @@ func TestComplianceDemo(t *testing.T) {
 	})
 
 	t.Run("QueryAfterRevocation", func(t *testing.T) {
-		out, err := QueryComplianceInfo(vid, pid, sv, zigbeeCertType)
+		out, err := QueryComplianceInfo(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: zigbeeCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
@@ -347,15 +404,15 @@ func TestComplianceDemo(t *testing.T) {
 		require.Contains(t, string(out), fmt.Sprintf(`"certificationType":"%s"`, matterCertType))
 		require.NotContains(t, string(out), fmt.Sprintf(`"certificationType":"%s"`, zigbeeCertType))
 
-		out, err = QueryRevokedModel(vid, pid, sv, zigbeeCertType)
+		out, err = QueryRevokedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: zigbeeCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"value":true`)
 
-		out, err = QueryCertifiedModel(vid, pid, sv, zigbeeCertType)
+		out, err = QueryCertifiedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: zigbeeCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"value":false`)
 
-		out, err = QueryProvisionalModel(vid, pid, sv, zigbeeCertType)
+		out, err = QueryProvisionalModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: zigbeeCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"value":false`)
 
@@ -378,16 +435,23 @@ func TestComplianceDemo(t *testing.T) {
 	reCertDate := "2020-03-03T00:00:00Z"
 
 	t.Run("ReCertifyAfterRevocation_Success", func(t *testing.T) {
-		txResult, err := CertifyModel(vid, pid, sv, svs, zigbeeCertType, reCertDate, cdCertID, zbAccount,
-			"--cdVersionNumber", fmt.Sprintf("%d", cdVersionNumber),
-		)
+		txResult, err := CertifyModel(CertifyModelOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: svs,
+			CertificationType:     zigbeeCertType,
+			CertificationDate:     reCertDate,
+			CDCertificateID:       cdCertID,
+			CDVersionNumber:       cdVersionNumber,
+			From:                  zbAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
 		// Compliance info — back to certified with new date
-		out, err := QueryComplianceInfo(vid, pid, sv, zigbeeCertType)
+		out, err := QueryComplianceInfo(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: zigbeeCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
@@ -406,11 +470,11 @@ func TestComplianceDemo(t *testing.T) {
 		require.Contains(t, string(out), fmt.Sprintf(`"certificationType":"%s"`, zigbeeCertType))
 		require.Contains(t, string(out), fmt.Sprintf(`"certificationType":"%s"`, matterCertType))
 
-		out, err = QueryCertifiedModel(vid, pid, sv, zigbeeCertType)
+		out, err = QueryCertifiedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: zigbeeCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"value":true`)
 
-		out, err = QueryRevokedModel(vid, pid, sv, zigbeeCertType)
+		out, err = QueryRevokedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: zigbeeCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"value":false`)
 
@@ -448,32 +512,21 @@ func TestComplianceDemo(t *testing.T) {
 	svs2 := fmt.Sprintf("%d", rand.Intn(65534)+1)
 
 	t.Run("CreateModelAndVersion2", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid2),
-			"--deviceTypeID", "1",
-			"--productName", "TestProduct",
-			"--productLabel", "TestingProductLabel",
-			"--partNumber", "1",
-			"--commissioningCustomFlow", "0",
-			"--enhancedSetupFlowOptions", "0",
-			"--from", vendorAccount,
-		)
+		txResult, err := model.AddModel(model.AddModelOpts{
+			VID: vid, PID: pid2, From: vendorAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		txResult, err = utils.ExecuteTx("tx", "model", "add-model-version",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid2),
-			"--softwareVersion", fmt.Sprintf("%d", sv2),
-			"--softwareVersionString", svs2,
-			"--cdVersionNumber", fmt.Sprintf("%d", cdVersionNumber),
-			"--maxApplicableSoftwareVersion", "10",
-			"--minApplicableSoftwareVersion", "1",
-			"--from", vendorAccount,
-		)
+		txResult, err = model.AddModelVersion(model.AddModelVersionOpts{
+			VID: vid, PID: pid2,
+			SoftwareVersion:       sv2,
+			SoftwareVersionString: svs2,
+			CDVersionNumber:       cdVersionNumber,
+			From:                  vendorAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -481,34 +534,43 @@ func TestComplianceDemo(t *testing.T) {
 	})
 
 	t.Run("CertifyWithOptionalFields", func(t *testing.T) {
-		txResult, err := CertifyModel(vid, pid2, sv2, svs2, zigbeeCertType, reCertDate, cdCertID, zbAccount,
-			"--cdVersionNumber", fmt.Sprintf("%d", cdVersionNumber),
-			"--programTypeVersion", "1.0",
-			"--familyId", "FAM123456abc",
-			"--supportedClusters", "0x0003,0x0004",
-			"--compliantPlatformUsed", "WIFI",
-			"--compliantPlatformVersion", "V1",
-			"--OSVersion", "someV",
-			"--certificationRoute", "fullTested",
-			"--programType", "endProduct",
-			"--transport", "wi-fi",
-			"--parentChild", "parent",
-			"--certificationIDOfSoftwareComponent", "someIDOfSoftwareComponent",
-		)
+		txResult, err := CertifyModel(CertifyModelOpts{
+			VID: vid, PID: pid2,
+			SoftwareVersion:       sv2,
+			SoftwareVersionString: svs2,
+			CertificationType:     zigbeeCertType,
+			CertificationDate:     reCertDate,
+			CDCertificateID:       cdCertID,
+			CDVersionNumber:       cdVersionNumber,
+			From:                  zbAccount,
+			Extra: []string{
+				"--programTypeVersion", "1.0",
+				"--familyId", "FAM123456abc",
+				"--supportedClusters", "0x0003,0x0004",
+				"--compliantPlatformUsed", "WIFI",
+				"--compliantPlatformVersion", "V1",
+				"--OSVersion", "someV",
+				"--certificationRoute", "fullTested",
+				"--programType", "endProduct",
+				"--transport", "wi-fi",
+				"--parentChild", "parent",
+				"--certificationIDOfSoftwareComponent", "someIDOfSoftwareComponent",
+			},
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
 		// Certified model
-		out, err := QueryCertifiedModel(vid, pid2, sv2, zigbeeCertType)
+		out, err := QueryCertifiedModel(ComplianceQueryOpts{VID: vid, PID: pid2, SoftwareVersion: sv2, CertificationType: zigbeeCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"value":true`)
 		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid2))
 		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 
 		// Compliance info — all optional fields present
-		out, err = QueryComplianceInfo(vid, pid2, sv2, zigbeeCertType)
+		out, err = QueryComplianceInfo(ComplianceQueryOpts{VID: vid, PID: pid2, SoftwareVersion: sv2, CertificationType: zigbeeCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid2))
@@ -565,7 +627,7 @@ func TestComplianceDemo(t *testing.T) {
 		require.NoError(t, err)
 
 		// Verify updated fields changed, non-updated optional fields unchanged
-		out, err := QueryComplianceInfo(vid, pid2, sv2, zigbeeCertType)
+		out, err := QueryComplianceInfo(ComplianceQueryOpts{VID: vid, PID: pid2, SoftwareVersion: sv2, CertificationType: zigbeeCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid2))
@@ -600,7 +662,7 @@ func TestComplianceDemo(t *testing.T) {
 		require.Contains(t, txResult.RawLog, "unauthorized")
 
 		// Fields must be unchanged after vendor update attempt
-		out, err := QueryComplianceInfo(vid, pid2, sv2, zigbeeCertType)
+		out, err := QueryComplianceInfo(ComplianceQueryOpts{VID: vid, PID: pid2, SoftwareVersion: sv2, CertificationType: zigbeeCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"programType":"softwareComponent"`)
 		require.Contains(t, string(out), `"transport":"ethernet"`)
@@ -616,7 +678,7 @@ func TestComplianceDemo(t *testing.T) {
 		require.NoError(t, err)
 
 		// Fields must remain as set by the first update
-		out, err := QueryComplianceInfo(vid, pid2, sv2, zigbeeCertType)
+		out, err := QueryComplianceInfo(ComplianceQueryOpts{VID: vid, PID: pid2, SoftwareVersion: sv2, CertificationType: zigbeeCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"programType":"softwareComponent"`)
 		require.Contains(t, string(out), `"transport":"ethernet"`)
@@ -652,7 +714,7 @@ func TestComplianceDemo(t *testing.T) {
 		require.NoError(t, err)
 
 		// All fields updated
-		out, err := QueryComplianceInfo(vid, pid2, sv2, zigbeeCertType)
+		out, err := QueryComplianceInfo(ComplianceQueryOpts{VID: vid, PID: pid2, SoftwareVersion: sv2, CertificationType: zigbeeCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
 		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid2))
@@ -691,7 +753,7 @@ func TestComplianceDemo(t *testing.T) {
 		require.NoError(t, err)
 
 		// Compliance info — Not Found
-		out, err := QueryComplianceInfo(vid, pid2, sv2, zigbeeCertType)
+		out, err := QueryComplianceInfo(ComplianceQueryOpts{VID: vid, PID: pid2, SoftwareVersion: sv2, CertificationType: zigbeeCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), "Not Found")
 
@@ -701,7 +763,7 @@ func TestComplianceDemo(t *testing.T) {
 		require.NotContains(t, string(out), fmt.Sprintf(`"pid":%d`, pid2))
 
 		// Certified model — Not Found
-		out, err = QueryCertifiedModel(vid, pid2, sv2, zigbeeCertType)
+		out, err = QueryCertifiedModel(ComplianceQueryOpts{VID: vid, PID: pid2, SoftwareVersion: sv2, CertificationType: zigbeeCertType})
 		require.NoError(t, err)
 		require.Contains(t, string(out), "Not Found")
 	})

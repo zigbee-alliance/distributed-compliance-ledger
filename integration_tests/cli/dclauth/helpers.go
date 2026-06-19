@@ -12,22 +12,99 @@ import (
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
+// ProposeAccountOpts holds optional flags for propose-add-account.
+// VID > 0 emits --vid; PidRanges non-empty emits --pid_ranges; Info emits --info.
+type ProposeAccountOpts struct {
+	Info      string
+	VID       int
+	PidRanges string
+	Extra     []string
+}
+
+func (o ProposeAccountOpts) args() []string {
+	var args []string
+	if o.Info != "" {
+		args = append(args, "--info", o.Info)
+	}
+	if o.VID != 0 {
+		args = append(args, "--vid", itoa(o.VID))
+	}
+	if o.PidRanges != "" {
+		args = append(args, "--pid_ranges", o.PidRanges)
+	}
+
+	return append(args, o.Extra...)
+}
+
+// AccountActionOpts holds optional flags for approve-add-account /
+// reject-add-account / propose-revoke-account / approve-revoke-account /
+// reject-revoke-account. Info emits --info <value>.
+type AccountActionOpts struct {
+	Info  string
+	Extra []string
+}
+
+func (o AccountActionOpts) args() []string {
+	var args []string
+	if o.Info != "" {
+		args = append(args, "--info", o.Info)
+	}
+
+	return append(args, o.Extra...)
+}
+
 // ProposeAccount executes the CLI command to propose adding a new account.
-func ProposeAccount(address, pubkey, roles, from string) (*utils.TxResult, error) {
-	return utils.ExecuteTx("tx", "auth", "propose-add-account",
+func ProposeAccount(address, pubkey, roles, from string, opts ...ProposeAccountOpts) (*utils.TxResult, error) {
+	args := []string{
+		"tx", "auth", "propose-add-account",
 		"--address", address,
 		"--pubkey", pubkey,
 		"--roles", roles,
 		"--from", from,
-	)
+	}
+	for _, o := range opts {
+		args = append(args, o.args()...)
+	}
+
+	return utils.ExecuteTx(args...)
 }
 
 // ApproveAccount executes the CLI command to approve adding an account.
-func ApproveAccount(address, from string) (*utils.TxResult, error) {
-	return utils.ExecuteTx("tx", "auth", "approve-add-account",
+func ApproveAccount(address, from string, opts ...AccountActionOpts) (*utils.TxResult, error) {
+	args := []string{
+		"tx", "auth", "approve-add-account",
 		"--address", address,
 		"--from", from,
-	)
+	}
+	for _, o := range opts {
+		args = append(args, o.args()...)
+	}
+
+	return utils.ExecuteTx(args...)
+}
+
+func itoa(n int) string {
+	if n == 0 {
+		return "0"
+	}
+	neg := false
+	if n < 0 {
+		neg = true
+		n = -n
+	}
+	var buf [20]byte
+	pos := len(buf)
+	for n > 0 {
+		pos--
+		buf[pos] = byte('0' + n%10)
+		n /= 10
+	}
+	if neg {
+		pos--
+		buf[pos] = '-'
+	}
+
+	return string(buf[pos:])
 }
 
 // QueryAccounts retrieves all accounts through the CLI.
@@ -101,27 +178,59 @@ func CreateAccountInfo(suite *utils.TestSuite) keyring.Record {
 }
 
 // ProposeRevokeAccount executes the CLI command to propose revoking an account.
-func ProposeRevokeAccount(address, from string) (*utils.TxResult, error) {
-	return utils.ExecuteTx("tx", "auth", "propose-revoke-account",
+func ProposeRevokeAccount(address, from string, opts ...AccountActionOpts) (*utils.TxResult, error) {
+	args := []string{
+		"tx", "auth", "propose-revoke-account",
 		"--address", address,
 		"--from", from,
-	)
+	}
+	for _, o := range opts {
+		args = append(args, o.args()...)
+	}
+
+	return utils.ExecuteTx(args...)
 }
 
 // ApproveRevokeAccount executes the CLI command to approve revoking an account.
-func ApproveRevokeAccount(address, from string) (*utils.TxResult, error) {
-	return utils.ExecuteTx("tx", "auth", "approve-revoke-account",
+func ApproveRevokeAccount(address, from string, opts ...AccountActionOpts) (*utils.TxResult, error) {
+	args := []string{
+		"tx", "auth", "approve-revoke-account",
 		"--address", address,
 		"--from", from,
-	)
+	}
+	for _, o := range opts {
+		args = append(args, o.args()...)
+	}
+
+	return utils.ExecuteTx(args...)
 }
 
 // RejectAccount executes the CLI command to reject adding an account.
-func RejectAccount(address, from string) (*utils.TxResult, error) {
-	return utils.ExecuteTx("tx", "auth", "reject-add-account",
+func RejectAccount(address, from string, opts ...AccountActionOpts) (*utils.TxResult, error) {
+	args := []string{
+		"tx", "auth", "reject-add-account",
 		"--address", address,
 		"--from", from,
-	)
+	}
+	for _, o := range opts {
+		args = append(args, o.args()...)
+	}
+
+	return utils.ExecuteTx(args...)
+}
+
+// RejectRevokeAccount executes the CLI command to reject a revocation proposal.
+func RejectRevokeAccount(address, from string, opts ...AccountActionOpts) (*utils.TxResult, error) {
+	args := []string{
+		"tx", "auth", "reject-revoke-account",
+		"--address", address,
+		"--from", from,
+	}
+	for _, o := range opts {
+		args = append(args, o.args()...)
+	}
+
+	return utils.ExecuteTx(args...)
 }
 
 // QueryProposedAccount queries a proposed (pending) account by address.

@@ -57,12 +57,12 @@ func TestVendorInfoDemo(t *testing.T) {
 	)
 
 	t.Run("AddVendorInfo", func(t *testing.T) {
-		txResult, err := AddVendor(vendorAccount,
-			"--vid", fmt.Sprintf("%d", vid),
-			"--companyLegalName", companyLegalName,
-			"--vendorName", vendorName,
-			"--schemaVersion", schemaVersion0,
-		)
+		txResult, err := AddVendor(vendorAccount, VendorOpts{
+			VID:              vid,
+			CompanyLegalName: companyLegalName,
+			VendorName:       vendorName,
+			SchemaVersion:    schemaVersion0,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -87,9 +87,7 @@ func TestVendorInfoDemo(t *testing.T) {
 	})
 
 	t.Run("UpdateVendorInfoRequiredFieldsOnly", func(t *testing.T) {
-		txResult, err := UpdateVendor(vendorAccount,
-			"--vid", fmt.Sprintf("%d", vid),
-		)
+		txResult, err := UpdateVendor(vendorAccount, VendorOpts{VID: vid})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -107,13 +105,13 @@ func TestVendorInfoDemo(t *testing.T) {
 	vendorLandingPageURL := "https://www.w3.org/"
 
 	t.Run("UpdateVendorInfoAllFields", func(t *testing.T) {
-		txResult, err := UpdateVendor(vendorAccount,
-			"--vid", fmt.Sprintf("%d", vid),
-			"--companyLegalName", updatedCompanyLegalName,
-			"--vendorLandingPageURL", vendorLandingPageURL,
-			"--vendorName", vendorName,
-			"--schemaVersion", schemaVersion0,
-		)
+		txResult, err := UpdateVendor(vendorAccount, VendorOpts{
+			VID:                  vid,
+			CompanyLegalName:     updatedCompanyLegalName,
+			VendorLandingPageURL: vendorLandingPageURL,
+			VendorName:           vendorName,
+			SchemaVersion:        schemaVersion0,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -129,11 +127,11 @@ func TestVendorInfoDemo(t *testing.T) {
 
 	t.Run("AddVendorForWrongVID_Fails", func(t *testing.T) {
 		vid1 := rand.Intn(60000) + 61000
-		txResult, err := AddVendor(vendorAccount,
-			"--vid", fmt.Sprintf("%d", vid1),
-			"--companyLegalName", updatedCompanyLegalName,
-			"--vendorName", vendorName,
-		)
+		txResult, err := AddVendor(vendorAccount, VendorOpts{
+			VID:              vid1,
+			CompanyLegalName: updatedCompanyLegalName,
+			VendorName:       vendorName,
+		})
 		// Either execution error or non-zero tx code
 		if err == nil {
 			require.NotEqual(t, uint32(0), txResult.Code)
@@ -141,11 +139,11 @@ func TestVendorInfoDemo(t *testing.T) {
 	})
 
 	t.Run("UpdateVendorForWrongAccount_Fails", func(t *testing.T) {
-		txResult, err := UpdateVendor(secondVendorAccount,
-			"--vid", fmt.Sprintf("%d", vid),
-			"--companyLegalName", updatedCompanyLegalName,
-			"--vendorName", vendorName,
-		)
+		txResult, err := UpdateVendor(secondVendorAccount, VendorOpts{
+			VID:              vid,
+			CompanyLegalName: updatedCompanyLegalName,
+			VendorName:       vendorName,
+		})
 		if err == nil {
 			require.NotEqual(t, uint32(0), txResult.Code)
 		}
@@ -153,11 +151,11 @@ func TestVendorInfoDemo(t *testing.T) {
 
 	t.Run("AddVendorByVendorAdmin", func(t *testing.T) {
 		adminVid := rand.Intn(60000) + 1
-		txResult, err := AddVendor(vendorAdminAccount,
-			"--vid", fmt.Sprintf("%d", adminVid),
-			"--companyLegalName", updatedCompanyLegalName,
-			"--vendorName", vendorName,
-		)
+		txResult, err := AddVendor(vendorAdminAccount, VendorOpts{
+			VID:              adminVid,
+			CompanyLegalName: updatedCompanyLegalName,
+			VendorName:       vendorName,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -166,11 +164,11 @@ func TestVendorInfoDemo(t *testing.T) {
 		// Update the same record by vendor admin
 		newCompanyName := "New Corp"
 		newVendorName := "New Vendor Name"
-		txResult, err = UpdateVendor(vendorAdminAccount,
-			"--vid", fmt.Sprintf("%d", adminVid),
-			"--companyLegalName", newCompanyName,
-			"--vendorName", newVendorName,
-		)
+		txResult, err = UpdateVendor(vendorAdminAccount, VendorOpts{
+			VID:              adminVid,
+			CompanyLegalName: newCompanyName,
+			VendorName:       newVendorName,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
