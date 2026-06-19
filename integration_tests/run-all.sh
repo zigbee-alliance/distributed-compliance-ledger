@@ -103,6 +103,34 @@ make image &>${DETAILED_OUTPUT_TARGET}
 
 cleanup_pool
 
+# Cli tests — Go-only since the migration completed. One pool per package,
+# coverage merged via collect_cover. The deleted bash suite at
+# integration_tests/cli/*.sh was proven redundant by CI coverage diff
+# (Go coverage was a strict superset of bash coverage).
+if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
+  CLI_GO_TEST_PACKAGES=$(find integration_tests/cli -mindepth 1 -maxdepth 1 -type d -not -name utils | sort)
+
+  for CLI_GO_TEST_PACKAGE in ${CLI_GO_TEST_PACKAGES}; do
+    init_pool
+
+    log "*****************************************************************************************"
+    log "Running go test ./$CLI_GO_TEST_PACKAGE/..."
+    log "*****************************************************************************************"
+
+    dcld config keyring-backend test
+
+    if go test -count=1 -timeout 30m -v "./$CLI_GO_TEST_PACKAGE/..." &>${DETAILED_OUTPUT_TARGET}; then
+      log "$CLI_GO_TEST_PACKAGE finished successfully"
+    else
+      log "$CLI_GO_TEST_PACKAGE failed"
+      exit 1
+    fi
+
+    collect_cover
+    cleanup_pool
+  done
+fi
+
 # Upgrade procedure tests
 if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
   UPGRADE_SHELL_TEST="./integration_tests/upgrade/test-upgrade.sh"
@@ -139,34 +167,6 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "deploy" ]]; then
     log "$DEPLOY_SHELL_TEST failed"
     exit 1
   fi
-fi
-
-# Cli tests — Go-only since the migration completed. One pool per package,
-# coverage merged via collect_cover. The deleted bash suite at
-# integration_tests/cli/*.sh was proven redundant by CI coverage diff
-# (Go coverage was a strict superset of bash coverage).
-if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
-  CLI_GO_TEST_PACKAGES=$(find integration_tests/cli -mindepth 1 -maxdepth 1 -type d -not -name utils | sort)
-
-  for CLI_GO_TEST_PACKAGE in ${CLI_GO_TEST_PACKAGES}; do
-    init_pool
-
-    log "*****************************************************************************************"
-    log "Running go test ./$CLI_GO_TEST_PACKAGE/..."
-    log "*****************************************************************************************"
-
-    dcld config keyring-backend test
-
-    if go test -count=1 -timeout 30m -v "./$CLI_GO_TEST_PACKAGE/..." &>${DETAILED_OUTPUT_TARGET}; then
-      log "$CLI_GO_TEST_PACKAGE finished successfully"
-    else
-      log "$CLI_GO_TEST_PACKAGE failed"
-      exit 1
-    fi
-
-    collect_cover
-    cleanup_pool
-  done
 fi
 
 # Light Client Proxy Cli shell tests
