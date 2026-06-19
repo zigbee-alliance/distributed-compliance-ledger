@@ -199,7 +199,7 @@ func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID_ParentExist(t *testi
 
 			// add leaf certificate
 			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
-			utils.AddNocIntermediateCertificate(setup, leafCertificate)
+			utils.AddMokedNocCertificate(setup, leafCertificate)
 
 			// check total number of certificates
 			nocCerts := setup.Keeper.GetAllNocCertificates(setup.Ctx)
@@ -275,7 +275,7 @@ func TestHandler_RemoveNocIntermediateCert_BySerialNumber_ParentExist(t *testing
 
 			// Add a leaf certificate
 			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
-			utils.AddNocIntermediateCertificate(setup, leafCertificate)
+			utils.AddMokedNocCertificate(setup, leafCertificate)
 
 			// remove ICA certificate by serial number
 			utils.RemoveNocIntermediateCertificate(
@@ -339,7 +339,7 @@ func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID_ApprovedChildExist(t
 
 			// add leaf certificate
 			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
-			utils.AddNocIntermediateCertificate(setup, leafCertificate)
+			utils.AddMokedNocCertificate(setup, leafCertificate)
 
 			// check total number of certificates
 			nocCerts := setup.Keeper.GetAllNocCertificates(setup.Ctx)
@@ -416,7 +416,7 @@ func TestHandler_RemoveNocIntermediateCert_BySerialNumber_ApprovedChildExist(t *
 
 			// Add a leaf certificate
 			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
-			utils.AddNocIntermediateCertificate(setup, leafCertificate)
+			utils.AddMokedNocCertificate(setup, leafCertificate)
 
 			// remove ICA certificate by serial number
 			utils.RemoveNocIntermediateCertificate(
@@ -481,7 +481,7 @@ func TestHandler_RemoveNocIntermediateCert_BySubjectAndSKID_RevokedChildExist(t 
 
 			// add leaf certificate
 			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
-			utils.AddNocIntermediateCertificate(setup, leafCertificate)
+			utils.AddMokedNocCertificate(setup, leafCertificate)
 
 			// check total number of certificates
 			nocCerts := setup.Keeper.GetAllNocCertificates(setup.Ctx)
@@ -560,7 +560,7 @@ func TestHandler_RemoveNocIntermediateCert_BySerialNumber_RevokedChildExist(t *t
 
 			// Add a leaf certificate
 			leafCertificate := utils.LeafNocCertificate1(setup.Vendor1, tc.crtType)
-			utils.AddNocIntermediateCertificate(setup, leafCertificate)
+			utils.AddMokedNocCertificate(setup, leafCertificate)
 
 			// revoke leaf certificate
 			utils.RevokeNocIntermediateCertificate(

@@ -16,7 +16,11 @@ package x509
 
 import (
 	"bytes"
+	"crypto/ecdsa"
+	"crypto/elliptic"
 	"crypto/x509"
+	"crypto/x509/pkix"
+	"encoding/asn1"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/pem"
@@ -28,6 +32,35 @@ import (
 
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 )
+
+// X.509 extension OIDs we look up by ID instead of relying on crypto/x509's
+// parsed fields, because we need to inspect the Critical flag — which
+// crypto/x509 only surfaces via the raw Extensions slice.
+var (
+	OIDBasicConstraints = asn1.ObjectIdentifier{2, 5, 29, 19}
+	OIDKeyUsage         = asn1.ObjectIdentifier{2, 5, 29, 15}
+	OIDExtKeyUsage      = asn1.ObjectIdentifier{2, 5, 29, 37}
+)
+
+// Matter OID strings used by the at-most-one-VID/PID walker. Kept as strings
+// (matching asn1.ObjectIdentifier.String() output) so we don't need to allocate
+// an asn1.ObjectIdentifier on every comparison.
+const (
+	matterVIDOIDString = "1.3.6.1.4.1.37244.2.1"
+	matterPIDOIDString = "1.3.6.1.4.1.37244.2.2"
+)
+
+// FindExtCritical reports whether the extension with the given OID is present
+// and, if so, whether it was marked critical.
+func FindExtCritical(cert *x509.Certificate, oid asn1.ObjectIdentifier) (present, critical bool) {
+	for _, e := range cert.Extensions {
+		if e.Id.Equal(oid) {
+			return true, e.Critical
+		}
+	}
+
+	return false, false
+}
 
 type Certificate struct {
 	Issuer         string
@@ -45,6 +78,11 @@ const (
 	MaxCertSize      = 20 * 1024 // 20 KB
 	MaxSANCount      = 100
 	MaxSubjectFields = 50
+
+	// matterKeyIdentifierLen is the required length of the SubjectKeyIdentifier
+	// and AuthorityKeyIdentifier keyIdentifier fields per Matter R1.6 §6.5.11.2:
+	// the 160-bit SHA-1 hash of the subjectPublicKey BIT STRING — 20 octets.
+	matterKeyIdentifierLen = 20
 )
 
 type DecodeX509CertVerificationOptions func(cert *x509.Certificate) error
@@ -54,39 +92,408 @@ type DecodeX509CertVerificationOptions func(cert *x509.Certificate) error
 // *x509.Certificate and may return an error to reject the certificate.
 type ParseAndValidateCertificateOptions = DecodeX509CertVerificationOptions
 
-// VerifyIsCACertificate is a ParseAndValidateCertificate option that fails if the
-// certificate does not have BasicConstraints marked valid with cA set to TRUE.
-// Pass it for CA-only roles: DA root (PAA), DA intermediate (PAI), and NOC root
-// (RCAC). Do NOT pass it for end-entity certificates — Matter R1.5 §6.2.2.3
-// requires DAC with cA=FALSE and §6.5.12 requires NOC with is-ca=false — nor
-// for the NOC ICA handler, which currently accepts both ICACs and NOCs.
-func VerifyIsCACertificate(cert *x509.Certificate) error {
+// VerifyCAExtensions is a ParseAndValidateCertificate option that enforces the
+// full structural CA profile mandated by Matter R1.6 §6.2.2.4/5 and §6.5.12:
+//
+//   - BasicConstraints extension SHALL be present and marked critical.
+//   - BasicConstraints cA flag SHALL be set to TRUE.
+//   - KeyUsage extension SHALL be present and marked critical.
+//   - KeyUsage SHALL include keyCertSign and cRLSign.
+//   - KeyUsage MAY include digitalSignature; no other bits SHALL be set.
+//   - SubjectKeyIdentifier SHALL be present.
+//   - AuthorityKeyIdentifier SHALL be present for non-self-signed CAs
+//     (PAI / ICAC); §6.2.2.5 leaves AKI optional for self-signed PAAs, and the
+//     §6.5.12 RCAC AKI==SKI rule is enforced separately by the RCAC handler.
+//
+// Used directly by the PAA, RCAC and ICAC handlers, and dispatched to from the
+// IsCA=TRUE branch of VerifyDAChainNonRoot (PAI).
+func VerifyCAExtensions(cert *x509.Certificate) error {
 	if !cert.BasicConstraintsValid || !cert.IsCA {
 		return pkitypes.NewErrInappropriateCertificateType(
 			"certificate is not a CA: BasicConstraints extension must be present and cA must be set to TRUE",
 		)
 	}
 
+	if _, critical := FindExtCritical(cert, OIDBasicConstraints); !critical {
+		return pkitypes.NewErrInvalidCertificate(
+			"BasicConstraints extension SHALL be marked critical",
+		)
+	}
+
+	kuPresent, kuCritical := FindExtCritical(cert, OIDKeyUsage)
+	if !kuPresent {
+		return pkitypes.NewErrInvalidCertificate(
+			"KeyUsage extension SHALL be present for CA certificates",
+		)
+	}
+	if !kuCritical {
+		return pkitypes.NewErrInvalidCertificate(
+			"KeyUsage extension SHALL be marked critical",
+		)
+	}
+
+	const requiredCAKU = x509.KeyUsageCertSign | x509.KeyUsageCRLSign
+	if cert.KeyUsage&requiredCAKU != requiredCAKU {
+		return pkitypes.NewErrInvalidCertificate(
+			"KeyUsage SHALL include both keyCertSign and cRLSign bits",
+		)
+	}
+
+	const allowedCAKU = requiredCAKU | x509.KeyUsageDigitalSignature
+	if cert.KeyUsage&^allowedCAKU != 0 {
+		return pkitypes.NewErrInvalidCertificate(
+			"KeyUsage SHALL NOT include bits other than keyCertSign, cRLSign, and digitalSignature",
+		)
+	}
+
+	if len(cert.SubjectKeyId) == 0 {
+		return pkitypes.NewErrInvalidCertificate(
+			"SubjectKeyIdentifier extension SHALL be present for CA certificates",
+		)
+	}
+	if len(cert.SubjectKeyId) != matterKeyIdentifierLen {
+		return pkitypes.NewErrInvalidCertificate(
+			fmt.Sprintf("SubjectKeyIdentifier SHALL be %d octets (160-bit SHA-1), got %d",
+				matterKeyIdentifierLen, len(cert.SubjectKeyId)),
+		)
+	}
+
+	// crypto/x509 exposes RawIssuer/RawSubject as the DER bytes of the Name
+	// sequence, so byte-equality is the structural "self-signed" test.
+	selfSigned := bytes.Equal(cert.RawIssuer, cert.RawSubject)
+	if !selfSigned {
+		if len(cert.AuthorityKeyId) == 0 {
+			return pkitypes.NewErrInvalidCertificate(
+				"AuthorityKeyIdentifier extension SHALL be present for non-self-signed CA certificates",
+			)
+		}
+		if len(cert.AuthorityKeyId) != matterKeyIdentifierLen {
+			return pkitypes.NewErrInvalidCertificate(
+				fmt.Sprintf("AuthorityKeyIdentifier keyIdentifier SHALL be %d octets (160-bit SHA-1), got %d",
+					matterKeyIdentifierLen, len(cert.AuthorityKeyId)),
+			)
+		}
+	}
+
 	return nil
 }
 
-// VerifyBasicConstraintsPresent is a ParseAndValidateCertificate option that fails
-// if the certificate does not encode the BasicConstraints extension at all.
-// It does NOT dictate the value of the cA flag, so it accepts both is-ca=true
-// (ICAC) and is-ca=false (NOC, DAC, CRL signer).
+// verifyEndEntityExtensions implements the structural rules shared by Matter
+// end-entity certificates (DAC per §6.2.2.3 and NOC per §6.5.12):
 //
-// Pass it on paths that take leaf certificates or paths that take both CAs and
-// leaves — Matter R1.5 §6.2.2.3 (DAC) and §6.5.12 (NOC) both require the
-// BasicConstraints extension to be encoded. The NOC-ICA handler accepts both
-// ICACs and NOCs, so a "BC encoded" check is the right gate there
-//
-// crypto/x509 sets BasicConstraintsValid = true if and only if the BC extension
-// was found and parsed.
-func VerifyBasicConstraintsPresent(cert *x509.Certificate) error {
+//   - BasicConstraints SHALL be encoded, marked critical, with cA=FALSE.
+//   - KeyUsage SHALL be encoded, marked critical, exactly digitalSignature.
+//   - SubjectKeyIdentifier SHALL be present.
+//   - AuthorityKeyIdentifier SHALL be present.
+func verifyEndEntityExtensions(cert *x509.Certificate, certKind string) error {
 	if !cert.BasicConstraintsValid {
+		return pkitypes.NewErrInvalidCertificate(
+			certKind + ": BasicConstraints extension SHALL be present",
+		)
+	}
+	if cert.IsCA {
 		return pkitypes.NewErrInappropriateCertificateType(
+			certKind + ": BasicConstraints cA SHALL be set to FALSE",
+		)
+	}
+	if _, critical := FindExtCritical(cert, OIDBasicConstraints); !critical {
+		return pkitypes.NewErrInvalidCertificate(
+			certKind + ": BasicConstraints extension SHALL be marked critical",
+		)
+	}
+
+	kuPresent, kuCritical := FindExtCritical(cert, OIDKeyUsage)
+	if !kuPresent {
+		return pkitypes.NewErrInvalidCertificate(
+			certKind + ": KeyUsage extension SHALL be present",
+		)
+	}
+	if !kuCritical {
+		return pkitypes.NewErrInvalidCertificate(
+			certKind + ": KeyUsage extension SHALL be marked critical",
+		)
+	}
+	if cert.KeyUsage != x509.KeyUsageDigitalSignature {
+		return pkitypes.NewErrInvalidCertificate(
+			certKind + ": KeyUsage SHALL be exactly digitalSignature",
+		)
+	}
+
+	if len(cert.SubjectKeyId) == 0 {
+		return pkitypes.NewErrInvalidCertificate(
+			certKind + ": SubjectKeyIdentifier extension SHALL be present",
+		)
+	}
+	if len(cert.SubjectKeyId) != matterKeyIdentifierLen {
+		return pkitypes.NewErrInvalidCertificate(
+			fmt.Sprintf("%s: SubjectKeyIdentifier SHALL be %d octets (160-bit SHA-1), got %d",
+				certKind, matterKeyIdentifierLen, len(cert.SubjectKeyId)),
+		)
+	}
+	if len(cert.AuthorityKeyId) == 0 {
+		return pkitypes.NewErrInvalidCertificate(
+			certKind + ": AuthorityKeyIdentifier extension SHALL be present",
+		)
+	}
+	if len(cert.AuthorityKeyId) != matterKeyIdentifierLen {
+		return pkitypes.NewErrInvalidCertificate(
+			fmt.Sprintf("%s: AuthorityKeyIdentifier keyIdentifier SHALL be %d octets (160-bit SHA-1), got %d",
+				certKind, matterKeyIdentifierLen, len(cert.AuthorityKeyId)),
+		)
+	}
+
+	return nil
+}
+
+// verifyDACExtensions is a ParseAndValidateCertificate option that enforces
+// the structural rules of a Matter Device Attestation Certificate (DAC) per
+// Matter R1.6 §6.2.2.3: BasicConstraints critical with cA=FALSE, KeyUsage
+// critical with exactly digitalSignature, and SKI + AKI present.
+func verifyDACExtensions(cert *x509.Certificate) error {
+	return verifyEndEntityExtensions(cert, "DAC")
+}
+
+// VerifyDAChainNonRoot is a ParseAndValidateCertificate option for the
+// MsgAddX509Cert handler, which accepts both Matter PAIs (cA=TRUE) and Matter
+// DACs (cA=FALSE). The certificate is dispatched by its BasicConstraints cA
+// flag:
+//
+//   - cA=TRUE  → Matter R1.6 §6.2.2.4 PAI profile, enforced by VerifyCAExtensions
+//     plus VerifyPAIPathLen for the §6.2.2.4 rule 9 pathLenConstraint=0 requirement.
+//   - cA=FALSE → Matter R1.6 §6.2.2.3 DAC profile, enforced by verifyDACExtensions.
+//
+// BasicConstraints must be encoded either way; a missing BC extension is
+// reported as a DAC violation since crypto/x509 leaves IsCA at its zero value.
+func VerifyDAChainNonRoot(cert *x509.Certificate) error {
+	if !cert.BasicConstraintsValid {
+		return pkitypes.NewErrInvalidCertificate(
 			"BasicConstraints extension SHALL be present",
 		)
+	}
+	if cert.IsCA {
+		if err := VerifyCAExtensions(cert); err != nil {
+			return err
+		}
+
+		return VerifyPAIPathLen(cert)
+	}
+
+	return verifyDACExtensions(cert)
+}
+
+// VerifyPAAPathLen is a ParseAndValidateCertificate option that enforces the
+// Matter R1.6 §6.2.2.5 rule 9 pathLenConstraint constraint for Product
+// Attestation Authority (PAA) certificates: the field MAY be omitted, but if
+// present SHALL equal 1.
+//
+// crypto/x509 reports a present-and-zero pathLen as MaxPathLen=0 with
+// MaxPathLenZero=true, and an absent pathLen as MaxPathLen=0 with
+// MaxPathLenZero=false, so "present" is (MaxPathLen > 0 || MaxPathLenZero).
+func VerifyPAAPathLen(cert *x509.Certificate) error {
+	present := cert.MaxPathLen > 0 || cert.MaxPathLenZero
+	if present && cert.MaxPathLen != 1 {
+		return pkitypes.NewErrInvalidCertificate(
+			fmt.Sprintf("PAA: BasicConstraints pathLenConstraint MAY be omitted; if present SHALL be 1, got %d", cert.MaxPathLen),
+		)
+	}
+
+	return nil
+}
+
+// VerifyPAIPathLen is a ParseAndValidateCertificate option that enforces the
+// Matter R1.6 §6.2.2.4 rule 9 pathLenConstraint constraint for Product
+// Attestation Intermediate (PAI) certificates: the field SHALL be present and
+// SHALL be set to 0.
+//
+// crypto/x509 reports a present-and-zero pathLen as MaxPathLen=0 with
+// MaxPathLenZero=true; any other shape (absent, or present with a non-zero
+// value) fails the check.
+func VerifyPAIPathLen(cert *x509.Certificate) error {
+	if !cert.MaxPathLenZero {
+		return pkitypes.NewErrInvalidCertificate(
+			"PAI: BasicConstraints pathLenConstraint SHALL be present and set to 0",
+		)
+	}
+
+	return nil
+}
+
+// VerifyVVSCExtensions is a ParseAndValidateCertificate option that enforces
+// the structural rules of a Matter Vendor ID Verification Signer Certificate
+// (VVSC) per Matter R1.6 §6.5.12: BasicConstraints critical with cA=FALSE,
+// KeyUsage critical with exactly digitalSignature, and SKI + AKI present.
+// §6.5.12 is silent on ExtendedKeyUsage for VVSC, so EKU is not constrained.
+func VerifyVVSCExtensions(cert *x509.Certificate) error {
+	return verifyEndEntityExtensions(cert, "VVSC")
+}
+
+// VerifyVersionV3 is a ParseAndValidateCertificate option that asserts the
+// certificate is X.509 v3, as required by Matter R1.6 §6.2.2.3 (DAC),
+// §6.2.2.4 (PAI), §6.2.2.5 (PAA), and §6.5.5/§6.5.8/§6.5.9 (NOC chain). The
+// DER-level INTEGER 2 maps to crypto/x509's Version=3.
+func VerifyVersionV3(cert *x509.Certificate) error {
+	if cert.Version != 3 {
+		return pkitypes.NewErrInvalidCertificate(
+			fmt.Sprintf("certificate version SHALL be v3, got v%d", cert.Version),
+		)
+	}
+
+	return nil
+}
+
+// VerifyNoPIDInSubject is a ParseAndValidateCertificate option that asserts the
+// certificate's subject does not contain a Matter ProductID attribute. Matter
+// R1.6 §6.2.2.5 rule 8 prohibits a ProductID in the PAA's subject (and
+// equivalently issuer, since PAAs are self-signed).
+func VerifyNoPIDInSubject(cert *x509.Certificate) error {
+	subjectAsText, err := ToSubjectAsText(cert.Subject.String())
+	if err != nil {
+		return pkitypes.NewErrInvalidCertificate(err)
+	}
+	pid, err := GetPidFromSubject(subjectAsText)
+	if err != nil {
+		return pkitypes.NewErrInvalidPidFormat(err)
+	}
+	if pid != 0 {
+		return pkitypes.NewErrNotEmptyPidForRootCertificate()
+	}
+
+	return nil
+}
+
+// VerifyNoEKU is a ParseAndValidateCertificate option that fails if the
+// certificate encodes an ExtendedKeyUsage extension. Matter R1.6 §6.5.12 says
+// "The ExtendedKeyUsage extension SHALL NOT be present" for RCAC and ICAC.
+// PAA / PAI are NOT constrained by this rule (§6.2.2.5 rule 11 explicitly
+// allows EKU on PAA), so this helper is wired only on the NOC-chain CA paths.
+func VerifyNoEKU(cert *x509.Certificate) error {
+	for _, e := range cert.Extensions {
+		if e.Id.String() == OIDExtKeyUsage.String() {
+			return pkitypes.NewErrInvalidCertificate(
+				"ExtendedKeyUsage extension SHALL NOT be present on RCAC/ICAC certificates",
+			)
+		}
+	}
+
+	return nil
+}
+
+// VerifyAtMostOneVIDAndPID is a ParseAndValidateCertificate option that asserts
+// the certificate's subject and issuer each contain AT MOST one matter-vid
+// (1.3.6.1.4.1.37244.2.1) and AT MOST one matter-pid (1.3.6.1.4.1.37244.2.2)
+// attribute. Implements Matter R1.6 §6.2.2.3 rules 4/5 (DAC), §6.2.2.4 rules
+// 4/8 (PAI), and §6.2.2.5 rules 4/6 (PAA).
+//
+// The stricter "exactly 1 VendorID" rule (§6.2.2.3 rule 4 for DAC issuer,
+// §6.2.2.4 for PAI subject) is not asserted here — enforcing it would require
+// regenerating the long-lived DA-chain fixtures that currently encode no VID
+// (LeafCertPem, IntermediateCertPem, IntermediateCertWithoutVidPid). That gap
+// is tracked separately as part of the Matter-DN parsing remediation.
+func VerifyAtMostOneVIDAndPID(cert *x509.Certificate) error {
+	if err := matterAttrAtMostOne(cert.Subject.Names, "subject"); err != nil {
+		return err
+	}
+
+	return matterAttrAtMostOne(cert.Issuer.Names, "issuer")
+}
+
+func matterAttrAtMostOne(names []pkix.AttributeTypeAndValue, field string) error {
+	vidCount, pidCount := 0, 0
+	for _, n := range names {
+		switch n.Type.String() {
+		case matterVIDOIDString:
+			vidCount++
+		case matterPIDOIDString:
+			pidCount++
+		}
+	}
+	if vidCount > 1 {
+		return pkitypes.NewErrInvalidCertificate(
+			fmt.Sprintf("%s SHALL contain at most one matter-vid attribute, found %d", field, vidCount),
+		)
+	}
+	if pidCount > 1 {
+		return pkitypes.NewErrInvalidCertificate(
+			fmt.Sprintf("%s SHALL contain at most one matter-pid attribute, found %d", field, pidCount),
+		)
+	}
+
+	return nil
+}
+
+// VerifyECDSAP256SHA256 is a ParseAndValidateCertificate option that asserts
+// the certificate is signed with ecdsa-with-SHA256 and that its subject public
+// key is an ECDSA key on the prime256v1 (P-256 / secp256r1) curve, per Matter
+// R1.6 §6.2.2.3 (DAC), §6.2.2.4 (PAI), §6.2.2.5 (PAA), and §6.5.5/§6.5.8/§6.5.9
+// (NOC chain). Mirrors the long-standing check in VerifyCRLSignerCertFormat —
+// before this helper existed, the CRL signer path was the only place these
+// rules were enforced.
+func VerifyECDSAP256SHA256(cert *x509.Certificate) error {
+	if cert.SignatureAlgorithm != x509.ECDSAWithSHA256 {
+		return pkitypes.NewErrInvalidCertificate(
+			"signatureAlgorithm SHALL be ecdsa-with-SHA256",
+		)
+	}
+
+	pub, ok := cert.PublicKey.(*ecdsa.PublicKey)
+	if !ok {
+		return pkitypes.NewErrInvalidCertificate(
+			"subjectPublicKeyInfo algorithm SHALL be ECDSA on prime256v1",
+		)
+	}
+	if pub.Curve != elliptic.P256() {
+		return pkitypes.NewErrInvalidCertificate(
+			"subjectPublicKeyInfo curve SHALL be prime256v1 (P-256)",
+		)
+	}
+
+	return nil
+}
+
+// VerifyVidPidConsistency enforces the immediate-parent VID/PID matching rules
+// from Matter R1.6 §6.2.2.3 (DAC) 8a and 9a, and §6.2.2.4 (PAI) 7a:
+//
+//   - When the parent's subject carries a Matter VID, the child's subject SHALL
+//     carry the same Matter VID.
+//   - When the parent's subject carries a Matter PID, the child's subject SHALL
+//     carry the same Matter PID.
+//
+// Following the spec literally, the rules only fire when the parent actually
+// carries the attribute — a PAA without a VID does not constrain its PAI's
+// VID, and a PAI without a PID does not constrain its DAC's PID. The child is
+// not required to be VID/PID-scoped on its own; the structural rules that
+// require it (DAC SHALL have VID, PAI SHALL have VID) belong to the per-cert
+// extension/DN validation, not to this immediate-parent consistency check.
+//
+// Both arguments are subject strings already passed through ToSubjectAsText,
+// which is the canonical representation stored alongside each certificate.
+func VerifyVidPidConsistency(childSubjectAsText, parentSubjectAsText string) error {
+	parentVid, err := GetVidFromSubject(parentSubjectAsText)
+	if err != nil {
+		return pkitypes.NewErrInvalidVidFormat(err)
+	}
+	if parentVid != 0 {
+		childVid, err := GetVidFromSubject(childSubjectAsText)
+		if err != nil {
+			return pkitypes.NewErrInvalidVidFormat(err)
+		}
+		if childVid != parentVid {
+			return pkitypes.NewErrCertVidNotEqualToIssuerVid(childVid, parentVid)
+		}
+	}
+
+	parentPid, err := GetPidFromSubject(parentSubjectAsText)
+	if err != nil {
+		return pkitypes.NewErrInvalidPidFormat(err)
+	}
+	if parentPid != 0 {
+		childPid, err := GetPidFromSubject(childSubjectAsText)
+		if err != nil {
+			return pkitypes.NewErrInvalidPidFormat(err)
+		}
+		if childPid != parentPid {
+			return pkitypes.NewErrCertPidNotEqualToIssuerPid(childPid, parentPid)
+		}
 	}
 
 	return nil
@@ -110,11 +517,16 @@ func DecodeX509Certificate(pemCertificate string, options ...DecodeX509CertVerif
 		}
 	}
 
+	subjectAsText, err := ToSubjectAsText(cert.Subject.String())
+	if err != nil {
+		return nil, pkitypes.NewErrInvalidCertificate(err)
+	}
+
 	certificate := Certificate{
 		Issuer:         ToBase64String(cert.RawIssuer),
 		SerialNumber:   cert.SerialNumber.String(),
 		Subject:        ToBase64String(cert.RawSubject),
-		SubjectAsText:  ToSubjectAsText(cert.Subject.String()),
+		SubjectAsText:  subjectAsText,
 		SubjectKeyID:   BytesToHex(cert.SubjectKeyId),
 		AuthorityKeyID: BytesToHex(cert.AuthorityKeyId),
 		Certificate:    cert,
@@ -123,18 +535,26 @@ func DecodeX509Certificate(pemCertificate string, options ...DecodeX509CertVerif
 	return &certificate, nil
 }
 
-func ToSubjectAsText(subject string) string {
-	oldVIDKey := "1.3.6.1.4.1.37244.2.1"
-	oldPIDKey := "1.3.6.1.4.1.37244.2.2"
+// ToSubjectAsText projects crypto/x509 pkix.Name.String() output into the
+// canonical DCL form by rewriting Matter VID / PID OID entries to their
+// readable `vid=0x..` / `pid=0x..` shorthand. Returns an error if either
+// OID's DER-encoded value is malformed — silently accepting a malformed VID
+// or PID would make the downstream GetVidFromSubject / GetPidFromSubject
+// lookups return 0 and bypass every VID/PID-based check.
+func ToSubjectAsText(subject string) (string, error) {
+	const (
+		oldVIDKey = "1.3.6.1.4.1.37244.2.1"
+		oldPIDKey = "1.3.6.1.4.1.37244.2.2"
+		newVIDKey = "vid"
+		newPIDKey = "pid"
+	)
 
-	newVIDKey := "vid"
-	newPIDKey := "pid"
+	subjectAsText, err := FormatOID(subject, oldVIDKey, newVIDKey)
+	if err != nil {
+		return "", err
+	}
 
-	subjectAsText := subject
-	subjectAsText = FormatOID(subjectAsText, oldVIDKey, newVIDKey)
-	subjectAsText = FormatOID(subjectAsText, oldPIDKey, newPIDKey)
-
-	return subjectAsText
+	return FormatOID(subjectAsText, oldPIDKey, newPIDKey)
 }
 
 var (
@@ -183,26 +603,60 @@ func getIntValueFromSubject(subjectAsText string, key string) (int32, error) {
 	return 0, nil
 }
 
-// This function is needed to patch the Issuer/Subject(vid/pid) field of certificate to hex format.
+// FormatOID rewrites every comma-separated entry in `header` whose attribute
+// type is exactly `oldKey` into the form `<newKey>=0x<value>`, where `<value>`
+// is the printable ASCII content of the DER-encoded attribute value. Used to
+// translate Matter VID / PID OID entries (`1.3.6.1.4.1.37244.2.{1,2}`) into
+// the readable `vid=0x6006` / `pid=0x8000` form callers downstream consume.
 // https://github.com/zigbee-alliance/distributed-compliance-ledger/issues/270
-func FormatOID(header, oldKey, newKey string) string {
+//
+// The input format comes from crypto/x509's pkix.Name.String(), which emits
+// unknown OIDs as `<oid>=#<hexDER>`, where `<hexDER>` is the hex encoding of a
+// DER-encoded string. We decode the DER properly (tag + length + value) and
+// accept both PrintableString (0x13) and UTF8String (0x0c). Returns error when
+// `oldKey` matches an entry but its value is malformed (wrong tag, truncated, non-hex)
+//
+// Entries whose attribute type does not match `oldKey` are returned untouched.
+func FormatOID(header, oldKey, newKey string) (string, error) {
 	subjectValues := strings.Split(header, ",")
-
-	// When translating a string number into a hexadecimal number,
-	// we must take 8 numbers of this string number from the end so that it needs to fit into an integer number.
-	hexStringIntegerLength := 8
+	// Match `oldKey=` exactly so e.g. matter-vid (1.3.6.1.4.1.37244.2.1) does
+	// not also match a hypothetical 1.3.6.1.4.1.37244.2.10.
+	prefix := oldKey + "="
 	for index, value := range subjectValues {
-		if strings.HasPrefix(value, oldKey) {
-			// get value from header
-			value = value[len(value)-hexStringIntegerLength:]
-
-			decoded, _ := hex.DecodeString(value)
-
-			subjectValues[index] = fmt.Sprintf("%s=0x%s", newKey, decoded)
+		if !strings.HasPrefix(value, prefix) {
+			continue
 		}
+		encoded := value[len(prefix):]
+		// pkix.Name.String emits `#<hex>` only when the attribute value is not
+		// a recognized printable type. If we see anything else, the value is
+		// already in readable form — accept it as is.
+		if !strings.HasPrefix(encoded, "#") {
+			continue
+		}
+		derBytes, err := hex.DecodeString(encoded[1:])
+		if err != nil {
+			return "", fmt.Errorf("FormatOID: %s value is not valid hex: %w", oldKey, err)
+		}
+		if len(derBytes) < 2 {
+			return "", fmt.Errorf("FormatOID: %s value DER is too short (%d bytes)", oldKey, len(derBytes))
+		}
+		// Matter encodes matter-vid / matter-pid as PrintableString or
+		// UTF8String. Reject anything else: we cannot safely project a
+		// BMPString / BIT STRING / OCTET STRING into the `<newKey>=0x...` form
+		// callers expect.
+		tag := derBytes[0]
+		if tag != 0x13 && tag != 0x0c {
+			return "", fmt.Errorf("FormatOID: %s value SHALL be PrintableString or UTF8String, got DER tag 0x%02x", oldKey, tag)
+		}
+		length := int(derBytes[1])
+		if 2+length > len(derBytes) {
+			return "", fmt.Errorf("FormatOID: %s value DER length (%d) exceeds remaining bytes (%d)", oldKey, length, len(derBytes)-2)
+		}
+		printable := derBytes[2 : 2+length]
+		subjectValues[index] = fmt.Sprintf("%s=0x%s", newKey, printable)
 	}
 
-	return strings.Join(subjectValues, ",")
+	return strings.Join(subjectValues, ","), nil
 }
 
 func ToBase64String(subject []byte) string {
@@ -248,6 +702,43 @@ func (c Certificate) Verify(parent *Certificate, blockTime time.Time) error {
 	return nil
 }
 
+// VerifyVVSCSignature is the Matter R1.6 §6.4.10 step 12.a.iii equivalent of
+// Verify for VVSC chains. It checks the validity window and verifies that c
+// was signed by parent's public key, but does NOT require parent to have
+// BasicConstraints cA=TRUE or KeyUsage keyCertSign — a §6.5.12 VVSC has
+// cA=FALSE and KU exactly digitalSignature, so a VVSC parent would never pass
+// crypto/x509's CheckSignatureFrom.
+//
+// Callers must have validated both child and parent against VerifyVVSCExtensions
+// before invoking this; this method does not re-check the structural profile.
+//
+// A zero blockTime defaults to time.Now(), matching crypto/x509.Verify's
+// behavior. The keeper invokes this with ctx.BlockTime(), which is the zero
+// time in unit-test contexts (where tmproto.Header{} is unset).
+func (c Certificate) VerifyVVSCSignature(parent *Certificate, blockTime time.Time) error {
+	if blockTime.IsZero() {
+		blockTime = time.Now()
+	}
+	if blockTime.Before(c.Certificate.NotBefore) {
+		return pkitypes.NewErrInvalidCertificate(
+			fmt.Sprintf("certificate is not yet valid (NotBefore=%v)", c.Certificate.NotBefore))
+	}
+	if blockTime.After(c.Certificate.NotAfter) {
+		return pkitypes.NewErrInvalidCertificate(
+			fmt.Sprintf("certificate has expired (NotAfter=%v)", c.Certificate.NotAfter))
+	}
+
+	if err := parent.Certificate.CheckSignature(
+		c.Certificate.SignatureAlgorithm,
+		c.Certificate.RawTBSCertificate,
+		c.Certificate.Signature,
+	); err != nil {
+		return pkitypes.NewErrInvalidCertificate(fmt.Sprintf("VVSC signature verification failed: %v", err))
+	}
+
+	return nil
+}
+
 func (c Certificate) IsSelfSigned() bool {
 	if len(c.AuthorityKeyID) > 0 {
 		return c.Issuer == c.Subject && c.AuthorityKeyID == c.SubjectKeyID
@@ -264,7 +755,7 @@ func (c Certificate) IsSelfSigned() bool {
 //
 // Parameters:
 //   - pemCertificate: PEM-encoded X.509 certificate string
-//   - options: optional checks applied to the parsed certificate, e.g. VerifyIsCACertificate
+//   - options: optional checks applied to the parsed certificate, e.g. VerifyVersionV3
 //
 // Returns:
 //   - *Certificate: Parsed certificate structure if validation succeeds
@@ -309,7 +800,7 @@ func ParseAndValidateCertificate(pemCertificate string, options ...ParseAndValid
 		return nil, pkitypes.NewErrInvalidCertificate(fmt.Sprintf("subject field count (%d) exceeds maximum limit of %d", subjectFieldCount, MaxSubjectFields))
 	}
 
-	// 4. Apply caller-supplied options (e.g. VerifyIsCACertificate)
+	// 4. Apply caller-supplied options (e.g. VerifyVersionV3)
 	for _, opt := range options {
 		if err = opt(cert.Certificate); err != nil {
 			return nil, err
