@@ -94,7 +94,7 @@ jobs:
     needs:
       - lint
     steps:
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
           go-version: 1.26.4
       - uses: actions/checkout@v6
@@ -129,7 +129,7 @@ jobs:
     needs:
       - changes
     steps:
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
           go-version: 1.26.4
       - uses: actions/checkout@v6
@@ -178,7 +178,7 @@ jobs:
       - changes
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
           go-version: 1.26.4
       - name: golangci-lint
@@ -197,7 +197,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: actions/download-artifact@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
           go-version: 1.26.4
       - name: Install gocovmerge
