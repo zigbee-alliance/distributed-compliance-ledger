@@ -4,6 +4,7 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	x509std "crypto/x509"
+	"encoding/asn1"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -14,6 +15,22 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
 )
+
+var (
+	oidBasicConstraintsTest = asn1.ObjectIdentifier{2, 5, 29, 19}
+	oidKeyUsageTest         = asn1.ObjectIdentifier{2, 5, 29, 15}
+)
+
+func setExtCritical(cert *x509.Certificate, oid asn1.ObjectIdentifier, critical bool) {
+	for i := range cert.Certificate.Extensions {
+		if cert.Certificate.Extensions[i].Id.Equal(oid) {
+			cert.Certificate.Extensions[i].Critical = critical
+
+			return
+		}
+	}
+	panic("extension OID not found in test fixture: " + oid.String())
+}
 
 func TestMsgAddPkiRevocationDistributionPoint_verifyCRLCertFormat(t *testing.T) {
 	negativeTests := []struct {
@@ -52,9 +69,16 @@ func TestMsgAddPkiRevocationDistributionPoint_verifyCRLCertFormat(t *testing.T) 
 			err: pkitypes.ErrCRLSignerCertificateInvalidFormat,
 		},
 		{
+			name: "Basic Constraints extension is not critical",
+			init: func(certificate *x509.Certificate) {
+				setExtCritical(certificate, oidBasicConstraintsTest, false)
+			},
+			err: pkitypes.ErrCRLSignerCertificateInvalidFormat,
+		},
+		{
 			name: "Key Usage extension is not critical",
 			init: func(certificate *x509.Certificate) {
-				certificate.Certificate.Extensions[3].Critical = false
+				setExtCritical(certificate, oidKeyUsageTest, false)
 			},
 			err: pkitypes.ErrCRLSignerCertificateInvalidFormat,
 		},

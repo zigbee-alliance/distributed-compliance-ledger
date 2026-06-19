@@ -645,9 +645,11 @@ func TestHandler_RemoveNocRootCert_ByOtherVendor(t *testing.T) {
 			vendorAccAddress2 := utils.GenerateAccAddress()
 			setup.AddAccount(vendorAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID1)
 
-			// remove ICA certificate by second vendor account
+			// remove ICA certificate by second vendor account. Use the
+			// runtime cert fields so the OperationalPKI / VIDSignerPKI branches
+			// reference NocRootCert1 / VvscRootCert1 respectively.
 			removeIcaCert := types.NewMsgRemoveNocX509RootCert(
-				vendorAccAddress2.String(), testconstants.NocRootCert1Subject, testconstants.NocRootCert1SubjectKeyID, testconstants.NocRootCert1SerialNumber)
+				vendorAccAddress2.String(), rootCertificate.Subject, rootCertificate.SubjectKeyId, rootCertificate.SerialNumber)
 			_, err := setup.Handler(setup.Ctx, removeIcaCert)
 			require.Error(t, err)
 			require.True(t, pkitypes.ErrCertVidNotEqualAccountVid.Is(err))

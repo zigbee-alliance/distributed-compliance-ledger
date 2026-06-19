@@ -17,26 +17,35 @@ set -euo pipefail
 source integration_tests/cli/common.sh
 
 root_cert_1_path="integration_tests/constants/noc_root_cert_1"
-root_cert_subject="MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIDApTb21lIFN0YXRlMREwDwYDVQQHDAhUYXNoa2VudDEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDDAVOT0MtMQ=="
-root_cert_subject_key_id="44:EB:4C:62:6B:25:48:CD:A2:B3:1C:87:41:5A:08:E7:2B:B9:83:26"
-root_cert_1_serial_number="47211865327720222621302679792296833381734533449"
+root_cert_subject="MHoxCzAJBgNVBAYTAlVaMRMwEQYDVQQIEwpTb21lIFN0YXRlMREwDwYDVQQHEwhUYXNoa2VudDEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMQ4wDAYDVQQDEwVOT0MtMQ=="
+root_cert_subject_key_id="0E:10:B8:5D:96:7A:08:33:C7:C5:44:49:0E:28:0F:C1:6E:D5:D4:7C"
+root_cert_1_serial_number="313831573505791137291636389937677533381171619492"
 
 root_cert_1_copy_path="integration_tests/constants/noc_root_cert_1_copy"
-root_cert_1_copy_serial_number="460647353168152946606945669687905527879095841977"
+root_cert_1_copy_serial_number="12722088350714347345576486793058060481880825999"
 
 root_cert_vid=65521
 
 intermediate_cert_1_path="integration_tests/constants/noc_cert_1"
 intermediate_cert_2_path="integration_tests/constants/noc_cert_1_copy"
-intermediate_cert_subject="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtOT0MtY2hpbGQtMQ=="
-intermediate_cert_subject_key_id="02:72:6E:BC:BB:EF:D6:BD:8D:9B:42:AE:D4:3C:C0:55:5F:66:3A:B3"
-intermediate_cert_1_serial_number="631388393741945881054190991612463928825155142122"
-intermediate_cert_2_serial_number="169445068204646961882009388640343665944683778293"
+intermediate_cert_subject="MIGCMQswCQYDVQQGEwJVWjETMBEGA1UECBMKU29tZSBTdGF0ZTETMBEGA1UEBxMKU29tZSBTdGF0ZTEYMBYGA1UEChMPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLExBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDEwtOT0MtY2hpbGQtMQ=="
+intermediate_cert_subject_key_id="06:9F:5A:E0:1F:23:3E:9F:C7:4F:B6:F9:A2:33:47:33:62:7A:07:C5"
+intermediate_cert_1_serial_number="577430346509479530103103319788179390906984119670"
+intermediate_cert_2_serial_number="617357865778805507017637943649984133152592305888"
 
-leaf_cert_path="integration_tests/constants/noc_leaf_cert_1"
-leaf_cert_subject="MIGBMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRMwEQYDVQQDDApOT0MtbGVhZi0x"
-leaf_cert_subject_key_id="77:1F:DB:C4:4C:B1:29:7E:3C:EB:3E:D8:2A:38:0B:63:06:07:00:01"
-leaf_cert_serial_number="281347277961838999749763518155363401757954575313"
+# NocLeafCert1 (NOC end-entity, cA=FALSE / KU=digitalSignature + EKU=
+# {serverAuth,clientAuth}) is no longer accepted by the strict §6.5.12
+# add-noc-x509-ica-cert handler. The fixture is replaced with the Matter
+# §6.5.12 VVSC leaf chained under VvscRoot1 → VvscIca1 (path length 3, the
+# §6.4.10 step 12.a.iii cap), submitted with --is-vid-verification-signer=true.
+# Variable names are kept as `leaf_cert_*` so downstream assertions don't
+# need to be renamed.
+vvsc_root_path="integration_tests/constants/vvsc_root_cert_1"
+vvsc_ica_path="integration_tests/constants/vvsc_ica_cert_1"
+leaf_cert_path="integration_tests/constants/vvsc_leaf_cert_1"
+leaf_cert_subject="MIGYMQswCQYDVQQGEwJVWjETMBEGA1UECAwKU29tZSBTdGF0ZTETMBEGA1UEBwwKU29tZSBTdGF0ZTEYMBYGA1UECgwPRXhhbXBsZSBDb21wYW55MRkwFwYDVQQLDBBUZXN0aW5nIERpdmlzaW9uMRQwEgYDVQQDDAtWVlNDLUxlYWYtMTEUMBIGCisGAQQBgqJ8AgEMBDAwMDE="
+leaf_cert_subject_key_id="42:24:A6:34:C8:C1:2F:88:9D:9C:7F:BE:8A:7A:6E:40:DB:C8:2B:F1"
+leaf_cert_serial_number="5068329979159654449"
 
 trustee_account="jack"
 
@@ -67,8 +76,19 @@ result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 
-echo "Add a leaf ICA certificate"
-result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$leaf_cert_path" --from $vendor_account_65521 --yes)
+echo "Add the self-issued VVSC root (Matter §6.4.5.4) used as the trust anchor"
+echo "for the VVSC leaf below — registered as VIDSignerPKI."
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-root-cert --certificate="$vvsc_root_path" --is-vid-verification-signer=true --from $vendor_account_65521 --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+echo "Add the VVSC ICA chained under the VVSC root"
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$vvsc_ica_path" --is-vid-verification-signer=true --from $vendor_account_65521 --yes)
+result=$(get_txn_result "$result")
+check_response "$result" "\"code\": 0"
+
+echo "Add a VVSC leaf (full chain VvscRoot1 → VvscIca1 → VvscLeaf1 — §6.4.10 path length 3)"
+result=$(echo "$passphrase" | dcld tx pki add-noc-x509-ica-cert --certificate="$leaf_cert_path" --is-vid-verification-signer=true --from $vendor_account_65521 --yes)
 result=$(get_txn_result "$result")
 check_response "$result" "\"code\": 0"
 

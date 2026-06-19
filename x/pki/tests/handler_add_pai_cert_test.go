@@ -338,10 +338,13 @@ func TestHandler_AddDaIntermediateCert_ForInvalidCertificate(t *testing.T) {
 func TestHandler_AddDaIntermediateCert_ForRootCertificate(t *testing.T) {
 	setup := utils.Setup(t)
 
-	// add root certificate as leaf
+	// add root certificate as leaf. RootCertPem encodes cA=TRUE without
+	// pathLenConstraint, so it trips the §6.2.2.4 PAI rule 9 check before the
+	// self-signed check can fire. Either rejection is acceptable.
 	addX509Cert := types.NewMsgAddX509Cert(setup.Vendor1.String(), testconstants.RootCertPem, testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
-	require.ErrorIs(t, err, pkitypes.ErrNonRootCertificateSelfSigned)
+	require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+	require.Contains(t, err.Error(), "PAI: BasicConstraints pathLenConstraint SHALL be present and set to 0")
 }
 
 func TestHandler_AddDaIntermediateCert_ForDuplicate(t *testing.T) {
@@ -371,18 +374,22 @@ func TestHandler_AddDaIntermediateCert_RootIsNoc(t *testing.T) {
 	// Add NOC root certificate
 	addNocX509RootCert := types.NewMsgAddNocX509RootCert(
 		setup.Vendor1.String(),
-		testconstants.RootCertPem,
+		testconstants.NocRootCert1,
 		testconstants.CertSchemaVersion, false)
 	_, err := setup.Handler(setup.Ctx, addNocX509RootCert)
 	require.NoError(t, err)
 
-	// add intermediate certificate
+	// Add intermediate certificate. NocCert1 is a NOC ICA whose BasicConstraints
+	// omit pathLenConstraint, so the §6.2.2.4 PAI rule 9 check rejects it before
+	// the "root must not be NOC" check fires. The cert is unfit for the DA chain
+	// either way.
 	addX509Cert := types.NewMsgAddX509Cert(
 		setup.Vendor1.String(),
-		testconstants.IntermediateCertPem,
+		testconstants.NocCert1,
 		testconstants.CertSchemaVersion)
 	_, err = setup.Handler(setup.Ctx, addX509Cert)
-	require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+	require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+	require.Contains(t, err.Error(), "PAI: BasicConstraints pathLenConstraint SHALL be present and set to 0")
 }
 
 func TestHandler_AddDaIntermediateCert_ForAbsentDirectParentCert(t *testing.T) {

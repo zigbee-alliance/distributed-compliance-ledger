@@ -16,13 +16,13 @@
 set -euo pipefail
 source integration_tests/cli/common.sh
 
-root_cert_with_vid_65521_subject="MIGYMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgEMBEZGRjE="
-root_cert_with_vid_65521_subject_key_id="CE:A8:92:66:EA:E0:80:BD:2B:B5:68:E4:0B:07:C4:FA:2C:34:6D:31"
+root_cert_with_vid_65521_subject="MIGYMQswCQYDVQQGEwJVUzERMA8GA1UECBMITmV3IFlvcmsxETAPBgNVBAcTCE5ldyBZb3JrMRgwFgYDVQQKEw9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsTEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMTD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgETBEZGRjE="
+root_cert_with_vid_65521_subject_key_id="6B:8C:77:1E:AD:CB:A8:3C:33:9C:2F:10:27:5F:42:03:1D:0A:F4:8E"
 root_cert_with_vid_65521_path="integration_tests/constants/root_cert_with_vid"
 root_cert_with_vid_65521_vid=65521
 
-intermediate_cert_with_vid_65521_subject="MIGuMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgEMBEZGRjExFDASBgorBgEEAYKifAICDARGRkYx"
-intermediate_cert_with_vid_65521_subject_key_id="0E:8C:E8:C8:B8:AA:50:BC:25:85:56:B9:B1:9C:C2:C7:D9:C5:2F:17"
+intermediate_cert_with_vid_65521_subject="MIGuMQswCQYDVQQGEwJVUzERMA8GA1UECBMITmV3IFlvcmsxETAPBgNVBAcTCE5ldyBZb3JrMRgwFgYDVQQKEw9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsTEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMTD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgETBEZGRjExFDASBgorBgEEAYKifAICEwRGRkYx"
+intermediate_cert_with_vid_65521_subject_key_id="B0:7B:3F:F1:45:01:91:8F:C1:FA:EE:CB:9A:01:06:C7:47:9B:5D:EC"
 intermediate_cert_with_vid_65521_path="integration_tests/constants/intermediate_cert_with_vid_1"
 intermediate_cert_with_vid_65521_serial_number="3"
 intermediate_cert_with_vid_65521_vid=65521
@@ -149,13 +149,13 @@ check_response "$result" "\"serialNumber\": \"$intermediate_cert_with_vid_65522_
 
 test_divider
 
-root_cert_subject="MIGCMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbQ=="
-root_cert_subject_key_id="39:86:07:80:B4:3F:95:7F:3B:39:A6:7F:53:BD:02:F8:70:22:1E:55"
+root_cert_subject="MIGCMQswCQYDVQQGEwJVUzERMA8GA1UECBMITmV3IFlvcmsxETAPBgNVBAcTCE5ldyBZb3JrMRgwFgYDVQQKEw9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsTEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMTD3d3dy5leGFtcGxlLmNvbQ=="
+root_cert_subject_key_id="C1:48:66:ED:6F:23:D8:28:1A:D9:37:7C:58:AC:3F:DA:04:C1:41:E8"
 root_cert_path="integration_tests/constants/root_with_same_subject_and_skid_1"
 root_cert_serial_number="1"
 
-intermediate_cert_subject="MEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQ="
-intermediate_cert_subject_key_id="81:50:BE:1A:EA:53:DD:05:3E:F6:B2:E9:A0:25:59:6F:B8:29:3D:AD"
+intermediate_cert_subject="MEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIEwpTb21lLVN0YXRlMSEwHwYDVQQKExhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQ="
+intermediate_cert_subject_key_id="A1:E0:92:89:FA:18:82:12:14:9D:B8:AE:19:43:BE:44:31:6B:F1:F5"
 intermediate_cert_1_path="integration_tests/constants/intermediate_with_same_subject_and_skid_1"
 intermediate_cert_1_serial_number="3"
 intermediate_cert_2_path="integration_tests/constants/intermediate_with_same_subject_and_skid_2"
