@@ -30,12 +30,6 @@ const (
 
 	crlSignerDelegatedByPAI1Path = "../../constants/leaf_cert_with_vid_65521"
 
-	// Use google_root_cert_r1 instead of root_cert to avoid conflict: TestPKIDemo revokes root_cert
-	// and the unique-cert store retains the entry, permanently blocking re-addition.
-	revPointsTestRootCertPath         = "../../constants/google_root_cert_r1"
-	revPointsTestRootCertSubject      = "MEcxCzAJBgNVBAYTAlVTMSIwIAYDVQQKExlHb29nbGUgVHJ1c3QgU2VydmljZXMgTExDMRQwEgYDVQQDEwtHVFMgUm9vdCBSMQ=="
-	revPointsTestRootCertSubjectKeyID = "E4:AF:2B:26:71:1A:2B:48:27:85:2F:52:66:2C:EF:F0:89:13:71:3E"
-
 	rootCertWithVidRevPath         = "../../constants/root_cert_with_vid"
 	rootCertWithVidRevSubject      = "MIGYMQswCQYDVQQGEwJVUzERMA8GA1UECBMITmV3IFlvcmsxETAPBgNVBAcTCE5ldyBZb3JrMRgwFgYDVQQKEw9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsTEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMTD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgETBEZGRjE="
 	rootCertWithVidRevSubjectKeyID = "6B:8C:77:1E:AD:CB:A8:3C:33:9C:2F:10:27:5F:42:03:1D:0A:F4:8E"
@@ -154,19 +148,6 @@ func TestPKIRevocationPoints(t *testing.T) {
 		require.NoError(t, err)
 
 		txResult, err = ApproveAddX509RootCert(paaCertNoVidSubject, paaCertNoVidSubjectKeyID, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
-
-		// Add root cert
-		txResult, err = ProposeAddX509RootCert(revPointsTestRootCertPath, jack, X509ProposeOpts{VID: revPointVid})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
-
-		txResult, err = ApproveAddX509RootCert(revPointsTestRootCertSubject, revPointsTestRootCertSubjectKeyID, alice)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -366,10 +347,11 @@ func TestPKIRevocationPoints(t *testing.T) {
 		require.NoError(t, err)
 		require.Contains(t, string(out), fmt.Sprintf(`"dataURL":"%s"`, dataURLNonScopedNew))
 
-		// Update VID-scoped PAA (use revPointsTestRootCertPath which is on-ledger and not revoked)
+		// Update VID-scoped PAA (use rootCertWithVidRevPath which is on-ledger, ECDSA P-256,
+		// and shares the FFF1 VID-scope so the handler's revocationPoint.Vid check passes)
 		txResult, err = UpdateRevocationPoint(vendorAccount, RevocationPointOpts{
 			VID:                revPointVid,
-			Certificate:        revPointsTestRootCertPath,
+			Certificate:        rootCertWithVidRevPath,
 			Label:              revPointLabel,
 			DataURL:            revPointDataURL,
 			IssuerSubjectKeyID: revPointIssuerSKID,
