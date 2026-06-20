@@ -124,6 +124,7 @@ func TestPKIDemo(t *testing.T) {
 // ── Section 1: Query All Empty ──────────────────────────────────────────────
 
 func pkiDemoQueryAllEmpty(t *testing.T) {
+	t.Helper()
 	cert, err := GetX509Cert(rootCertSubject, rootCertSubjectKeyID)
 	require.NoError(t, err)
 	require.Nil(t, cert)
@@ -192,6 +193,7 @@ func pkiDemoQueryAllEmpty(t *testing.T) {
 // ── Section 2: Propose Root Cert ───────────────────────────────────────────
 
 func pkiDemoProposeRootCertNotTrustee(t *testing.T, userAccount string) {
+	t.Helper()
 	txResult, err := ProposeAddX509RootCert(rootCertPath, userAccount, X509ProposeOpts{VID: pkiDemoVid})
 	require.NoError(t, err)
 	require.NotEqual(t, uint32(0), txResult.Code)
@@ -199,6 +201,7 @@ func pkiDemoProposeRootCertNotTrustee(t *testing.T, userAccount string) {
 }
 
 func pkiDemoProposeRootCertTrustee(t *testing.T, jack string) {
+	t.Helper()
 	txResult, err := ProposeAddX509RootCert(rootCertPath, jack, X509ProposeOpts{
 		VID:           pkiDemoVid,
 		SchemaVersion: "0",
@@ -274,6 +277,7 @@ func pkiDemoProposeRootCertTrustee(t *testing.T, jack string) {
 // ── Section 3: Approve Root Cert ───────────────────────────────────────────
 
 func pkiDemoApproveRootCert(t *testing.T, alice string) {
+	t.Helper()
 	txResult, err := ApproveAddX509RootCert(rootCertSubject, rootCertSubjectKeyID, alice)
 	require.NoError(t, err)
 	require.Equal(t, uint32(0), txResult.Code)
@@ -339,6 +343,7 @@ func pkiDemoApproveRootCert(t *testing.T, alice string) {
 // ── Section 4: Add Intermediate Cert ───────────────────────────────────────
 
 func pkiDemoAddIntermediateCert(t *testing.T, vendorAccount string) {
+	t.Helper()
 	txResult, err := AddX509Cert(intermediateCertPath, vendorAccount, X509ProposeOpts{SchemaVersion: "0"})
 	require.NoError(t, err)
 	require.Equal(t, uint32(0), txResult.Code)
@@ -398,6 +403,7 @@ func pkiDemoAddIntermediateCert(t *testing.T, vendorAccount string) {
 // ── Section 5: Add Leaf Cert ────────────────────────────────────────────────
 
 func pkiDemoAddLeafCert(t *testing.T, vendorAccount string) {
+	t.Helper()
 	txResult, err := AddX509Cert(leafCertPath, vendorAccount)
 	require.NoError(t, err)
 	require.Equal(t, uint32(0), txResult.Code)
@@ -517,6 +523,7 @@ func pkiDemoAddLeafCert(t *testing.T, vendorAccount string) {
 // ── Section 6: Revoke Intermediate Cert ────────────────────────────────────
 
 func pkiDemoRevokeIntermediateCertUnauthorized(t *testing.T, userAccount, vendorAccount65522 string) {
+	t.Helper()
 	// Non-vendor account cannot revoke
 	txResult, err := RevokeX509Cert(intermediateCertSubject, intermediateCertSubjectKeyID, userAccount)
 	require.NoError(t, err)
@@ -531,6 +538,7 @@ func pkiDemoRevokeIntermediateCertUnauthorized(t *testing.T, userAccount, vendor
 }
 
 func pkiDemoRevokeIntermediateCert(t *testing.T, vendorAccount string) {
+	t.Helper()
 	// Revoke intermediate without --revoke-child: leaf must survive
 	txResult, err := RevokeX509Cert(intermediateCertSubject, intermediateCertSubjectKeyID, vendorAccount)
 	require.NoError(t, err)
@@ -632,6 +640,7 @@ func pkiDemoRevokeIntermediateCert(t *testing.T, vendorAccount string) {
 // ── Section 7: Propose Revoke Root Cert ────────────────────────────────────
 
 func pkiDemoProposeRevokeRootCert(t *testing.T, jack string) {
+	t.Helper()
 	txResult, err := ProposeRevokeX509RootCert(rootCertSubject, rootCertSubjectKeyID, jack)
 	require.NoError(t, err)
 	require.Equal(t, uint32(0), txResult.Code)
@@ -708,6 +717,7 @@ func pkiDemoProposeRevokeRootCert(t *testing.T, jack string) {
 // ── Section 8: Approve Revoke Root Cert ────────────────────────────────────
 
 func pkiDemoApproveRevokeRootCert(t *testing.T, alice string) {
+	t.Helper()
 	txResult, err := ApproveRevokeX509RootCert(rootCertSubject, rootCertSubjectKeyID, alice)
 	require.NoError(t, err)
 	require.Equal(t, uint32(0), txResult.Code)
@@ -803,6 +813,7 @@ func pkiDemoApproveRevokeRootCert(t *testing.T, alice string) {
 // ── Section 9: Google Cert Query All Empty ──────────────────────────────────
 
 func pkiDemoGoogleCertQueryAllEmpty(t *testing.T) {
+	t.Helper()
 	cert, err := GetX509Cert(googleCertSubject, googleCertSubjectKeyID)
 	require.NoError(t, err)
 	require.Nil(t, cert)
@@ -867,6 +878,7 @@ func pkiDemoGoogleCertQueryAllEmpty(t *testing.T) {
 // ── Section 10: Propose Google Root Cert ───────────────────────────────────
 
 func pkiDemoProposeGoogleRootCert(t *testing.T, jack, userAccount string) {
+	t.Helper()
 	// Non-trustee fails
 	txResult, err := ProposeAddX509RootCert(googleCertPath, userAccount, X509ProposeOpts{VID: googleCertVid})
 	require.NoError(t, err)
@@ -927,6 +939,7 @@ func pkiDemoProposeGoogleRootCert(t *testing.T, jack, userAccount string) {
 // ── Section 11: Approve Google Root Cert ───────────────────────────────────
 
 func pkiDemoApproveGoogleRootCert(t *testing.T, alice string) {
+	t.Helper()
 	// Still proposed, not yet approved.
 	proposed, err := GetProposedX509RootCert(googleCertSubject, googleCertSubjectKeyID)
 	require.NoError(t, err)
@@ -990,6 +1003,7 @@ func pkiDemoApproveGoogleRootCert(t *testing.T, alice string) {
 // ── Section 12: Propose Revoke Google Root Cert ─────────────────────────────
 
 func pkiDemoProposeRevokeGoogleRootCert(t *testing.T, jack string) {
+	t.Helper()
 	txResult, err := ProposeRevokeX509RootCert(googleCertSubject, googleCertSubjectKeyID, jack)
 	require.NoError(t, err)
 	require.Equal(t, uint32(0), txResult.Code)
@@ -1048,6 +1062,7 @@ func pkiDemoProposeRevokeGoogleRootCert(t *testing.T, jack string) {
 // ── Section 13: Approve Revoke Google Root Cert ─────────────────────────────
 
 func pkiDemoApproveRevokeGoogleRootCert(t *testing.T, alice string) {
+	t.Helper()
 	txResult, err := ApproveRevokeX509RootCert(googleCertSubject, googleCertSubjectKeyID, alice)
 	require.NoError(t, err)
 	require.Equal(t, uint32(0), txResult.Code)
@@ -1109,6 +1124,7 @@ func pkiDemoApproveRevokeGoogleRootCert(t *testing.T, alice string) {
 // ── Section 14: Propose and Reject Test Cert (single trustee) ──────────────
 
 func pkiDemoProposeAndRejectTestCertSingleTrustee(t *testing.T, jack string) {
+	t.Helper()
 	// Jack proposes
 	txResult, err := ProposeAddX509RootCert(testCertPath, jack, X509ProposeOpts{VID: testCertVid})
 	require.NoError(t, err)
@@ -1146,6 +1162,7 @@ func pkiDemoProposeAndRejectTestCertSingleTrustee(t *testing.T, jack string) {
 // ── Section 15: Propose Test Root Cert ─────────────────────────────────────
 
 func pkiDemoProposeTestRootCert(t *testing.T, jack, userAccount string) {
+	t.Helper()
 	// Non-trustee fails
 	txResult, err := ProposeAddX509RootCert(testCertPath, userAccount, X509ProposeOpts{VID: testCertVid})
 	require.NoError(t, err)
@@ -1173,6 +1190,7 @@ func pkiDemoProposeTestRootCert(t *testing.T, jack, userAccount string) {
 // ── Section 16: Reject Test Root Cert (multi-trustee scenario) ─────────────
 
 func pkiDemoRejectTestRootCertMultiTrustee(t *testing.T, jack, alice, bob string) {
+	t.Helper()
 	// Add a 4th trustee to raise approval/rejection thresholds
 	newTrustee1 := cliputils.CreateAccount(t, "Trustee")
 	newTrustee1AddrOut, err := utils.ExecuteCLI("keys", "show", newTrustee1, "-a", "--keyring-backend", "test")
@@ -1294,6 +1312,7 @@ func pkiDemoRejectTestRootCertMultiTrustee(t *testing.T, jack, alice, bob string
 // ── Section 17: Propose Test Root Cert Again ────────────────────────────────
 
 func pkiDemoProposeTestRootCertAgain(t *testing.T, jack, userAccount string) {
+	t.Helper()
 	// Non-trustee fails
 	txResult, err := ProposeAddX509RootCert(testCertPath, userAccount, X509ProposeOpts{VID: testCertVid})
 	require.NoError(t, err)
@@ -1326,6 +1345,7 @@ func pkiDemoProposeTestRootCertAgain(t *testing.T, jack, userAccount string) {
 // ── Section 18: Approve Test Root Cert ─────────────────────────────────────
 
 func pkiDemoApproveTestRootCert(t *testing.T, alice string) {
+	t.Helper()
 	// Alice approves — with 3 trustees (jack+alice+bob), 2 approvals = quorum
 	txResult, err := ApproveAddX509RootCert(testCertSubject, testCertSubjectKeyID, alice)
 	require.NoError(t, err)
