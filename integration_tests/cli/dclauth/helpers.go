@@ -166,15 +166,21 @@ func GetAccount(address string) (*dclauthtypes.Account, error) {
 
 	// The CLI either wraps the account inside an "account" key or emits the
 	// account directly. Try the wrapped shape first; fall back to direct.
+	// Account.Address is promoted from the embedded *BaseAccount, so reading
+	// it panics when BaseAccount is nil — guard against that here.
 	var res struct {
 		Account dclauthtypes.Account `json:"account"`
 	}
-	if err := json.Unmarshal(out, &res); err == nil && res.Account.Address != "" {
+	if err := json.Unmarshal(out, &res); err == nil &&
+		res.Account.BaseAccount != nil && res.Account.Address != "" {
 		return &res.Account, nil
 	}
 	var acc dclauthtypes.Account
 	if err := json.Unmarshal(out, &acc); err != nil {
 		return nil, fmt.Errorf("parse Account: %w, output: %s", err, string(out))
+	}
+	if acc.BaseAccount == nil {
+		return nil, fmt.Errorf("parse Account: missing base_account, output: %s", string(out))
 	}
 
 	return &acc, nil
