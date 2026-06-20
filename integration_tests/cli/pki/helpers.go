@@ -1,7 +1,11 @@
 package pki
 
 import (
+	"encoding/json"
+	"fmt"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 // X509ProposeOpts holds optional flags for propose-add-x509-root-cert /
@@ -404,210 +408,555 @@ func AssignVid(subject, subjectKeyID string, vid int, from string) (*utils.TxRes
 	)
 }
 
-// QueryX509Cert queries an approved x509 certificate.
-func QueryX509Cert(subject, subjectKeyID string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "x509-cert",
+// getSingle runs a single-item dcld query and unmarshals the JSON output into
+// v. Returns (false, nil) when the CLI returned "Not Found" so callers can
+// branch on a nil result; otherwise (true, nil) and v is populated.
+func getSingle(v interface{}, args ...string) (found bool, err error) {
+	out, err := utils.ExecuteCLI(args...)
+	if err != nil {
+		return false, err
+	}
+	if utils.IsNotFound(out) {
+		return false, nil
+	}
+	if err := json.Unmarshal(out, v); err != nil {
+		return false, fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
+	}
+
+	return true, nil
+}
+
+// getList runs an all-* dcld query and unmarshals the wrapper response into v.
+func getList(v interface{}, args ...string) error {
+	out, err := utils.ExecuteCLI(args...)
+	if err != nil {
+		return err
+	}
+	if err := json.Unmarshal(out, v); err != nil {
+		return fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
+	}
+
+	return nil
+}
+
+// GetX509Cert queries an approved x509 certificate by (subject, SKID). Returns
+// nil when no record matches.
+func GetX509Cert(subject, subjectKeyID string) (*pkitypes.ApprovedCertificates, error) {
+	var res pkitypes.ApprovedCertificates
+	found, err := getSingle(&res,
+		"query", "pki", "x509-cert",
 		"--subject", subject,
 		"--subject-key-id", subjectKeyID,
 		"-o", "json",
 	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
-// QueryCert queries any certificate type (DA or NOC) by subject and subjectKeyID.
-func QueryCert(subject, subjectKeyID string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "cert",
-		"--subject", subject,
-		"--subject-key-id", subjectKeyID,
-		"-o", "json",
-	)
-}
-
-// QueryAllX509Certs queries all approved x509 certificates.
-func QueryAllX509Certs(extra ...string) ([]byte, error) {
-	args := []string{"query", "pki", "all-x509-certs", "-o", "json"}
-	args = append(args, extra...)
-
-	return utils.ExecuteCLI(args...)
-}
-
-// QueryProposedX509RootCert queries a proposed root certificate.
-func QueryProposedX509RootCert(subject, subjectKeyID string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "proposed-x509-root-cert",
-		"--subject", subject,
-		"--subject-key-id", subjectKeyID,
-		"-o", "json",
-	)
-}
-
-// QueryAllProposedX509RootCerts queries all proposed root certificates.
-func QueryAllProposedX509RootCerts() ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "all-proposed-x509-root-certs", "-o", "json")
-}
-
-// QueryRevokedX509Cert queries a revoked x509 certificate.
-func QueryRevokedX509Cert(subject, subjectKeyID string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "revoked-x509-cert",
-		"--subject", subject,
-		"--subject-key-id", subjectKeyID,
-		"-o", "json",
-	)
-}
-
-// QueryAllRevokedX509Certs queries all revoked x509 certificates.
-func QueryAllRevokedX509Certs() ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "all-revoked-x509-certs", "-o", "json")
-}
-
-// QueryProposedRevokedX509RootCert queries a proposed revocation for a root cert.
-func QueryProposedRevokedX509RootCert(subject, subjectKeyID string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "proposed-x509-root-cert-to-revoke",
-		"--subject", subject,
-		"--subject-key-id", subjectKeyID,
-		"-o", "json",
-	)
-}
-
-// QueryAllProposedRevokedX509RootCerts queries all proposed revocations for root certs.
-func QueryAllProposedRevokedX509RootCerts() ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "all-proposed-x509-root-certs-to-revoke", "-o", "json")
-}
-
-// QueryRejectedX509RootCert queries a rejected root certificate.
-func QueryRejectedX509RootCert(subject, subjectKeyID string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "rejected-x509-root-cert",
-		"--subject", subject,
-		"--subject-key-id", subjectKeyID,
-		"-o", "json",
-	)
-}
-
-// QueryAllRejectedX509RootCerts queries all rejected root certificates.
-func QueryAllRejectedX509RootCerts() ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "all-rejected-x509-root-certs", "-o", "json")
-}
-
-// QueryNocRootCerts queries NOC root certificates for a vid.
-func QueryNocRootCerts(vid int) ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "noc-x509-root-certs",
-		"--vid", itoa(vid),
-		"-o", "json",
-	)
-}
-
-// QueryAllNocRootCerts queries all NOC root certificates.
-func QueryAllNocRootCerts() ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "all-noc-x509-root-certs", "-o", "json")
-}
-
-// QueryNocX509IcaCerts queries NOC ICA certificates for a vid.
-func QueryNocX509IcaCerts(vid int) ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "noc-x509-ica-certs",
-		"--vid", itoa(vid),
-		"-o", "json",
-	)
-}
-
-// QueryAllNocX509IcaCerts queries all NOC ICA certificates.
-func QueryAllNocX509IcaCerts() ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "all-noc-x509-ica-certs", "-o", "json")
-}
-
-// QueryAllNocX509Certs queries all NOC certificates (root + ICA).
-func QueryAllNocX509Certs() ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "all-noc-x509-certs", "-o", "json")
-}
-
-// QueryNocCert queries a NOC certificate by various flags (pass as extra: --subject, --subject-key-id, --vid, etc.)
-func QueryNocCert(extra ...string) ([]byte, error) {
-	args := []string{"query", "pki", "noc-x509-cert", "-o", "json"}
-	args = append(args, extra...)
-
-	return utils.ExecuteCLI(args...)
-}
-
-// QueryNocSubjectCerts queries all NOC certificates by subject.
-func QueryNocSubjectCerts(subject string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "all-noc-subject-x509-certs",
-		"--subject", subject,
-		"-o", "json",
-	)
-}
-
-// QueryAllRevokedNocRootCerts queries all revoked NOC root certificates.
-func QueryAllRevokedNocRootCerts() ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "all-revoked-noc-x509-root-certs", "-o", "json")
-}
-
-// QueryRevokedNocRootCert queries a revoked NOC root certificate by subject and subjectKeyID.
-func QueryRevokedNocRootCert(subject, subjectKeyID string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "revoked-noc-x509-root-cert",
-		"--subject", subject,
-		"--subject-key-id", subjectKeyID,
-		"-o", "json",
-	)
-}
-
-// QueryAllRevokedNocX509IcaCerts queries all revoked NOC ICA certificates.
-func QueryAllRevokedNocX509IcaCerts() ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "all-revoked-noc-x509-ica-certs", "-o", "json")
-}
-
-// QueryAllX509RootCerts queries all approved root certificates.
-func QueryAllX509RootCerts() ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "all-x509-root-certs", "-o", "json")
-}
-
-// QueryAllRevokedX509RootCerts queries all revoked root certificates.
-func QueryAllRevokedX509RootCerts() ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "all-revoked-x509-root-certs", "-o", "json")
-}
-
-// QueryX509CertBySKID queries an x509 certificate by subject-key-id only (no subject required).
-func QueryX509CertBySKID(skid string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "x509-cert",
+// GetX509CertBySKID queries an x509 certificate by SKID only. Returns nil when
+// no record matches.
+func GetX509CertBySKID(skid string) (*pkitypes.ApprovedCertificatesBySubjectKeyId, error) {
+	var res pkitypes.ApprovedCertificatesBySubjectKeyId
+	found, err := getSingle(&res,
+		"query", "pki", "x509-cert",
 		"--subject-key-id", skid,
 		"-o", "json",
 	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
-// QueryChildX509Certs queries all child certificates by subject and subjectKeyID.
-func QueryChildX509Certs(subject, subjectKeyID string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "all-child-x509-certs",
+// GetCert queries any certificate (DA or NOC) by (subject, SKID).
+func GetCert(subject, subjectKeyID string) (*pkitypes.AllCertificates, error) {
+	var res pkitypes.AllCertificates
+	found, err := getSingle(&res,
+		"query", "pki", "cert",
 		"--subject", subject,
 		"--subject-key-id", subjectKeyID,
 		"-o", "json",
 	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
-// QueryPkiRevocationDistributionPoint queries a revocation distribution point.
-func QueryPkiRevocationDistributionPoint(vid int, label, issuerSubjectKeyID string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "revocation-point",
+// GetAllX509Certs queries all approved x509 certificates.
+func GetAllX509Certs(extra ...string) ([]pkitypes.ApprovedCertificates, error) {
+	var res pkitypes.QueryAllApprovedCertificatesResponse
+	args := []string{"query", "pki", "all-x509-certs", "-o", "json"}
+	args = append(args, extra...)
+	if err := getList(&res, args...); err != nil {
+		return nil, err
+	}
+
+	return res.ApprovedCertificates, nil
+}
+
+// GetAllX509RootCerts queries all approved root certificates.
+func GetAllX509RootCerts() (*pkitypes.ApprovedRootCertificates, error) {
+	var res pkitypes.ApprovedRootCertificates
+	found, err := getSingle(&res, "query", "pki", "all-x509-root-certs", "-o", "json")
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+// GetX509CertsBySubject queries all approved certs by subject. Returns nil
+// when no record matches.
+func GetX509CertsBySubject(subject string) (*pkitypes.ApprovedCertificatesBySubject, error) {
+	var res pkitypes.ApprovedCertificatesBySubject
+	found, err := getSingle(&res,
+		"query", "pki", "all-subject-x509-certs",
+		"--subject", subject,
+		"-o", "json",
+	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+// GetProposedX509RootCert queries a proposed root certificate. Returns nil
+// when no record matches.
+func GetProposedX509RootCert(subject, subjectKeyID string) (*pkitypes.ProposedCertificate, error) {
+	var res pkitypes.ProposedCertificate
+	found, err := getSingle(&res,
+		"query", "pki", "proposed-x509-root-cert",
+		"--subject", subject,
+		"--subject-key-id", subjectKeyID,
+		"-o", "json",
+	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+// GetAllProposedX509RootCerts queries all proposed root certificates.
+func GetAllProposedX509RootCerts() ([]pkitypes.ProposedCertificate, error) {
+	var res pkitypes.QueryAllProposedCertificateResponse
+	if err := getList(&res, "query", "pki", "all-proposed-x509-root-certs", "-o", "json"); err != nil {
+		return nil, err
+	}
+
+	return res.ProposedCertificate, nil
+}
+
+// GetRevokedX509Cert queries a revoked x509 certificate. Returns nil when no
+// record matches.
+func GetRevokedX509Cert(subject, subjectKeyID string) (*pkitypes.RevokedCertificates, error) {
+	var res pkitypes.RevokedCertificates
+	found, err := getSingle(&res,
+		"query", "pki", "revoked-x509-cert",
+		"--subject", subject,
+		"--subject-key-id", subjectKeyID,
+		"-o", "json",
+	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+// GetAllRevokedX509Certs queries all revoked x509 certificates.
+func GetAllRevokedX509Certs() ([]pkitypes.RevokedCertificates, error) {
+	var res pkitypes.QueryAllRevokedCertificatesResponse
+	if err := getList(&res, "query", "pki", "all-revoked-x509-certs", "-o", "json"); err != nil {
+		return nil, err
+	}
+
+	return res.RevokedCertificates, nil
+}
+
+// GetAllRevokedX509RootCerts queries all revoked root certificates.
+func GetAllRevokedX509RootCerts() (*pkitypes.RevokedRootCertificates, error) {
+	var res pkitypes.RevokedRootCertificates
+	found, err := getSingle(&res, "query", "pki", "all-revoked-x509-root-certs", "-o", "json")
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+// GetProposedRevokedX509RootCert queries a proposed revocation for a root
+// cert. Returns nil when no record matches.
+func GetProposedRevokedX509RootCert(subject, subjectKeyID string) (*pkitypes.ProposedCertificateRevocation, error) {
+	var res pkitypes.ProposedCertificateRevocation
+	found, err := getSingle(&res,
+		"query", "pki", "proposed-x509-root-cert-to-revoke",
+		"--subject", subject,
+		"--subject-key-id", subjectKeyID,
+		"-o", "json",
+	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+// GetAllProposedRevokedX509RootCerts queries all proposed revocations.
+func GetAllProposedRevokedX509RootCerts() ([]pkitypes.ProposedCertificateRevocation, error) {
+	var res pkitypes.QueryAllProposedCertificateRevocationResponse
+	if err := getList(&res, "query", "pki", "all-proposed-x509-root-certs-to-revoke", "-o", "json"); err != nil {
+		return nil, err
+	}
+
+	return res.ProposedCertificateRevocation, nil
+}
+
+// GetRejectedX509RootCert queries a rejected root certificate. Returns nil
+// when no record matches.
+func GetRejectedX509RootCert(subject, subjectKeyID string) (*pkitypes.RejectedCertificate, error) {
+	var res pkitypes.RejectedCertificate
+	found, err := getSingle(&res,
+		"query", "pki", "rejected-x509-root-cert",
+		"--subject", subject,
+		"--subject-key-id", subjectKeyID,
+		"-o", "json",
+	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+// GetAllRejectedX509RootCerts queries all rejected root certificates.
+func GetAllRejectedX509RootCerts() ([]pkitypes.RejectedCertificate, error) {
+	var res pkitypes.QueryAllRejectedCertificatesResponse
+	if err := getList(&res, "query", "pki", "all-rejected-x509-root-certs", "-o", "json"); err != nil {
+		return nil, err
+	}
+
+	return res.RejectedCertificate, nil
+}
+
+// GetChildX509Certs queries all child certificates by (subject, SKID). Returns
+// nil when no record matches.
+func GetChildX509Certs(subject, subjectKeyID string) (*pkitypes.ChildCertificates, error) {
+	var res pkitypes.ChildCertificates
+	found, err := getSingle(&res,
+		"query", "pki", "all-child-x509-certs",
+		"--subject", subject,
+		"--subject-key-id", subjectKeyID,
+		"-o", "json",
+	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+// GetNocRootCerts queries NOC root certificates for a vid. Returns nil when
+// no record matches.
+func GetNocRootCerts(vid int) (*pkitypes.NocRootCertificates, error) {
+	var res pkitypes.NocRootCertificates
+	found, err := getSingle(&res,
+		"query", "pki", "noc-x509-root-certs",
+		"--vid", itoa(vid),
+		"-o", "json",
+	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+// GetAllNocRootCerts queries all NOC root certificates.
+func GetAllNocRootCerts() ([]pkitypes.NocRootCertificates, error) {
+	var res pkitypes.QueryAllNocRootCertificatesResponse
+	if err := getList(&res, "query", "pki", "all-noc-x509-root-certs", "-o", "json"); err != nil {
+		return nil, err
+	}
+
+	return res.NocRootCertificates, nil
+}
+
+// GetNocX509IcaCerts queries NOC ICA certificates for a vid. Returns nil when
+// no record matches.
+func GetNocX509IcaCerts(vid int) (*pkitypes.NocIcaCertificates, error) {
+	var res pkitypes.NocIcaCertificates
+	found, err := getSingle(&res,
+		"query", "pki", "noc-x509-ica-certs",
+		"--vid", itoa(vid),
+		"-o", "json",
+	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+// GetAllNocX509IcaCerts queries all NOC ICA certificates.
+func GetAllNocX509IcaCerts() ([]pkitypes.NocIcaCertificates, error) {
+	var res pkitypes.QueryAllNocIcaCertificatesResponse
+	if err := getList(&res, "query", "pki", "all-noc-x509-ica-certs", "-o", "json"); err != nil {
+		return nil, err
+	}
+
+	return res.NocIcaCertificates, nil
+}
+
+// GetAllNocX509Certs queries all NOC certificates (root + ICA). The CLI emits
+// a single AllCertificates wrapper with a Certs list.
+func GetAllNocX509Certs() (*pkitypes.AllCertificates, error) {
+	var res pkitypes.AllCertificates
+	found, err := getSingle(&res, "query", "pki", "all-noc-x509-certs", "-o", "json")
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+// GetNocCert queries a NOC certificate by various flags. Pass --subject /
+// --subject-key-id / --vid as extra args. Returns nil when no record matches.
+// The CLI dispatches to NocCertificates or NocCertificatesByVidAndSkid depending
+// on the flags, but both share the cert layout; the wider NocCertificates
+// shape is used here.
+func GetNocCert(extra ...string) (*pkitypes.NocCertificates, error) {
+	var res pkitypes.NocCertificates
+	args := []string{"query", "pki", "noc-x509-cert", "-o", "json"}
+	args = append(args, extra...)
+	found, err := getSingle(&res, args...)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+// GetNocSubjectCerts queries all NOC certificates by subject. Returns nil when
+// no record matches.
+func GetNocSubjectCerts(subject string) (*pkitypes.NocCertificatesBySubject, error) {
+	var res pkitypes.NocCertificatesBySubject
+	found, err := getSingle(&res,
+		"query", "pki", "all-noc-subject-x509-certs",
+		"--subject", subject,
+		"-o", "json",
+	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+// GetAllRevokedNocRootCerts queries all revoked NOC root certificates.
+func GetAllRevokedNocRootCerts() ([]pkitypes.RevokedNocRootCertificates, error) {
+	var res pkitypes.QueryAllRevokedNocRootCertificatesResponse
+	if err := getList(&res, "query", "pki", "all-revoked-noc-x509-root-certs", "-o", "json"); err != nil {
+		return nil, err
+	}
+
+	return res.RevokedNocRootCertificates, nil
+}
+
+// GetRevokedNocRootCert queries a revoked NOC root certificate. Returns nil
+// when no record matches.
+func GetRevokedNocRootCert(subject, subjectKeyID string) (*pkitypes.RevokedNocRootCertificates, error) {
+	var res pkitypes.RevokedNocRootCertificates
+	found, err := getSingle(&res,
+		"query", "pki", "revoked-noc-x509-root-cert",
+		"--subject", subject,
+		"--subject-key-id", subjectKeyID,
+		"-o", "json",
+	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+// GetAllRevokedNocX509IcaCerts queries all revoked NOC ICA certificates.
+func GetAllRevokedNocX509IcaCerts() ([]pkitypes.RevokedNocIcaCertificates, error) {
+	var res pkitypes.QueryAllRevokedNocIcaCertificatesResponse
+	if err := getList(&res, "query", "pki", "all-revoked-noc-x509-ica-certs", "-o", "json"); err != nil {
+		return nil, err
+	}
+
+	return res.RevokedNocIcaCertificates, nil
+}
+
+// GetPkiRevocationDistributionPoint queries a revocation distribution point.
+// Returns nil when no record matches.
+func GetPkiRevocationDistributionPoint(vid int, label, issuerSubjectKeyID string) (*pkitypes.PkiRevocationDistributionPoint, error) {
+	var res pkitypes.PkiRevocationDistributionPoint
+	found, err := getSingle(&res,
+		"query", "pki", "revocation-point",
 		"--vid", itoa(vid),
 		"--label", label,
 		"--issuer-subject-key-id", issuerSubjectKeyID,
 		"-o", "json",
 	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
-// QueryAllPkiRevocationDistributionPoints queries all revocation distribution points.
-func QueryAllPkiRevocationDistributionPoints() ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "all-revocation-points", "-o", "json")
+// GetAllPkiRevocationDistributionPoints queries all revocation distribution points.
+func GetAllPkiRevocationDistributionPoints() ([]pkitypes.PkiRevocationDistributionPoint, error) {
+	var res pkitypes.QueryAllPkiRevocationDistributionPointResponse
+	if err := getList(&res, "query", "pki", "all-revocation-points", "-o", "json"); err != nil {
+		return nil, err
+	}
+
+	return res.PkiRevocationDistributionPoint, nil
 }
 
-// QueryPkiRevocationDistributionPointsByIssuer queries revocation distribution points by issuer subject key ID.
-func QueryPkiRevocationDistributionPointsByIssuer(issuerSubjectKeyID string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "revocation-points",
+// GetPkiRevocationDistributionPointsByIssuer queries revocation distribution
+// points by issuer SKID. Returns nil when no record matches.
+func GetPkiRevocationDistributionPointsByIssuer(issuerSubjectKeyID string) (*pkitypes.PkiRevocationDistributionPointsByIssuerSubjectKeyID, error) {
+	var res pkitypes.PkiRevocationDistributionPointsByIssuerSubjectKeyID
+	found, err := getSingle(&res,
+		"query", "pki", "revocation-points",
 		"--issuer-subject-key-id", issuerSubjectKeyID,
 		"-o", "json",
 	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
-// QueryX509CertsBySubject queries all certs by subject.
-func QueryX509CertsBySubject(subject string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "pki", "all-subject-x509-certs",
-		"--subject", subject,
-		"-o", "json",
-	)
+// findCertBySerial returns the *Certificate in certs whose SerialNumber matches.
+func findCertBySerial(certs []*pkitypes.Certificate, serial string) *pkitypes.Certificate {
+	for _, c := range certs {
+		if c != nil && c.SerialNumber == serial {
+			return c
+		}
+	}
+
+	return nil
+}
+
+// containsCertSerial reports whether certs has an entry with the given serial.
+func containsCertSerial(certs []*pkitypes.Certificate, serial string) bool {
+	return findCertBySerial(certs, serial) != nil
+}
+
+// containsCertSubjectSerial reports whether certs has a (subject, serial) match.
+func containsCertSubjectSerial(certs []*pkitypes.Certificate, subject, serial string) bool {
+	for _, c := range certs {
+		if c != nil && c.Subject == subject && c.SerialNumber == serial {
+			return true
+		}
+	}
+
+	return false
+}
+
+// containsApprovedCertSerial reports whether any of the ApprovedCertificates'
+// inner Certs slices contains the given serial.
+func containsApprovedCertSerial(list []pkitypes.ApprovedCertificates, serial string) bool {
+	for i := range list {
+		if findCertBySerial(list[i].Certs, serial) != nil {
+			return true
+		}
+	}
+
+	return false
+}
+
+// containsRevokedCertSerial does the same for RevokedCertificates.
+func containsRevokedCertSerial(list []pkitypes.RevokedCertificates, serial string) bool {
+	for i := range list {
+		if findCertBySerial(list[i].Certs, serial) != nil {
+			return true
+		}
+	}
+
+	return false
+}
+
+// containsRevokedNocRootCertSerial does the same for RevokedNocRootCertificates.
+func containsRevokedNocRootCertSerial(list []pkitypes.RevokedNocRootCertificates, serial string) bool {
+	for i := range list {
+		if findCertBySerial(list[i].Certs, serial) != nil {
+			return true
+		}
+	}
+
+	return false
+}
+
+// containsRevokedNocIcaCertSerial does the same for RevokedNocIcaCertificates.
+func containsRevokedNocIcaCertSerial(list []pkitypes.RevokedNocIcaCertificates, serial string) bool {
+	for i := range list {
+		if findCertBySerial(list[i].Certs, serial) != nil {
+			return true
+		}
+	}
+
+	return false
+}
+
+// containsRevokedNocIcaCertSubject reports whether any RevokedNocIcaCertificates
+// entry has the given subject.
+func containsRevokedNocIcaCertSubject(list []pkitypes.RevokedNocIcaCertificates, subject string) bool {
+	for i := range list {
+		if list[i].Subject == subject {
+			return true
+		}
+	}
+
+	return false
+}
+
+// containsNocRootCertSerial does the same for NocRootCertificates.
+func containsNocRootCertSerial(list []pkitypes.NocRootCertificates, serial string) bool {
+	for i := range list {
+		if findCertBySerial(list[i].Certs, serial) != nil {
+			return true
+		}
+	}
+
+	return false
+}
+
+// containsNocIcaCertSerial does the same for NocIcaCertificates.
+func containsNocIcaCertSerial(list []pkitypes.NocIcaCertificates, serial string) bool {
+	for i := range list {
+		if findCertBySerial(list[i].Certs, serial) != nil {
+			return true
+		}
+	}
+
+	return false
+}
+
+// containsRevocationPointByLabel reports whether the list has an entry with
+// matching vid + label.
+func containsRevocationPointByLabel(list []pkitypes.PkiRevocationDistributionPoint, vid int32, label string) bool {
+	for i := range list {
+		if list[i].Vid == vid && list[i].Label == label {
+			return true
+		}
+	}
+
+	return false
 }
 
 // flagOrHex returns hex if non-empty, otherwise the decimal-formatted n.

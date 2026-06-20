@@ -1,7 +1,11 @@
 package compliance
 
 import (
+	"encoding/json"
+	"fmt"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+	compliancetypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
 // CertifyModelOpts holds parameters for the certify-model transaction.
@@ -206,57 +210,297 @@ func (o ComplianceQueryOpts) args() []string {
 	}
 }
 
-// QueryComplianceInfo queries compliance-info for a given vid/pid/sv/certType.
-func QueryComplianceInfo(opts ComplianceQueryOpts) ([]byte, error) {
-	return utils.ExecuteCLI(append([]string{"query", "compliance", "compliance-info"}, opts.args()...)...)
+// getSingle runs a single-item dcld query and unmarshals the JSON output into v.
+// Returns (false, nil) when the CLI returned "Not Found" so callers can branch
+// on a nil result; otherwise returns (true, nil) and v is populated.
+func getSingle(v interface{}, args ...string) (found bool, err error) {
+	out, err := utils.ExecuteCLI(args...)
+	if err != nil {
+		return false, err
+	}
+	if utils.IsNotFound(out) {
+		return false, nil
+	}
+	if err := json.Unmarshal(out, v); err != nil {
+		return false, fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
+	}
+
+	return true, nil
 }
 
-// QueryCertifiedModel queries the certified-model endpoint.
-func QueryCertifiedModel(opts ComplianceQueryOpts) ([]byte, error) {
-	return utils.ExecuteCLI(append([]string{"query", "compliance", "certified-model"}, opts.args()...)...)
+// getList runs an all-* dcld query and unmarshals the wrapper response into v.
+// All-queries always return a (possibly empty) response wrapper, so there is no
+// "Not Found" branch here.
+func getList(v interface{}, args ...string) error {
+	out, err := utils.ExecuteCLI(args...)
+	if err != nil {
+		return err
+	}
+	if err := json.Unmarshal(out, v); err != nil {
+		return fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
+	}
+
+	return nil
 }
 
-// QueryRevokedModel queries the revoked-model endpoint.
-func QueryRevokedModel(opts ComplianceQueryOpts) ([]byte, error) {
-	return utils.ExecuteCLI(append([]string{"query", "compliance", "revoked-model"}, opts.args()...)...)
+// GetComplianceInfo queries compliance-info for a given vid/pid/sv/certType.
+// Returns nil when the record does not exist.
+func GetComplianceInfo(opts ComplianceQueryOpts) (*compliancetypes.ComplianceInfo, error) {
+	var res compliancetypes.ComplianceInfo
+	found, err := getSingle(&res, append([]string{"query", "compliance", "compliance-info"}, opts.args()...)...)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
-// QueryProvisionalModel queries the provisional-model endpoint.
-func QueryProvisionalModel(opts ComplianceQueryOpts) ([]byte, error) {
-	return utils.ExecuteCLI(append([]string{"query", "compliance", "provisional-model"}, opts.args()...)...)
+// GetCertifiedModel queries the certified-model endpoint. Returns nil when the
+// record does not exist.
+func GetCertifiedModel(opts ComplianceQueryOpts) (*compliancetypes.CertifiedModel, error) {
+	var res compliancetypes.CertifiedModel
+	found, err := getSingle(&res, append([]string{"query", "compliance", "certified-model"}, opts.args()...)...)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
-// QueryDeviceSoftwareCompliance queries device-software-compliance by CDCertificateID.
-func QueryDeviceSoftwareCompliance(cdCertificateID string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "compliance", "device-software-compliance",
+// GetRevokedModel queries the revoked-model endpoint. Returns nil when the
+// record does not exist.
+func GetRevokedModel(opts ComplianceQueryOpts) (*compliancetypes.RevokedModel, error) {
+	var res compliancetypes.RevokedModel
+	found, err := getSingle(&res, append([]string{"query", "compliance", "revoked-model"}, opts.args()...)...)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+// GetProvisionalModel queries the provisional-model endpoint. Returns nil when
+// the record does not exist.
+func GetProvisionalModel(opts ComplianceQueryOpts) (*compliancetypes.ProvisionalModel, error) {
+	var res compliancetypes.ProvisionalModel
+	found, err := getSingle(&res, append([]string{"query", "compliance", "provisional-model"}, opts.args()...)...)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+// GetDeviceSoftwareCompliance queries device-software-compliance by
+// CDCertificateID. Returns nil when the record does not exist.
+func GetDeviceSoftwareCompliance(cdCertificateID string) (*compliancetypes.DeviceSoftwareCompliance, error) {
+	var res compliancetypes.DeviceSoftwareCompliance
+	found, err := getSingle(&res,
+		"query", "compliance", "device-software-compliance",
 		"--cdCertificateId", cdCertificateID,
 		"-o", "json",
 	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
-// QueryAllComplianceInfo queries all compliance info records.
-func QueryAllComplianceInfo() ([]byte, error) {
-	return utils.ExecuteCLI("query", "compliance", "all-compliance-info", "-o", "json")
+// GetAllComplianceInfo queries all compliance info records.
+func GetAllComplianceInfo() ([]compliancetypes.ComplianceInfo, error) {
+	var res compliancetypes.QueryAllComplianceInfoResponse
+	if err := getList(&res, "query", "compliance", "all-compliance-info", "-o", "json"); err != nil {
+		return nil, err
+	}
+
+	return res.ComplianceInfo, nil
 }
 
-// QueryAllCertifiedModels queries all certified models.
-func QueryAllCertifiedModels() ([]byte, error) {
-	return utils.ExecuteCLI("query", "compliance", "all-certified-models", "-o", "json")
+// GetAllCertifiedModels queries all certified models.
+func GetAllCertifiedModels() ([]compliancetypes.CertifiedModel, error) {
+	var res compliancetypes.QueryAllCertifiedModelResponse
+	if err := getList(&res, "query", "compliance", "all-certified-models", "-o", "json"); err != nil {
+		return nil, err
+	}
+
+	return res.CertifiedModel, nil
 }
 
-// QueryAllRevokedModels queries all revoked models.
-func QueryAllRevokedModels() ([]byte, error) {
-	return utils.ExecuteCLI("query", "compliance", "all-revoked-models", "-o", "json")
+// GetAllRevokedModels queries all revoked models.
+func GetAllRevokedModels() ([]compliancetypes.RevokedModel, error) {
+	var res compliancetypes.QueryAllRevokedModelResponse
+	if err := getList(&res, "query", "compliance", "all-revoked-models", "-o", "json"); err != nil {
+		return nil, err
+	}
+
+	return res.RevokedModel, nil
 }
 
-// QueryAllProvisionalModels queries all provisional models.
-func QueryAllProvisionalModels() ([]byte, error) {
-	return utils.ExecuteCLI("query", "compliance", "all-provisional-models", "-o", "json")
+// GetAllProvisionalModels queries all provisional models.
+func GetAllProvisionalModels() ([]compliancetypes.ProvisionalModel, error) {
+	var res compliancetypes.QueryAllProvisionalModelResponse
+	if err := getList(&res, "query", "compliance", "all-provisional-models", "-o", "json"); err != nil {
+		return nil, err
+	}
+
+	return res.ProvisionalModel, nil
 }
 
-// QueryAllDeviceSoftwareCompliance queries all device software compliance records.
-func QueryAllDeviceSoftwareCompliance() ([]byte, error) {
-	return utils.ExecuteCLI("query", "compliance", "all-device-software-compliance", "-o", "json")
+// GetAllDeviceSoftwareCompliance queries all device software compliance records.
+func GetAllDeviceSoftwareCompliance() ([]compliancetypes.DeviceSoftwareCompliance, error) {
+	var res compliancetypes.QueryAllDeviceSoftwareComplianceResponse
+	if err := getList(&res, "query", "compliance", "all-device-software-compliance", "-o", "json"); err != nil {
+		return nil, err
+	}
+
+	return res.DeviceSoftwareCompliance, nil
+}
+
+// containsComplianceInfo reports whether list has an entry matching (vid, pid).
+func containsComplianceInfo(list []compliancetypes.ComplianceInfo, vid, pid int32) bool {
+	for i := range list {
+		if list[i].Vid == vid && list[i].Pid == pid {
+			return true
+		}
+	}
+
+	return false
+}
+
+// containsCertifiedModel reports whether list has an entry matching (vid, pid).
+func containsCertifiedModel(list []compliancetypes.CertifiedModel, vid, pid int32) bool {
+	for i := range list {
+		if list[i].Vid == vid && list[i].Pid == pid {
+			return true
+		}
+	}
+
+	return false
+}
+
+// containsRevokedModel reports whether list has an entry matching (vid, pid).
+func containsRevokedModel(list []compliancetypes.RevokedModel, vid, pid int32) bool {
+	for i := range list {
+		if list[i].Vid == vid && list[i].Pid == pid {
+			return true
+		}
+	}
+
+	return false
+}
+
+// containsProvisionalModel reports whether list has an entry matching (vid, pid).
+func containsProvisionalModel(list []compliancetypes.ProvisionalModel, vid, pid int32) bool {
+	for i := range list {
+		if list[i].Vid == vid && list[i].Pid == pid {
+			return true
+		}
+	}
+
+	return false
+}
+
+// containsDeviceSoftwareCompliance reports whether list has an entry whose
+// CDCertificateID matches cdCertID.
+func containsDeviceSoftwareCompliance(list []compliancetypes.DeviceSoftwareCompliance, cdCertID string) bool {
+	for i := range list {
+		if list[i].CDCertificateId == cdCertID {
+			return true
+		}
+	}
+
+	return false
+}
+
+// containsComplianceInfoCertType reports whether list contains a record with
+// the given (vid, pid, certType).
+func containsComplianceInfoCertType(list []*compliancetypes.ComplianceInfo, vid, pid int32, certType string) bool {
+	for _, ci := range list {
+		if ci != nil && ci.Vid == vid && ci.Pid == pid && ci.CertificationType == certType {
+			return true
+		}
+	}
+
+	return false
+}
+
+// hasComplianceInfoCertType reports whether list contains a record matching
+// (vid, pid, certType, date).
+func hasComplianceInfoCertType(list []compliancetypes.ComplianceInfo, vid, pid int32, certType, date string) bool {
+	for i := range list {
+		m := &list[i]
+		if m.Vid == vid && m.Pid == pid && m.CertificationType == certType && m.Date == date {
+			return true
+		}
+	}
+
+	return false
+}
+
+// hasCertifiedModelCertType reports whether list contains a record matching
+// (vid, pid, certType).
+func hasCertifiedModelCertType(list []compliancetypes.CertifiedModel, vid, pid int32, certType string) bool {
+	for i := range list {
+		m := &list[i]
+		if m.Vid == vid && m.Pid == pid && m.CertificationType == certType {
+			return true
+		}
+	}
+
+	return false
+}
+
+// hasRevokedWithValue reports whether list contains a record matching
+// (vid, pid) with the given Value.
+func hasRevokedWithValue(list []compliancetypes.RevokedModel, vid, pid int32, value bool) bool {
+	for i := range list {
+		m := &list[i]
+		if m.Vid == vid && m.Pid == pid && m.Value == value {
+			return true
+		}
+	}
+
+	return false
+}
+
+// hasProvisionalWithValue reports whether list contains a record matching
+// (vid, pid) with the given Value.
+func hasProvisionalWithValue(list []compliancetypes.ProvisionalModel, vid, pid int32, value bool) bool {
+	for i := range list {
+		m := &list[i]
+		if m.Vid == vid && m.Pid == pid && m.Value == value {
+			return true
+		}
+	}
+
+	return false
+}
+
+// hasCertifiedTrueAt reports whether list contains a CertifiedModel matching
+// (vid, pid, sv, certType) with Value=true.
+func hasCertifiedTrueAt(list []compliancetypes.CertifiedModel, vid, pid int32, sv uint32, certType string) bool {
+	for i := range list {
+		m := &list[i]
+		if m.Vid == vid && m.Pid == pid && m.SoftwareVersion == sv && m.CertificationType == certType && m.Value {
+			return true
+		}
+	}
+
+	return false
+}
+
+// hasComplianceInfoStatus reports whether list contains a record matching
+// (vid, pid) with the given SoftwareVersionCertificationStatus.
+func hasComplianceInfoStatus(list []compliancetypes.ComplianceInfo, vid, pid int32, status uint32) bool {
+	for i := range list {
+		m := &list[i]
+		if m.Vid == vid && m.Pid == pid && m.SoftwareVersionCertificationStatus == status {
+			return true
+		}
+	}
+
+	return false
 }
 
 func itoa(n int) string {

@@ -84,6 +84,14 @@ func QueryTx(txHash string) ([]byte, error) {
 	return ExecuteCLI("query", "tx", txHash, "-o", "json")
 }
 
+// IsNotFound reports whether the dcld CLI output is the literal `"Not Found"`
+// response emitted by utils/cli.QueryWithProof when a single-item query misses.
+// All single-item Get* helpers use this to translate the sentinel response into
+// a nil result without an error.
+func IsNotFound(out []byte) bool {
+	return strings.Contains(string(out), "Not Found")
+}
+
 // OnChainCode parses the on-chain execution code from a confirmed tx response.
 // Returns 0 and no error if the code field is absent (assumed success).
 func OnChainCode(txData []byte) (uint32, string, error) {

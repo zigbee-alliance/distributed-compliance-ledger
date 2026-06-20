@@ -42,9 +42,10 @@ func TestPKICombineCerts(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryX509Cert(rootWithSameSubjectAndSkidSubject, rootWithSameSubjectAndSkidSubjectKeyID)
+		cert, err := GetX509Cert(rootWithSameSubjectAndSkidSubject, rootWithSameSubjectAndSkidSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, rootWithSameSubjectAndSkidSubject))
+		require.NotNil(t, cert)
+		require.Equal(t, rootWithSameSubjectAndSkidSubject, cert.Subject)
 	})
 
 	t.Run("ProposeAndApproveSecondRootCert_SameSubjectSkid", func(t *testing.T) {
@@ -61,9 +62,11 @@ func TestPKICombineCerts(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Now both certs with same subject+skid should coexist
-		out, err := QueryX509Cert(rootWithSameSubjectAndSkidSubject, rootWithSameSubjectAndSkidSubjectKeyID)
+		// Now both certs with same subject+skid should coexist (2 entries in Certs).
+		cert, err := GetX509Cert(rootWithSameSubjectAndSkidSubject, rootWithSameSubjectAndSkidSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, rootWithSameSubjectAndSkidSubject))
+		require.NotNil(t, cert)
+		require.Equal(t, rootWithSameSubjectAndSkidSubject, cert.Subject)
+		require.Len(t, cert.Certs, 2)
 	})
 }

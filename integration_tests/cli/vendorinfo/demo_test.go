@@ -22,6 +22,7 @@ import (
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+	vendorinfotypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/types"
 )
 
 func TestVendorInfoDemo(t *testing.T) {
@@ -38,16 +39,16 @@ func TestVendorInfoDemo(t *testing.T) {
 	vendorAdminAccount := cliputils.CreateAccount(t, "VendorAdmin")
 
 	t.Run("QueryNonExistent", func(t *testing.T) {
-		out, err := QueryVendor(fmt.Sprintf("%d", vid))
+		v, err := GetVendor(vid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, v)
 	})
 
 	t.Run("QueryAllEmpty", func(t *testing.T) {
 		// This test's specific vendor must not exist yet (other tests may have added different VIDs).
-		out, err := QueryVendor(fmt.Sprintf("%d", vid))
+		v, err := GetVendor(vid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, v)
 	})
 
 	const (
@@ -70,20 +71,30 @@ func TestVendorInfoDemo(t *testing.T) {
 	})
 
 	t.Run("QueryVendorInfo", func(t *testing.T) {
-		out, err := QueryVendor(fmt.Sprintf("%d", vid))
+		v, err := GetVendor(vid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorID":%d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"companyLegalName":"%s"`, companyLegalName))
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorName":"%s"`, vendorName))
-		require.Contains(t, string(out), fmt.Sprintf(`"schemaVersion":%s`, schemaVersion0))
+		require.NotNil(t, v)
+		require.Equal(t, int32(vid), v.VendorID)
+		require.Equal(t, companyLegalName, v.CompanyLegalName)
+		require.Equal(t, vendorName, v.VendorName)
+		require.Equal(t, uint32(0), v.SchemaVersion)
 	})
 
 	t.Run("QueryAllVendors", func(t *testing.T) {
-		out, err := QueryAllVendors()
+		all, err := GetAllVendors()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorID":%d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"companyLegalName":"%s"`, companyLegalName))
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorName":"%s"`, vendorName))
+		require.True(t, containsVendorByID(all, int32(vid)))
+		var got *vendorinfotypes.VendorInfo
+		for i := range all {
+			if all[i].VendorID == int32(vid) {
+				got = &all[i]
+
+				break
+			}
+		}
+		require.NotNil(t, got)
+		require.Equal(t, companyLegalName, got.CompanyLegalName)
+		require.Equal(t, vendorName, got.VendorName)
 	})
 
 	t.Run("UpdateVendorInfoRequiredFieldsOnly", func(t *testing.T) {
@@ -94,11 +105,12 @@ func TestVendorInfoDemo(t *testing.T) {
 		require.NoError(t, err)
 
 		// Omitted optional fields should keep their previous values
-		out, err := QueryVendor(fmt.Sprintf("%d", vid))
+		v, err := GetVendor(vid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorID":%d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"companyLegalName":"%s"`, companyLegalName))
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorName":"%s"`, vendorName))
+		require.NotNil(t, v)
+		require.Equal(t, int32(vid), v.VendorID)
+		require.Equal(t, companyLegalName, v.CompanyLegalName)
+		require.Equal(t, vendorName, v.VendorName)
 	})
 
 	updatedCompanyLegalName := "ABC Subsidiary Corporation"
@@ -117,12 +129,13 @@ func TestVendorInfoDemo(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryVendor(fmt.Sprintf("%d", vid))
+		v, err := GetVendor(vid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorID":%d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"companyLegalName":"%s"`, updatedCompanyLegalName))
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorName":"%s"`, vendorName))
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorLandingPageURL":"%s"`, vendorLandingPageURL))
+		require.NotNil(t, v)
+		require.Equal(t, int32(vid), v.VendorID)
+		require.Equal(t, updatedCompanyLegalName, v.CompanyLegalName)
+		require.Equal(t, vendorName, v.VendorName)
+		require.Equal(t, vendorLandingPageURL, v.VendorLandingPageURL)
 	})
 
 	t.Run("AddVendorForWrongVID_Fails", func(t *testing.T) {

@@ -83,15 +83,16 @@ func TestPKINocRevocationWithRevokingChild(t *testing.T) {
 
 		// VvscLeafCert1 is already active on-chain from TestPKINocCerts (chained
 		// under VvscRoot1 → VvscIca1, was never revoked). Verify it exists.
-		out, err := QueryNocX509IcaCerts(nocVid)
+		icas, err := GetNocX509IcaCerts(nocVid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, vvscLeafCert1Subject))
+		require.NotNil(t, icas)
+		require.True(t, containsCertSubjectSerial(icas.Certs, vvscLeafCert1Subject, vvscLeafCert1SerialNumber))
 
-		// Verify root certs exist
-		out, err = QueryAllNocRootCerts()
+		// Verify root certs exist.
+		allRoots, err := GetAllNocRootCerts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), nocRootCert1SerialNumber)
-		require.Contains(t, string(out), nocRootCert1CopySerialNumber)
+		require.True(t, containsNocRootCertSerial(allRoots, nocRootCert1SerialNumber))
+		require.True(t, containsNocRootCertSerial(allRoots, nocRootCert1CopySerialNumber))
 
 		// Revoke the OperationalPKI root NOC certificate with revoke-child=true.
 		// Cascade hits NocCert1 only — the VVSC chain is structurally disjoint (Matter §6.5.12).
@@ -109,52 +110,58 @@ func TestPKINocRevocationWithRevokingChild(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Both NOC root certs should be revoked
-		out, err = QueryAllRevokedNocRootCerts()
+		// Both NOC root certs + VVSC root should be revoked.
+		revokedRoots, err := GetAllRevokedNocRootCerts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), nocRootCert1SerialNumber)
-		require.Contains(t, string(out), nocRootCert1CopySerialNumber)
-		require.Contains(t, string(out), vvscRootCert1SerialNumber)
+		require.True(t, containsRevokedNocRootCertSerial(revokedRoots, nocRootCert1SerialNumber))
+		require.True(t, containsRevokedNocRootCertSerial(revokedRoots, nocRootCert1CopySerialNumber))
+		require.True(t, containsRevokedNocRootCertSerial(revokedRoots, vvscRootCert1SerialNumber))
 
 		// Revoked ICA list now contains both the NOC ICA and the VVSC ICA + leaf.
-		out, err = QueryAllRevokedNocX509IcaCerts()
+		revokedIcas, err := GetAllRevokedNocX509IcaCerts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, vvscIcaCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, vvscLeafCert1Subject))
+		require.True(t, containsRevokedNocIcaCertSubject(revokedIcas, nocCert1Subject))
+		require.True(t, containsRevokedNocIcaCertSubject(revokedIcas, vvscIcaCert1Subject))
+		require.True(t, containsRevokedNocIcaCertSubject(revokedIcas, vvscLeafCert1Subject))
 
 		// Root cert 1 (both serials) should no longer be in the approved root list for VID.
-		// (Root cert 2 from TestPKINocCerts may still be approved — don't assert "Not Found".)
-		out, err = QueryNocRootCerts(nocVid)
+		// (Root cert 2 from TestPKINocCerts may still be approved.)
+		roots, err := GetNocRootCerts(nocVid)
 		require.NoError(t, err)
-		require.NotContains(t, string(out), nocRootCert1SerialNumber)
-		require.NotContains(t, string(out), nocRootCert1CopySerialNumber)
-		require.NotContains(t, string(out), vvscRootCert1SerialNumber)
+		if roots != nil {
+			require.False(t, containsCertSerial(roots.Certs, nocRootCert1SerialNumber))
+			require.False(t, containsCertSerial(roots.Certs, nocRootCert1CopySerialNumber))
+			require.False(t, containsCertSerial(roots.Certs, vvscRootCert1SerialNumber))
+		}
 
 		// cert1 should be revoked after revoking root cert 1 with child flag.
-		// noc_cert_2 (child of root cert 2) from TestPKINocCerts is still approved — don't assert "Not Found".
-		out, err = QueryNocX509IcaCerts(nocVid)
+		// (noc_cert_2 — child of root cert 2 from TestPKINocCerts — may still be approved.)
+		icas, err = GetNocX509IcaCerts(nocVid)
 		require.NoError(t, err)
-		require.NotContains(t, string(out), nocCert1SerialNumber)
-		require.NotContains(t, string(out), vvscLeafCert1SerialNumber)
+		if icas != nil {
+			require.False(t, containsCertSerial(icas.Certs, nocCert1SerialNumber))
+			require.False(t, containsCertSerial(icas.Certs, vvscLeafCert1SerialNumber))
+		}
 
 		// NOC certs must not appear in the DA (all-x509-certs) list.
-		out, err = QueryAllX509Certs()
+		allDa, err := GetAllX509Certs()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), nocRootCert1Subject)
-		require.NotContains(t, string(out), nocCert1Subject)
-		require.NotContains(t, string(out), vvscLeafCert1Subject)
+		require.False(t, containsApprovedCertSerial(allDa, nocRootCert1SerialNumber))
+		require.False(t, containsApprovedCertSerial(allDa, nocCert1SerialNumber))
+		require.False(t, containsApprovedCertSerial(allDa, vvscLeafCert1SerialNumber))
 	})
 
 	t.Run("RevokeNocIcaCertWithChildFlag", func(t *testing.T) {
 		// noc_root_cert_2 and noc_cert_2 were already added by TestPKINocCerts — verify they are on-chain.
-		out, err := QueryNocRootCerts(nocVid)
+		roots, err := GetNocRootCerts(nocVid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), nocRootCert2SerialNumber)
+		require.NotNil(t, roots)
+		require.True(t, containsCertSerial(roots.Certs, nocRootCert2SerialNumber))
 
-		out, err = QueryNocX509IcaCerts(nocVid)
+		icas, err := GetNocX509IcaCerts(nocVid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), nocCert2SerialNumber)
+		require.NotNil(t, icas)
+		require.True(t, containsCertSerial(icas.Certs, nocCert2SerialNumber))
 
 		// Add cert2copy (OperationalPKI ICA copy) — not yet on-chain.
 		txResult, err := AddNocX509IcaCert(nocRevChildCert2CopyPath, vendorAccount)
@@ -209,29 +216,36 @@ func TestPKINocRevocationWithRevokingChild(t *testing.T) {
 		require.NoError(t, err)
 
 		// Revoked ICA list contains NocCert2 (+ copy), VvscIca2, and VvscLeaf2.
-		out, err = QueryAllRevokedNocX509IcaCerts()
+		revokedIcas, err := GetAllRevokedNocX509IcaCerts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocCert2Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, vvscIcaCert2Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocLeafCert2Subject))
-		require.Contains(t, string(out), nocCert2SerialNumber)
-		require.Contains(t, string(out), nocRevChildCert2CopySerialNumber)
-		require.Contains(t, string(out), nocLeafCert2SerialNumber)
+		require.True(t, containsRevokedNocIcaCertSubject(revokedIcas, nocCert2Subject))
+		require.True(t, containsRevokedNocIcaCertSubject(revokedIcas, vvscIcaCert2Subject))
+		require.True(t, containsRevokedNocIcaCertSubject(revokedIcas, nocLeafCert2Subject))
+		require.True(t, containsRevokedNocIcaCertSerial(revokedIcas, nocCert2SerialNumber))
+		require.True(t, containsRevokedNocIcaCertSerial(revokedIcas, nocRevChildCert2CopySerialNumber))
+		require.True(t, containsRevokedNocIcaCertSerial(revokedIcas, nocLeafCert2SerialNumber))
 
-		// Root should not be in revoked ICA list
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s`, nocRootCert2Subject))
+		// Root should not be in revoked ICA list.
+		require.False(t, containsRevokedNocIcaCertSubject(revokedIcas, nocRootCert2Subject))
 
-		// NOC certs by VID should not contain ICA/leaf
-		out, err = QueryNocX509IcaCerts(nocVid)
+		// NOC certs by VID should not contain ICA/leaf.
+		icas, err = GetNocX509IcaCerts(nocVid)
 		require.NoError(t, err)
-		require.NotContains(t, string(out), nocCert2Subject)
-		require.NotContains(t, string(out), nocLeafCert2Subject)
+		if icas != nil {
+			for _, c := range icas.Certs {
+				require.NotEqual(t, nocCert2Subject, c.Subject)
+				require.NotEqual(t, nocLeafCert2Subject, c.Subject)
+			}
+		}
 
-		// All NOC certs should not contain revoked ICA/leaf but should still have root
-		out, err = QueryAllNocX509Certs()
+		// All NOC certs should not contain revoked ICA/leaf but should still have root.
+		all, err := GetAllNocX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert2Subject))
-		require.NotContains(t, string(out), nocCert2Subject)
-		require.NotContains(t, string(out), nocLeafCert2Subject)
+		require.NotNil(t, all)
+		require.True(t, containsCertSubjectSerial(all.Certs, nocRootCert2Subject, nocRootCert2SerialNumber))
+		for _, c := range all.Certs {
+			require.NotEqual(t, nocCert2Subject, c.Subject)
+			require.NotEqual(t, nocLeafCert2Subject, c.Subject)
+		}
 	})
 }

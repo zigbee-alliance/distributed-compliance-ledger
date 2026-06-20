@@ -94,43 +94,45 @@ func TestComplianceRevocation(t *testing.T) {
 	})
 
 	t.Run("QueryAfterRevocation", func(t *testing.T) {
-		out, err := QueryCertifiedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certType})
+		certified, err := GetCertifiedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certType})
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, certified)
 
-		out, err = QueryCertifiedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certTypeMatter})
+		certified, err = GetCertifiedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certTypeMatter})
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, certified)
 
-		out, err = QueryRevokedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certType})
+		revoked, err := GetRevokedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certType})
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"value":true`)
-		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
+		require.NotNil(t, revoked)
+		require.True(t, revoked.Value)
+		require.Equal(t, int32(vid), revoked.Vid)
+		require.Equal(t, int32(pid), revoked.Pid)
 
-		out, err = QueryRevokedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certTypeMatter})
+		revoked, err = GetRevokedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certTypeMatter})
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"value":true`)
+		require.NotNil(t, revoked)
+		require.True(t, revoked.Value)
 
-		// Never provisioned — record doesn't exist, so "Not Found"
-		out, err = QueryProvisionalModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certType})
+		// Never provisioned — record doesn't exist.
+		provisional, err := GetProvisionalModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certType})
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, provisional)
 
-		out, err = QueryComplianceInfo(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certType})
+		info, err := GetComplianceInfo(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certType})
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"softwareVersionCertificationStatus":3`)
-		require.Contains(t, string(out), fmt.Sprintf(`"date":"%s"`, revocationDate))
-		require.Contains(t, string(out), fmt.Sprintf(`"reason":"%s"`, revocationReason))
+		require.NotNil(t, info)
+		require.Equal(t, uint32(3), info.SoftwareVersionCertificationStatus)
+		require.Equal(t, revocationDate, info.Date)
+		require.Equal(t, revocationReason, info.Reason)
 
-		out, err = QueryAllRevokedModels()
+		allRevoked, err := GetAllRevokedModels()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
+		require.True(t, containsRevokedModel(allRevoked, int32(vid), int32(pid)))
 
-		out, err = QueryAllCertifiedModels()
+		allCertified, err := GetAllCertifiedModels()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
+		require.False(t, containsCertifiedModel(allCertified, int32(vid), int32(pid)))
 	})
 
 	t.Run("CertifyAfterRevoke_Success", func(t *testing.T) {
@@ -149,12 +151,14 @@ func TestComplianceRevocation(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryCertifiedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certType})
+		certified, err := GetCertifiedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certType})
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"value":true`)
+		require.NotNil(t, certified)
+		require.True(t, certified.Value)
 
-		out, err = QueryRevokedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certType})
+		revoked, err := GetRevokedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certType})
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"value":false`)
+		require.NotNil(t, revoked)
+		require.False(t, revoked.Value)
 	})
 }

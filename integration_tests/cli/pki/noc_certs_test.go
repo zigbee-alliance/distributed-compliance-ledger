@@ -74,68 +74,37 @@ func TestPKINocCerts(t *testing.T) {
 	cliputils.CreateVendorAccount(t, vendorAccount2, nocVid2)
 
 	t.Run("QueryAllEmpty", func(t *testing.T) {
-		// Query by VID — Not Found
-		out, err := QueryNocRootCerts(nocVid)
+		// Query by VID — not present.
+		roots, err := GetNocRootCerts(nocVid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert1Subject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert1SubjectKeyID))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1SerialNumber))
+		require.Nil(t, roots)
 
-		// Query by VID + SKID for cert1 — Not Found
-		out, err = QueryNocCert("--vid", fmt.Sprintf("%d", nocVid), "--subject-key-id", nocRootCert1SubjectKeyID)
-		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert1Subject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert1SubjectKeyID))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1SerialNumber))
+		// Query by VID + SKID for each known cert — not present.
+		for _, skid := range []string{nocRootCert1SubjectKeyID, nocRootCert2SubjectKeyID, nocRootCert3SubjectKeyID} {
+			cert, err := GetNocCert("--vid", fmt.Sprintf("%d", nocVid), "--subject-key-id", skid)
+			require.NoError(t, err)
+			require.Nil(t, cert)
+		}
 
-		// Query by VID + SKID for cert2 — Not Found
-		out, err = QueryNocCert("--vid", fmt.Sprintf("%d", nocVid), "--subject-key-id", nocRootCert2SubjectKeyID)
+		// Query all NOC root certs — empty.
+		allRoots, err := GetAllNocRootCerts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert2Subject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert2SubjectKeyID))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert2SerialNumber))
+		require.Empty(t, allRoots)
 
-		// Query by VID + SKID for cert3 — Not Found
-		out, err = QueryNocCert("--vid", fmt.Sprintf("%d", nocVid), "--subject-key-id", nocRootCert3SubjectKeyID)
+		// Query by subject + SKID — not present.
+		cert, err := GetNocCert("--subject", nocRootCert1Subject, "--subject-key-id", nocRootCert1SubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert3Subject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert3SubjectKeyID))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert3SerialNumber))
+		require.Nil(t, cert)
 
-		// Query all — empty
-		out, err = QueryAllNocRootCerts()
+		// Query by subject alone — not present.
+		subjCerts, err := GetNocSubjectCerts(nocRootCert1Subject)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "[]")
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert1Subject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert1SubjectKeyID))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1SerialNumber))
+		require.Nil(t, subjCerts)
 
-		// Query by subject + SKID — Not Found
-		out, err = QueryNocCert("--subject", nocRootCert1Subject, "--subject-key-id", nocRootCert1SubjectKeyID)
+		// Query by SKID alone — not present.
+		cert, err = GetNocCert("--subject-key-id", nocRootCert1SubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert1Subject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert1SubjectKeyID))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1SerialNumber))
-
-		// Query by subject alone — Not Found
-		out, err = QueryNocSubjectCerts(nocRootCert1Subject)
-		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert1Subject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert1SubjectKeyID))
-
-		// Query by SKID alone — Not Found
-		out, err = QueryNocCert("--subject-key-id", nocRootCert1SubjectKeyID)
-		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert1Subject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert1SubjectKeyID))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1SerialNumber))
+		require.Nil(t, cert)
 	})
 
 	t.Run("AddNocRootCerts", func(t *testing.T) {
@@ -167,91 +136,62 @@ func TestPKINocCerts(t *testing.T) {
 	})
 
 	t.Run("QueryNocRootCertsByVid", func(t *testing.T) {
-		// Query by VID — both cert1 and cert2 present with all fields
-		out, err := QueryNocRootCerts(nocVid)
+		// Query by VID — both cert1 and cert2 are present.
+		roots, err := GetNocRootCerts(nocVid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert1SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectAsText":"%s"`, nocRootCert1SubjectAsText))
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert2Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert2SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert2SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectAsText":"%s"`, nocRootCert2SubjectAsText))
-		require.Contains(t, string(out), `"schemaVersion":0`)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, nocVid))
+		require.NotNil(t, roots)
+		require.True(t, containsCertSubjectSerial(roots.Certs, nocRootCert1Subject, nocRootCert1SerialNumber))
+		require.True(t, containsCertSubjectSerial(roots.Certs, nocRootCert2Subject, nocRootCert2SerialNumber))
+		c1 := findCertBySerial(roots.Certs, nocRootCert1SerialNumber)
+		require.NotNil(t, c1)
+		require.Equal(t, nocRootCert1SubjectKeyID, c1.SubjectKeyId)
+		require.Equal(t, nocRootCert1SubjectAsText, c1.SubjectAsText)
+		require.Equal(t, int32(nocVid), c1.Vid)
 
 		// Query by VID + SKID for cert1
-		out, err = QueryNocCert("--vid", fmt.Sprintf("%d", nocVid), "--subject-key-id", nocRootCert1SubjectKeyID)
+		cert, err := GetNocCert("--vid", fmt.Sprintf("%d", nocVid), "--subject-key-id", nocRootCert1SubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert1SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectAsText":"%s"`, nocRootCert1SubjectAsText))
-		require.Contains(t, string(out), `"schemaVersion":0`)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, nocVid))
-		require.Contains(t, string(out), `"tq":1`)
+		require.NotNil(t, cert)
+		require.True(t, containsCertSubjectSerial(cert.Certs, nocRootCert1Subject, nocRootCert1SerialNumber))
+		require.Equal(t, uint64(1), cert.Tq)
 
 		// Query by VID + SKID for cert2
-		out, err = QueryNocCert("--vid", fmt.Sprintf("%d", nocVid), "--subject-key-id", nocRootCert2SubjectKeyID)
+		cert, err = GetNocCert("--vid", fmt.Sprintf("%d", nocVid), "--subject-key-id", nocRootCert2SubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert2Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert2SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert2SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectAsText":"%s"`, nocRootCert2SubjectAsText))
-		require.Contains(t, string(out), `"schemaVersion":0`)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, nocVid))
-		require.Contains(t, string(out), `"tq":1`)
+		require.NotNil(t, cert)
+		require.True(t, containsCertSubjectSerial(cert.Certs, nocRootCert2Subject, nocRootCert2SerialNumber))
 
-		// Query all NOC root certs — all three certs from both VIDs
-		out, err = QueryAllNocRootCerts()
+		// Query all NOC root certs — all three certs from both VIDs.
+		allRoots, err := GetAllNocRootCerts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert1SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectAsText":"%s"`, nocRootCert1SubjectAsText))
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert2Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert2SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert2SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectAsText":"%s"`, nocRootCert2SubjectAsText))
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert3Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert3SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert3SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectAsText":"%s"`, nocRootCert3SubjectAsText))
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, nocVid))
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, nocVid2))
+		require.True(t, containsNocRootCertSerial(allRoots, nocRootCert1SerialNumber))
+		require.True(t, containsNocRootCertSerial(allRoots, nocRootCert2SerialNumber))
+		require.True(t, containsNocRootCertSerial(allRoots, nocRootCert3SerialNumber))
 
-		// Query by subject + SKID using noc-x509-cert
-		out, err = QueryNocCert("--subject", nocRootCert1Subject, "--subject-key-id", nocRootCert1SubjectKeyID)
+		// Query by subject + SKID using noc-x509-cert.
+		cert, err = GetNocCert("--subject", nocRootCert1Subject, "--subject-key-id", nocRootCert1SubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert1SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectAsText":"%s"`, nocRootCert1SubjectAsText))
-		require.Contains(t, string(out), `"approvals":[]`)
+		require.NotNil(t, cert)
+		require.True(t, containsCertSubjectSerial(cert.Certs, nocRootCert1Subject, nocRootCert1SerialNumber))
 
-		// Query by subject + SKID using generic cert command
-		out, err = QueryCert(nocRootCert1Subject, nocRootCert1SubjectKeyID)
+		// Query by subject + SKID using generic cert command.
+		gen, err := GetCert(nocRootCert1Subject, nocRootCert1SubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert1SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectAsText":"%s"`, nocRootCert1SubjectAsText))
-		require.Contains(t, string(out), `"approvals":[]`)
+		require.NotNil(t, gen)
+		require.True(t, containsCertSubjectSerial(gen.Certs, nocRootCert1Subject, nocRootCert1SerialNumber))
 
-		// Query by subject alone
-		out, err = QueryNocSubjectCerts(nocRootCert1Subject)
+		// Query by subject alone.
+		subjCerts, err := GetNocSubjectCerts(nocRootCert1Subject)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"%s"`, nocRootCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"%s"`, nocRootCert1SubjectKeyID))
+		require.NotNil(t, subjCerts)
+		require.Equal(t, nocRootCert1Subject, subjCerts.Subject)
+		require.Contains(t, subjCerts.SubjectKeyIds, nocRootCert1SubjectKeyID)
 
-		// Query by SKID alone
-		out, err = QueryNocCert("--subject-key-id", nocRootCert1SubjectKeyID)
+		// Query by SKID alone.
+		cert, err = GetNocCert("--subject-key-id", nocRootCert1SubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert1SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectAsText":"%s"`, nocRootCert1SubjectAsText))
+		require.NotNil(t, cert)
+		require.True(t, containsCertSubjectSerial(cert.Certs, nocRootCert1Subject, nocRootCert1SerialNumber))
 	})
 
 	t.Run("AddNocIcaCerts", func(t *testing.T) {
@@ -262,19 +202,25 @@ func TestPKINocCerts(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// ICA certs by VID — cert1 present with all fields
-		out, err := QueryNocX509IcaCerts(nocVid)
+		// ICA certs by VID — cert1 present.
+		icas, err := GetNocX509IcaCerts(nocVid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocCert1SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, nocVid))
+		require.NotNil(t, icas)
+		require.True(t, containsCertSubjectSerial(icas.Certs, nocCert1Subject, nocCert1SerialNumber))
 
-		// Child certs of root1 — cert1 present
-		out, err = QueryChildX509Certs(nocRootCert1Subject, nocRootCert1SubjectKeyID)
+		// Child certs of root1 — cert1 present.
+		children, err := GetChildX509Certs(nocRootCert1Subject, nocRootCert1SubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocCert1SubjectKeyID))
+		require.NotNil(t, children)
+		foundChild := false
+		for _, id := range children.CertIds {
+			if id.Subject == nocCert1Subject && id.SubjectKeyId == nocCert1SubjectKeyID {
+				foundChild = true
+
+				break
+			}
+		}
+		require.True(t, foundChild)
 
 		// Try to add ICA with different VID — should fail
 		txResult, err = AddNocX509IcaCert(nocCert2Path, vendorAccount2)
@@ -295,42 +241,27 @@ func TestPKINocCerts(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// All ICA certs — cert1 (both serials), cert2, vid, schemaVersion
-		out, err = QueryAllNocX509IcaCerts()
+		// All ICA certs include cert1 (both serials), cert2.
+		allIcas, err := GetAllNocX509IcaCerts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocCert1SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocCert1CopySerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocCert2Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocCert2SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocCert2SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, nocVid))
-		require.Contains(t, string(out), `"schemaVersion":0`)
+		require.True(t, containsNocIcaCertSerial(allIcas, nocCert1SerialNumber))
+		require.True(t, containsNocIcaCertSerial(allIcas, nocCert1CopySerialNumber))
+		require.True(t, containsNocIcaCertSerial(allIcas, nocCert2SerialNumber))
 
-		// NOC certs must NOT appear in the DA approved cert list
-		out, err = QueryAllX509Certs()
+		// NOC certs must NOT appear in the DA approved cert list.
+		da, err := GetAllX509Certs()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), nocRootCert1Subject)
-		require.NotContains(t, string(out), nocRootCert1SubjectKeyID)
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1SerialNumber))
-		require.NotContains(t, string(out), nocCert1Subject)
-		require.NotContains(t, string(out), nocCert1SubjectKeyID)
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocCert1SerialNumber))
+		require.False(t, containsApprovedCertSerial(da, nocRootCert1SerialNumber))
+		require.False(t, containsApprovedCertSerial(da, nocCert1SerialNumber))
 
-		// All NOC certs — root and ICA both present
-		out, err = QueryAllNocX509Certs()
+		// All NOC certs — root and ICA both present.
+		all, err := GetAllNocX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert1SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocCert1SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocCert1CopySerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocCert2Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocCert2SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocCert2SerialNumber))
+		require.NotNil(t, all)
+		require.True(t, containsCertSerial(all.Certs, nocRootCert1SerialNumber))
+		require.True(t, containsCertSerial(all.Certs, nocCert1SerialNumber))
+		require.True(t, containsCertSerial(all.Certs, nocCert1CopySerialNumber))
+		require.True(t, containsCertSerial(all.Certs, nocCert2SerialNumber))
 	})
 
 	t.Run("AddAndRevokeNocRootCert", func(t *testing.T) {
@@ -363,20 +294,20 @@ func TestPKINocCerts(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Verify root state before revocation
-		out, err := QueryAllNocRootCerts()
+		// Verify root state before revocation.
+		allRoots, err := GetAllNocRootCerts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1CopySerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert2SerialNumber))
+		require.True(t, containsNocRootCertSerial(allRoots, nocRootCert1SerialNumber))
+		require.True(t, containsNocRootCertSerial(allRoots, nocRootCert1CopySerialNumber))
+		require.True(t, containsNocRootCertSerial(allRoots, nocRootCert2SerialNumber))
 
-		// Verify ICA state before revocation
-		out, err = QueryAllNocX509IcaCerts()
+		// Verify ICA state before revocation.
+		allIcas, err := GetAllNocX509IcaCerts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocCert1CopySerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocCert2SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, vvscLeafCert1SerialNumber))
+		require.True(t, containsNocIcaCertSerial(allIcas, nocCert1SerialNumber))
+		require.True(t, containsNocIcaCertSerial(allIcas, nocCert1CopySerialNumber))
+		require.True(t, containsNocIcaCertSerial(allIcas, nocCert2SerialNumber))
+		require.True(t, containsNocIcaCertSerial(allIcas, vvscLeafCert1SerialNumber))
 
 		// Try to revoke with different VID — should fail
 		txResult, err = RevokeNocRootCert(nocRootCert1Subject, nocRootCert1SubjectKeyID, vendorAccount2)
@@ -390,103 +321,73 @@ func TestPKINocCerts(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// All revoked NOC root certs — both serials, ICA/leaf absent
-		out, err = QueryAllRevokedNocRootCerts()
+		// All revoked NOC root certs — both serials, ICA/leaf absent.
+		revokedRoots, err := GetAllRevokedNocRootCerts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s`, nocRootCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert1SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1CopySerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocCert1Subject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, vvscLeafCert1Subject))
+		require.True(t, containsRevokedNocRootCertSerial(revokedRoots, nocRootCert1SerialNumber))
+		require.True(t, containsRevokedNocRootCertSerial(revokedRoots, nocRootCert1CopySerialNumber))
 
-		// Revoked NOC root cert by subject + SKID
-		out, err = QueryRevokedNocRootCert(nocRootCert1Subject, nocRootCert1SubjectKeyID)
+		// Revoked NOC root cert by subject + SKID.
+		revokedRoot, err := GetRevokedNocRootCert(nocRootCert1Subject, nocRootCert1SubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s`, nocRootCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert1SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1CopySerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert2Subject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert3Subject))
+		require.NotNil(t, revokedRoot)
+		require.True(t, containsCertSerial(revokedRoot.Certs, nocRootCert1SerialNumber))
+		require.True(t, containsCertSerial(revokedRoot.Certs, nocRootCert1CopySerialNumber))
 
-		// DA revoked certs must NOT contain revoked NOC root certs
-		out, err = QueryAllRevokedX509Certs()
+		// DA revoked certs must NOT contain revoked NOC root certs.
+		daRevoked, err := GetAllRevokedX509Certs()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), nocRootCert1Subject)
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1SerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1CopySerialNumber))
+		require.False(t, containsRevokedCertSerial(daRevoked, nocRootCert1SerialNumber))
+		require.False(t, containsRevokedCertSerial(daRevoked, nocRootCert1CopySerialNumber))
 
-		// Active NOC root certs by VID — cert2 present, cert1 absent
-		out, err = QueryNocRootCerts(nocVid)
+		// Active NOC root certs by VID — cert2 present, cert1 absent.
+		roots, err := GetNocRootCerts(nocVid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert2Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert2SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert2SerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert1Subject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert1SubjectKeyID))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1SerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1CopySerialNumber))
+		require.NotNil(t, roots)
+		require.True(t, containsCertSerial(roots.Certs, nocRootCert2SerialNumber))
+		require.False(t, containsCertSerial(roots.Certs, nocRootCert1SerialNumber))
+		require.False(t, containsCertSerial(roots.Certs, nocRootCert1CopySerialNumber))
 
-		// Query by VID + SKID for cert1 — Not Found
-		out, err = QueryNocCert("--vid", fmt.Sprintf("%d", nocVid), "--subject-key-id", nocRootCert1SubjectKeyID)
+		// Query by VID + SKID for cert1 — gone.
+		cert, err := GetNocCert("--vid", fmt.Sprintf("%d", nocVid), "--subject-key-id", nocRootCert1SubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert1Subject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert1SubjectKeyID))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1SerialNumber))
+		require.Nil(t, cert)
 
-		// Query by VID + SKID for cert2 — present with all fields
-		out, err = QueryNocCert("--vid", fmt.Sprintf("%d", nocVid), "--subject-key-id", nocRootCert2SubjectKeyID)
+		// Query by VID + SKID for cert2 — present.
+		cert, err = GetNocCert("--vid", fmt.Sprintf("%d", nocVid), "--subject-key-id", nocRootCert2SubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert2Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert2SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert2SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectAsText":"%s"`, nocRootCert2SubjectAsText))
-		require.Contains(t, string(out), `"schemaVersion":0`)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, nocVid))
-		require.Contains(t, string(out), `"tq":1`)
+		require.NotNil(t, cert)
+		require.True(t, containsCertSubjectSerial(cert.Certs, nocRootCert2Subject, nocRootCert2SerialNumber))
 
-		// Query by subject for cert1 — gone
-		out, err = QueryNocSubjectCerts(nocRootCert1Subject)
+		// Query by subject for cert1 — gone (either nil or doesn't list the SKID).
+		subjCerts, err := GetNocSubjectCerts(nocRootCert1Subject)
 		require.NoError(t, err)
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert1Subject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert1SubjectKeyID))
+		if subjCerts != nil {
+			require.NotContains(t, subjCerts.SubjectKeyIds, nocRootCert1SubjectKeyID)
+		}
 
-		// Query by SKID alone for cert1 — Not Found
-		out, err = QueryNocCert("--subject-key-id", nocRootCert1SubjectKeyID)
+		// Query by SKID alone for cert1 — gone.
+		cert, err = GetNocCert("--subject-key-id", nocRootCert1SubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert1Subject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert1SubjectKeyID))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1SerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1CopySerialNumber))
+		require.Nil(t, cert)
 
-		// ICA certs by VID — ICA and leaf still active
-		out, err = QueryNocX509IcaCerts(nocVid)
+		// ICA certs by VID — ICA and leaf still active.
+		icas, err := GetNocX509IcaCerts(nocVid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, vvscLeafCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocCert1SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, vvscLeafCert1SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocCert1CopySerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, vvscLeafCert1SerialNumber))
+		require.NotNil(t, icas)
+		require.True(t, containsCertSubjectSerial(icas.Certs, nocCert1Subject, nocCert1SerialNumber))
+		require.True(t, containsCertSubjectSerial(icas.Certs, nocCert1Subject, nocCert1CopySerialNumber))
+		require.True(t, containsCertSubjectSerial(icas.Certs, vvscLeafCert1Subject, vvscLeafCert1SerialNumber))
 
-		// All NOC certs — ICA/leaf present, revoked root1 absent
-		out, err = QueryAllNocX509Certs()
+		// All NOC certs — ICA/leaf present, revoked root1 absent.
+		all, err := GetAllNocX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocCert1SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocCert1CopySerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, vvscLeafCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, vvscLeafCert1SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, vvscLeafCert1SerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert1Subject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert1SubjectKeyID))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1SerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1CopySerialNumber))
+		require.NotNil(t, all)
+		require.True(t, containsCertSerial(all.Certs, nocCert1SerialNumber))
+		require.True(t, containsCertSerial(all.Certs, nocCert1CopySerialNumber))
+		require.True(t, containsCertSerial(all.Certs, vvscLeafCert1SerialNumber))
+		require.False(t, containsCertSerial(all.Certs, nocRootCert1SerialNumber))
+		require.False(t, containsCertSerial(all.Certs, nocRootCert1CopySerialNumber))
 	})
 
 	t.Run("RevokeNocIcaCert", func(t *testing.T) {
@@ -502,69 +403,60 @@ func TestPKINocCerts(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Revoked ICA list — cert1 present (with schemaVersion), leaf absent
-		out, err := QueryAllRevokedNocX509IcaCerts()
+		// Revoked ICA list — cert1 present, leaf absent.
+		revokedIcas, err := GetAllRevokedNocX509IcaCerts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocCert1SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocCert1SerialNumber))
-		require.Contains(t, string(out), `"schemaVersion":0`)
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, vvscLeafCert1Subject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, vvscLeafCert1SubjectKeyID))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, vvscLeafCert1SerialNumber))
+		require.True(t, containsRevokedNocIcaCertSerial(revokedIcas, nocCert1SerialNumber))
+		require.False(t, containsRevokedNocIcaCertSerial(revokedIcas, vvscLeafCert1SerialNumber))
+		require.False(t, containsRevokedNocIcaCertSubject(revokedIcas, vvscLeafCert1Subject))
 
-		// Revoked root list must not contain ICA or leaf
-		out, err = QueryAllRevokedNocRootCerts()
+		// Revoked root list must not contain ICA or leaf.
+		revokedRoots, err := GetAllRevokedNocRootCerts()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocCert1SubjectKeyID))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, vvscLeafCert1SubjectKeyID))
+		for _, r := range revokedRoots {
+			require.NotEqual(t, nocCert1SubjectKeyID, r.SubjectKeyId)
+			require.NotEqual(t, vvscLeafCert1SubjectKeyID, r.SubjectKeyId)
+		}
 
-		// Query by subject for cert1 — gone
-		out, err = QueryNocSubjectCerts(nocCert1Subject)
+		// Query by subject for cert1 — gone (either nil or doesn't list the SKID).
+		subjCerts, err := GetNocSubjectCerts(nocCert1Subject)
 		require.NoError(t, err)
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocCert1Subject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocCert1SubjectKeyID))
+		if subjCerts != nil {
+			require.NotContains(t, subjCerts.SubjectKeyIds, nocCert1SubjectKeyID)
+		}
 
-		// Query by SKID alone for cert1 — Not Found
-		out, err = QueryNocCert("--subject-key-id", nocCert1SubjectKeyID)
+		// Query by SKID alone for cert1 — gone.
+		cert, err := GetNocCert("--subject-key-id", nocCert1SubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocCert1Subject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocCert1SubjectKeyID))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocCert1SerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocCert1CopySerialNumber))
+		require.Nil(t, cert)
 
-		// Active ICA certs by VID — only leaf remains
-		out, err = QueryNocX509IcaCerts(nocVid)
+		// Active ICA certs by VID — only leaf remains.
+		icas, err := GetNocX509IcaCerts(nocVid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, vvscLeafCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, vvscLeafCert1SubjectKeyID))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocCert1Subject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocCert1SubjectKeyID))
+		require.NotNil(t, icas)
+		require.True(t, containsCertSubjectSerial(icas.Certs, vvscLeafCert1Subject, vvscLeafCert1SerialNumber))
+		for _, c := range icas.Certs {
+			require.NotEqual(t, nocCert1Subject, c.Subject)
+		}
 
-		// Query by VID + SKID for cert1 — Not Found
-		out, err = QueryNocCert("--vid", fmt.Sprintf("%d", nocVid), "--subject-key-id", nocCert1SubjectKeyID)
+		// Query by VID + SKID for cert1 — gone.
+		cert, err = GetNocCert("--vid", fmt.Sprintf("%d", nocVid), "--subject-key-id", nocCert1SubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, cert)
 
-		// Query by VID + SKID for leaf — present
-		out, err = QueryNocCert("--vid", fmt.Sprintf("%d", nocVid), "--subject-key-id", vvscLeafCert1SubjectKeyID)
+		// Query by VID + SKID for leaf — present.
+		cert, err = GetNocCert("--vid", fmt.Sprintf("%d", nocVid), "--subject-key-id", vvscLeafCert1SubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, vvscLeafCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, vvscLeafCert1SubjectKeyID))
+		require.NotNil(t, cert)
+		require.True(t, containsCertSubjectSerial(cert.Certs, vvscLeafCert1Subject, vvscLeafCert1SerialNumber))
 
-		// All NOC certs — leaf present, cert1 and root1 absent
-		out, err = QueryAllNocX509Certs()
+		// All NOC certs — leaf present, cert1 and root1 absent.
+		all, err := GetAllNocX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, vvscLeafCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, vvscLeafCert1SubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, vvscLeafCert1SerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocCert1Subject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocCert1SubjectKeyID))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocCert1SerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert1Subject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, nocRootCert1SubjectKeyID))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1SerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, nocRootCert1CopySerialNumber))
+		require.NotNil(t, all)
+		require.True(t, containsCertSerial(all.Certs, vvscLeafCert1SerialNumber))
+		require.False(t, containsCertSerial(all.Certs, nocCert1SerialNumber))
+		require.False(t, containsCertSerial(all.Certs, nocRootCert1SerialNumber))
+		require.False(t, containsCertSerial(all.Certs, nocRootCert1CopySerialNumber))
 	})
 }

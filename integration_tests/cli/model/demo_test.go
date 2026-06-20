@@ -22,17 +22,17 @@ func TestModelDemo(t *testing.T) {
 	cliputils.CreateVendorAccount(t, vendorAccountWithPids, vidWithPids, pidRanges)
 
 	t.Run("QueryNonExistentModel", func(t *testing.T) {
-		out, err := QueryModel(vid, pid)
+		m, err := GetModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, m)
 
-		out, err = QueryVendorModels(vid)
+		vm, err := GetVendorModels(vid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, vm)
 
-		out, err = QueryAllModels()
+		all, err := GetAllModels()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
+		require.False(t, containsModelByPid(all, int32(vid), int32(pid)))
 	})
 
 	productLabel := "Device #1"
@@ -73,13 +73,14 @@ func TestModelDemo(t *testing.T) {
 	})
 
 	t.Run("QueryModel", func(t *testing.T) {
-		out, err := QueryModel(vid, pid)
+		m, err := GetModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
-		require.Contains(t, string(out), fmt.Sprintf(`"productLabel":"%s"`, productLabel))
-		require.Contains(t, string(out), `"schemaVersion":0`)
-		require.Contains(t, string(out), `"enhancedSetupFlowOptions":0`)
+		require.NotNil(t, m)
+		require.Equal(t, int32(vid), m.Vid)
+		require.Equal(t, int32(pid), m.Pid)
+		require.Equal(t, productLabel, m.ProductLabel)
+		require.Equal(t, uint32(0), m.SchemaVersion)
+		require.Equal(t, int32(0), m.EnhancedSetupFlowOptions)
 	})
 
 	t.Run("AddModelVersions", func(t *testing.T) {
@@ -112,14 +113,14 @@ func TestModelDemo(t *testing.T) {
 	})
 
 	t.Run("QueryAllModelsAndVendorModels", func(t *testing.T) {
-		out, err := QueryAllModels()
+		all, err := GetAllModels()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
+		require.True(t, containsModelByPid(all, int32(vid), int32(pid)))
 
-		out, err = QueryVendorModels(vid)
+		vm, err := GetVendorModels(vid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
+		require.NotNil(t, vm)
+		require.True(t, containsProductByPid(vm.Products, int32(pid)))
 	})
 
 	description := "New Device Description"
@@ -145,17 +146,18 @@ func TestModelDemo(t *testing.T) {
 	})
 
 	t.Run("QueryUpdatedModel", func(t *testing.T) {
-		out, err := QueryModel(vid, pid)
+		m, err := GetModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
-		require.Contains(t, string(out), fmt.Sprintf(`"productLabel":"%s"`, description))
-		require.Contains(t, string(out), `"schemaVersion":0`)
-		require.Contains(t, string(out), fmt.Sprintf(`"commissioningModeInitialStepsHint":%d`, newCommissioningModeInitialStepsHint))
-		require.Contains(t, string(out), fmt.Sprintf(`"commissioningModeSecondaryStepsHint":%d`, newCommissioningModeSecondaryStepsHint))
-		require.Contains(t, string(out), fmt.Sprintf(`"icdUserActiveModeTriggerHint":%d`, newIcdUserActiveModeTriggerHint))
-		require.Contains(t, string(out), fmt.Sprintf(`"factoryResetStepsHint":%d`, newFactoryResetStepsHint))
-		require.Contains(t, string(out), `"enhancedSetupFlowOptions":2`)
+		require.NotNil(t, m)
+		require.Equal(t, int32(vid), m.Vid)
+		require.Equal(t, int32(pid), m.Pid)
+		require.Equal(t, description, m.ProductLabel)
+		require.Equal(t, uint32(0), m.SchemaVersion)
+		require.Equal(t, uint32(newCommissioningModeInitialStepsHint), m.CommissioningModeInitialStepsHint)
+		require.Equal(t, uint32(newCommissioningModeSecondaryStepsHint), m.CommissioningModeSecondaryStepsHint)
+		require.Equal(t, uint32(newIcdUserActiveModeTriggerHint), m.IcdUserActiveModeTriggerHint)
+		require.Equal(t, uint32(newFactoryResetStepsHint), m.FactoryResetStepsHint)
+		require.Equal(t, int32(2), m.EnhancedSetupFlowOptions)
 	})
 
 	supportURL := "https://newsupporturl.test"
@@ -170,9 +172,10 @@ func TestModelDemo(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryModel(vid, pid)
+		m, err := GetModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"supportUrl":"%s"`, supportURL))
+		require.NotNil(t, m)
+		require.Equal(t, supportURL, m.SupportUrl)
 	})
 
 	t.Run("DeleteModels", func(t *testing.T) {
@@ -190,20 +193,20 @@ func TestModelDemo(t *testing.T) {
 	})
 
 	t.Run("QueryAfterDeletion", func(t *testing.T) {
-		out, err := QueryModel(vid, pid)
+		m, err := GetModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, m)
 
-		out, err = QueryModel(vidWithPids, pid)
+		m, err = GetModel(vidWithPids, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, m)
 
-		out, err = QueryModelVersion(vid, pid, sv)
+		mv, err := GetModelVersion(vid, pid, sv)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, mv)
 
-		out, err = QueryModelVersion(vidWithPids, pid, sv)
+		mv, err = GetModelVersion(vidWithPids, pid, sv)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, mv)
 	})
 }

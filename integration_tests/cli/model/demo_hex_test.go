@@ -20,17 +20,17 @@ func TestModelDemoHex(t *testing.T) {
 	cliputils.CreateVendorAccount(t, vendorAccount, vid)
 
 	t.Run("QueryNonExistent", func(t *testing.T) {
-		out, err := QueryModelHex(vidHex, pidHex)
+		m, err := GetModelHex(vidHex, pidHex)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, m)
 
-		out, err = QueryVendorModelsHex(vidHex)
+		vm, err := GetVendorModelsHex(vidHex)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, vm)
 
-		out, err = QueryAllModels()
+		all, err := GetAllModels()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
+		require.False(t, containsModelByPid(all, int32(vid), int32(pid)))
 	})
 
 	productLabel := "Device #1"
@@ -48,20 +48,21 @@ func TestModelDemoHex(t *testing.T) {
 	})
 
 	t.Run("QueryModel", func(t *testing.T) {
-		out, err := QueryModelHex(vidHex, pidHex)
+		m, err := GetModelHex(vidHex, pidHex)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
-		require.Contains(t, string(out), fmt.Sprintf(`"productLabel":"%s"`, productLabel))
+		require.NotNil(t, m)
+		require.Equal(t, int32(vid), m.Vid)
+		require.Equal(t, int32(pid), m.Pid)
+		require.Equal(t, productLabel, m.ProductLabel)
 
-		out, err = QueryAllModels()
+		all, err := GetAllModels()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
+		require.True(t, containsModelByPid(all, int32(vid), int32(pid)))
 
-		out, err = QueryVendorModelsHex(vidHex)
+		vm, err := GetVendorModelsHex(vidHex)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
+		require.NotNil(t, vm)
+		require.True(t, containsProductByPid(vm.Products, int32(pid)))
 	})
 
 	description := "New Device Description"
@@ -76,11 +77,12 @@ func TestModelDemoHex(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryModelHex(vidHex, pidHex)
+		m, err := GetModelHex(vidHex, pidHex)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
-		require.Contains(t, string(out), fmt.Sprintf(`"productLabel":"%s"`, description))
+		require.NotNil(t, m)
+		require.Equal(t, int32(vid), m.Vid)
+		require.Equal(t, int32(pid), m.Pid)
+		require.Equal(t, description, m.ProductLabel)
 	})
 
 	supportURL := "https://newsupporturl.test"
@@ -95,9 +97,10 @@ func TestModelDemoHex(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryModelHex(vidHex, pidHex)
+		m, err := GetModelHex(vidHex, pidHex)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"supportUrl":"%s"`, supportURL))
+		require.NotNil(t, m)
+		require.Equal(t, supportURL, m.SupportUrl)
 	})
 
 	t.Run("DeleteModel", func(t *testing.T) {
@@ -107,8 +110,8 @@ func TestModelDemoHex(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryModelHex(vidHex, pidHex)
+		m, err := GetModelHex(vidHex, pidHex)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, m)
 	})
 }

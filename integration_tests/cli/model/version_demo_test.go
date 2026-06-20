@@ -67,38 +67,39 @@ func TestModelVersionDemo(t *testing.T) {
 	})
 
 	t.Run("QueryModelVersion", func(t *testing.T) {
-		out, err := QueryModelVersion(vid, pid, sv)
+		mv, err := GetModelVersion(vid, pid, sv)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
-		require.Contains(t, string(out), fmt.Sprintf(`"softwareVersion":%d`, sv))
-		require.Contains(t, string(out), `"softwareVersionString":"1"`)
-		require.Contains(t, string(out), `"cdVersionNumber":1`)
-		require.Contains(t, string(out), `"softwareVersionValid":true`)
-		require.Contains(t, string(out), `"minApplicableSoftwareVersion":1`)
-		require.Contains(t, string(out), `"maxApplicableSoftwareVersion":10`)
-		require.Contains(t, string(out), `"schemaVersion":0`)
+		require.NotNil(t, mv)
+		require.Equal(t, int32(vid), mv.Vid)
+		require.Equal(t, int32(pid), mv.Pid)
+		require.Equal(t, uint32(sv), mv.SoftwareVersion)
+		require.Equal(t, "1", mv.SoftwareVersionString)
+		require.Equal(t, int32(1), mv.CdVersionNumber)
+		require.True(t, mv.SoftwareVersionValid)
+		require.Equal(t, uint32(1), mv.MinApplicableSoftwareVersion)
+		require.Equal(t, uint32(10), mv.MaxApplicableSoftwareVersion)
+		require.Equal(t, uint32(0), mv.SchemaVersion)
 	})
 
 	t.Run("QueryAllModelVersions", func(t *testing.T) {
-		out, err := QueryAllModelVersions(vid, pid)
+		mvs, err := GetAllModelVersions(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
-		require.Contains(t, string(out), "softwareVersions")
-		require.Contains(t, string(out), fmt.Sprintf("%d", sv))
+		require.NotNil(t, mvs)
+		require.Equal(t, int32(vid), mvs.Vid)
+		require.Equal(t, int32(pid), mvs.Pid)
+		require.Contains(t, mvs.SoftwareVersions, uint32(sv))
 	})
 
 	t.Run("QueryNonExistentModelVersion", func(t *testing.T) {
-		out, err := QueryModelVersion(vid, pid, 123456)
+		mv, err := GetModelVersion(vid, pid, 123456)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, mv)
 
 		vid1 := rand.Intn(65534) + 1
 		pid1 := rand.Intn(65534) + 1
-		out, err = QueryAllModelVersions(vid1, pid1)
+		mvs, err := GetAllModelVersions(vid1, pid1)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, mvs)
 	})
 
 	t.Run("UpdateModelVersion", func(t *testing.T) {
@@ -113,11 +114,12 @@ func TestModelVersionDemo(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryModelVersion(vid, pid, sv)
+		mv, err := GetModelVersion(vid, pid, sv)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"softwareVersionValid":false`)
-		require.Contains(t, string(out), `"minApplicableSoftwareVersion":2`)
-		require.Contains(t, string(out), `"maxApplicableSoftwareVersion":10`)
+		require.NotNil(t, mv)
+		require.False(t, mv.SoftwareVersionValid)
+		require.Equal(t, uint32(2), mv.MinApplicableSoftwareVersion)
+		require.Equal(t, uint32(10), mv.MaxApplicableSoftwareVersion)
 	})
 
 	sv2 := rand.Intn(65534) + 1
@@ -135,10 +137,11 @@ func TestModelVersionDemo(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryAllModelVersions(vid, pid)
+		mvs, err := GetAllModelVersions(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf("%d", sv))
-		require.Contains(t, string(out), fmt.Sprintf("%d", sv2))
+		require.NotNil(t, mvs)
+		require.Contains(t, mvs.SoftwareVersions, uint32(sv))
+		require.Contains(t, mvs.SoftwareVersions, uint32(sv2))
 	})
 
 	t.Run("AddModelVersionFromDifferentVendor_Fails", func(t *testing.T) {
@@ -185,8 +188,8 @@ func TestModelVersionDemo(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryModelVersion(vid, pid, sv)
+		mv, err := GetModelVersion(vid, pid, sv)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, mv)
 	})
 }

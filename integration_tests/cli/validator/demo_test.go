@@ -22,14 +22,52 @@
 package validator
 
 import (
-	"fmt"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+	validatortypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
+
+// proposedHasVoter reports whether the proposed-disable record has addr as the
+// creator or among its approvals.
+func proposedHasVoter(p *validatortypes.ProposedDisableValidator, addr string) bool {
+	if p == nil {
+		return false
+	}
+	if p.Creator == addr {
+		return true
+	}
+	for _, a := range p.Approvals {
+		if a != nil && a.Address == addr {
+			return true
+		}
+	}
+
+	return false
+}
+
+// rejectedHasVoter reports whether the rejected-disable record has addr in its
+// approvals (proposer) or rejects.
+func rejectedHasVoter(r *validatortypes.RejectedDisableValidator, addr string) bool {
+	if r == nil {
+		return false
+	}
+	for _, a := range r.Approvals {
+		if a != nil && a.Address == addr {
+			return true
+		}
+	}
+	for _, a := range r.Rejects {
+		if a != nil && a.Address == addr {
+			return true
+		}
+	}
+
+	return false
+}
 
 // TestValidatorProposeRejectDisable covers the propose-and-reject
 // disable-validator path and the sequential approve/reject/re-vote flows.
@@ -68,19 +106,19 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 		require.NoError(t, err)
 
 		// Should not be in proposed list
-		out, err := QueryProposedDisableNode(validatorAddress)
+		proposed, err := GetProposedDisableNode(validatorAddress)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, proposed)
 
 		// Should not be in rejected list (single proposer rejection clears it immediately)
-		out, err = QueryRejectedDisableNode(validatorAddress)
+		rejected, err := GetRejectedDisableNode(validatorAddress)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, rejected)
 
 		// Should not be in disabled list
-		out, err = QueryDisabledNode(validatorAddress)
+		disabled, err := GetDisabledNode(validatorAddress)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, disabled)
 	})
 
 	t.Run("ProposeApproveDisableAndReEnable", func(t *testing.T) {
@@ -92,14 +130,15 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 		require.NoError(t, err)
 
 		// Proposed list contains the validator
-		out, err := QueryAllProposedDisableNodes()
+		allProposed, err := GetAllProposedDisableNodes()
 		require.NoError(t, err)
-		require.Contains(t, string(out), validatorAddress)
+		require.True(t, containsProposedByAddress(allProposed, validatorAddress))
 
-		out, err = QueryProposedDisableNode(validatorAddress)
+		proposed, err := GetProposedDisableNode(validatorAddress)
 		require.NoError(t, err)
-		require.Contains(t, string(out), validatorAddress)
-		require.Contains(t, string(out), aliceAddr)
+		require.NotNil(t, proposed)
+		require.Equal(t, validatorAddress, proposed.Address)
+		require.True(t, proposedHasVoter(proposed, aliceAddr))
 
 		// Bob approves — reaches threshold (ceil(2/3 * 3 trustees) = 2, proposer counts as 1),
 		// validator becomes disabled and the proposal is removed.
@@ -116,15 +155,16 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 		}
 
 		// Should no longer be in proposed list (threshold reached)
-		out, err = QueryAllProposedDisableNodes()
+		allProposed, err = GetAllProposedDisableNodes()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), fmt.Sprintf(`"address":"%s"`, validatorAddress))
+		require.False(t, containsProposedByAddress(allProposed, validatorAddress))
 
 		// Should be in disabled list
-		out, err = QueryDisabledNode(validatorAddress)
+		disabled, err := GetDisabledNode(validatorAddress)
 		require.NoError(t, err)
-		require.Contains(t, string(out), validatorAddress)
-		require.Contains(t, string(out), "false") // disabledByNodeAdmin = false
+		require.NotNil(t, disabled)
+		require.Equal(t, validatorAddress, disabled.Address)
+		require.False(t, disabled.DisabledByNodeAdmin)
 
 		// Node admin (validatorOwner) re-enables the validator
 		txResult, err = EnableNode(validatorOwner)
@@ -134,9 +174,9 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 		require.NoError(t, err)
 
 		// Should no longer be disabled
-		out, err = QueryDisabledNode(validatorAddress)
+		disabled, err = GetDisabledNode(validatorAddress)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, disabled)
 	})
 
 	t.Run("ProposeApproveRejectRejectFailsSecondTime", func(t *testing.T) {
@@ -190,11 +230,12 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 		}
 
 		// Still in proposed list (not enough rejections yet)
-		out, err := QueryProposedDisableNode(validatorAddress)
+		proposed, err := GetProposedDisableNode(validatorAddress)
 		require.NoError(t, err)
-		require.Contains(t, string(out), validatorAddress)
-		require.Contains(t, string(out), aliceAddr)
-		require.Contains(t, string(out), bobAddr)
+		require.NotNil(t, proposed)
+		require.Equal(t, validatorAddress, proposed.Address)
+		require.True(t, proposedHasVoter(proposed, aliceAddr))
+		require.True(t, proposedHasVoter(proposed, bobAddr))
 
 		// Jack rejects — now enough rejections to move to rejected list
 		txResult, err = RejectDisableNode(validatorAddress, jack)
@@ -210,30 +251,32 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 		}
 
 		// No longer in proposed list
-		out, err = QueryAllProposedDisableNodes()
+		allProposed, err := GetAllProposedDisableNodes()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), validatorAddress)
+		require.False(t, containsProposedByAddress(allProposed, validatorAddress))
 
 		// Should be in rejected list
-		out, err = QueryAllRejectedDisableNodes()
+		allRejected, err := GetAllRejectedDisableNodes()
 		require.NoError(t, err)
-		require.Contains(t, string(out), validatorAddress)
-		require.Contains(t, string(out), aliceAddr)
-		require.Contains(t, string(out), bobAddr)
+		require.True(t, containsRejectedByAddress(allRejected, validatorAddress))
 
-		out, err = QueryRejectedDisableNode(validatorAddress)
+		rejected, err := GetRejectedDisableNode(validatorAddress)
 		require.NoError(t, err)
-		require.Contains(t, string(out), validatorAddress)
+		require.NotNil(t, rejected)
+		require.Equal(t, validatorAddress, rejected.Address)
+		require.True(t, rejectedHasVoter(rejected, aliceAddr))
+		require.True(t, rejectedHasVoter(rejected, bobAddr))
 
 		// Should NOT be disabled
-		out, err = QueryDisabledNode(validatorAddress)
+		disabled, err := GetDisabledNode(validatorAddress)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, disabled)
 
-		// Should NOT be jailed
-		out, err = QueryNode(validatorAddress)
+		// Should NOT be jailed (validator must still exist on chain)
+		v, err := GetNode(validatorAddress)
 		require.NoError(t, err)
-		require.NotContains(t, string(out), `"jailed":true`)
+		require.NotNil(t, v)
+		require.False(t, v.Jailed)
 	})
 
 	t.Run("RePropose_AfterRejected_StartsFresh", func(t *testing.T) {
@@ -245,15 +288,16 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 		require.NoError(t, err)
 
 		// Now in proposed list
-		out, err := QueryProposedDisableNode(validatorAddress)
+		proposed, err := GetProposedDisableNode(validatorAddress)
 		require.NoError(t, err)
-		require.Contains(t, string(out), validatorAddress)
-		require.Contains(t, string(out), aliceAddr)
+		require.NotNil(t, proposed)
+		require.Equal(t, validatorAddress, proposed.Address)
+		require.True(t, proposedHasVoter(proposed, aliceAddr))
 
 		// Rejected list should no longer have it
-		out, err = QueryRejectedDisableNode(validatorAddress)
+		rejected, err := GetRejectedDisableNode(validatorAddress)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, rejected)
 
 		// Clean up: reject it to leave the network in a clean state
 		txResult, err = RejectDisableNode(validatorAddress, alice)
@@ -269,14 +313,13 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 func resolveFirstValidator(t *testing.T) (ownerAccountName, validatorAddress string) {
 	t.Helper()
 
-	out, err := QueryAllNodes()
+	nodes, err := GetAllNodes()
 	require.NoError(t, err)
-	outStr := string(out)
 
 	// The validator "owner" field in all-nodes is a cosmosvaloper... address.
 	// Use --bech val to get the cosmosvaloper address for each well-known key and
-	// match against the all-nodes JSON. Prefer anna then jack so the validator under
-	// test is not owned by alice or bob (the propose/approve signers).
+	// match against the on-chain owners. Prefer anna then jack so the validator
+	// under test is not owned by alice or bob (the propose/approve signers).
 	knownAccounts := []string{"anna", "jack", "alice", "bob"}
 	for _, acc := range knownAccounts {
 		valAddrOut, err := utils.ExecuteCLI("keys", "show", acc, "--bech", "val", "-a", "--keyring-backend", "test")
@@ -284,7 +327,7 @@ func resolveFirstValidator(t *testing.T) (ownerAccountName, validatorAddress str
 			continue
 		}
 		valAddr := strings.TrimSpace(string(valAddrOut))
-		if valAddr != "" && strings.Contains(outStr, valAddr) {
+		if valAddr != "" && containsValidatorByOwner(nodes, valAddr) {
 			return acc, valAddr
 		}
 	}

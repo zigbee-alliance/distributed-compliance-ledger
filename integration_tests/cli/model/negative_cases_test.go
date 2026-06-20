@@ -3,6 +3,7 @@ package model
 import (
 	"fmt"
 	"math/rand"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -28,34 +29,14 @@ func TestModelNegativeCases(t *testing.T) {
 	cliputils.CreateVendorAccount(t, vendorAccountWithPids, vidWithPids, pidRanges)
 
 	t.Run("AddModel_NotVendor_Fails", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--deviceTypeID", "1",
-			"--productName", "TestProduct",
-			"--productLabel", "TestingProductLabel",
-			"--partNumber", "1",
-			"--commissioningCustomFlow", "0",
-			"--enhancedSetupFlowOptions", "0",
-			"--from", certificationHouse,
-		)
+		txResult, err := AddModel(AddModelOpts{VID: vid, PID: pid, From: certificationHouse})
 		require.NoError(t, err)
 		require.Equal(t, uint32(4), txResult.Code)
 		_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
 	})
 
 	t.Run("AddModel_VendorNonAssociatedPID_Fails", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vidWithPids),
-			"--pid", "101",
-			"--deviceTypeID", "1",
-			"--productName", "TestProduct",
-			"--productLabel", "TestingProductLabel",
-			"--partNumber", "1",
-			"--commissioningCustomFlow", "0",
-			"--enhancedSetupFlowOptions", "0",
-			"--from", vendorAccountWithPids,
-		)
+		txResult, err := AddModel(AddModelOpts{VID: vidWithPids, PID: 101, From: vendorAccountWithPids})
 		require.NoError(t, err)
 		require.Equal(t, uint32(4), txResult.Code)
 		_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -63,17 +44,7 @@ func TestModelNegativeCases(t *testing.T) {
 
 	t.Run("AddModel_WrongVendorID_Fails", func(t *testing.T) {
 		vid1 := rand.Intn(65534) + 1
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid1),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--deviceTypeID", "1",
-			"--productName", "TestProduct",
-			"--productLabel", "TestingProductLabel",
-			"--partNumber", "1",
-			"--commissioningCustomFlow", "0",
-			"--enhancedSetupFlowOptions", "0",
-			"--from", vendorAccount,
-		)
+		txResult, err := AddModel(AddModelOpts{VID: vid1, PID: pid, From: vendorAccount})
 		require.NoError(t, err)
 		require.Equal(t, uint32(4), txResult.Code)
 		_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -91,18 +62,8 @@ func TestModelNegativeCases(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Second add fails with 501
-		txResult, err = utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--deviceTypeID", "1",
-			"--productName", "TestProduct",
-			"--productLabel", "TestingProductLabel",
-			"--partNumber", "1",
-			"--commissioningCustomFlow", "0",
-			"--enhancedSetupFlowOptions", "0",
-			"--from", vendorAccount,
-		)
+		// Second add fails with code 501 (model already exists).
+		txResult, err = AddModel(AddModelOpts{VID: vid, PID: pid, From: vendorAccount})
 		require.NoError(t, err)
 		require.Equal(t, uint32(501), txResult.Code)
 		_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -138,62 +99,53 @@ func TestModelNegativeCases(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Delete certified model — should fail with code 525
-		txResult, err = utils.ExecuteTx("tx", "model", "delete-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--from", vendorAccount,
-		)
+		// Delete certified model — should fail with code 525.
+		txResult, err = DeleteModel(vid, pid, vendorAccount)
 		require.NoError(t, err)
 		require.Equal(t, uint32(525), txResult.Code)
 		_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
 	})
 
 	t.Run("AddModel_UnknownAccount_Fails", func(t *testing.T) {
-		out, err := utils.ExecuteCLI("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--deviceTypeID", "1",
-			"--productName", "TestProduct",
-			"--productLabel", "TestingProductLabel",
-			"--partNumber", "1",
-			"--commissioningCustomFlow", "0",
-			"--enhancedSetupFlowOptions", "0",
-			"--from", "Unknown",
-			"--yes", "-o", "json", "--keyring-backend", "test",
-		)
-		combined := string(out)
-		if err != nil {
-			combined += err.Error()
-		}
-		require.Contains(t, combined, "key not found")
+		// AddModel routes through ExecuteTx; an unknown --from is rejected at the
+		// CLI keyring layer before broadcast, so the failure surfaces as a Go err.
+		_, err := AddModel(AddModelOpts{VID: vid, PID: pid, From: "Unknown"})
+		require.Error(t, err)
+		require.Contains(t, err.Error(), "key not found")
 	})
 
+	type vidCase struct {
+		label string
+		opts  AddModelOpts
+	}
 	t.Run("AddModel_InvalidVidPid", func(t *testing.T) {
-		for _, inv := range []string{"-1", "0", "65536", "string"} {
-			out, err := utils.ExecuteCLI("tx", "model", "add-model",
-				"--vid", inv,
-				"--pid", fmt.Sprintf("%d", pid),
-				"--deviceTypeID", "1",
-				"--productName", "TestProduct",
-				"--productLabel", "TestingProductLabel",
-				"--partNumber", "1",
-				"--commissioningCustomFlow", "0",
-				"--enhancedSetupFlowOptions", "0",
-				"--from", vendorAccount,
-				"--yes", "-o", "json", "--keyring-backend", "test",
-			)
-			combined := string(out)
+		cases := []vidCase{
+			{"-1", AddModelOpts{VID: -1, PID: pid, From: vendorAccount}},
+			{"0", AddModelOpts{VID: 0, PID: pid, From: vendorAccount}},
+			{"65536", AddModelOpts{VID: 65536, PID: pid, From: vendorAccount}},
+			// VIDHex bypasses int formatting and lets us send a non-numeric token.
+			{"string", AddModelOpts{VIDHex: "string", PID: pid, From: vendorAccount}},
+		}
+		for _, tc := range cases {
+			tc := tc
+			txResult, err := AddModel(tc.opts)
+			combined := ""
 			if err != nil {
-				combined += err.Error()
+				combined = err.Error()
 			}
-			// Expect some error related to vid validation
-			hasErr := len(combined) > 0 && (containsAny(combined, "Vid must not be", "invalid syntax", "invalid argument"))
-			require.True(t, hasErr, "expected error for vid=%s, got: %s", inv, combined)
+			if txResult != nil {
+				combined += txResult.RawLog
+			}
+			hasErr := combined != "" && (strings.Contains(combined, "Vid must not be") ||
+				strings.Contains(combined, "invalid syntax") ||
+				strings.Contains(combined, "invalid argument"))
+			require.True(t, hasErr, "expected error for vid=%s, got: %s", tc.label, combined)
 		}
 	})
 
 	t.Run("AddModel_EmptyProductName_Fails", func(t *testing.T) {
+		// AddModel substitutes its "TestProduct" default for an empty ProductName,
+		// so we can't drive this case through the typed helper. Send the raw flags.
 		out, err := utils.ExecuteCLI("tx", "model", "add-model",
 			"--vid", fmt.Sprintf("%d", vid),
 			"--pid", fmt.Sprintf("%d", pid),
@@ -214,42 +166,9 @@ func TestModelNegativeCases(t *testing.T) {
 	})
 
 	t.Run("AddModel_EmptyFrom_Fails", func(t *testing.T) {
-		out, err := utils.ExecuteCLI("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--deviceTypeID", "1",
-			"--productName", "TestProduct",
-			"--productLabel", "TestingProductLabel",
-			"--partNumber", "1",
-			"--commissioningCustomFlow", "0",
-			"--enhancedSetupFlowOptions", "0",
-			"--from", "",
-			"--yes", "-o", "json", "--keyring-backend", "test",
-		)
-		combined := string(out)
-		if err != nil {
-			combined += err.Error()
-		}
-		require.Contains(t, combined, "invalid creator address")
+		// AddModel forwards From="" verbatim; the CLI rejects it before broadcast.
+		_, err := AddModel(AddModelOpts{VID: vid, PID: pid, From: ""})
+		require.Error(t, err)
+		require.Contains(t, err.Error(), "invalid creator address")
 	})
-}
-
-func containsAny(s string, subs ...string) bool {
-	for _, sub := range subs {
-		if len(sub) > 0 {
-			idx := 0
-			for i := 0; i <= len(s)-len(sub); i++ {
-				if s[i:i+len(sub)] == sub {
-					idx = 1
-
-					break
-				}
-			}
-			if idx > 0 {
-				return true
-			}
-		}
-	}
-
-	return false
 }

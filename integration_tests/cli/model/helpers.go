@@ -1,7 +1,11 @@
 package model
 
 import (
+	"encoding/json"
+	"fmt"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
 // AddModelOpts holds parameters for the add-model transaction.
@@ -233,69 +237,154 @@ func DeleteModelVersion(vid, pid, sv int, from string) (*utils.TxResult, error) 
 	)
 }
 
-// QueryModel queries a specific model by vid/pid.
-func QueryModel(vid, pid int) ([]byte, error) {
-	return utils.ExecuteCLI("query", "model", "get-model",
-		"--vid", itoa(vid),
-		"--pid", itoa(pid),
-		"-o", "json",
-	)
+// getSingle runs a single-item dcld query and unmarshals into v. Returns
+// (false, nil) when the CLI emitted "Not Found".
+func getSingle(v interface{}, args ...string) (found bool, err error) {
+	out, err := utils.ExecuteCLI(args...)
+	if err != nil {
+		return false, err
+	}
+	if utils.IsNotFound(out) {
+		return false, nil
+	}
+	if err := json.Unmarshal(out, v); err != nil {
+		return false, fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
+	}
+
+	return true, nil
 }
 
-// QueryModelHex queries a model using hex-format vid/pid strings.
-func QueryModelHex(vid, pid string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "model", "get-model",
+// getList runs an all-* dcld query and unmarshals the wrapper response.
+func getList(v interface{}, args ...string) error {
+	out, err := utils.ExecuteCLI(args...)
+	if err != nil {
+		return err
+	}
+	if err := json.Unmarshal(out, v); err != nil {
+		return fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
+	}
+
+	return nil
+}
+
+// GetModel queries a specific model by vid/pid. Returns nil when the model
+// does not exist.
+func GetModel(vid, pid int) (*modeltypes.Model, error) {
+	return GetModelHex(itoa(vid), itoa(pid))
+}
+
+// GetModelHex queries a model using hex-format vid/pid strings.
+func GetModelHex(vid, pid string) (*modeltypes.Model, error) {
+	var res modeltypes.Model
+	found, err := getSingle(&res,
+		"query", "model", "get-model",
 		"--vid", vid,
 		"--pid", pid,
 		"-o", "json",
 	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
-// QueryAllModels queries all models.
-func QueryAllModels() ([]byte, error) {
-	return utils.ExecuteCLI("query", "model", "all-models", "-o", "json")
+// GetAllModels queries all models.
+func GetAllModels() ([]modeltypes.Model, error) {
+	var res modeltypes.QueryAllModelResponse
+	if err := getList(&res, "query", "model", "all-models", "-o", "json"); err != nil {
+		return nil, err
+	}
+
+	return res.Model, nil
 }
 
-// QueryVendorModels queries all models for a given vendor.
-func QueryVendorModels(vid int) ([]byte, error) {
-	return QueryVendorModelsHex(itoa(vid))
+// GetVendorModels queries all models for a given vendor. Returns nil when the
+// vendor has no products on chain.
+func GetVendorModels(vid int) (*modeltypes.VendorProducts, error) {
+	return GetVendorModelsHex(itoa(vid))
 }
 
-// QueryVendorModelsHex queries all models for a given vendor using a hex vid.
-func QueryVendorModelsHex(vid string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "model", "vendor-models",
+// GetVendorModelsHex queries vendor models using a hex vid string.
+func GetVendorModelsHex(vid string) (*modeltypes.VendorProducts, error) {
+	var res modeltypes.VendorProducts
+	found, err := getSingle(&res,
+		"query", "model", "vendor-models",
 		"--vid", vid,
 		"-o", "json",
 	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
-// QueryModelVersion queries a specific model version.
-func QueryModelVersion(vid, pid, sv int) ([]byte, error) {
-	return QueryModelVersionHex(itoa(vid), itoa(pid), sv)
+// GetModelVersion queries a specific model version. Returns nil when the
+// record does not exist.
+func GetModelVersion(vid, pid, sv int) (*modeltypes.ModelVersion, error) {
+	return GetModelVersionHex(itoa(vid), itoa(pid), sv)
 }
 
-// QueryModelVersionHex queries a specific model version using hex vid/pid.
-func QueryModelVersionHex(vid, pid string, sv int) ([]byte, error) {
-	return utils.ExecuteCLI("query", "model", "model-version",
+// GetModelVersionHex queries a model version using hex vid/pid.
+func GetModelVersionHex(vid, pid string, sv int) (*modeltypes.ModelVersion, error) {
+	var res modeltypes.ModelVersion
+	found, err := getSingle(&res,
+		"query", "model", "model-version",
 		"--vid", vid,
 		"--pid", pid,
 		"--softwareVersion", itoa(sv),
 		"-o", "json",
 	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
-// QueryAllModelVersions queries all model versions for a given vid/pid.
-func QueryAllModelVersions(vid, pid int) ([]byte, error) {
-	return QueryAllModelVersionsHex(itoa(vid), itoa(pid))
+// GetAllModelVersions queries all model versions for a given vid/pid. Returns
+// nil when the model has no versions on chain.
+func GetAllModelVersions(vid, pid int) (*modeltypes.ModelVersions, error) {
+	return GetAllModelVersionsHex(itoa(vid), itoa(pid))
 }
 
-// QueryAllModelVersionsHex queries all model versions using hex vid/pid.
-func QueryAllModelVersionsHex(vid, pid string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "model", "all-model-versions",
+// GetAllModelVersionsHex queries all model versions using hex vid/pid.
+func GetAllModelVersionsHex(vid, pid string) (*modeltypes.ModelVersions, error) {
+	var res modeltypes.ModelVersions
+	found, err := getSingle(&res,
+		"query", "model", "all-model-versions",
 		"--vid", vid,
 		"--pid", pid,
 		"-o", "json",
 	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+// containsModelByPid reports whether list has a Model with the given (vid, pid).
+func containsModelByPid(list []modeltypes.Model, vid, pid int32) bool {
+	for i := range list {
+		if list[i].Vid == vid && list[i].Pid == pid {
+			return true
+		}
+	}
+
+	return false
+}
+
+// containsProductByPid reports whether products has an entry with the given pid.
+func containsProductByPid(products []*modeltypes.Product, pid int32) bool {
+	for _, p := range products {
+		if p != nil && p.Pid == pid {
+			return true
+		}
+	}
+
+	return false
 }
 
 func itoa(n int) string {

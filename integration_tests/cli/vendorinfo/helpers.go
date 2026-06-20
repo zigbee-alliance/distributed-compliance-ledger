@@ -15,7 +15,11 @@
 package vendorinfo
 
 import (
+	"encoding/json"
+	"fmt"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+	vendorinfotypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/types"
 )
 
 // VendorOpts holds parameters for add-vendor / update-vendor.
@@ -105,15 +109,74 @@ func itoa(n int) string {
 	return string(buf[pos:])
 }
 
-// QueryVendor queries a vendor info record by VID.
-func QueryVendor(vid string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "vendorinfo", "vendor",
+// getSingle runs a single-item dcld query and unmarshals into v. Returns
+// (false, nil) when the CLI emitted "Not Found".
+func getSingle(v interface{}, args ...string) (found bool, err error) {
+	out, err := utils.ExecuteCLI(args...)
+	if err != nil {
+		return false, err
+	}
+	if utils.IsNotFound(out) {
+		return false, nil
+	}
+	if err := json.Unmarshal(out, v); err != nil {
+		return false, fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
+	}
+
+	return true, nil
+}
+
+// getList runs an all-* dcld query and unmarshals the wrapper response.
+func getList(v interface{}, args ...string) error {
+	out, err := utils.ExecuteCLI(args...)
+	if err != nil {
+		return err
+	}
+	if err := json.Unmarshal(out, v); err != nil {
+		return fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
+	}
+
+	return nil
+}
+
+// GetVendor queries a vendor info record by VID. Returns nil when no record
+// exists.
+func GetVendor(vid int) (*vendorinfotypes.VendorInfo, error) {
+	return GetVendorHex(itoa(vid))
+}
+
+// GetVendorHex queries a vendor info record using a hex VID string.
+func GetVendorHex(vid string) (*vendorinfotypes.VendorInfo, error) {
+	var res vendorinfotypes.VendorInfo
+	found, err := getSingle(&res,
+		"query", "vendorinfo", "vendor",
 		"--vid", vid,
 		"-o", "json",
 	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
-// QueryAllVendors queries all vendor info records.
-func QueryAllVendors() ([]byte, error) {
-	return utils.ExecuteCLI("query", "vendorinfo", "all-vendors", "-o", "json")
+// GetAllVendors queries all vendor info records.
+func GetAllVendors() ([]vendorinfotypes.VendorInfo, error) {
+	var res vendorinfotypes.QueryAllVendorInfoResponse
+	if err := getList(&res, "query", "vendorinfo", "all-vendors", "-o", "json"); err != nil {
+		return nil, err
+	}
+
+	return res.VendorInfo, nil
+}
+
+// containsVendorByID reports whether list has a VendorInfo with the given VID.
+func containsVendorByID(list []vendorinfotypes.VendorInfo, vid int32) bool {
+	for i := range list {
+		if list[i].VendorID == vid {
+			return true
+		}
+	}
+
+	return false
 }

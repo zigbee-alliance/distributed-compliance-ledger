@@ -2,6 +2,8 @@ package dclauth
 
 import (
 	"encoding/json"
+	"fmt"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
@@ -107,52 +109,72 @@ func itoa(n int) string {
 	return string(buf[pos:])
 }
 
-// QueryAccounts retrieves all accounts through the CLI.
-func QueryAccounts() (*dclauthtypes.QueryAllAccountResponse, error) {
-	out, err := utils.ExecuteCLI("query", "auth", "all-accounts", "-o", "json")
+// getSingle runs a single-item dcld query and unmarshals into v. Returns
+// (false, nil) when the CLI emitted "Not Found".
+func getSingle(v interface{}, args ...string) (found bool, err error) {
+	out, err := utils.ExecuteCLI(args...)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	var res dclauthtypes.QueryAllAccountResponse
-	if err := json.Unmarshal(out, &res); err != nil {
-		return nil, err
+	if utils.IsNotFound(out) {
+		return false, nil
+	}
+	if err := json.Unmarshal(out, v); err != nil {
+		return false, fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
 	}
 
-	return &res, nil
+	return true, nil
 }
 
-// QueryAccount queries a specific account by address.
-func QueryAccount(address string) (*dclauthtypes.Account, error) {
+// getList runs an all-* dcld query and unmarshals the wrapper into v.
+func getList(v interface{}, args ...string) error {
+	out, err := utils.ExecuteCLI(args...)
+	if err != nil {
+		return err
+	}
+	if err := json.Unmarshal(out, v); err != nil {
+		return fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
+	}
+
+	return nil
+}
+
+// GetAllAccounts retrieves all accounts through the CLI. The high pagination
+// limit avoids the default 100-entry cap.
+func GetAllAccounts() ([]dclauthtypes.Account, error) {
+	var res dclauthtypes.QueryAllAccountResponse
+	if err := getList(&res, "query", "auth", "all-accounts", "-o", "json", "--limit", "10000"); err != nil {
+		return nil, err
+	}
+
+	return res.Account, nil
+}
+
+// GetAccount queries a specific account by address. Returns nil when the
+// account does not exist.
+func GetAccount(address string) (*dclauthtypes.Account, error) {
 	out, err := utils.ExecuteCLI("query", "auth", "account", "--address", address, "-o", "json")
 	if err != nil {
 		return nil, err
 	}
+	if utils.IsNotFound(out) {
+		return nil, nil //nolint:nilnil // (nil, nil) marks "no record" — established Get* pattern
+	}
 
-	// CLI generally wraps the account inside a response map or directly outputs the model.
+	// The CLI either wraps the account inside an "account" key or emits the
+	// account directly. Try the wrapped shape first; fall back to direct.
 	var res struct {
 		Account dclauthtypes.Account `json:"account"`
 	}
-	if err := json.Unmarshal(out, &res); err != nil {
-		var acc dclauthtypes.Account
-		if err2 := json.Unmarshal(out, &acc); err2 == nil {
-			return &acc, nil
-		}
-
-		return nil, err
+	if err := json.Unmarshal(out, &res); err == nil && res.Account.Address != "" {
+		return &res.Account, nil
+	}
+	var acc dclauthtypes.Account
+	if err := json.Unmarshal(out, &acc); err != nil {
+		return nil, fmt.Errorf("parse Account: %w, output: %s", err, string(out))
 	}
 
-	return &res.Account, nil
-}
-
-// AccountIsInList is a utility to check if an address string is in the account list.
-func AccountIsInList(address string, accounts []dclauthtypes.Account) bool {
-	for _, acc := range accounts {
-		if acc.Address == address || acc.BaseAccount.Address == address {
-			return true
-		}
-	}
-
-	return false
+	return &acc, nil
 }
 
 // CreateAccountInfo provisions a new key in the test suite keyring with a random name.
@@ -233,55 +255,170 @@ func RejectRevokeAccount(address, from string, opts ...AccountActionOpts) (*util
 	return utils.ExecuteTx(args...)
 }
 
-// QueryProposedAccount queries a proposed (pending) account by address.
-func QueryProposedAccount(address string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "auth", "proposed-account", "--address", address, "-o", "json")
+// GetProposedAccount queries a proposed (pending) account by address. Returns
+// nil when the record does not exist.
+func GetProposedAccount(address string) (*dclauthtypes.PendingAccount, error) {
+	var res dclauthtypes.PendingAccount
+	found, err := getSingle(&res,
+		"query", "auth", "proposed-account",
+		"--address", address,
+		"-o", "json",
+	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
-// QueryProposedAccountToRevoke queries a proposed-to-revoke account by address.
-func QueryProposedAccountToRevoke(address string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "auth", "proposed-account-to-revoke", "--address", address, "-o", "json")
+// GetProposedAccountToRevoke queries a proposed-to-revoke account by address.
+// Returns nil when the record does not exist.
+func GetProposedAccountToRevoke(address string) (*dclauthtypes.PendingAccountRevocation, error) {
+	var res dclauthtypes.PendingAccountRevocation
+	found, err := getSingle(&res,
+		"query", "auth", "proposed-account-to-revoke",
+		"--address", address,
+		"-o", "json",
+	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
-// QueryRevokedAccount queries a revoked account by address.
-func QueryRevokedAccount(address string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "auth", "revoked-account", "--address", address, "-o", "json")
+// GetRevokedAccount queries a revoked account by address. Returns nil when the
+// record does not exist.
+func GetRevokedAccount(address string) (*dclauthtypes.RevokedAccount, error) {
+	var res dclauthtypes.RevokedAccount
+	found, err := getSingle(&res,
+		"query", "auth", "revoked-account",
+		"--address", address,
+		"-o", "json",
+	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
-// QueryRejectedAccount queries a rejected account by address.
-func QueryRejectedAccount(address string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "auth", "rejected-account", "--address", address, "-o", "json")
+// GetRejectedAccount queries a rejected account by address. Returns nil when
+// the record does not exist.
+func GetRejectedAccount(address string) (*dclauthtypes.RejectedAccount, error) {
+	var res dclauthtypes.RejectedAccount
+	found, err := getSingle(&res,
+		"query", "auth", "rejected-account",
+		"--address", address,
+		"-o", "json",
+	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
-// QueryAllProposedAccounts queries all proposed (pending) accounts.
-func QueryAllProposedAccounts() ([]byte, error) {
-	return utils.ExecuteCLI("query", "auth", "all-proposed-accounts", "-o", "json")
+// GetAllProposedAccounts queries all proposed (pending) accounts.
+func GetAllProposedAccounts() ([]dclauthtypes.PendingAccount, error) {
+	var res dclauthtypes.QueryAllPendingAccountResponse
+	if err := getList(&res, "query", "auth", "all-proposed-accounts", "-o", "json"); err != nil {
+		return nil, err
+	}
+
+	return res.PendingAccount, nil
 }
 
-// QueryAllProposedAccountsToRevoke queries all accounts proposed to be revoked.
-func QueryAllProposedAccountsToRevoke() ([]byte, error) {
-	return utils.ExecuteCLI("query", "auth", "all-proposed-accounts-to-revoke", "-o", "json")
+// GetAllProposedAccountsToRevoke queries all accounts proposed to be revoked.
+func GetAllProposedAccountsToRevoke() ([]dclauthtypes.PendingAccountRevocation, error) {
+	var res dclauthtypes.QueryAllPendingAccountRevocationResponse
+	if err := getList(&res, "query", "auth", "all-proposed-accounts-to-revoke", "-o", "json"); err != nil {
+		return nil, err
+	}
+
+	return res.PendingAccountRevocation, nil
 }
 
-// QueryAllRevokedAccounts queries all revoked accounts.
-func QueryAllRevokedAccounts() ([]byte, error) {
-	return utils.ExecuteCLI("query", "auth", "all-revoked-accounts", "-o", "json")
+// GetAllRevokedAccounts queries all revoked accounts.
+func GetAllRevokedAccounts() ([]dclauthtypes.RevokedAccount, error) {
+	var res dclauthtypes.QueryAllRevokedAccountResponse
+	if err := getList(&res, "query", "auth", "all-revoked-accounts", "-o", "json"); err != nil {
+		return nil, err
+	}
+
+	return res.RevokedAccount, nil
 }
 
-// QueryAllRejectedAccounts queries all rejected accounts.
-func QueryAllRejectedAccounts() ([]byte, error) {
-	return utils.ExecuteCLI("query", "auth", "all-rejected-accounts", "-o", "json")
+// GetAllRejectedAccounts queries all rejected accounts.
+func GetAllRejectedAccounts() ([]dclauthtypes.RejectedAccount, error) {
+	var res dclauthtypes.QueryAllRejectedAccountResponse
+	if err := getList(&res, "query", "auth", "all-rejected-accounts", "-o", "json"); err != nil {
+		return nil, err
+	}
+
+	return res.RejectedAccount, nil
 }
 
-// QueryAccountRaw queries a specific account by address and returns raw bytes.
-func QueryAccountRaw(address string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "auth", "account", "--address", address, "-o", "json")
+// containsAccountAddress reports whether list contains an account with the
+// given address (either at the embedded BaseAccount level or — for accounts
+// returned by the CLI without a Cosmos BaseAccount — at the top-level Address).
+func containsAccountAddress(list []dclauthtypes.Account, address string) bool {
+	for i := range list {
+		if list[i].Address == address {
+			return true
+		}
+		if list[i].BaseAccount != nil && list[i].BaseAccount.Address == address {
+			return true
+		}
+	}
+
+	return false
 }
 
-// QueryAllAccountsRaw retrieves all accounts as raw bytes.
-// Uses a high limit to avoid the default 100-entry pagination cap.
-func QueryAllAccountsRaw() ([]byte, error) {
-	return utils.ExecuteCLI("query", "auth", "all-accounts", "-o", "json", "--limit", "10000")
+// containsPendingAccountAddress reports whether list has a PendingAccount with
+// the given address.
+func containsPendingAccountAddress(list []dclauthtypes.PendingAccount, address string) bool {
+	for i := range list {
+		if list[i].Account != nil && list[i].Account.Address == address {
+			return true
+		}
+	}
+
+	return false
+}
+
+// containsPendingAccountRevocationAddress reports the same for
+// PendingAccountRevocation.
+func containsPendingAccountRevocationAddress(list []dclauthtypes.PendingAccountRevocation, address string) bool {
+	for i := range list {
+		if list[i].Address == address {
+			return true
+		}
+	}
+
+	return false
+}
+
+// containsRevokedAccountAddress reports the same for RevokedAccount.
+func containsRevokedAccountAddress(list []dclauthtypes.RevokedAccount, address string) bool {
+	for i := range list {
+		if list[i].Account != nil && list[i].Account.Address == address {
+			return true
+		}
+	}
+
+	return false
+}
+
+// containsRejectedAccountAddress reports the same for RejectedAccount.
+func containsRejectedAccountAddress(list []dclauthtypes.RejectedAccount, address string) bool {
+	for i := range list {
+		if list[i].Account != nil && list[i].Account.Address == address {
+			return true
+		}
+	}
+
+	return false
 }
 
 // GetAddress returns the address string for a keyring key name.
@@ -290,12 +427,8 @@ func GetAddress(name string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	s := string(out)
-	for len(s) > 0 && (s[len(s)-1] == '\n' || s[len(s)-1] == '\r' || s[len(s)-1] == ' ') {
-		s = s[:len(s)-1]
-	}
 
-	return s, nil
+	return strings.TrimSpace(string(out)), nil
 }
 
 // GetPubkey returns the pubkey string for a keyring key name.
@@ -304,12 +437,8 @@ func GetPubkey(name string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	s := string(out)
-	for len(s) > 0 && (s[len(s)-1] == '\n' || s[len(s)-1] == '\r' || s[len(s)-1] == ' ') {
-		s = s[:len(s)-1]
-	}
 
-	return s, nil
+	return strings.TrimSpace(string(out)), nil
 }
 
 // AddKey generates a new key in the test keyring with the given name.
@@ -319,25 +448,4 @@ func AddKey(name string) error {
 	_, err := utils.ExecuteCLI("keys", "add", name, "--keyring-backend", "test", "--no-backup")
 
 	return err
-}
-
-// QueryAccountResponse is a lightweight wrapper to unmarshal the account query output.
-func QueryAccountResponse(address string) (*dclauthtypes.Account, error) {
-	out, err := utils.ExecuteCLI("query", "auth", "account", "--address", address, "-o", "json")
-	if err != nil {
-		return nil, err
-	}
-	var res struct {
-		Account dclauthtypes.Account `json:"account"`
-	}
-	if err := json.Unmarshal(out, &res); err != nil {
-		var acc dclauthtypes.Account
-		if err2 := json.Unmarshal(out, &acc); err2 == nil {
-			return &acc, nil
-		}
-
-		return nil, err
-	}
-
-	return &res.Account, nil
 }

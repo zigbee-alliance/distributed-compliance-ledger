@@ -15,7 +15,11 @@
 package upgrade
 
 import (
+	"encoding/json"
+	"fmt"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+	upgradetypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types"
 )
 
 // ProposeUpgradeOpts holds optional flags for propose-upgrade.
@@ -96,31 +100,84 @@ func RejectUpgrade(name, from string, opts ...UpgradeActionOpts) (*utils.TxResul
 	return utils.ExecuteTx(args...)
 }
 
-// QueryProposedUpgrade queries a proposed upgrade plan by name.
-func QueryProposedUpgrade(name string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "dclupgrade", "proposed-upgrade",
+// getSingle runs a single-item dcld query and unmarshals into v. Returns
+// (false, nil) when the CLI emitted "Not Found".
+func getSingle(v interface{}, args ...string) (found bool, err error) {
+	out, err := utils.ExecuteCLI(args...)
+	if err != nil {
+		return false, err
+	}
+	if utils.IsNotFound(out) {
+		return false, nil
+	}
+	if err := json.Unmarshal(out, v); err != nil {
+		return false, fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
+	}
+
+	return true, nil
+}
+
+// GetProposedUpgrade queries a proposed upgrade plan by name. Returns nil when
+// no proposal exists.
+func GetProposedUpgrade(name string) (*upgradetypes.ProposedUpgrade, error) {
+	var res upgradetypes.ProposedUpgrade
+	found, err := getSingle(&res,
+		"query", "dclupgrade", "proposed-upgrade",
 		"--name", name,
 		"-o", "json",
 	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
-// QueryApprovedUpgrade queries an approved upgrade plan by name.
-func QueryApprovedUpgrade(name string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "dclupgrade", "approved-upgrade",
+// GetApprovedUpgrade queries an approved upgrade plan by name. Returns nil
+// when no approved record exists.
+func GetApprovedUpgrade(name string) (*upgradetypes.ApprovedUpgrade, error) {
+	var res upgradetypes.ApprovedUpgrade
+	found, err := getSingle(&res,
+		"query", "dclupgrade", "approved-upgrade",
 		"--name", name,
 		"-o", "json",
 	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
-// QueryRejectedUpgrade queries a rejected upgrade plan by name.
-func QueryRejectedUpgrade(name string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "dclupgrade", "rejected-upgrade",
+// GetRejectedUpgrade queries a rejected upgrade plan by name. Returns nil when
+// no rejected record exists.
+func GetRejectedUpgrade(name string) (*upgradetypes.RejectedUpgrade, error) {
+	var res upgradetypes.RejectedUpgrade
+	found, err := getSingle(&res,
+		"query", "dclupgrade", "rejected-upgrade",
 		"--name", name,
 		"-o", "json",
 	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
-// QueryUpgradePlan queries the currently scheduled upgrade plan.
-func QueryUpgradePlan() ([]byte, error) {
-	return utils.ExecuteCLI("query", "upgrade", "plan", "-o", "json")
+// GetUpgradePlan queries the currently scheduled upgrade plan from the Cosmos
+// SDK upgrade module. The CLI prints just the Plan body (not the
+// QueryCurrentPlanResponse wrapper). Returns the underlying CLI error when no
+// plan is scheduled — the SDK exits with "no upgrade scheduled".
+func GetUpgradePlan() (*upgradetypes.Plan, error) {
+	out, err := utils.ExecuteCLI("query", "upgrade", "plan", "-o", "json")
+	if err != nil {
+		return nil, err
+	}
+	var res upgradetypes.Plan
+	if err := json.Unmarshal(out, &res); err != nil {
+		return nil, fmt.Errorf("parse Plan: %w, output: %s", err, string(out))
+	}
+
+	return &res, nil
 }

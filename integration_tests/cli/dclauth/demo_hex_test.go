@@ -42,24 +42,26 @@ func TestAuthDemoHex(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Vendor accounts need only 1/3 approvals — should be active immediately
-		out, err := QueryAllAccountsRaw()
+		// Vendor accounts need only 1/3 approvals — should be active immediately.
+		all, err := GetAllAccounts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), userAddr)
+		require.True(t, containsAccountAddress(all, userAddr))
 
-		out, err = QueryAccountRaw(userAddr)
+		acc, err := GetAccount(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), userAddr)
-		require.Contains(t, string(out), jackAddr)
-		require.Contains(t, string(out), "Jack is proposing this account")
+		require.NotNil(t, acc)
+		require.Equal(t, userAddr, acc.Address)
+		require.Len(t, acc.Approvals, 1)
+		require.Equal(t, jackAddr, acc.Approvals[0].Address)
+		require.Equal(t, "Jack is proposing this account", acc.Approvals[0].Info)
 
-		out, err = QueryProposedAccount(userAddr)
+		prop, err := GetProposedAccount(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, prop)
 
-		out, err = QueryAllProposedAccounts()
+		allProposed, err := GetAllProposedAccounts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), "[]")
+		require.False(t, containsPendingAccountAddress(allProposed, userAddr))
 	})
 
 	t.Run("AddModelWithHexVID", func(t *testing.T) {
@@ -119,14 +121,11 @@ func TestAuthDemoHex(t *testing.T) {
 	})
 
 	t.Run("QueryModel", func(t *testing.T) {
-		out, err := model.QueryModelHex(vidHex, pidHex)
+		m, err := model.GetModelHex(vidHex, pidHex)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"vid":`+formatInt(vid))
-		require.Contains(t, string(out), `"pid":`+formatInt(pid))
-		require.Contains(t, string(out), "Device #1")
+		require.NotNil(t, m)
+		require.Equal(t, int32(vid), m.Vid)
+		require.Equal(t, int32(pid), m.Pid)
+		require.Equal(t, "Device #1", m.ProductName)
 	})
-}
-
-func formatInt(n int) string {
-	return itoa(n)
 }

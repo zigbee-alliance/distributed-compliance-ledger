@@ -93,26 +93,26 @@ func TestPKINocRevocationWithSerialNumber(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Only first root cert should be in revoked list
-		out, err := QueryAllRevokedNocRootCerts()
+		// Only first root cert should be in revoked list.
+		revokedRoots, err := GetAllRevokedNocRootCerts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), nocRootCert1SerialNumber)
-		require.NotContains(t, string(out), nocRootCert1CopySerialNumber)
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocCert1Subject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, vvscLeafCert1Subject))
+		require.True(t, containsRevokedNocRootCertSerial(revokedRoots, nocRootCert1SerialNumber))
+		require.False(t, containsRevokedNocRootCertSerial(revokedRoots, nocRootCert1CopySerialNumber))
 
-		// Second root cert should still be active
-		out, err = QueryNocRootCerts(nocVid)
+		// Second root cert should still be active.
+		roots, err := GetNocRootCerts(nocVid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), nocRootCert1CopySerialNumber)
-		require.NotContains(t, string(out), nocRootCert1SerialNumber)
+		require.NotNil(t, roots)
+		require.True(t, containsCertSerial(roots.Certs, nocRootCert1CopySerialNumber))
+		require.False(t, containsCertSerial(roots.Certs, nocRootCert1SerialNumber))
 
 		// NOC ICA + VVSC leaf should still be active (VVSC chain is structurally
 		// disjoint from the NOC root revocation — Matter §6.5.12).
-		out, err = QueryNocX509IcaCerts(nocVid)
+		icas, err := GetNocX509IcaCerts(nocVid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, vvscLeafCert1Subject))
+		require.NotNil(t, icas)
+		require.True(t, containsCertSerial(icas.Certs, nocCert1SerialNumber))
+		require.True(t, containsCertSerial(icas.Certs, vvscLeafCert1SerialNumber))
 
 		// Revoke second root cert with revoke-child=true. Cascade hits NocCert1
 		// (under the NOC chain) — the VVSC chain is structurally disjoint.
@@ -133,31 +133,30 @@ func TestPKINocRevocationWithSerialNumber(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Both NOC root certs should be revoked
-		out, err = QueryAllRevokedNocRootCerts()
+		// Both NOC root certs should be revoked.
+		revokedRoots, err = GetAllRevokedNocRootCerts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), nocRootCert1SerialNumber)
-		require.Contains(t, string(out), nocRootCert1CopySerialNumber)
+		require.True(t, containsRevokedNocRootCertSerial(revokedRoots, nocRootCert1SerialNumber))
+		require.True(t, containsRevokedNocRootCertSerial(revokedRoots, nocRootCert1CopySerialNumber))
 
 		// Revoked ICA list now contains the cascaded NOC ICA + VVSC ICA + VVSC leaf.
-		out, err = QueryAllRevokedNocX509IcaCerts()
+		revokedIcas, err := GetAllRevokedNocX509IcaCerts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, vvscIcaCert1Subject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, vvscLeafCert1Subject))
-		require.Contains(t, string(out), nocCert1SerialNumber)
-		require.Contains(t, string(out), vvscLeafCert1SerialNumber)
+		require.True(t, containsRevokedNocIcaCertSubject(revokedIcas, nocCert1Subject))
+		require.True(t, containsRevokedNocIcaCertSubject(revokedIcas, vvscIcaCert1Subject))
+		require.True(t, containsRevokedNocIcaCertSubject(revokedIcas, vvscLeafCert1Subject))
+		require.True(t, containsRevokedNocIcaCertSerial(revokedIcas, nocCert1SerialNumber))
+		require.True(t, containsRevokedNocIcaCertSerial(revokedIcas, vvscLeafCert1SerialNumber))
 
-		// NOC certs for VID1 (nocVid) should not have root_cert_1 active any more.
+		// root_cert_1 active list should not contain root_cert_1 entries any more.
 		// root_cert_2 (different chain) may still be active — that is expected.
-		out, err = QueryAllRevokedNocRootCerts()
+		roots, err = GetNocRootCerts(nocVid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), nocRootCert1SerialNumber)
-		require.Contains(t, string(out), nocRootCert1CopySerialNumber)
-
-		out, err = QueryNocRootCerts(nocVid)
-		require.NoError(t, err)
-		require.NotContains(t, string(out), nocRootCert1Subject)
+		if roots != nil {
+			for _, c := range roots.Certs {
+				require.NotEqual(t, nocRootCert1Subject, c.Subject)
+			}
+		}
 	})
 
 	t.Run("RevokeNocIcaCertBySerial", func(t *testing.T) {
@@ -238,17 +237,18 @@ func TestPKINocRevocationWithSerialNumber(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryAllRevokedNocX509IcaCerts()
+		revokedIcas, err := GetAllRevokedNocX509IcaCerts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), nocCert2SerialNumber)
-		require.NotContains(t, string(out), nocRevChildCert2CopySerialNumber)
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocLeafCert2Subject))
+		require.True(t, containsRevokedNocIcaCertSerial(revokedIcas, nocCert2SerialNumber))
+		require.False(t, containsRevokedNocIcaCertSerial(revokedIcas, nocRevChildCert2CopySerialNumber))
+		require.False(t, containsRevokedNocIcaCertSubject(revokedIcas, nocLeafCert2Subject))
 
-		// Second ICA cert should still be active
-		out, err = QueryNocCert("--subject-key-id", nocCert2SubjectKeyID)
+		// Second ICA cert should still be active.
+		cert, err := GetNocCert("--subject-key-id", nocCert2SubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), nocRevChildCert2CopySerialNumber)
-		require.NotContains(t, string(out), nocCert2SerialNumber)
+		require.NotNil(t, cert)
+		require.True(t, containsCertSerial(cert.Certs, nocRevChildCert2CopySerialNumber))
+		require.False(t, containsCertSerial(cert.Certs, nocCert2SerialNumber))
 
 		// Revoke second NOC ICA cert with revoke-child=true. Cascade is contained
 		// to the NOC chain — the VVSC leaf is structurally disjoint (Matter §6.5.12).
@@ -266,18 +266,21 @@ func TestPKINocRevocationWithSerialNumber(t *testing.T) {
 		require.NoError(t, err)
 
 		// All ICAs (NOC + VVSC) and the VVSC leaf should be revoked.
-		out, err = QueryAllRevokedNocX509IcaCerts()
+		revokedIcas, err = GetAllRevokedNocX509IcaCerts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), nocCert2SerialNumber)
-		require.Contains(t, string(out), nocRevChildCert2CopySerialNumber)
-		require.Contains(t, string(out), vvscIcaCert2SerialNumber)
-		require.Contains(t, string(out), nocLeafCert2SerialNumber)
+		require.True(t, containsRevokedNocIcaCertSerial(revokedIcas, nocCert2SerialNumber))
+		require.True(t, containsRevokedNocIcaCertSerial(revokedIcas, nocRevChildCert2CopySerialNumber))
+		require.True(t, containsRevokedNocIcaCertSerial(revokedIcas, vvscIcaCert2SerialNumber))
+		require.True(t, containsRevokedNocIcaCertSerial(revokedIcas, nocLeafCert2SerialNumber))
 
 		// Only root cert should remain in the active NOC list (for nocVid).
-		out, err = QueryAllNocX509Certs()
+		all, err := GetAllNocX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, nocRootCert2Subject))
-		require.NotContains(t, string(out), nocCert2Subject)
-		require.NotContains(t, string(out), nocLeafCert2Subject)
+		require.NotNil(t, all)
+		require.True(t, containsCertSubjectSerial(all.Certs, nocRootCert2Subject, nocRootCert2SerialNumber))
+		for _, c := range all.Certs {
+			require.NotEqual(t, nocCert2Subject, c.Subject)
+			require.NotEqual(t, nocLeafCert2Subject, c.Subject)
+		}
 	})
 }

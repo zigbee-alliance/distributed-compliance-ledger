@@ -56,9 +56,10 @@ func TestPKIRevocationWithRevokingChild(t *testing.T) {
 	t.Run("SetupCerts", func(t *testing.T) {
 		// Root certs 1 and 2 are already approved on-chain from TestPKICombineCerts.
 		// Verify they exist before proceeding.
-		out, err := QueryX509Cert(revChildRootCertSubject, revChildRootCertSubjectKeyID)
+		rootCert, err := GetX509Cert(revChildRootCertSubject, revChildRootCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revChildRootCertSubject))
+		require.NotNil(t, rootCert)
+		require.Equal(t, revChildRootCertSubject, rootCert.Subject)
 
 		// Add intermediate cert 1
 		txResult, err := AddX509Cert(revChildIntermCert1Path, vendorAccount)
@@ -82,13 +83,12 @@ func TestPKIRevocationWithRevokingChild(t *testing.T) {
 		require.NoError(t, err)
 
 		// Verify all certs exist
-		out, err = QueryAllX509Certs()
+		all, err := GetAllX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revChildRootCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revChildIntermCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, revChildRootCertSubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, revChildIntermCertSubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, revChildLeafCertSubjectKeyID))
+		require.True(t, containsApprovedCertSerial(all, revChildRootCert1SerialNumber))
+		require.True(t, containsApprovedCertSerial(all, revChildIntermCert1SerialNumber))
+		require.True(t, containsApprovedCertSerial(all, revChildIntermCert2SerialNumber))
+		require.True(t, containsApprovedCertSerial(all, revChildLeafCertSerialNumber))
 	})
 
 	t.Run("RevokeIntermediateCertWithChildFlag", func(t *testing.T) {
@@ -100,26 +100,20 @@ func TestPKIRevocationWithRevokingChild(t *testing.T) {
 		require.NoError(t, err)
 
 		// Revoked certs should contain both intermediate and leaf
-		out, err := QueryAllRevokedX509Certs()
+		revoked, err := GetAllRevokedX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revChildIntermCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, revChildIntermCertSubjectKeyID))
-		require.Contains(t, string(out), revChildLeafCertSubjectKeyID)
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revChildIntermCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revChildIntermCert2SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revChildLeafCertSerialNumber))
+		require.True(t, containsRevokedCertSerial(revoked, revChildIntermCert1SerialNumber))
+		require.True(t, containsRevokedCertSerial(revoked, revChildIntermCert2SerialNumber))
+		require.True(t, containsRevokedCertSerial(revoked, revChildLeafCertSerialNumber))
 
-		// Approved certs should contain only two root certs
-		out, err = QueryAllX509Certs()
+		// Approved certs should contain only two root certs (no intermediate/leaf).
+		all, err := GetAllX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revChildRootCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, revChildRootCertSubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revChildRootCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revChildRootCert2SerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revChildIntermCertSubject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revChildIntermCert1SerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revChildIntermCert2SerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revChildLeafCertSerialNumber))
+		require.True(t, containsApprovedCertSerial(all, revChildRootCert1SerialNumber))
+		require.True(t, containsApprovedCertSerial(all, revChildRootCert2SerialNumber))
+		require.False(t, containsApprovedCertSerial(all, revChildIntermCert1SerialNumber))
+		require.False(t, containsApprovedCertSerial(all, revChildIntermCert2SerialNumber))
+		require.False(t, containsApprovedCertSerial(all, revChildLeafCertSerialNumber))
 	})
 
 	t.Run("ReAddCertsAfterRevocation", func(t *testing.T) {

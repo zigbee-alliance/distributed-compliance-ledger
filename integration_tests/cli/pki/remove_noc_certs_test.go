@@ -98,12 +98,13 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryAllNocX509Certs()
+		all, err := GetAllNocX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), removeNocRootCert1SerialNumber)
-		require.Contains(t, string(out), removeNocIntermCert1Serial)
-		require.Contains(t, string(out), removeNocIntermCert2Serial)
-		require.Contains(t, string(out), removeNocLeafCertSerial)
+		require.NotNil(t, all)
+		require.True(t, containsCertSerial(all.Certs, removeNocRootCert1SerialNumber))
+		require.True(t, containsCertSerial(all.Certs, removeNocIntermCert1Serial))
+		require.True(t, containsCertSerial(all.Certs, removeNocIntermCert2Serial))
+		require.True(t, containsCertSerial(all.Certs, removeNocLeafCertSerial))
 	})
 
 	t.Run("RevokeAndRemoveIcaCert", func(t *testing.T) {
@@ -136,11 +137,12 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Only second ICA cert should remain
-		out, err := QueryNocCert("--subject", removeNocIntermCertSubject, "--subject-key-id", removeNocIntermCertSubjectKeyID)
+		// Only second ICA cert should remain.
+		cert, err := GetNocCert("--subject", removeNocIntermCertSubject, "--subject-key-id", removeNocIntermCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), removeNocIntermCert2Serial)
-		require.NotContains(t, string(out), removeNocIntermCert1Serial)
+		require.NotNil(t, cert)
+		require.True(t, containsCertSerial(cert.Certs, removeNocIntermCert2Serial))
+		require.False(t, containsCertSerial(cert.Certs, removeNocIntermCert1Serial))
 
 		// Remove remaining ICA cert by subject+subjectKeyID
 		txResult, err = RemoveNocCert(removeNocIntermCertSubject, removeNocIntermCertSubjectKeyID, vendorAccount65521)
@@ -149,15 +151,15 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err = QueryNocCert("--subject", removeNocIntermCertSubject, "--subject-key-id", removeNocIntermCertSubjectKeyID)
+		cert, err = GetNocCert("--subject", removeNocIntermCertSubject, "--subject-key-id", removeNocIntermCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, cert)
 
 		// This test's ICA certs (subject = removeNocIntermCertSubject) should not be in the revoked list.
-		// (Prior NOC tests may have left other subjects in the revoked list, so we cannot assert "[]".)
-		out, err = QueryAllRevokedNocX509IcaCerts()
+		// (Prior NOC tests may have left other subjects in the revoked list, so we cannot assert empty.)
+		revoked, err := GetAllRevokedNocX509IcaCerts()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), removeNocIntermCertSubject)
+		require.False(t, containsRevokedNocIcaCertSubject(revoked, removeNocIntermCertSubject))
 	})
 
 	t.Run("RemoveLeafCert", func(t *testing.T) {
@@ -167,9 +169,9 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryNocCert("--subject", removeNocLeafCertSubject, "--subject-key-id", removeNocLeafCertSubjectKeyID)
+		cert, err := GetNocCert("--subject", removeNocLeafCertSubject, "--subject-key-id", removeNocLeafCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, cert)
 	})
 
 	t.Run("RemoveNocRootCert", func(t *testing.T) {
@@ -216,11 +218,12 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Only copy root should remain
-		out, err := QueryNocRootCerts(removeNocRootCertVid)
+		// Only copy root should remain.
+		roots, err := GetNocRootCerts(removeNocRootCertVid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), removeNocRootCert1CopySerial)
-		require.NotContains(t, string(out), removeNocRootCert1SerialNumber)
+		require.NotNil(t, roots)
+		require.True(t, containsCertSerial(roots.Certs, removeNocRootCert1CopySerial))
+		require.False(t, containsCertSerial(roots.Certs, removeNocRootCert1SerialNumber))
 
 		// Re-add root cert and then remove both
 		txResult, err = AddNocRootCert(nocRootCert1Path, vendorAccount65521)
@@ -236,13 +239,14 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err = QueryNocCert("--subject", removeNocRootCertSubject, "--subject-key-id", removeNocRootCertSubjectKeyID)
+		cert, err := GetNocCert("--subject", removeNocRootCertSubject, "--subject-key-id", removeNocRootCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, cert)
 
-		// ICA cert should still be present
-		out, err = QueryAllNocX509Certs()
+		// ICA cert should still be present.
+		all, err := GetAllNocX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), removeNocIntermCert1Serial)
+		require.NotNil(t, all)
+		require.True(t, containsCertSerial(all.Certs, removeNocIntermCert1Serial))
 	})
 }

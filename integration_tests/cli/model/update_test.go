@@ -38,17 +38,18 @@ func TestModelUpdate(t *testing.T) {
 	})
 
 	t.Run("QueryDefaultValues", func(t *testing.T) {
-		out, err := QueryModel(vid, pid)
+		m, err := GetModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
-		require.Contains(t, string(out), fmt.Sprintf(`"productLabel":"%s"`, productLabel))
-		require.Contains(t, string(out), `"schemaVersion":0`)
-		require.Contains(t, string(out), `"commissioningModeInitialStepsHint":1`)
-		require.Contains(t, string(out), `"commissioningModeSecondaryStepsHint":4`)
-		require.Contains(t, string(out), `"icdUserActiveModeTriggerHint":1`)
-		require.Contains(t, string(out), `"factoryResetStepsHint":1`)
-		require.Contains(t, string(out), `"enhancedSetupFlowOptions":0`)
+		require.NotNil(t, m)
+		require.Equal(t, int32(vid), m.Vid)
+		require.Equal(t, int32(pid), m.Pid)
+		require.Equal(t, productLabel, m.ProductLabel)
+		require.Equal(t, uint32(0), m.SchemaVersion)
+		require.Equal(t, uint32(1), m.CommissioningModeInitialStepsHint)
+		require.Equal(t, uint32(4), m.CommissioningModeSecondaryStepsHint)
+		require.Equal(t, uint32(1), m.IcdUserActiveModeTriggerHint)
+		require.Equal(t, uint32(1), m.FactoryResetStepsHint)
+		require.Equal(t, int32(0), m.EnhancedSetupFlowOptions)
 	})
 
 	t.Run("UpdateModelFields", func(t *testing.T) {
@@ -67,14 +68,15 @@ func TestModelUpdate(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryModel(vid, pid)
+		m, err := GetModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"productLabel":"%s"`, newDesc))
-		require.Contains(t, string(out), `"commissioningModeInitialStepsHint":8`)
-		require.Contains(t, string(out), `"commissioningModeSecondaryStepsHint":9`)
-		require.Contains(t, string(out), `"icdUserActiveModeTriggerHint":7`)
-		require.Contains(t, string(out), `"factoryResetStepsHint":6`)
-		require.Contains(t, string(out), `"enhancedSetupFlowOptions":2`)
+		require.NotNil(t, m)
+		require.Equal(t, newDesc, m.ProductLabel)
+		require.Equal(t, uint32(8), m.CommissioningModeInitialStepsHint)
+		require.Equal(t, uint32(9), m.CommissioningModeSecondaryStepsHint)
+		require.Equal(t, uint32(7), m.IcdUserActiveModeTriggerHint)
+		require.Equal(t, uint32(6), m.FactoryResetStepsHint)
+		require.Equal(t, int32(2), m.EnhancedSetupFlowOptions)
 	})
 
 	t.Run("UpdateModelSupportURL", func(t *testing.T) {
@@ -88,18 +90,20 @@ func TestModelUpdate(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryModel(vid, pid)
+		m, err := GetModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"supportUrl":"%s"`, supportURL))
+		require.NotNil(t, m)
+		require.Equal(t, supportURL, m.SupportUrl)
 	})
 
 	t.Run("UpdateImmutableFields_Fails", func(t *testing.T) {
 		// VID and PID are immutable — attempting to change vid via update should fail or be ignored
 		// The shell script creates a model and then tries to update with a different vid (impossible via flags).
 		// We verify that productName cannot be set to empty via update by checking the model is intact.
-		out, err := QueryModel(vid, pid)
+		m, err := GetModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
+		require.NotNil(t, m)
+		require.Equal(t, int32(vid), m.Vid)
+		require.Equal(t, int32(pid), m.Pid)
 	})
 }

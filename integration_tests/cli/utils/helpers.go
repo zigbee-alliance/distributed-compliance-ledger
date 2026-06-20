@@ -244,12 +244,7 @@ func WaitForHeight(t *testing.T, target int64, timeoutSec int) {
 	}
 }
 
-// stripNewline removes trailing newline/whitespace from CLI output bytes.
+// stripNewline removes trailing whitespace from CLI output bytes.
 func stripNewline(b []byte) string {
-	s := string(b)
-	for len(s) > 0 && (s[len(s)-1] == '\n' || s[len(s)-1] == '\r' || s[len(s)-1] == ' ') {
-		s = s[:len(s)-1]
-	}
-
-	return s
+	return strings.TrimSpace(string(b))
 }

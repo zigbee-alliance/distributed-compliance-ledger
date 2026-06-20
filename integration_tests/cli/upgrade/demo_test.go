@@ -54,10 +54,11 @@ func TestUpgradeDemo(t *testing.T) {
 		require.NoError(t, err)
 
 		// Verify proposed upgrade
-		out, err := QueryProposedUpgrade(upgradeNameV120)
+		proposed, err := GetProposedUpgrade(upgradeNameV120)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV120))
-		require.Contains(t, string(out), fmt.Sprintf(`"height":"%s"`, farFutureHeight))
+		require.NotNil(t, proposed)
+		require.Equal(t, upgradeNameV120, proposed.Plan.Name)
+		require.Equal(t, farFutureHeight, fmt.Sprintf("%d", proposed.Plan.Height))
 
 		// alice approves
 		txResult, err = ApproveUpgrade(upgradeNameV120, alice)
@@ -81,14 +82,15 @@ func TestUpgradeDemo(t *testing.T) {
 		require.NoError(t, err)
 
 		// Approved upgrade should NOT yet be in approved store (threshold not reached)
-		out, err = QueryApprovedUpgrade(upgradeNameV120)
+		approved, err := GetApprovedUpgrade(upgradeNameV120)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, approved)
 
 		// Still in proposed
-		out, err = QueryProposedUpgrade(upgradeNameV120)
+		proposed, err = GetProposedUpgrade(upgradeNameV120)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV120))
+		require.NotNil(t, proposed)
+		require.Equal(t, upgradeNameV120, proposed.Plan.Name)
 
 		// bob approves — threshold now reached
 		txResult, err = ApproveUpgrade(upgradeNameV120, bob)
@@ -98,20 +100,22 @@ func TestUpgradeDemo(t *testing.T) {
 		require.NoError(t, err)
 
 		// Upgrade plan should now be scheduled
-		out, err = QueryUpgradePlan()
+		plan, err := GetUpgradePlan()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV120))
-		require.Contains(t, string(out), fmt.Sprintf(`"height":"%s"`, farFutureHeight))
+		require.NotNil(t, plan)
+		require.Equal(t, upgradeNameV120, plan.Name)
+		require.Equal(t, farFutureHeight, fmt.Sprintf("%d", plan.Height))
 
 		// Should be in approved store
-		out, err = QueryApprovedUpgrade(upgradeNameV120)
+		approved, err = GetApprovedUpgrade(upgradeNameV120)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV120))
+		require.NotNil(t, approved)
+		require.Equal(t, upgradeNameV120, approved.Plan.Name)
 
 		// Should no longer be in proposed store
-		out, err = QueryProposedUpgrade(upgradeNameV120)
+		proposed, err = GetProposedUpgrade(upgradeNameV120)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, proposed)
 	})
 
 	t.Run("ProposerCannotApproveOwnUpgrade", func(t *testing.T) {
@@ -186,9 +190,10 @@ func TestUpgradeDemo(t *testing.T) {
 		require.NoError(t, err)
 
 		// Still in proposed
-		out, err := QueryProposedUpgrade(upgradeNameV121)
+		proposed, err := GetProposedUpgrade(upgradeNameV121)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV121))
+		require.NotNil(t, proposed)
+		require.Equal(t, upgradeNameV121, proposed.Plan.Name)
 
 		// trusteeAccount rejects (revotes)
 		txResult, err = RejectUpgrade(upgradeNameV121, trusteeAccount)
@@ -212,18 +217,19 @@ func TestUpgradeDemo(t *testing.T) {
 		require.NoError(t, err)
 
 		// Still in proposed (not enough rejections)
-		out, err = QueryProposedUpgrade(upgradeNameV121)
+		proposed, err = GetProposedUpgrade(upgradeNameV121)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV121))
+		require.NotNil(t, proposed)
+		require.Equal(t, upgradeNameV121, proposed.Plan.Name)
 
 		// Not yet rejected or approved
-		out, err = QueryRejectedUpgrade(upgradeNameV121)
+		rejected, err := GetRejectedUpgrade(upgradeNameV121)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, rejected)
 
-		out, err = QueryApprovedUpgrade(upgradeNameV121)
+		approved, err := GetApprovedUpgrade(upgradeNameV121)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, approved)
 
 		// bob rejects — threshold reached
 		txResult, err = RejectUpgrade(upgradeNameV121, bob)
@@ -233,19 +239,20 @@ func TestUpgradeDemo(t *testing.T) {
 		require.NoError(t, err)
 
 		// Now in rejected store
-		out, err = QueryRejectedUpgrade(upgradeNameV121)
+		rejected, err = GetRejectedUpgrade(upgradeNameV121)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV121))
+		require.NotNil(t, rejected)
+		require.Equal(t, upgradeNameV121, rejected.Plan.Name)
 
 		// No longer in proposed
-		out, err = QueryProposedUpgrade(upgradeNameV121)
+		proposed, err = GetProposedUpgrade(upgradeNameV121)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, proposed)
 
 		// Not approved
-		out, err = QueryApprovedUpgrade(upgradeNameV121)
+		approved, err = GetApprovedUpgrade(upgradeNameV121)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, approved)
 	})
 
 	t.Run("ProposeAndRejectByProposer_v1_4_1", func(t *testing.T) {
@@ -268,18 +275,18 @@ func TestUpgradeDemo(t *testing.T) {
 		require.NoError(t, err)
 
 		// Should not be in proposed
-		out, err := QueryProposedUpgrade(upgradeNameV141)
+		proposed, err := GetProposedUpgrade(upgradeNameV141)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, proposed)
 
 		// Should not be in rejected
-		out, err = QueryRejectedUpgrade(upgradeNameV141)
+		rejected, err := GetRejectedUpgrade(upgradeNameV141)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, rejected)
 
 		// Should not be in approved
-		out, err = QueryApprovedUpgrade(upgradeNameV141)
+		approved, err := GetApprovedUpgrade(upgradeNameV141)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, approved)
 	})
 }

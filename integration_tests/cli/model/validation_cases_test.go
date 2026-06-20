@@ -59,13 +59,14 @@ func TestModelValidationCases(t *testing.T) {
 		})
 		requireTxOK(t, txResult, err)
 
-		out, err := QueryModel(vid1, pid1)
+		m, err := GetModel(vid1, pid1)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid1))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid1))
-		require.Contains(t, string(out), `"productName":"TestProduct"`)
-		require.Contains(t, string(out), `"partNumber":"1"`)
-		require.Contains(t, string(out), `"commissioningCustomFlow":0`)
+		require.NotNil(t, m)
+		require.Equal(t, int32(vid1), m.Vid)
+		require.Equal(t, int32(pid1), m.Pid)
+		require.Equal(t, "TestProduct", m.ProductName)
+		require.Equal(t, "1", m.PartNumber)
+		require.Equal(t, int32(0), m.CommissioningCustomFlow)
 	})
 
 	t.Run("AddModel_AllFields", func(t *testing.T) {
@@ -96,30 +97,30 @@ func TestModelValidationCases(t *testing.T) {
 		})
 		requireTxOK(t, txResult, err)
 
-		out, err := QueryModel(vid1, pid2)
+		m, err := GetModel(vid1, pid2)
 		require.NoError(t, err)
-		s := string(out)
-		require.Contains(t, s, fmt.Sprintf(`"vid":%d`, vid1))
-		require.Contains(t, s, fmt.Sprintf(`"pid":%d`, pid2))
-		require.Contains(t, s, `"deviceTypeId":2`)
-		require.Contains(t, s, `"productName":"Test Product with All Fields"`)
-		require.Contains(t, s, `"productLabel":"Test Product with All fields"`)
-		require.Contains(t, s, `"partNumber":"23.456"`)
-		require.Contains(t, s, `"commissioningCustomFlow":1`)
-		require.Contains(t, s, `"commissioningCustomFlowUrl":"https://customflow.url.info"`)
-		require.Contains(t, s, `"commissioningModeInitialStepsHint":1`)
-		require.Contains(t, s, `"commissioningModeInitialStepsInstruction":"Initial Instructions"`)
-		require.Contains(t, s, `"commissioningModeSecondaryStepsHint":2`)
-		require.Contains(t, s, `"commissioningModeSecondaryStepsInstruction":"Secondary Steps Instruction"`)
-		require.Contains(t, s, `"icdUserActiveModeTriggerHint":4`)
-		require.Contains(t, s, `"icdUserActiveModeTriggerInstruction":"ICD User Active Mode Trigger Instruction"`)
-		require.Contains(t, s, `"factoryResetStepsHint":3`)
-		require.Contains(t, s, `"factoryResetStepsInstruction":"Factory Reset Steps Instruction"`)
-		require.Contains(t, s, `"userManualUrl":"https://usermanual.url"`)
-		require.Contains(t, s, `"supportUrl":"https://support.url.info"`)
-		require.Contains(t, s, `"productUrl":"https://product.url.info"`)
-		require.Contains(t, s, `"lsfUrl":"https://lsf.url.info"`)
-		require.Contains(t, s, `"lsfRevision":1`)
+		require.NotNil(t, m)
+		require.Equal(t, int32(vid1), m.Vid)
+		require.Equal(t, int32(pid2), m.Pid)
+		require.Equal(t, int32(2), m.DeviceTypeId)
+		require.Equal(t, "Test Product with All Fields", m.ProductName)
+		require.Equal(t, "Test Product with All fields", m.ProductLabel)
+		require.Equal(t, "23.456", m.PartNumber)
+		require.Equal(t, int32(1), m.CommissioningCustomFlow)
+		require.Equal(t, "https://customflow.url.info", m.CommissioningCustomFlowUrl)
+		require.Equal(t, uint32(1), m.CommissioningModeInitialStepsHint)
+		require.Equal(t, "Initial Instructions", m.CommissioningModeInitialStepsInstruction)
+		require.Equal(t, uint32(2), m.CommissioningModeSecondaryStepsHint)
+		require.Equal(t, "Secondary Steps Instruction", m.CommissioningModeSecondaryStepsInstruction)
+		require.Equal(t, uint32(4), m.IcdUserActiveModeTriggerHint)
+		require.Equal(t, "ICD User Active Mode Trigger Instruction", m.IcdUserActiveModeTriggerInstruction)
+		require.Equal(t, uint32(3), m.FactoryResetStepsHint)
+		require.Equal(t, "Factory Reset Steps Instruction", m.FactoryResetStepsInstruction)
+		require.Equal(t, "https://usermanual.url", m.UserManualUrl)
+		require.Equal(t, "https://support.url.info", m.SupportUrl)
+		require.Equal(t, "https://product.url.info", m.ProductUrl)
+		require.Equal(t, "https://lsf.url.info", m.LsfUrl)
+		require.Equal(t, int32(1), m.LsfRevision)
 	})
 
 	t.Run("AddModel_MandatoryAndSomeOptional_Pid3", func(t *testing.T) {
@@ -146,12 +147,12 @@ func TestModelValidationCases(t *testing.T) {
 		})
 		requireTxOK(t, txResult, err)
 
-		out, err := QueryModel(vid1, pid3)
+		m, err := GetModel(vid1, pid3)
 		require.NoError(t, err)
-		s := string(out)
-		require.Contains(t, s, fmt.Sprintf(`"vid":%d`, vid1))
-		require.Contains(t, s, fmt.Sprintf(`"pid":%d`, pid3))
-		require.Contains(t, s, `"factoryResetStepsInstruction":"Factory Reset Steps Instruction"`)
+		require.NotNil(t, m)
+		require.Equal(t, int32(vid1), m.Vid)
+		require.Equal(t, int32(pid3), m.Pid)
+		require.Equal(t, "Factory Reset Steps Instruction", m.FactoryResetStepsInstruction)
 	})
 
 	// --- UpdateModel ---
@@ -167,15 +168,15 @@ func TestModelValidationCases(t *testing.T) {
 		)
 		requireTxOK(t, txResult, err)
 
-		out, err := QueryModel(vid1, pid1)
+		m, err := GetModel(vid1, pid1)
 		require.NoError(t, err)
-		s := string(out)
-		require.Contains(t, s, `"productName":"Updated Product Name"`)
-		require.Contains(t, s, `"partNumber":"2"`)
-		require.Contains(t, s, `"productLabel":"Updated Test Product"`)
-		require.Contains(t, s, `"commissioningCustomFlow":0`)
-		require.Contains(t, s, `"lsfUrl":"https://lsf.url.info?v=1"`)
-		require.Contains(t, s, `"lsfRevision":1`)
+		require.NotNil(t, m)
+		require.Equal(t, "Updated Product Name", m.ProductName)
+		require.Equal(t, "2", m.PartNumber)
+		require.Equal(t, "Updated Test Product", m.ProductLabel)
+		require.Equal(t, int32(0), m.CommissioningCustomFlow)
+		require.Equal(t, "https://lsf.url.info?v=1", m.LsfUrl)
+		require.Equal(t, int32(1), m.LsfRevision)
 	})
 
 	t.Run("UpdateModel_SingleField_Pid1", func(t *testing.T) {
@@ -185,12 +186,12 @@ func TestModelValidationCases(t *testing.T) {
 		)
 		requireTxOK(t, txResult, err)
 
-		out, err := QueryModel(vid1, pid1)
+		m, err := GetModel(vid1, pid1)
 		require.NoError(t, err)
-		s := string(out)
-		require.Contains(t, s, `"productName":"Updated Product Name"`) // unchanged
-		require.Contains(t, s, `"partNumber":"2"`)                     // unchanged
-		require.Contains(t, s, `"productLabel":"Updated Test Product V2"`)
+		require.NotNil(t, m)
+		require.Equal(t, "Updated Product Name", m.ProductName) // unchanged
+		require.Equal(t, "2", m.PartNumber)                     // unchanged
+		require.Equal(t, "Updated Test Product V2", m.ProductLabel)
 	})
 
 	t.Run("UpdateModel_AllFields_Pid1", func(t *testing.T) {
@@ -212,22 +213,22 @@ func TestModelValidationCases(t *testing.T) {
 		)
 		requireTxOK(t, txResult, err)
 
-		out, err := QueryModel(vid1, pid1)
+		m, err := GetModel(vid1, pid1)
 		require.NoError(t, err)
-		s := string(out)
-		require.Contains(t, s, `"productName":"Updated Product Name V3"`)
-		require.Contains(t, s, `"partNumber":"V3"`)
-		require.Contains(t, s, `"productLabel":"Updated Test Product V3"`)
-		require.Contains(t, s, `"commissioningCustomFlowUrl":"https://updated.url.info"`)
-		require.Contains(t, s, `"commissioningModeInitialStepsInstruction":"Instructions updated v3"`)
-		require.Contains(t, s, `"commissioningModeSecondaryStepsInstruction":"Secondary Instructions v3"`)
-		require.Contains(t, s, `"icdUserActiveModeTriggerInstruction":"ICD User Active Mode Trigger Instructions v3"`)
-		require.Contains(t, s, `"factoryResetStepsInstruction":"Factory Reset Instructions v3"`)
-		require.Contains(t, s, `"userManualUrl":"https://userManual.info/v3"`)
-		require.Contains(t, s, `"supportUrl":"https://support.url.info/v3"`)
-		require.Contains(t, s, `"productUrl":"https://product.landingpage.url"`)
-		require.Contains(t, s, `"lsfUrl":"https://lsf.url.info?v=2"`)
-		require.Contains(t, s, `"lsfRevision":2`)
+		require.NotNil(t, m)
+		require.Equal(t, "Updated Product Name V3", m.ProductName)
+		require.Equal(t, "V3", m.PartNumber)
+		require.Equal(t, "Updated Test Product V3", m.ProductLabel)
+		require.Equal(t, "https://updated.url.info", m.CommissioningCustomFlowUrl)
+		require.Equal(t, "Instructions updated v3", m.CommissioningModeInitialStepsInstruction)
+		require.Equal(t, "Secondary Instructions v3", m.CommissioningModeSecondaryStepsInstruction)
+		require.Equal(t, "ICD User Active Mode Trigger Instructions v3", m.IcdUserActiveModeTriggerInstruction)
+		require.Equal(t, "Factory Reset Instructions v3", m.FactoryResetStepsInstruction)
+		require.Equal(t, "https://userManual.info/v3", m.UserManualUrl)
+		require.Equal(t, "https://support.url.info/v3", m.SupportUrl)
+		require.Equal(t, "https://product.landingpage.url", m.ProductUrl)
+		require.Equal(t, "https://lsf.url.info?v=2", m.LsfUrl)
+		require.Equal(t, int32(2), m.LsfRevision)
 	})
 
 	t.Run("UpdateModel_OneFieldPreservesOthers_Pid1", func(t *testing.T) {
@@ -237,12 +238,12 @@ func TestModelValidationCases(t *testing.T) {
 		)
 		requireTxOK(t, txResult, err)
 
-		out, err := QueryModel(vid1, pid1)
+		m, err := GetModel(vid1, pid1)
 		require.NoError(t, err)
-		s := string(out)
-		require.Contains(t, s, `"productLabel":"Updated Test Product V4"`)
-		require.Contains(t, s, `"productName":"Updated Product Name V3"`) // unchanged
-		require.Contains(t, s, `"lsfRevision":2`)                         // unchanged
+		require.NotNil(t, m)
+		require.Equal(t, "Updated Test Product V4", m.ProductLabel)
+		require.Equal(t, "Updated Product Name V3", m.ProductName) // unchanged
+		require.Equal(t, int32(2), m.LsfRevision)                  // unchanged
 	})
 
 	t.Run("UpdateModel_NoFields_Pid1", func(t *testing.T) {
@@ -251,13 +252,13 @@ func TestModelValidationCases(t *testing.T) {
 		)
 		requireTxOK(t, txResult, err)
 
-		out, err := QueryModel(vid1, pid1)
+		m, err := GetModel(vid1, pid1)
 		require.NoError(t, err)
-		s := string(out)
+		require.NotNil(t, m)
 		// All previously-set fields should remain.
-		require.Contains(t, s, `"productLabel":"Updated Test Product V4"`)
-		require.Contains(t, s, `"productName":"Updated Product Name V3"`)
-		require.Contains(t, s, `"lsfRevision":2`)
+		require.Equal(t, "Updated Test Product V4", m.ProductLabel)
+		require.Equal(t, "Updated Product Name V3", m.ProductName)
+		require.Equal(t, int32(2), m.LsfRevision)
 	})
 
 	t.Run("UpdateModel_LsfRevisionEqual_Fails_Pid1", func(t *testing.T) {
@@ -294,17 +295,17 @@ func TestModelValidationCases(t *testing.T) {
 		})
 		requireTxOK(t, txResult, err)
 
-		out, err := QueryModelVersion(vid1, pid1, svBasic)
+		mv, err := GetModelVersion(vid1, pid1, svBasic)
 		require.NoError(t, err)
-		s := string(out)
-		require.Contains(t, s, fmt.Sprintf(`"vid":%d`, vid1))
-		require.Contains(t, s, fmt.Sprintf(`"pid":%d`, pid1))
-		require.Contains(t, s, fmt.Sprintf(`"softwareVersion":%d`, svBasic))
-		require.Contains(t, s, `"softwareVersionString":"1"`)
-		require.Contains(t, s, `"cdVersionNumber":1`)
-		require.Contains(t, s, `"softwareVersionValid":true`)
-		require.Contains(t, s, `"minApplicableSoftwareVersion":10`)
-		require.Contains(t, s, `"maxApplicableSoftwareVersion":20`)
+		require.NotNil(t, mv)
+		require.Equal(t, int32(vid1), mv.Vid)
+		require.Equal(t, int32(pid1), mv.Pid)
+		require.Equal(t, uint32(svBasic), mv.SoftwareVersion)
+		require.Equal(t, "1", mv.SoftwareVersionString)
+		require.Equal(t, int32(1), mv.CdVersionNumber)
+		require.True(t, mv.SoftwareVersionValid)
+		require.Equal(t, uint32(10), mv.MinApplicableSoftwareVersion)
+		require.Equal(t, uint32(20), mv.MaxApplicableSoftwareVersion)
 	})
 
 	t.Run("UpdateModelVersion_OnlyValidity_Basic", func(t *testing.T) {
@@ -313,9 +314,10 @@ func TestModelValidationCases(t *testing.T) {
 		)
 		requireTxOK(t, txResult, err)
 
-		out, err := QueryModelVersion(vid1, pid1, svBasic)
+		mv, err := GetModelVersion(vid1, pid1, svBasic)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"softwareVersionValid":false`)
+		require.NotNil(t, mv)
+		require.False(t, mv.SoftwareVersionValid)
 	})
 
 	t.Run("UpdateModelVersion_FewFields_Basic", func(t *testing.T) {
@@ -331,16 +333,16 @@ func TestModelValidationCases(t *testing.T) {
 		)
 		requireTxOK(t, txResult, err)
 
-		out, err := QueryModelVersion(vid1, pid1, svBasic)
+		mv, err := GetModelVersion(vid1, pid1, svBasic)
 		require.NoError(t, err)
-		s := string(out)
-		require.Contains(t, s, `"softwareVersionValid":true`)
-		require.Contains(t, s, `"otaUrl":"https://ota.url.com"`)
-		require.Contains(t, s, `"otaFileSize":"123"`)
-		require.Contains(t, s, `"otaChecksumType":1`)
-		require.Contains(t, s, `"minApplicableSoftwareVersion":2`)
-		require.Contains(t, s, `"maxApplicableSoftwareVersion":20`)
-		require.Contains(t, s, `"releaseNotesUrl":"https://release.url.info"`)
+		require.NotNil(t, mv)
+		require.True(t, mv.SoftwareVersionValid)
+		require.Equal(t, "https://ota.url.com", mv.OtaUrl)
+		require.Equal(t, uint64(123), mv.OtaFileSize)
+		require.Equal(t, int32(1), mv.OtaChecksumType)
+		require.Equal(t, uint32(2), mv.MinApplicableSoftwareVersion)
+		require.Equal(t, uint32(20), mv.MaxApplicableSoftwareVersion)
+		require.Equal(t, "https://release.url.info", mv.ReleaseNotesUrl)
 	})
 
 	// --- Model Version: full create + update lifecycle ---
@@ -370,20 +372,20 @@ func TestModelValidationCases(t *testing.T) {
 		})
 		requireTxOK(t, txResult, err)
 
-		out, err := QueryModelVersion(vid1, pid1, svFull)
+		mv, err := GetModelVersion(vid1, pid1, svFull)
 		require.NoError(t, err)
-		s := string(out)
-		require.Contains(t, s, `"softwareVersionString":"1.0"`)
-		require.Contains(t, s, `"cdVersionNumber":21334`)
-		require.Contains(t, s, `"firmwareInformation":"123456789012345678901234567890123456789012345678901234567890123"`)
-		require.Contains(t, s, `"otaUrl":"https://ota.url.info"`)
-		require.Contains(t, s, `"otaFileSize":"123456789"`)
-		require.Contains(t, s, `"otaChecksum":"MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk="`)
-		require.Contains(t, s, `"otaChecksumType":1`)
-		require.Contains(t, s, `"releaseNotesUrl":"https://release.notes.url.info"`)
-		require.Contains(t, s, `"maxApplicableSoftwareVersion":32`)
-		require.Contains(t, s, `"minApplicableSoftwareVersion":5`)
-		require.Contains(t, s, `"specificationVersion":4`)
+		require.NotNil(t, mv)
+		require.Equal(t, "1.0", mv.SoftwareVersionString)
+		require.Equal(t, int32(21334), mv.CdVersionNumber)
+		require.Equal(t, "123456789012345678901234567890123456789012345678901234567890123", mv.FirmwareInformation)
+		require.Equal(t, "https://ota.url.info", mv.OtaUrl)
+		require.Equal(t, uint64(123456789), mv.OtaFileSize)
+		require.Equal(t, "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=", mv.OtaChecksum)
+		require.Equal(t, int32(1), mv.OtaChecksumType)
+		require.Equal(t, "https://release.notes.url.info", mv.ReleaseNotesUrl)
+		require.Equal(t, uint32(32), mv.MaxApplicableSoftwareVersion)
+		require.Equal(t, uint32(5), mv.MinApplicableSoftwareVersion)
+		require.Equal(t, uint32(4), mv.SpecificationVersion) //nolint:staticcheck // intentionally testing the deprecated field is still served
 	})
 
 	t.Run("UpdateModelVersion_NoChange_Full", func(t *testing.T) {
@@ -391,12 +393,12 @@ func TestModelValidationCases(t *testing.T) {
 		txResult, err := UpdateModelVersion(vid1, pid1, svFull, vendorAccount1)
 		requireTxOK(t, txResult, err)
 
-		out, err := QueryModelVersion(vid1, pid1, svFull)
+		mv, err := GetModelVersion(vid1, pid1, svFull)
 		require.NoError(t, err)
-		s := string(out)
-		require.Contains(t, s, `"cdVersionNumber":21334`)
-		require.Contains(t, s, `"otaUrl":"https://ota.url.info"`)
-		require.Contains(t, s, `"maxApplicableSoftwareVersion":32`)
+		require.NotNil(t, mv)
+		require.Equal(t, int32(21334), mv.CdVersionNumber)
+		require.Equal(t, "https://ota.url.info", mv.OtaUrl)
+		require.Equal(t, uint32(32), mv.MaxApplicableSoftwareVersion)
 	})
 
 	t.Run("UpdateModelVersion_OnlyValidity_Full", func(t *testing.T) {
@@ -405,11 +407,11 @@ func TestModelValidationCases(t *testing.T) {
 		)
 		requireTxOK(t, txResult, err)
 
-		out, err := QueryModelVersion(vid1, pid1, svFull)
+		mv, err := GetModelVersion(vid1, pid1, svFull)
 		require.NoError(t, err)
-		s := string(out)
-		require.Contains(t, s, `"softwareVersionValid":false`)
-		require.Contains(t, s, `"otaUrl":"https://ota.url.info"`) // unchanged
+		require.NotNil(t, mv)
+		require.False(t, mv.SoftwareVersionValid)
+		require.Equal(t, "https://ota.url.info", mv.OtaUrl) // unchanged
 	})
 
 	t.Run("UpdateModelVersion_AllMutable_Full", func(t *testing.T) {
@@ -422,14 +424,14 @@ func TestModelValidationCases(t *testing.T) {
 		)
 		requireTxOK(t, txResult, err)
 
-		out, err := QueryModelVersion(vid1, pid1, svFull)
+		mv, err := GetModelVersion(vid1, pid1, svFull)
 		require.NoError(t, err)
-		s := string(out)
-		require.Contains(t, s, `"softwareVersionValid":true`)
-		require.Contains(t, s, `"otaUrl":"https://updated.ota.url.info"`)
-		require.Contains(t, s, `"releaseNotesUrl":"https://updated.release.notes.url.info"`)
-		require.Contains(t, s, `"maxApplicableSoftwareVersion":25`)
-		require.Contains(t, s, `"minApplicableSoftwareVersion":15`)
+		require.NotNil(t, mv)
+		require.True(t, mv.SoftwareVersionValid)
+		require.Equal(t, "https://updated.ota.url.info", mv.OtaUrl)
+		require.Equal(t, "https://updated.release.notes.url.info", mv.ReleaseNotesUrl)
+		require.Equal(t, uint32(25), mv.MaxApplicableSoftwareVersion)
+		require.Equal(t, uint32(15), mv.MinApplicableSoftwareVersion)
 	})
 
 	t.Run("UpdateModelVersion_OtaFieldsWithoutUrl_Fails", func(t *testing.T) {
@@ -467,9 +469,10 @@ func TestModelValidationCases(t *testing.T) {
 		})
 		requireTxOK(t, txResult, err)
 
-		out, err := QueryModelVersion(vid1, pid1, svBounds)
+		mv, err := GetModelVersion(vid1, pid1, svBounds)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"specificationVersion":6`)
+		require.NotNil(t, mv)
+		require.Equal(t, uint32(6), mv.SpecificationVersion) //nolint:staticcheck // intentionally testing the deprecated field is still served
 	})
 
 	t.Run("UpdateModelVersion_MaxLessThanMin_Fails", func(t *testing.T) {
@@ -539,9 +542,10 @@ func TestModelValidationCases(t *testing.T) {
 		})
 		requireTxOK(t, txResult, err)
 
-		out, err := QueryModelVersion(vid1, pid1, svNoSpecVer)
+		mv, err := GetModelVersion(vid1, pid1, svNoSpecVer)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"specificationVersion":0`)
+		require.NotNil(t, mv)
+		require.Equal(t, uint32(0), mv.SpecificationVersion) //nolint:staticcheck // intentionally testing the deprecated field is still served
 	})
 
 	// --- update-model-version must NOT accept --specificationVersion ---
@@ -584,9 +588,10 @@ func TestModelValidationCases(t *testing.T) {
 
 	t.Run("QueryModelVersion_SpecVerImmutable_Preserved", func(t *testing.T) {
 		// After the rejected update above, specificationVersion must remain 33.
-		out, err := QueryModelVersion(vid1, pid1, svSpecVerImmutable)
+		mv, err := GetModelVersion(vid1, pid1, svSpecVerImmutable)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"specificationVersion":33`)
+		require.NotNil(t, mv)
+		require.Equal(t, uint32(33), mv.SpecificationVersion) //nolint:staticcheck // intentionally testing the deprecated field is still served
 	})
 
 	// Keep the AddModel_WithSchemaVersion path for ts-client compatibility coverage.
@@ -601,8 +606,9 @@ func TestModelValidationCases(t *testing.T) {
 		})
 		requireTxOK(t, txResult, err)
 
-		out, err := QueryModel(vid1, extraPid)
+		m, err := GetModel(vid1, extraPid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"schemaVersion":0`)
+		require.NotNil(t, m)
+		require.Equal(t, uint32(0), m.SchemaVersion)
 	})
 }

@@ -70,19 +70,19 @@ func TestPKIRevocationPoints(t *testing.T) {
 	cliputils.CreateVendorAccount(t, vendorAccountNonScoped, revPointVidNonScoped)
 
 	t.Run("QueryAllEmpty", func(t *testing.T) {
-		out, err := QueryAllPkiRevocationDistributionPoints()
+		all, err := GetAllPkiRevocationDistributionPoints()
 		require.NoError(t, err)
-		require.Contains(t, string(out), "[]")
+		require.Empty(t, all)
 	})
 
 	t.Run("QueryRevocationPointNotFound", func(t *testing.T) {
-		out, err := QueryPkiRevocationDistributionPoint(revPointVid, revPointLabel, "AB")
+		point, err := GetPkiRevocationDistributionPoint(revPointVid, revPointLabel, "AB")
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, point)
 
-		out, err = QueryPkiRevocationDistributionPointsByIssuer("AB")
+		byIssuer, err := GetPkiRevocationDistributionPointsByIssuer("AB")
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, byIssuer)
 	})
 
 	t.Run("AddRevocationPointFailures", func(t *testing.T) {
@@ -197,10 +197,9 @@ func TestPKIRevocationPoints(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryAllPkiRevocationDistributionPoints()
+		all, err := GetAllPkiRevocationDistributionPoints()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, revPointVid))
-		require.Contains(t, string(out), fmt.Sprintf(`"label":"%s"`, revPointLabel))
+		require.True(t, containsRevocationPointByLabel(all, int32(revPointVid), revPointLabel))
 
 		// Cannot add same point twice (same vid, issuer, label)
 		txResult, err = AddRevocationPoint(vendorAccount, RevocationPointOpts{
@@ -231,10 +230,10 @@ func TestPKIRevocationPoints(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryAllPkiRevocationDistributionPoints()
+		all, err := GetAllPkiRevocationDistributionPoints()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, revPointVid))
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, revPointVidNonScoped))
+		require.True(t, containsRevocationPointByLabel(all, int32(revPointVid), revPointLabel))
+		require.True(t, containsRevocationPointByLabel(all, int32(revPointVidNonScoped), revPointLabelNonScoped))
 	})
 
 	t.Run("AddRevocationPointForPAI", func(t *testing.T) {
@@ -252,10 +251,11 @@ func TestPKIRevocationPoints(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryPkiRevocationDistributionPoint(revPointVid65522, revPointLabelPAI, revPointIssuerSKID)
+		point, err := GetPkiRevocationDistributionPoint(revPointVid65522, revPointLabelPAI, revPointIssuerSKID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, revPointVid65522))
-		require.Contains(t, string(out), fmt.Sprintf(`"label":"%s"`, revPointLabelPAI))
+		require.NotNil(t, point)
+		require.Equal(t, int32(revPointVid65522), point.Vid)
+		require.Equal(t, revPointLabelPAI, point.Label)
 	})
 
 	t.Run("AddRevocationPointWithDelegator", func(t *testing.T) {
@@ -282,10 +282,11 @@ func TestPKIRevocationPoints(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryPkiRevocationDistributionPoint(revPointVid, revPointLabelLeafDel, delegatorCertSubjectKeyID)
+		point, err := GetPkiRevocationDistributionPoint(revPointVid, revPointLabelLeafDel, delegatorCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, revPointVid))
-		require.Contains(t, string(out), fmt.Sprintf(`"label":"%s"`, revPointLabelLeafDel))
+		require.NotNil(t, point)
+		require.Equal(t, int32(revPointVid), point.Vid)
+		require.Equal(t, revPointLabelLeafDel, point.Label)
 	})
 
 	t.Run("AddRevocationPointForNonVidScopedPAI", func(t *testing.T) {
@@ -325,9 +326,10 @@ func TestPKIRevocationPoints(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryPkiRevocationDistributionPoint(revPointVid, revPointLabelLeafDel, delegatorCertSubjectKeyID)
+		point, err := GetPkiRevocationDistributionPoint(revPointVid, revPointLabelLeafDel, delegatorCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"dataURL":"%s"`, dataURLNew))
+		require.NotNil(t, point)
+		require.Equal(t, dataURLNew, point.DataURL)
 
 		// Update non-VID-scoped PAI (uses addVendorIntermCertPath / revPointGsr4IssuerSKID)
 		dataURLNonScopedNew := revPointDataURLNonScoped + "_new"
@@ -343,9 +345,10 @@ func TestPKIRevocationPoints(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err = QueryPkiRevocationDistributionPoint(revPointVid, revPointLabelIntermediate, revPointGsr4IssuerSKID)
+		point, err = GetPkiRevocationDistributionPoint(revPointVid, revPointLabelIntermediate, revPointGsr4IssuerSKID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"dataURL":"%s"`, dataURLNonScopedNew))
+		require.NotNil(t, point)
+		require.Equal(t, dataURLNonScopedNew, point.DataURL)
 
 		// Update VID-scoped PAA (use rootCertWithVidRevPath which is on-ledger, ECDSA P-256,
 		// and shares the FFF1 VID-scope so the handler's revocationPoint.Vid check passes)
@@ -396,8 +399,8 @@ func TestPKIRevocationPoints(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryPkiRevocationDistributionPoint(revPointVid, revPointLabel, revPointIssuerSKID)
+		point, err := GetPkiRevocationDistributionPoint(revPointVid, revPointLabel, revPointIssuerSKID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, point)
 	})
 }

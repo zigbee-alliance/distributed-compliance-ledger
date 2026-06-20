@@ -53,9 +53,10 @@ func TestPKIAddVendorX509Certificates(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryX509Cert(addVendorIntermCertSubject, addVendorIntermCertSubjectKeyID)
+		cert, err := GetX509Cert(addVendorIntermCertSubject, addVendorIntermCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, addVendorIntermCertSubject))
+		require.NotNil(t, cert)
+		require.Equal(t, addVendorIntermCertSubject, cert.Subject)
 	})
 
 	t.Run("AddLeafCert_WrongVendor_Fails", func(t *testing.T) {

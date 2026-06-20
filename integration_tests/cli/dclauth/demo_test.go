@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
 func TestAuthDemoNodeAdmin(t *testing.T) {
@@ -34,35 +35,35 @@ func TestAuthDemoNodeAdmin(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("InitialState_NotFound", func(t *testing.T) {
-		out, err := QueryAccountRaw(userAddr)
+		acc, err := GetAccount(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, acc)
 
-		out, err = QueryProposedAccountToRevoke(userAddr)
+		propRev, err := GetProposedAccountToRevoke(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, propRev)
 
-		out, err = QueryProposedAccount(userAddr)
+		prop, err := GetProposedAccount(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, prop)
 
-		out, err = QueryRevokedAccount(userAddr)
+		revoked, err := GetRevokedAccount(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, revoked)
 	})
 
 	t.Run("InitialListsEmpty", func(t *testing.T) {
-		out, err := QueryAllProposedAccounts()
+		allProposed, err := GetAllProposedAccounts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), "[]")
+		require.False(t, containsPendingAccountAddress(allProposed, userAddr))
 
-		out, err = QueryAllProposedAccountsToRevoke()
+		allProposedRev, err := GetAllProposedAccountsToRevoke()
 		require.NoError(t, err)
-		require.Contains(t, string(out), "[]")
+		require.False(t, containsPendingAccountRevocationAddress(allProposedRev, userAddr))
 
-		out, err = QueryAllRevokedAccounts()
+		allRevoked, err := GetAllRevokedAccounts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), "[]")
+		require.False(t, containsRevokedAccountAddress(allRevoked, userAddr))
 	})
 
 	t.Run("JackProposes", func(t *testing.T) {
@@ -72,26 +73,28 @@ func TestAuthDemoNodeAdmin(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Account not yet active
-		out, err := QueryAllAccountsRaw()
+		// Account not yet active.
+		all, err := GetAllAccounts()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), userAddr)
+		require.False(t, containsAccountAddress(all, userAddr))
 
-		out, err = QueryAccountRaw(userAddr)
+		acc, err := GetAccount(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, acc)
 
-		// Now in proposed list
-		out, err = QueryProposedAccount(userAddr)
+		// Now in proposed list.
+		prop, err := GetProposedAccount(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), userAddr)
-		require.Contains(t, string(out), jackAddr)
-		require.Contains(t, string(out), "Jack is proposing this account")
-		require.NotContains(t, string(out), aliceAddr)
+		require.NotNil(t, prop)
+		require.NotNil(t, prop.Account)
+		require.Equal(t, userAddr, prop.Account.Address)
+		require.Len(t, prop.Account.Approvals, 1)
+		require.Equal(t, jackAddr, prop.Account.Approvals[0].Address)
+		require.Equal(t, "Jack is proposing this account", prop.Account.Approvals[0].Info)
 
-		out, err = QueryAllProposedAccounts()
+		allProposed, err := GetAllProposedAccounts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), userAddr)
+		require.True(t, containsPendingAccountAddress(allProposed, userAddr))
 	})
 
 	t.Run("AliceApproves", func(t *testing.T) {
@@ -108,27 +111,30 @@ func TestAuthDemoNodeAdmin(t *testing.T) {
 			require.NotEqual(t, uint32(0), txBad.Code)
 		}
 
-		// Account is now active
-		out, err := QueryAllAccountsRaw()
+		// Account is now active.
+		all, err := GetAllAccounts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), userAddr)
+		require.True(t, containsAccountAddress(all, userAddr))
 
-		out, err = QueryAccountRaw(userAddr)
+		acc, err := GetAccount(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), userAddr)
-		require.Contains(t, string(out), jackAddr)
-		require.Contains(t, string(out), aliceAddr)
-		require.Contains(t, string(out), "Alice is approving this account")
-		require.Contains(t, string(out), "Jack is proposing this account")
+		require.NotNil(t, acc)
+		require.Len(t, acc.Approvals, 2)
+		approvers := []string{acc.Approvals[0].Address, acc.Approvals[1].Address}
+		require.Contains(t, approvers, jackAddr)
+		require.Contains(t, approvers, aliceAddr)
+		infos := []string{acc.Approvals[0].Info, acc.Approvals[1].Info}
+		require.Contains(t, infos, "Jack is proposing this account")
+		require.Contains(t, infos, "Alice is approving this account")
 
-		// No longer in proposed list
-		out, err = QueryAllProposedAccounts()
+		// No longer in proposed list.
+		allProposed, err := GetAllProposedAccounts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), "[]")
+		require.False(t, containsPendingAccountAddress(allProposed, userAddr))
 
-		out, err = QueryProposedAccount(userAddr)
+		prop, err := GetProposedAccount(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, prop)
 	})
 
 	t.Run("AliceProposeRevoke", func(t *testing.T) {
@@ -138,26 +144,28 @@ func TestAuthDemoNodeAdmin(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Still in active accounts (not enough approvals to revoke)
-		out, err := QueryAllAccountsRaw()
+		// Still in active accounts (not enough approvals to revoke).
+		all, err := GetAllAccounts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), userAddr)
+		require.True(t, containsAccountAddress(all, userAddr))
 
-		// In proposed-to-revoke list
-		out, err = QueryAllProposedAccountsToRevoke()
+		// In proposed-to-revoke list.
+		allProposedRev, err := GetAllProposedAccountsToRevoke()
 		require.NoError(t, err)
-		require.Contains(t, string(out), userAddr)
+		require.True(t, containsPendingAccountRevocationAddress(allProposedRev, userAddr))
 
-		out, err = QueryProposedAccountToRevoke(userAddr)
+		propRev, err := GetProposedAccountToRevoke(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), userAddr)
-		require.Contains(t, string(out), aliceAddr)
-		require.Contains(t, string(out), "Alice proposes to revoke account")
+		require.NotNil(t, propRev)
+		require.Equal(t, userAddr, propRev.Address)
+		require.Len(t, propRev.Approvals, 1)
+		require.Equal(t, aliceAddr, propRev.Approvals[0].Address)
+		require.Equal(t, "Alice proposes to revoke account", propRev.Approvals[0].Info)
 
-		// Not yet revoked
-		out, err = QueryAllRevokedAccounts()
+		// Not yet revoked.
+		allRevoked, err := GetAllRevokedAccounts()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), userAddr)
+		require.False(t, containsRevokedAccountAddress(allRevoked, userAddr))
 	})
 
 	t.Run("BobApprovesRevoke", func(t *testing.T) {
@@ -167,69 +175,71 @@ func TestAuthDemoNodeAdmin(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Now revoked
-		out, err := QueryAllRevokedAccounts()
+		// Now revoked.
+		allRevoked, err := GetAllRevokedAccounts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), userAddr)
-		require.Contains(t, string(out), "TrusteeVoting")
+		require.True(t, containsRevokedAccountAddress(allRevoked, userAddr))
 
-		// No longer in active accounts
-		out, err = QueryAllAccountsRaw()
+		// No longer in active accounts.
+		all, err := GetAllAccounts()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), userAddr)
+		require.False(t, containsAccountAddress(all, userAddr))
 
-		out, err = QueryAllProposedAccountsToRevoke()
+		allProposedRev, err := GetAllProposedAccountsToRevoke()
 		require.NoError(t, err)
-		require.Contains(t, string(out), "[]")
+		require.False(t, containsPendingAccountRevocationAddress(allProposedRev, userAddr))
 
-		out, err = QueryProposedAccountToRevoke(userAddr)
+		propRev, err := GetProposedAccountToRevoke(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, propRev)
 
-		out, err = QueryRevokedAccount(userAddr)
+		revoked, err := GetRevokedAccount(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), userAddr)
-		require.Contains(t, string(out), "TrusteeVoting")
+		require.NotNil(t, revoked)
+		require.NotNil(t, revoked.Account)
+		require.Equal(t, userAddr, revoked.Account.Address)
+		require.Equal(t, dclauthtypes.RevokedAccount_TrusteeVoting, revoked.Reason)
 	})
 
 	t.Run("ReAddAfterRevoke_ProposeApprove", func(t *testing.T) {
-		// Jack proposes again
+		// Jack proposes again.
 		txResult, err := ProposeAccount(userAddr, userPubkey, "NodeAdmin", jack, ProposeAccountOpts{Info: "Jack is proposing this account"})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Still revoked in revoked list
-		out, err := QueryAllRevokedAccounts()
+		// Still revoked in revoked list.
+		allRevoked, err := GetAllRevokedAccounts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), userAddr)
+		require.True(t, containsRevokedAccountAddress(allRevoked, userAddr))
 
-		// Not yet active
-		out, err = QueryAllAccountsRaw()
+		// Not yet active.
+		all, err := GetAllAccounts()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), userAddr)
+		require.False(t, containsAccountAddress(all, userAddr))
 
-		out, err = QueryProposedAccount(userAddr)
+		prop, err := GetProposedAccount(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), userAddr)
+		require.NotNil(t, prop)
+		require.Equal(t, userAddr, prop.Account.Address)
 
-		// Alice approves
+		// Alice approves.
 		txResult, err = ApproveAccount(userAddr, alice, AccountActionOpts{Info: "Alice is approving this account"})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// No longer in revoked list
-		out, err = QueryAllRevokedAccounts()
+		// No longer in revoked list.
+		allRevoked, err = GetAllRevokedAccounts()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), userAddr)
+		require.False(t, containsRevokedAccountAddress(allRevoked, userAddr))
 
-		// Active again
-		out, err = QueryAllAccountsRaw()
+		// Active again.
+		all, err = GetAllAccounts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), userAddr)
+		require.True(t, containsAccountAddress(all, userAddr))
 	})
 
 	t.Run("RejectScenario", func(t *testing.T) {
@@ -260,54 +270,68 @@ func TestAuthDemoNodeAdmin(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Still in proposed (alice rejected but not enough rejections)
-		out, err := QueryAllProposedAccounts()
+		// Still in proposed (alice rejected but not enough rejections).
+		allProposed, err := GetAllProposedAccounts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), userAddr)
+		require.True(t, containsPendingAccountAddress(allProposed, userAddr))
 
-		out, err = QueryAllAccountsRaw()
+		all, err := GetAllAccounts()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), userAddr)
+		require.False(t, containsAccountAddress(all, userAddr))
 
-		out, err = QueryAllRejectedAccounts()
+		allRejected, err := GetAllRejectedAccounts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), "[]")
+		require.False(t, containsRejectedAccountAddress(allRejected, userAddr))
 
-		// Bob rejects
+		// Bob rejects.
 		txResult, err = RejectAccount(userAddr, bob, AccountActionOpts{Info: "Bob is rejecting this account"})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Bob cannot reject again
+		// Bob cannot reject again.
 		txBad, errBad := RejectAccount(userAddr, bob, AccountActionOpts{Info: "Bob is rejecting this account"})
 		if errBad == nil {
 			require.NotEqual(t, uint32(0), txBad.Code)
 		}
 
-		// Now in rejected list (enough rejections)
-		out, err = QueryAllRejectedAccounts()
+		// Now in rejected list (enough rejections).
+		allRejected, err = GetAllRejectedAccounts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), userAddr)
+		require.True(t, containsRejectedAccountAddress(allRejected, userAddr))
 
-		out, err = QueryAllProposedAccounts()
+		allProposed, err = GetAllProposedAccounts()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), userAddr)
+		require.False(t, containsPendingAccountAddress(allProposed, userAddr))
 
-		out, err = QueryAllAccountsRaw()
+		all, err = GetAllAccounts()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), userAddr)
+		require.False(t, containsAccountAddress(all, userAddr))
 
-		out, err = QueryRejectedAccount(userAddr)
+		rejected, err := GetRejectedAccount(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), userAddr)
-		require.Contains(t, string(out), jackAddr)
-		require.Contains(t, string(out), "Jack is proposing this account")
-		require.Contains(t, string(out), aliceAddr)
-		require.Contains(t, string(out), "Alice is rejecting this account")
-		require.Contains(t, string(out), bobAddr)
-		require.Contains(t, string(out), "Bob is rejecting this account")
+		require.NotNil(t, rejected)
+		require.NotNil(t, rejected.Account)
+		require.Equal(t, userAddr, rejected.Account.Address)
+		approvers := []string{}
+		infos := []string{}
+		for _, a := range rejected.Account.Approvals {
+			approvers = append(approvers, a.Address)
+			infos = append(infos, a.Info)
+		}
+		require.Contains(t, approvers, jackAddr)
+		require.Contains(t, infos, "Jack is proposing this account")
+		var rejectors []string
+		var rejectInfos []string
+		for _, r := range rejected.Account.Rejects {
+			rejectors = append(rejectors, r.Address)
+			rejectInfos = append(rejectInfos, r.Info)
+		}
+		require.Contains(t, rejectors, aliceAddr)
+		require.Contains(t, rejectInfos, "Alice is rejecting this account")
+		require.Contains(t, rejectors, bobAddr)
+		require.Contains(t, rejectInfos, "Bob is rejecting this account")
 	})
 
 	// Unused variables referenced to avoid compiler errors
@@ -343,20 +367,20 @@ func TestAuthDemoJackRejectOwnProposal(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Not in proposed (jack removed his approval+proposal)
-		out, err := QueryProposedAccount(userAddr)
+		// Not in proposed (jack removed his approval+proposal).
+		prop, err := GetProposedAccount(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, prop)
 
-		// Not in rejected (single rejection doesn't reach quorum with 3 trustees)
-		out, err = QueryRejectedAccount(userAddr)
+		// Not in rejected (single rejection doesn't reach quorum with 3 trustees).
+		rejected, err := GetRejectedAccount(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, rejected)
 
-		// Not in approved
-		out, err = QueryAccountRaw(userAddr)
+		// Not in approved.
+		acc, err := GetAccount(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, acc)
 	})
 }
 
@@ -439,14 +463,16 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Both new trustees are now active
-		out, err := QueryAccountRaw(newTrustee1Addr)
+		// Both new trustees are now active.
+		acc1, err := GetAccount(newTrustee1Addr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), newTrustee1Addr)
+		require.NotNil(t, acc1)
+		require.Equal(t, newTrustee1Addr, acc1.Address)
 
-		out, err = QueryAccountRaw(newTrustee2Addr)
+		acc2, err := GetAccount(newTrustee2Addr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), newTrustee2Addr)
+		require.NotNil(t, acc2)
+		require.Equal(t, newTrustee2Addr, acc2.Address)
 	})
 
 	// ── With 5 trustees: Vendor needs 2 approvals (ceil(5/3)=2) ───────────
@@ -467,29 +493,30 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// With 5 trustees, vendor needs ceil(5/3)=2 approvals, so Jack's proposal alone is not enough
-		out, err := QueryAccountRaw(vendorAddr)
+		// With 5 trustees, vendor needs ceil(5/3)=2 approvals, so Jack's proposal alone is not enough.
+		acc, err := GetAccount(vendorAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, acc)
 
-		out, err = QueryAllProposedAccounts()
+		allProposed, err := GetAllProposedAccounts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), vendorAddr)
+		require.True(t, containsPendingAccountAddress(allProposed, vendorAddr))
 
-		// Alice approves → 2 approvals = quorum → account active
+		// Alice approves → 2 approvals = quorum → account active.
 		txResult, err = ApproveAccount(vendorAddr, alice, AccountActionOpts{Info: "Alice is approving this account"})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err = QueryAccountRaw(vendorAddr)
+		acc, err = GetAccount(vendorAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), vendorAddr)
+		require.NotNil(t, acc)
+		require.Equal(t, vendorAddr, acc.Address)
 
-		out, err = QueryProposedAccount(vendorAddr)
+		prop, err := GetProposedAccount(vendorAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, prop)
 	})
 
 	// ── Revoke vendor: with 5 trustees needs ceil(10/3)=4 approvals ────────
@@ -509,10 +536,11 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Account still active (need 4 approvals)
-		out, err := QueryAccountRaw(vendorAddr)
+		// Account still active (need 4 approvals).
+		acc, err := GetAccount(vendorAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), vendorAddr)
+		require.NotNil(t, acc)
+		require.Equal(t, vendorAddr, acc.Address)
 
 		// Revoke new_trustee1 → 4 trustees total
 		// With 4 trustees: revocation needs ceil(8/3)=3 approvals → we have alice+bob already
@@ -540,24 +568,26 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// new_trustee1 is revoked → 4 trustees remain
-		out, err = QueryRevokedAccount(newTrustee1Addr)
+		// new_trustee1 is revoked → 4 trustees remain.
+		revT1, err := GetRevokedAccount(newTrustee1Addr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), newTrustee1Addr)
+		require.NotNil(t, revT1)
+		require.Equal(t, newTrustee1Addr, revT1.Account.Address)
 
-		// Now approve vendor revocation — with 4 trustees need ceil(8/3)=3 approvals
-		// alice(1) + bob(2) + jack(3) = 3 → quorum
+		// Now approve vendor revocation — with 4 trustees need ceil(8/3)=3 approvals.
+		// alice(1) + bob(2) + jack(3) = 3 → quorum.
 		txResult, err = ApproveRevokeAccount(vendorAddr, jack)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Vendor is now revoked
-		out, err = QueryRevokedAccount(vendorAddr)
+		// Vendor is now revoked.
+		revVendor, err := GetRevokedAccount(vendorAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), vendorAddr)
-		require.Contains(t, string(out), "TrusteeVoting")
+		require.NotNil(t, revVendor)
+		require.Equal(t, vendorAddr, revVendor.Account.Address)
+		require.Equal(t, dclauthtypes.RevokedAccount_TrusteeVoting, revVendor.Reason)
 	})
 
 	// ── Reject scenario with dynamic trustee count ──────────────────────────
@@ -578,12 +608,12 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Still in proposed
-		out, err := QueryAllProposedAccounts()
+		// Still in proposed.
+		allProposed, err := GetAllProposedAccounts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), vendorAddr)
+		require.True(t, containsPendingAccountAddress(allProposed, vendorAddr))
 
-		// Revoke new_trustee2 → 3 trustees (jack, alice, bob)
+		// Revoke new_trustee2 → 3 trustees (jack, alice, bob).
 		txResult, err = ProposeRevokeAccount(newTrustee2Addr, alice)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
@@ -602,30 +632,32 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// new_trustee2 is revoked → 3 trustees
-		out, err = QueryRevokedAccount(newTrustee2Addr)
+		// new_trustee2 is revoked → 3 trustees.
+		revT2, err := GetRevokedAccount(newTrustee2Addr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), newTrustee2Addr)
+		require.NotNil(t, revT2)
+		require.Equal(t, newTrustee2Addr, revT2.Account.Address)
 
-		// Alice rejects → with 3 trustees need ceil(6/3)=2 rejections → bob+alice=2 → quorum
+		// Alice rejects → with 3 trustees need ceil(6/3)=2 rejections → bob+alice=2 → quorum.
 		txResult, err = RejectAccount(vendorAddr, alice, AccountActionOpts{Info: "Alice is rejecting this account"})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Account is now in rejected list
-		out, err = QueryAllRejectedAccounts()
+		// Account is now in rejected list.
+		allRejected, err := GetAllRejectedAccounts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), vendorAddr)
+		require.True(t, containsRejectedAccountAddress(allRejected, vendorAddr))
 
-		out, err = QueryRejectedAccount(vendorAddr)
+		rejected, err := GetRejectedAccount(vendorAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), vendorAddr)
+		require.NotNil(t, rejected)
+		require.Equal(t, vendorAddr, rejected.Account.Address)
 
-		out, err = QueryAllProposedAccounts()
+		allProposed, err = GetAllProposedAccounts()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), vendorAddr)
+		require.False(t, containsPendingAccountAddress(allProposed, vendorAddr))
 	})
 }
 
@@ -657,24 +689,26 @@ func TestAuthDemoVendorAccount(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// With Vendor role, 1 approval is sufficient so account is already active
-		out, err := QueryAllAccountsRaw()
+		// With Vendor role, 1 approval is sufficient so account is already active.
+		all, err := GetAllAccounts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), userAddr)
+		require.True(t, containsAccountAddress(all, userAddr))
 
-		out, err = QueryAccountRaw(userAddr)
+		acc, err := GetAccount(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), userAddr)
-		require.Contains(t, string(out), jackAddr)
-		require.Contains(t, string(out), "Jack is proposing this account")
+		require.NotNil(t, acc)
+		require.Equal(t, userAddr, acc.Address)
+		require.Len(t, acc.Approvals, 1)
+		require.Equal(t, jackAddr, acc.Approvals[0].Address)
+		require.Equal(t, "Jack is proposing this account", acc.Approvals[0].Info)
 
-		out, err = QueryProposedAccount(userAddr)
+		prop, err := GetProposedAccount(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, prop)
 
-		out, err = QueryAllProposedAccounts()
+		allProposed, err := GetAllProposedAccounts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), "[]")
+		require.False(t, containsPendingAccountAddress(allProposed, userAddr))
 
 		_ = aliceAddr
 	})
@@ -702,22 +736,24 @@ func TestAuthDemoVendorAccount(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err := QueryAllAccountsRaw()
+		all, err := GetAllAccounts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), userAddr)
+		require.True(t, containsAccountAddress(all, userAddr))
 
-		out, err = QueryAccountRaw(userAddr)
+		acc, err := GetAccount(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), userAddr)
-		require.Contains(t, string(out), jackAddr)
+		require.NotNil(t, acc)
+		require.Equal(t, userAddr, acc.Address)
+		require.Len(t, acc.Approvals, 1)
+		require.Equal(t, jackAddr, acc.Approvals[0].Address)
 
-		out, err = QueryProposedAccount(userAddr)
+		prop, err := GetProposedAccount(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, prop)
 
-		out, err = QueryAllProposedAccounts()
+		allProposed, err := GetAllProposedAccounts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), "[]")
+		require.False(t, containsPendingAccountAddress(allProposed, userAddr))
 	})
 
 	t.Run("VendorWithInvalidPidRanges_Fails", func(t *testing.T) {
@@ -742,21 +778,21 @@ func TestAuthDemoVendorAccount(t *testing.T) {
 			"--from", jack,
 			"--yes", "-o", "json", "--keyring-backend", "test",
 		)
-		// Expect error about invalid PID range
+		// Expect error about invalid PID range.
 		combined := string(out)
 		if err != nil {
 			combined += err.Error()
 		}
 		require.Contains(t, combined, "invalid PID Range is provided")
 
-		out2, _ := QueryProposedAccount(userAddr)
-		require.Contains(t, string(out2), "Not Found")
+		prop, _ := GetProposedAccount(userAddr)
+		require.Nil(t, prop)
 
-		out3, _ := QueryAllProposedAccounts()
-		require.Contains(t, string(out3), "[]")
+		allProposed, _ := GetAllProposedAccounts()
+		require.False(t, containsPendingAccountAddress(allProposed, userAddr))
 
-		out4, _ := QueryAllAccountsRaw()
-		require.NotContains(t, string(out4), userAddr)
+		all, _ := GetAllAccounts()
+		require.False(t, containsAccountAddress(all, userAddr))
 	})
 
 	t.Run("NodeAdminWithVendorRole_NeedsMoreApprovals", func(t *testing.T) {
@@ -780,43 +816,45 @@ func TestAuthDemoVendorAccount(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// NodeAdmin requires 2/3 approval so not yet active
-		out, err := QueryAllAccountsRaw()
+		// NodeAdmin requires 2/3 approval so not yet active.
+		all, err := GetAllAccounts()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), userAddr)
+		require.False(t, containsAccountAddress(all, userAddr))
 
-		out, err = QueryAccountRaw(userAddr)
+		acc, err := GetAccount(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, acc)
 
-		out, err = QueryAllProposedAccounts()
+		allProposed, err := GetAllProposedAccounts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), userAddr)
+		require.True(t, containsPendingAccountAddress(allProposed, userAddr))
 
-		// Alice approves — now has 2 approvals, should become active
+		// Alice approves — now has 2 approvals, should become active.
 		txResult, err = ApproveAccount(userAddr, alice, AccountActionOpts{Info: "Alice is approving this account"})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		out, err = QueryAllAccountsRaw()
+		all, err = GetAllAccounts()
 		require.NoError(t, err)
-		require.Contains(t, string(out), userAddr)
+		require.True(t, containsAccountAddress(all, userAddr))
 
-		out, err = QueryAccountRaw(userAddr)
+		acc, err = GetAccount(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), userAddr)
-		require.Contains(t, string(out), jackAddr)
-		require.Contains(t, string(out), aliceAddr)
-		require.Contains(t, string(out), "Alice is approving this account")
+		require.NotNil(t, acc)
+		require.Equal(t, userAddr, acc.Address)
+		require.Len(t, acc.Approvals, 2)
+		approvers := []string{acc.Approvals[0].Address, acc.Approvals[1].Address}
+		require.Contains(t, approvers, jackAddr)
+		require.Contains(t, approvers, aliceAddr)
 
-		out, err = QueryAllProposedAccounts()
+		allProposed, err = GetAllProposedAccounts()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), userAddr)
+		require.False(t, containsPendingAccountAddress(allProposed, userAddr))
 
-		out, err = QueryProposedAccount(userAddr)
+		prop, err := GetProposedAccount(userAddr)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, prop)
 	})
 }
