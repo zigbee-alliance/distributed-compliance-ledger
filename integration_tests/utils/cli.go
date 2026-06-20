@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os/exec"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -116,6 +117,88 @@ func StripPagination(out []byte) []byte {
 	}
 
 	return stripped
+}
+
+// quotedIntFields are the JSON keys whose values are uint64/int64 in
+// gogoproto-generated structs but get emitted as quoted strings by the Cosmos
+// SDK's protojson printer. NormalizeProtoJSON unquotes them so encoding/json
+// can decode the response into the typed proto wrapper without choking on the
+// type mismatch.
+var quotedIntFields = map[string]struct{}{
+	"account_number": {}, // cosmos.auth.BaseAccount.account_number (uint64)
+	"sequence":       {}, // cosmos.auth.BaseAccount.sequence       (uint64)
+	"time":           {}, // dclauth.Grant.time                     (int64)
+	"height":         {}, // cosmos.upgrade.Plan.height             (int64)
+	"otaFileSize":    {}, // model.ModelVersion.otaFileSize         (uint64)
+	"total":          {}, // cosmos.base.query.PageResponse.total   (uint64)
+}
+
+// NormalizeProtoJSON walks out and converts every "<key>":"<digits>" entry
+// whose key is in quotedIntFields into "<key>":<digits>. Returns the original
+// bytes unchanged if the JSON is malformed or no rewrites are needed.
+func NormalizeProtoJSON(out []byte) []byte {
+	var root interface{}
+	if err := json.Unmarshal(out, &root); err != nil {
+		return out
+	}
+	changed := false
+	walkAndUnquoteInts(&root, &changed)
+	if !changed {
+		return out
+	}
+	rewritten, err := json.Marshal(root)
+	if err != nil {
+		return out
+	}
+
+	return rewritten
+}
+
+// walkAndUnquoteInts recursively rewrites string-encoded ints in place for any
+// map key that appears in quotedIntFields.
+func walkAndUnquoteInts(node *interface{}, changed *bool) {
+	switch v := (*node).(type) {
+	case map[string]interface{}:
+		for k, child := range v {
+			if _, ok := quotedIntFields[k]; ok {
+				if s, isStr := child.(string); isStr && looksLikeInt(s) {
+					if n, err := strconv.ParseInt(s, 10, 64); err == nil {
+						v[k] = json.Number(strconv.FormatInt(n, 10))
+						*changed = true
+
+						continue
+					}
+				}
+			}
+			walkAndUnquoteInts(&child, changed)
+			v[k] = child
+		}
+	case []interface{}:
+		for i := range v {
+			walkAndUnquoteInts(&v[i], changed)
+		}
+	}
+}
+
+// looksLikeInt reports whether s is a non-empty optionally-signed integer.
+func looksLikeInt(s string) bool {
+	if s == "" {
+		return false
+	}
+	i := 0
+	if s[0] == '-' || s[0] == '+' {
+		if len(s) == 1 {
+			return false
+		}
+		i = 1
+	}
+	for ; i < len(s); i++ {
+		if s[i] < '0' || s[i] > '9' {
+			return false
+		}
+	}
+
+	return true
 }
 
 // OnChainCode parses the on-chain execution code from a confirmed tx response.

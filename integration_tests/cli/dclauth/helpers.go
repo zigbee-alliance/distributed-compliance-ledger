@@ -119,6 +119,7 @@ func getSingle(v interface{}, args ...string) (found bool, err error) {
 	if utils.IsNotFound(out) {
 		return false, nil
 	}
+	out = utils.NormalizeProtoJSON(out)
 	if err := json.Unmarshal(out, v); err != nil {
 		return false, fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
 	}
@@ -132,7 +133,7 @@ func getList(v interface{}, args ...string) error {
 	if err != nil {
 		return err
 	}
-	out = utils.StripPagination(out)
+	out = utils.NormalizeProtoJSON(utils.StripPagination(out))
 	if err := json.Unmarshal(out, v); err != nil {
 		return fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
 	}
@@ -161,6 +162,7 @@ func GetAccount(address string) (*dclauthtypes.Account, error) {
 	if utils.IsNotFound(out) {
 		return nil, nil //nolint:nilnil // (nil, nil) marks "no record" — established Get* pattern
 	}
+	out = utils.NormalizeProtoJSON(out)
 
 	// The CLI either wraps the account inside an "account" key or emits the
 	// account directly. Try the wrapped shape first; fall back to direct.

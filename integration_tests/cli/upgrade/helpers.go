@@ -110,6 +110,7 @@ func getSingle(v interface{}, args ...string) (found bool, err error) {
 	if utils.IsNotFound(out) {
 		return false, nil
 	}
+	out = utils.NormalizeProtoJSON(out)
 	if err := json.Unmarshal(out, v); err != nil {
 		return false, fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
 	}
@@ -174,6 +175,7 @@ func GetUpgradePlan() (*upgradetypes.Plan, error) {
 	if err != nil {
 		return nil, err
 	}
+	out = utils.NormalizeProtoJSON(out)
 	var res upgradetypes.Plan
 	if err := json.Unmarshal(out, &res); err != nil {
 		return nil, fmt.Errorf("parse Plan: %w, output: %s", err, string(out))
