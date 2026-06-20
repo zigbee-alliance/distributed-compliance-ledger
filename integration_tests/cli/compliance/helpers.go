@@ -236,6 +236,7 @@ func getList(v interface{}, args ...string) error {
 	if err != nil {
 		return err
 	}
+	out = utils.StripPagination(out)
 	if err := json.Unmarshal(out, v); err != nil {
 		return fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
 	}

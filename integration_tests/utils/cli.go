@@ -92,6 +92,32 @@ func IsNotFound(out []byte) bool {
 	return strings.Contains(string(out), "Not Found")
 }
 
+// StripPagination removes the top-level "pagination" field from a CLI JSON
+// response. The Cosmos SDK prints proto messages via protojson, which encodes
+// PageResponse.Total as a quoted string ("0"). encoding/json then refuses to
+// unmarshal that back into the uint64 field on the gogoproto-generated
+// QueryAll*Response, so we drop the pagination wrapper entirely before
+// decoding — list helpers never read it anyway.
+//
+// Returns the input unchanged if the JSON is malformed or has no pagination
+// key, so callers can use it unconditionally.
+func StripPagination(out []byte) []byte {
+	var fields map[string]json.RawMessage
+	if err := json.Unmarshal(out, &fields); err != nil {
+		return out
+	}
+	if _, ok := fields["pagination"]; !ok {
+		return out
+	}
+	delete(fields, "pagination")
+	stripped, err := json.Marshal(fields)
+	if err != nil {
+		return out
+	}
+
+	return stripped
+}
+
 // OnChainCode parses the on-chain execution code from a confirmed tx response.
 // Returns 0 and no error if the code field is absent (assumed success).
 func OnChainCode(txData []byte) (uint32, string, error) {
