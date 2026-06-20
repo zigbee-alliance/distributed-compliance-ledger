@@ -196,7 +196,24 @@ func TestPKINocRevocationWithSerialNumber(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Re-add VVSC ICA2 + VVSC leaf 2 (chained under VvscRoot1Copy which is still active).
+		// Subtest 1's cascade (revoke vvsc_root_cert_1 with --revoke-child at line 130)
+		// soft-deleted VvscRoot1Copy into the revoked root pool, so no active VVSC
+		// trust anchor remains at (VvscRoot1 Subject, SKID). Remove both revoked
+		// entries (clears their UniqueCertificate records) and re-add VvscRoot1 so
+		// verifyVVSCCertificate's chain walk for VvscIca2 below resolves.
+		txResult, err = RemoveNocRootCert(vvscRootCert1Subject, vvscRootCert1SubjectKeyID, vendorAccount)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		txResult, err = AddNocRootCert(vvscRootCert1Path, vendorAccount, AddNocCertOpts{IsVidVerificationSigner: true})
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// Re-add VVSC ICA2 + VVSC leaf 2 (chained under the freshly re-added VvscRoot1).
 		txResult, err = AddNocX509IcaCert(vvscIcaCert2Path, vendorAccount, AddNocCertOpts{IsVidVerificationSigner: true})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
