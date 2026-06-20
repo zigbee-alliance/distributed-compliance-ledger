@@ -133,6 +133,23 @@ var quotedIntFields = map[string]struct{}{
 	"total":          {}, // cosmos.base.query.PageResponse.total   (uint64)
 }
 
+// stringEnumFields maps JSON keys to the proto-generated <enum>_value tables
+// for proto enums whose JSON encoding emits the symbolic name (e.g.
+// "TrusteeVoting") rather than the underlying int32. NormalizeProtoJSON
+// rewrites those entries to their numeric form so encoding/json can decode
+// the response into the typed proto wrapper.
+var stringEnumFields = map[string]map[string]int32{
+	"reason": { // dclauth.RevokedAccount.reason
+		"TrusteeVoting":      0,
+		"MaliciousValidator": 1,
+	},
+	"certificateType": { // pki.Certificate.certificateType
+		"DeviceAttestationPKI": 0,
+		"OperationalPKI":       1,
+		"VIDSignerPKI":         2,
+	},
+}
+
 // NormalizeProtoJSON walks out and converts every "<key>":"<digits>" entry
 // whose key is in quotedIntFields into "<key>":<digits>. Returns the original
 // bytes unchanged if the JSON is malformed or no rewrites are needed.
@@ -154,8 +171,8 @@ func NormalizeProtoJSON(out []byte) []byte {
 	return rewritten
 }
 
-// walkAndUnquoteInts recursively rewrites string-encoded ints in place for any
-// map key that appears in quotedIntFields.
+// walkAndUnquoteInts recursively rewrites string-encoded ints (for
+// quotedIntFields) and string-encoded enums (for stringEnumFields) in place.
 func walkAndUnquoteInts(node *interface{}, changed *bool) {
 	switch v := (*node).(type) {
 	case map[string]interface{}:
@@ -164,6 +181,16 @@ func walkAndUnquoteInts(node *interface{}, changed *bool) {
 				if s, isStr := child.(string); isStr && looksLikeInt(s) {
 					if n, err := strconv.ParseInt(s, 10, 64); err == nil {
 						v[k] = json.Number(strconv.FormatInt(n, 10))
+						*changed = true
+
+						continue
+					}
+				}
+			}
+			if enumMap, ok := stringEnumFields[k]; ok {
+				if s, isStr := child.(string); isStr {
+					if n, ok := enumMap[s]; ok {
+						v[k] = json.Number(strconv.FormatInt(int64(n), 10))
 						*changed = true
 
 						continue
