@@ -56,9 +56,9 @@ func TestPKIRevokeRootCertWholeSubjectWithChild(t *testing.T) {
 		require.NoError(t, err)
 		require.NotNil(t, root, "google_root_cert_gsr4 must be approved on-chain (added by TestPKIAddVendorX509Certificates)")
 
-		interm, err := GetX509Cert(addVendorIntermCertSubject, addVendorIntermCertSubjectKeyID)
+		intermCert, err := GetX509Cert(addVendorIntermCertSubject, addVendorIntermCertSubjectKeyID)
 		require.NoError(t, err)
-		require.NotNil(t, interm, "intermediate_cert_gsr4 must be approved on-chain (added by TestPKIAddVendorX509Certificates)")
+		require.NotNil(t, intermCert, "intermediate_cert_gsr4 must be approved on-chain (added by TestPKIAddVendorX509Certificates)")
 	})
 
 	t.Run("ProposeRevokeRootWholeSubjectWithChild", func(t *testing.T) {
@@ -80,9 +80,9 @@ func TestPKIRevokeRootCertWholeSubjectWithChild(t *testing.T) {
 		root, err := GetX509Cert(addVendorRootCertSubject, addVendorRootCertSubjectKeyID)
 		require.NoError(t, err)
 		require.NotNil(t, root)
-		interm, err := GetX509Cert(addVendorIntermCertSubject, addVendorIntermCertSubjectKeyID)
+		intermCert, err := GetX509Cert(addVendorIntermCertSubject, addVendorIntermCertSubjectKeyID)
 		require.NoError(t, err)
-		require.NotNil(t, interm)
+		require.NotNil(t, intermCert)
 	})
 
 	t.Run("ApproveRevokeRootWholeSubjectWithChild", func(t *testing.T) {
