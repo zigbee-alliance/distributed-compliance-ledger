@@ -882,6 +882,19 @@ func containsApprovedCertSerial(list []pkitypes.ApprovedCertificates, serial str
 	return false
 }
 
+// containsApprovedCertSubjectSerial reports whether any ApprovedCertificates
+// entry has a cert matching both the subject and the serial — used when
+// multiple unrelated certs in the ledger share a serial number.
+func containsApprovedCertSubjectSerial(list []pkitypes.ApprovedCertificates, subject, serial string) bool {
+	for i := range list {
+		if containsCertSubjectSerial(list[i].Certs, subject, serial) {
+			return true
+		}
+	}
+
+	return false
+}
+
 // containsRevokedCertSerial does the same for RevokedCertificates.
 func containsRevokedCertSerial(list []pkitypes.RevokedCertificates, serial string) bool {
 	for i := range list {

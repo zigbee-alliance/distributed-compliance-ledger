@@ -125,12 +125,13 @@ func StripPagination(out []byte) []byte {
 // can decode the response into the typed proto wrapper without choking on the
 // type mismatch.
 var quotedIntFields = map[string]struct{}{
-	"account_number": {}, // cosmos.auth.BaseAccount.account_number (uint64)
-	"sequence":       {}, // cosmos.auth.BaseAccount.sequence       (uint64)
-	"time":           {}, // dclauth.Grant.time                     (int64)
-	"height":         {}, // cosmos.upgrade.Plan.height             (int64)
-	"otaFileSize":    {}, // model.ModelVersion.otaFileSize         (uint64)
-	"total":          {}, // cosmos.base.query.PageResponse.total   (uint64)
+	"account_number": {}, // cosmos.auth.BaseAccount.account_number     (uint64)
+	"sequence":       {}, // cosmos.auth.BaseAccount.sequence           (uint64)
+	"time":           {}, // dclauth.Grant.time                         (int64)
+	"height":         {}, // cosmos.upgrade.Plan.height                 (int64)
+	"otaFileSize":    {}, // model.ModelVersion.otaFileSize             (uint64)
+	"dataFileSize":   {}, // pki.PkiRevocationDistributionPoint.dataFileSize (uint64)
+	"total":          {}, // cosmos.base.query.PageResponse.total       (uint64)
 }
 
 // stringEnumFields maps JSON keys to the proto-generated <enum>_value tables

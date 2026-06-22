@@ -126,11 +126,11 @@ func TestPKIRevocationWithSerialNumber(t *testing.T) {
 		// Approved certs should contain only the two root certs.
 		all, err := GetAllX509Certs()
 		require.NoError(t, err)
-		require.True(t, containsApprovedCertSerial(all, revSerialRootCert1SerialNumber))
-		require.True(t, containsApprovedCertSerial(all, revSerialRootCert2SerialNumber))
-		require.False(t, containsApprovedCertSerial(all, revSerialIntermCert1SerialNumber))
-		require.False(t, containsApprovedCertSerial(all, revSerialIntermCert2SerialNumber))
-		require.False(t, containsApprovedCertSerial(all, revSerialLeafCertSerialNumber))
+		require.True(t, containsApprovedCertSubjectSerial(all, revSerialRootCertSubject, revSerialRootCert1SerialNumber))
+		require.True(t, containsApprovedCertSubjectSerial(all, revSerialRootCertSubject, revSerialRootCert2SerialNumber))
+		require.False(t, containsApprovedCertSubjectSerial(all, revSerialIntermCertSubject, revSerialIntermCert1SerialNumber))
+		require.False(t, containsApprovedCertSubjectSerial(all, revSerialIntermCertSubject, revSerialIntermCert2SerialNumber))
+		require.False(t, containsApprovedCertSubjectSerial(all, revSerialLeafCertSubject, revSerialLeafCertSerialNumber))
 	})
 
 	t.Run("ReAddCertsForRootRevocationTest", func(t *testing.T) {
