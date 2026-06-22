@@ -30,6 +30,7 @@ const (
 
 	hexVidDecimal  = 2579
 	hexVid2Decimal = 2580
+	hexVid3Decimal = 2581
 )
 
 func TestVendorInfoDemoHex(t *testing.T) {
@@ -91,24 +92,24 @@ func TestVendorInfoDemoHex(t *testing.T) {
 	})
 
 	t.Run("AddVendorForWrongHexVID_Fails", func(t *testing.T) {
+		// hexVid3 is not the vendor account's VID; the message names its decimal value.
 		txResult, err := AddVendor(vendorAccount, VendorOpts{
 			VIDHex:           hexVid3,
 			CompanyLegalName: updatedCompanyName,
 			VendorName:       vendorName,
 		})
-		if err == nil {
-			require.NotEqual(t, uint32(0), txResult.Code)
-		}
+		require.Contains(t, txFailureText(txResult, err),
+			fmt.Sprintf("transaction should be signed by a vendor account associated with the vendorID %d", hexVid3Decimal))
 	})
 
 	t.Run("UpdateVendorForWrongHexAccount_Fails", func(t *testing.T) {
+		// secondVendorAccount (hexVid2) cannot update hexVid's record.
 		txResult, err := UpdateVendor(secondVendorAccount, VendorOpts{
 			VIDHex:           hexVid,
 			CompanyLegalName: updatedCompanyName,
 			VendorName:       vendorName,
 		})
-		if err == nil {
-			require.NotEqual(t, uint32(0), txResult.Code)
-		}
+		require.Contains(t, txFailureText(txResult, err),
+			fmt.Sprintf("transaction should be signed by a vendor account associated with the vendorID %d", hexVidDecimal))
 	})
 }

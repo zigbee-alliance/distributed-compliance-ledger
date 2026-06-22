@@ -25,6 +25,13 @@ func TestPKIApproval(t *testing.T) {
 	alice := testconstants.AliceAccount
 	bob := testconstants.BobAccount
 
+	jackAddr, err := dclauth.GetAddress(jack)
+	require.NoError(t, err)
+	aliceAddr, err := dclauth.GetAddress(alice)
+	require.NoError(t, err)
+	bobAddr, err := dclauth.GetAddress(bob)
+	require.NoError(t, err)
+
 	userAccount := cliputils.CreateAccount(t, "CertificationCenter")
 
 	// At genesis 3 trustees exist (Jack, Alice, Bob).
@@ -127,36 +134,60 @@ func TestPKIApproval(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 
+		// After the proposal, the proposer's approval is recorded and the cert is
+		// not yet in the approved store.
+		proposed, err := GetProposedX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		require.NoError(t, err)
+		require.NotNil(t, proposed)
+		require.True(t, grantsContain(proposed.Approvals, fourthAddr))
+		cert, err := GetX509Cert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		require.NoError(t, err)
+		require.Nil(t, cert, "cert must not be approved after only the proposal")
+
 		txResult, err = ApproveAddX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID, jack)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 
-		// Still proposed after 2 approvals.
-		proposed, err := GetProposedX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		// Still proposed (not approved) after 2 approvals; approvals accumulate.
+		proposed, err = GetProposedX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
 		require.NoError(t, err)
 		require.NotNil(t, proposed)
 		require.Equal(t, approvalTestRootCertSubject, proposed.Subject)
+		require.True(t, grantsContain(proposed.Approvals, fourthAddr))
+		require.True(t, grantsContain(proposed.Approvals, jackAddr))
+		cert, err = GetX509Cert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		require.NoError(t, err)
+		require.Nil(t, cert, "cert must not be approved after 2/4 approvals")
 
 		txResult, err = ApproveAddX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID, alice)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 
-		// Still proposed after 3 approvals.
+		// Still proposed (not approved) after 3 approvals.
 		proposed, err = GetProposedX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
 		require.NoError(t, err)
 		require.NotNil(t, proposed)
+		require.True(t, grantsContain(proposed.Approvals, aliceAddr))
+		cert, err = GetX509Cert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		require.NoError(t, err)
+		require.Nil(t, cert, "cert must not be approved after 3/4 approvals")
 
 		txResult, err = ApproveAddX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID, bob)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 
-		// Now approved (4 approvals = quorum).
-		cert, err := GetX509Cert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		// Now approved (4 approvals = quorum); all four approver addresses are
+		// recorded on the approved certificate.
+		cert, err = GetX509Cert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
 		require.NoError(t, err)
 		require.NotNil(t, cert)
 		require.Equal(t, approvalTestRootCertSubject, cert.Subject)
 		require.NotEmpty(t, cert.Certs)
 		require.True(t, cert.Certs[0].IsRoot)
+		require.True(t, grantsContain(cert.Certs[0].Approvals, fourthAddr))
+		require.True(t, grantsContain(cert.Certs[0].Approvals, jackAddr))
+		require.True(t, grantsContain(cert.Certs[0].Approvals, aliceAddr))
+		require.True(t, grantsContain(cert.Certs[0].Approvals, bobAddr))
 
 		proposed, err = GetProposedX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
 		require.NoError(t, err)
@@ -170,19 +201,36 @@ func TestPKIApproval(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 
+		sixthAddr, err := dclauth.GetAddress(sixthKey)
+		require.NoError(t, err)
+		fifthAddr, err := dclauth.GetAddress(fifthKey)
+		require.NoError(t, err)
+		fourthRevAddr, err := dclauth.GetAddress(fourthKey)
+		require.NoError(t, err)
+
 		proposedRev, err := GetProposedRevokedX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
 		require.NoError(t, err)
 		require.NotNil(t, proposedRev)
 		require.Equal(t, approvalTestRootCertSubject, proposedRev.Subject)
+		require.True(t, grantsContain(proposedRev.Approvals, sixthAddr))
+		// Cert is still approved (not yet revoked) with only the proposer's vote.
+		cert, err := GetX509Cert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
 
 		txResult, err = ApproveRevokeX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID, fifthKey)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 
-		// Still proposed (2 approvals).
+		// Still proposed (2 approvals accumulate); cert still approved.
 		proposedRev, err = GetProposedRevokedX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
 		require.NoError(t, err)
 		require.NotNil(t, proposedRev)
+		require.True(t, grantsContain(proposedRev.Approvals, sixthAddr))
+		require.True(t, grantsContain(proposedRev.Approvals, fifthAddr))
+		cert, err = GetX509Cert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
 
 		txResult, err = ApproveRevokeX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID, fourthKey)
 		require.NoError(t, err)
@@ -192,18 +240,24 @@ func TestPKIApproval(t *testing.T) {
 		proposedRev, err = GetProposedRevokedX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
 		require.NoError(t, err)
 		require.NotNil(t, proposedRev)
+		require.True(t, grantsContain(proposedRev.Approvals, fourthRevAddr))
 
 		txResult, err = ApproveRevokeX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID, bob)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 
-		// Now revoked (4 approvals = quorum).
+		// Now revoked (4 approvals = quorum); the revoke voters are recorded.
 		revoked, err := GetRevokedX509Cert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
 		require.NoError(t, err)
 		require.NotNil(t, revoked)
 		require.Equal(t, approvalTestRootCertSubject, revoked.Subject)
+		require.NotEmpty(t, revoked.Certs)
+		require.True(t, grantsContain(revoked.Certs[0].Approvals, sixthAddr))
+		require.True(t, grantsContain(revoked.Certs[0].Approvals, fifthAddr))
+		require.True(t, grantsContain(revoked.Certs[0].Approvals, fourthRevAddr))
+		require.True(t, grantsContain(revoked.Certs[0].Approvals, bobAddr))
 
-		cert, err := GetX509Cert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		cert, err = GetX509Cert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
 		require.NoError(t, err)
 		require.Nil(t, cert)
 	})

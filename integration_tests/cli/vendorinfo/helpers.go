@@ -60,6 +60,21 @@ func (o VendorOpts) args() []string {
 	return append(args, o.Extra...)
 }
 
+// txFailureText returns a rejected tx's error text and/or RawLog so the exact
+// chain message can be asserted whether the failure surfaces client-side (err)
+// or in the broadcast/DeliverTx result.
+func txFailureText(txResult *utils.TxResult, err error) string {
+	combined := ""
+	if err != nil {
+		combined += err.Error()
+	}
+	if txResult != nil {
+		combined += txResult.RawLog
+	}
+
+	return combined
+}
+
 // AddVendor adds a vendor info record.
 func AddVendor(from string, opts VendorOpts) (*utils.TxResult, error) {
 	args := []string{"tx", "vendorinfo", "add-vendor", "--from", from}

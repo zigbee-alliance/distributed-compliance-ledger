@@ -83,6 +83,58 @@ func TestModelDemo(t *testing.T) {
 		require.Equal(t, int32(0), m.EnhancedSetupFlowOptions)
 	})
 
+	t.Run("QueryModelWithPidRanges", func(t *testing.T) {
+		// The vidWithPids model was added with the full enhanced-setup-flow and
+		// maintenance field set — verify each persisted.
+		m, err := GetModel(vidWithPids, pid)
+		require.NoError(t, err)
+		require.NotNil(t, m)
+		require.Equal(t, int32(vidWithPids), m.Vid)
+		require.Equal(t, int32(pid), m.Pid)
+		require.Equal(t, productLabel, m.ProductLabel)
+		require.Equal(t, int32(1), m.EnhancedSetupFlowOptions)
+		require.Equal(t, "https://example.org/file.txt", m.EnhancedSetupFlowTCUrl)
+		require.Equal(t, int32(1), m.EnhancedSetupFlowTCRevision)
+		require.Equal(t, "MWRjNGE0NDA0MWRjYWYxMTU0NWI3NTQzZGZlOTQyZjQ3NDJmNTY4YmU2OGZlZTI3NTQ0MWIwOTJiYjYwZGVlZA==", m.EnhancedSetupFlowTCDigest)
+		require.Equal(t, uint32(1024), m.EnhancedSetupFlowTCFileSize)
+		require.Equal(t, "https://example.org", m.MaintenanceUrl)
+		require.Equal(t, "https://url.commissioningfallbackurl.dclmodel", m.CommissioningFallbackUrl)
+		require.Equal(t, uint32(1), m.DiscoveryCapabilitiesBitmask)
+	})
+
+	t.Run("UpdateModelWithPidRangesFields", func(t *testing.T) {
+		// Update the vidWithPids model's enhanced-setup-flow / maintenance fields
+		// and confirm the new values persist.
+		newTCUrl := "https://example.org/file2.txt"
+		newDigest := "MWRjNGE0NDA0MWRjYWYxMTU0NWI3NTQzZGZlOTQyZjQ3NDJmNTY4YmU2OGZlZTI3NTQ0MWIwOTJiYjYwZGVlZA=="
+		newMaintenanceURL := "https://example.org/maintenance"
+		newFallbackURL := "https://url.newcommissioningfallbackurl.dclmodel"
+		txResult, err := UpdateModel(vidWithPids, pid, vendorAccountWithPids,
+			"--productLabel", "Updated pid-ranges model",
+			"--enhancedSetupFlowOptions", "1",
+			"--enhancedSetupFlowTCUrl", newTCUrl,
+			"--enhancedSetupFlowTCRevision", "2",
+			"--enhancedSetupFlowTCDigest", newDigest,
+			"--enhancedSetupFlowTCFileSize", "2048",
+			"--maintenanceUrl", newMaintenanceURL,
+			"--commissioningFallbackUrl", newFallbackURL,
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		m, err := GetModel(vidWithPids, pid)
+		require.NoError(t, err)
+		require.NotNil(t, m)
+		require.Equal(t, int32(1), m.EnhancedSetupFlowOptions)
+		require.Equal(t, newTCUrl, m.EnhancedSetupFlowTCUrl)
+		require.Equal(t, int32(2), m.EnhancedSetupFlowTCRevision)
+		require.Equal(t, uint32(2048), m.EnhancedSetupFlowTCFileSize)
+		require.Equal(t, newMaintenanceURL, m.MaintenanceUrl)
+		require.Equal(t, newFallbackURL, m.CommissioningFallbackUrl)
+	})
+
 	t.Run("AddModelVersions", func(t *testing.T) {
 		svStr := fmt.Sprintf("%d", sv)
 		txResult, err := AddModelVersion(AddModelVersionOpts{
@@ -208,5 +260,45 @@ func TestModelDemo(t *testing.T) {
 		mv, err = GetModelVersion(vidWithPids, pid, sv)
 		require.NoError(t, err)
 		require.Nil(t, mv)
+	})
+
+	t.Run("VendorAdminModelLifecycle", func(t *testing.T) {
+		// A VendorAdmin account can add/update/delete a model for any vendor
+		// (model-demo.sh:273-309).
+		vendorAdmin := cliputils.CreateAccount(t, "VendorAdmin")
+		vid3 := rand.Intn(65534) + 1
+		pid3 := rand.Intn(65534) + 1
+
+		txResult, err := AddModel(AddModelOpts{VID: vid3, PID: pid3, ProductLabel: "VendorAdmin Product", From: vendorAdmin})
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		m, err := GetModel(vid3, pid3)
+		require.NoError(t, err)
+		require.NotNil(t, m)
+		require.Equal(t, "VendorAdmin Product", m.ProductLabel)
+
+		txResult, err = UpdateModel(vid3, pid3, vendorAdmin, "--productLabel", "Updated by VendorAdmin")
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		m, err = GetModel(vid3, pid3)
+		require.NoError(t, err)
+		require.NotNil(t, m)
+		require.Equal(t, "Updated by VendorAdmin", m.ProductLabel)
+
+		txResult, err = DeleteModel(vid3, pid3, vendorAdmin)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		m, err = GetModel(vid3, pid3)
+		require.NoError(t, err)
+		require.Nil(t, m)
 	})
 }

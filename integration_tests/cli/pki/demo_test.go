@@ -235,6 +235,12 @@ func pkiDemoProposeRootCertTrustee(t *testing.T, jack string) {
 	require.Equal(t, rootCertSubjectText, proposed2.SubjectAsText)
 	require.Equal(t, int32(pkiDemoVid), proposed2.Vid)
 
+	// Only the proposer (jack) has approved so far — no other trustee address.
+	jackAddr, err := dclauth.GetAddress(jack)
+	require.NoError(t, err)
+	require.Len(t, proposed2.Approvals, 1)
+	require.True(t, grantsContain(proposed2.Approvals, jackAddr))
+
 	// Approved cert must still be absent.
 	cert, err := GetX509Cert(rootCertSubject, rootCertSubjectKeyID)
 	require.NoError(t, err)
@@ -294,6 +300,14 @@ func pkiDemoApproveRootCert(t *testing.T, alice string) {
 	require.NotNil(t, c)
 	require.Equal(t, rootCertSubjectText, c.SubjectAsText)
 	require.True(t, c.IsRoot)
+
+	// The approved cert records both the proposer (jack) and the approver (alice).
+	jackAddr, err := dclauth.GetAddress(testconstants.JackAccount)
+	require.NoError(t, err)
+	aliceAddr, err := dclauth.GetAddress(alice)
+	require.NoError(t, err)
+	require.True(t, grantsContain(c.Approvals, jackAddr))
+	require.True(t, grantsContain(c.Approvals, aliceAddr))
 
 	// Approved cert by skid only.
 	bySkid, err := GetX509CertBySKID(rootCertSubjectKeyID)
@@ -1280,6 +1294,14 @@ func pkiDemoRejectTestRootCertMultiTrustee(t *testing.T, jack, alice, bob string
 	rejCert := findCertBySerial(rejected.Certs, testCertSerialNumber)
 	require.NotNil(t, rejCert)
 	require.Equal(t, testCertSubjectText, rejCert.SubjectAsText)
+
+	// The rejected cert records both rejecting trustees (jack, alice).
+	jackAddr, err := dclauth.GetAddress(jack)
+	require.NoError(t, err)
+	aliceAddr, err := dclauth.GetAddress(alice)
+	require.NoError(t, err)
+	require.True(t, grantsContain(rejCert.Rejects, jackAddr))
+	require.True(t, grantsContain(rejCert.Rejects, aliceAddr))
 
 	// No longer in proposed.
 	allProposed, err := GetAllProposedX509RootCerts()

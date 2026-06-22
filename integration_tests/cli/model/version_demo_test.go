@@ -192,4 +192,57 @@ func TestModelVersionDemo(t *testing.T) {
 		require.NoError(t, err)
 		require.Nil(t, mv)
 	})
+
+	t.Run("VendorAdminModelVersionLifecycle", func(t *testing.T) {
+		// A VendorAdmin account can add/update/delete model versions for any
+		// vendor (modelversion-demo.sh:185-223).
+		vendorAdmin := cliputils.CreateAccount(t, "VendorAdmin")
+		vid3 := rand.Intn(65534) + 1
+		pid3 := rand.Intn(65534) + 1
+		sv3 := rand.Intn(65534) + 1
+
+		txResult, err := AddModel(AddModelOpts{VID: vid3, PID: pid3, ProductLabel: "Test Product", From: vendorAdmin})
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		txResult, err = AddModelVersion(AddModelVersionOpts{
+			VID: vid3, PID: pid3, SoftwareVersion: sv3, SoftwareVersionString: "1", From: vendorAdmin,
+		})
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		mv, err := GetModelVersion(vid3, pid3, sv3)
+		require.NoError(t, err)
+		require.NotNil(t, mv)
+		require.Equal(t, int32(vid3), mv.Vid)
+		require.Equal(t, uint32(sv3), mv.SoftwareVersion)
+		require.True(t, mv.SoftwareVersionValid)
+
+		// VendorAdmin invalidates the version.
+		txResult, err = UpdateModelVersion(vid3, pid3, sv3, vendorAdmin, "--softwareVersionValid=false")
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		mv, err = GetModelVersion(vid3, pid3, sv3)
+		require.NoError(t, err)
+		require.NotNil(t, mv)
+		require.False(t, mv.SoftwareVersionValid)
+
+		// VendorAdmin deletes the version (never certified, so no compliance info).
+		txResult, err = DeleteModelVersion(vid3, pid3, sv3, vendorAdmin)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		mv, err = GetModelVersion(vid3, pid3, sv3)
+		require.NoError(t, err)
+		require.Nil(t, mv)
+	})
 }

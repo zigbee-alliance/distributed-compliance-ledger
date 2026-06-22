@@ -114,17 +114,20 @@ func TestModelNegativeCases(t *testing.T) {
 		require.Contains(t, err.Error(), "key not found")
 	})
 
-	type vidCase struct {
-		label string
-		opts  AddModelOpts
-	}
 	t.Run("AddModel_InvalidVidPid", func(t *testing.T) {
-		cases := []vidCase{
-			{"-1", AddModelOpts{VID: -1, PID: pid, From: vendorAccount}},
-			{"0", AddModelOpts{VID: 0, PID: pid, From: vendorAccount}},
-			{"65536", AddModelOpts{VID: 65536, PID: pid, From: vendorAccount}},
-			// VIDHex bypasses int formatting and lets us send a non-numeric token.
-			{"string", AddModelOpts{VIDHex: "string", PID: pid, From: vendorAccount}},
+		// Cover both the VID and PID sides with the exact range/parse messages.
+		// VIDHex/PIDHex send a non-numeric token to trigger the CLI parse error.
+		cases := []struct {
+			label string
+			opts  AddModelOpts
+			want  string
+		}{
+			{"vid<1", AddModelOpts{VID: -1, PID: pid, From: vendorAccount}, "Vid must not be less than 1"},
+			{"vid>65535", AddModelOpts{VID: 65536, PID: pid, From: vendorAccount}, "Vid must not be greater than 65535"},
+			{"vid-nonnumeric", AddModelOpts{VIDHex: "string", PID: pid, From: vendorAccount}, "invalid syntax"},
+			{"pid<1", AddModelOpts{VID: vid, PID: -1, From: vendorAccount}, "Pid must not be less than 1"},
+			{"pid>65535", AddModelOpts{VID: vid, PID: 65536, From: vendorAccount}, "Pid must not be greater than 65535"},
+			{"pid-nonnumeric", AddModelOpts{VID: vid, PIDHex: "string", From: vendorAccount}, "invalid syntax"},
 		}
 		for _, tc := range cases {
 			tc := tc
@@ -136,10 +139,7 @@ func TestModelNegativeCases(t *testing.T) {
 			if txResult != nil {
 				combined += txResult.RawLog
 			}
-			hasErr := combined != "" && (strings.Contains(combined, "Vid must not be") ||
-				strings.Contains(combined, "invalid syntax") ||
-				strings.Contains(combined, "invalid argument"))
-			require.True(t, hasErr, "expected error for vid=%s, got: %s", tc.label, combined)
+			require.Contains(t, combined, tc.want, "case %s", tc.label)
 		}
 	})
 
@@ -170,5 +170,108 @@ func TestModelNegativeCases(t *testing.T) {
 		_, err := AddModel(AddModelOpts{VID: vid, PID: pid, From: ""})
 		require.Error(t, err)
 		require.Contains(t, err.Error(), "invalid creator address")
+	})
+
+	// rawAddModelRejected runs an add-model with the given flag overrides (the
+	// helper substitutes defaults for empty Product fields, so the empty-field
+	// cases must be sent raw) and asserts the failure message.
+	rawAddModelRejected := func(want string, extra ...string) {
+		t.Helper()
+		args := append([]string{"tx", "model", "add-model"}, extra...)
+		args = append(args, "--yes", "-o", "json", "--keyring-backend", "test")
+		out, err := utils.ExecuteCLI(args...)
+		combined := string(out)
+		if err != nil {
+			combined += err.Error()
+		}
+		require.Contains(t, combined, want)
+	}
+
+	t.Run("AddModel_EmptyProductLabel_Fails", func(t *testing.T) {
+		rawAddModelRejected("ProductLabel is a required field",
+			"--vid", fmt.Sprintf("%d", vid), "--pid", fmt.Sprintf("%d", pid),
+			"--deviceTypeID", "1", "--productName", "TestProduct", "--productLabel", "",
+			"--partNumber", "1", "--commissioningCustomFlow", "0",
+			"--enhancedSetupFlowOptions", "0", "--from", vendorAccount)
+	})
+
+	t.Run("AddModel_EmptyPartNumber_Fails", func(t *testing.T) {
+		rawAddModelRejected("PartNumber is a required field",
+			"--vid", fmt.Sprintf("%d", vid), "--pid", fmt.Sprintf("%d", pid),
+			"--deviceTypeID", "1", "--productName", "TestProduct",
+			"--productLabel", "TestingProductLabel", "--partNumber", "",
+			"--commissioningCustomFlow", "0", "--enhancedSetupFlowOptions", "0",
+			"--from", vendorAccount)
+	})
+
+	t.Run("AddModel_DiscoveryBitmaskTooHigh_Fails", func(t *testing.T) {
+		// 31 is one above the allowed max of 30. Reaches ValidateBasic.
+		txResult, err := AddModel(AddModelOpts{
+			VID: vid, PID: rand.Intn(65534) + 1, From: vendorAccount,
+			DiscoveryCapabilitiesBitmask: 31,
+		})
+		combined := ""
+		if err != nil {
+			combined = err.Error()
+		}
+		if txResult != nil {
+			combined += txResult.RawLog
+		}
+		require.Contains(t, combined, "DiscoveryCapabilitiesBitmask must not be greater than 30")
+	})
+
+	t.Run("AddModel_NoFromFlag_Fails", func(t *testing.T) {
+		// Omit --from entirely (distinct from the empty-string case above).
+		rawAddModelRejected(`required flag(s) "from" not set`,
+			"--vid", fmt.Sprintf("%d", vid), "--pid", fmt.Sprintf("%d", pid),
+			"--deviceTypeID", "1", "--productName", "TestProduct",
+			"--productLabel", "TestingProductLabel", "--partNumber", "1",
+			"--commissioningCustomFlow", "0", "--enhancedSetupFlowOptions", "0")
+	})
+
+	t.Run("AddModelVersion_OtaNegatives", func(t *testing.T) {
+		// A model is needed before adding versions.
+		mvPid := rand.Intn(65534) + 1
+		mvSv := rand.Intn(65534) + 1
+		mvSvs := fmt.Sprintf("%d", rand.Intn(65534)+1)
+		txResult, err := AddModel(AddModelOpts{VID: vid, PID: mvPid, From: vendorAccount})
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// otaChecksumType outside the IANA allow-list is rejected at the handler.
+		txResult, err = AddModelVersion(AddModelVersionOpts{
+			VID: vid, PID: mvPid, SoftwareVersion: mvSv, SoftwareVersionString: mvSvs,
+			OtaURL: "https://ota.url.com", OtaFileSize: 123,
+			OtaChecksum: "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=",
+			From:        vendorAccount,
+			Extra:       []string{"--otaChecksumType", "2"},
+		})
+		combined := ""
+		if err != nil {
+			combined = err.Error()
+		}
+		if txResult != nil {
+			combined += txResult.RawLog
+		}
+		require.Contains(t, combined, "OtaChecksumType 2 is not supported")
+
+		// otaChecksum longer than 88 chars is rejected by ValidateBasic.
+		txResult, err = AddModelVersion(AddModelVersionOpts{
+			VID: vid, PID: mvPid, SoftwareVersion: mvSv, SoftwareVersionString: mvSvs,
+			OtaURL: "https://ota.url.com", OtaFileSize: 123,
+			OtaChecksum: strings.Repeat("a", 89),
+			From:        vendorAccount,
+			Extra:       []string{"--otaChecksumType", "1"},
+		})
+		combined = ""
+		if err != nil {
+			combined = err.Error()
+		}
+		if txResult != nil {
+			combined += txResult.RawLog
+		}
+		require.Contains(t, combined, "maximum length for OtaChecksum allowed is 88")
 	})
 }

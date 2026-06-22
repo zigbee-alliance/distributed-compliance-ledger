@@ -75,5 +75,67 @@ func TestModelVersionDemoHex(t *testing.T) {
 		mv, err := GetModelVersionHex(vidHex, pidHex, 123456)
 		require.NoError(t, err)
 		require.Nil(t, mv)
+
+		// all-model-versions for an unrelated hex vid/pid is also Not Found.
+		mvs, err := GetAllModelVersionsHex("0xA14", "0xA15")
+		require.NoError(t, err)
+		require.Nil(t, mvs)
+	})
+
+	t.Run("UpdateModelVersion_WithHexVID", func(t *testing.T) {
+		// The chain keys versions by the integer value, so a decimal update
+		// targets the same hex-created version; read it back with the hex query.
+		txResult, err := UpdateModelVersion(vid, pid, sv, vendorAccount,
+			"--minApplicableSoftwareVersion", "2",
+			"--maxApplicableSoftwareVersion", "10",
+			"--softwareVersionValid=false",
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		mv, err := GetModelVersionHex(vidHex, pidHex, sv)
+		require.NoError(t, err)
+		require.NotNil(t, mv)
+		require.False(t, mv.SoftwareVersionValid)
+		require.Equal(t, uint32(2), mv.MinApplicableSoftwareVersion)
+		require.Equal(t, uint32(10), mv.MaxApplicableSoftwareVersion)
+	})
+
+	sv2 := rand.Intn(65534) + 1
+
+	t.Run("AddSecondModelVersion_WithHexVID", func(t *testing.T) {
+		txResult, err := AddModelVersion(AddModelVersionOpts{
+			VID: vid, PID: pid, SoftwareVersion: sv2, SoftwareVersionString: "1", From: vendorAccount,
+		})
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		mvs, err := GetAllModelVersionsHex(vidHex, pidHex)
+		require.NoError(t, err)
+		require.NotNil(t, mvs)
+		require.Contains(t, mvs.SoftwareVersions, uint32(sv))
+		require.Contains(t, mvs.SoftwareVersions, uint32(sv2))
+	})
+
+	t.Run("AddAndUpdateModelVersionFromDifferentVendor_Fails", func(t *testing.T) {
+		newVid := rand.Intn(60000) + 3000 // guaranteed != vid (2579)
+		differentVendor := fmt.Sprintf("vendor_account_%d", newVid)
+		cliputils.CreateVendorAccount(t, differentVendor, newVid)
+
+		txResult, err := AddModelVersion(AddModelVersionOpts{
+			VID: vid, PID: pid, SoftwareVersion: sv, SoftwareVersionString: "1",
+			CDVersionNumber: 1, MinApplicableSoftwareVersion: 1, MaxApplicableSoftwareVersion: 10,
+			From: differentVendor,
+		})
+		require.NoError(t, err)
+		require.Contains(t, txResult.RawLog, fmt.Sprintf("vendorID %d", vid))
+
+		txResult, err = UpdateModelVersion(vid, pid, sv, differentVendor, "--softwareVersionValid=false")
+		require.NoError(t, err)
+		require.Contains(t, txResult.RawLog, fmt.Sprintf("vendorID %d", vid))
 	})
 }

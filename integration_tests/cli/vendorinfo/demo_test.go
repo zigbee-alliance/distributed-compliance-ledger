@@ -45,10 +45,16 @@ func TestVendorInfoDemo(t *testing.T) {
 	})
 
 	t.Run("QueryAllEmpty", func(t *testing.T) {
-		// This test's specific vendor must not exist yet (other tests may have added different VIDs).
+		// This test's specific vendor must not exist yet (other tests may have
+		// added different VIDs, so the global all-vendors list is not literally
+		// empty on the shared ledger — assert only that our VID is absent).
 		v, err := GetVendor(vid)
 		require.NoError(t, err)
 		require.Nil(t, v)
+
+		all, err := GetAllVendors()
+		require.NoError(t, err)
+		require.False(t, containsVendorByID(all, int32(vid)))
 	})
 
 	const (
@@ -136,30 +142,31 @@ func TestVendorInfoDemo(t *testing.T) {
 		require.Equal(t, updatedCompanyLegalName, v.CompanyLegalName)
 		require.Equal(t, vendorName, v.VendorName)
 		require.Equal(t, vendorLandingPageURL, v.VendorLandingPageURL)
+		require.Equal(t, uint32(0), v.SchemaVersion)
 	})
 
 	t.Run("AddVendorForWrongVID_Fails", func(t *testing.T) {
+		// vid1 is outside the vendor account's associated VID, so the add must be
+		// rejected naming that VID.
 		vid1 := rand.Intn(60000) + 61000
 		txResult, err := AddVendor(vendorAccount, VendorOpts{
 			VID:              vid1,
 			CompanyLegalName: updatedCompanyLegalName,
 			VendorName:       vendorName,
 		})
-		// Either execution error or non-zero tx code
-		if err == nil {
-			require.NotEqual(t, uint32(0), txResult.Code)
-		}
+		require.Contains(t, txFailureText(txResult, err),
+			fmt.Sprintf("transaction should be signed by a vendor account associated with the vendorID %d", vid1))
 	})
 
 	t.Run("UpdateVendorForWrongAccount_Fails", func(t *testing.T) {
+		// secondVendorAccount (vid2) cannot update vid's record.
 		txResult, err := UpdateVendor(secondVendorAccount, VendorOpts{
 			VID:              vid,
 			CompanyLegalName: updatedCompanyLegalName,
 			VendorName:       vendorName,
 		})
-		if err == nil {
-			require.NotEqual(t, uint32(0), txResult.Code)
-		}
+		require.Contains(t, txFailureText(txResult, err),
+			fmt.Sprintf("transaction should be signed by a vendor account associated with the vendorID %d", vid))
 	})
 
 	t.Run("AddVendorByVendorAdmin", func(t *testing.T) {

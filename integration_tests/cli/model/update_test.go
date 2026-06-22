@@ -79,6 +79,62 @@ func TestModelUpdate(t *testing.T) {
 		require.Equal(t, int32(2), m.EnhancedSetupFlowOptions)
 	})
 
+	// The hints are now 8/9/7/6 (from UpdateModelFields). The next two subtests
+	// verify the update handler treats an omitted or zero hint as "leave it
+	// unchanged" (each hint updates only when msg.<Hint> != 0).
+
+	t.Run("UpdateDescriptionOnly_PreservesHints", func(t *testing.T) {
+		newDesc := "New Device Description 2"
+		txResult, err := UpdateModel(vid, pid, vendorAccount,
+			"--productLabel", newDesc,
+			"--schemaVersion", "0",
+			"--enhancedSetupFlowOptions", "2",
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// Omitted hints keep their previously-set values.
+		m, err := GetModel(vid, pid)
+		require.NoError(t, err)
+		require.NotNil(t, m)
+		require.Equal(t, newDesc, m.ProductLabel)
+		require.Equal(t, uint32(8), m.CommissioningModeInitialStepsHint)
+		require.Equal(t, uint32(9), m.CommissioningModeSecondaryStepsHint)
+		require.Equal(t, uint32(7), m.IcdUserActiveModeTriggerHint)
+		require.Equal(t, uint32(6), m.FactoryResetStepsHint)
+		require.Equal(t, int32(2), m.EnhancedSetupFlowOptions)
+	})
+
+	t.Run("UpdateHintsZero_PreservesHints", func(t *testing.T) {
+		newDesc := "New Device Description 3"
+		txResult, err := UpdateModel(vid, pid, vendorAccount,
+			"--productLabel", newDesc,
+			"--schemaVersion", "0",
+			"--commissioningModeInitialStepsHint", "0",
+			"--commissioningModeSecondaryStepsHint", "0",
+			"--factoryResetStepsHint", "0",
+			"--icdUserActiveModeTriggerHint", "0",
+			"--enhancedSetupFlowOptions", "2",
+		)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// Explicit zero hints are ignored — the previous values are retained.
+		m, err := GetModel(vid, pid)
+		require.NoError(t, err)
+		require.NotNil(t, m)
+		require.Equal(t, newDesc, m.ProductLabel)
+		require.Equal(t, uint32(8), m.CommissioningModeInitialStepsHint)
+		require.Equal(t, uint32(9), m.CommissioningModeSecondaryStepsHint)
+		require.Equal(t, uint32(7), m.IcdUserActiveModeTriggerHint)
+		require.Equal(t, uint32(6), m.FactoryResetStepsHint)
+		require.Equal(t, int32(2), m.EnhancedSetupFlowOptions)
+	})
+
 	t.Run("UpdateModelSupportURL", func(t *testing.T) {
 		supportURL := "https://newsupporturl.test"
 		txResult, err := UpdateModel(vid, pid, vendorAccount,

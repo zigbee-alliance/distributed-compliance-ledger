@@ -875,6 +875,19 @@ func containsCertSubjectSerial(certs []*pkitypes.Certificate, subject, serial st
 	return false
 }
 
+// grantsContain reports whether a list of approval/reject grants includes the
+// given address. Used to assert which trustees voted on a proposed/approved/
+// revoked/rejected certificate.
+func grantsContain(grants []*pkitypes.Grant, addr string) bool {
+	for _, g := range grants {
+		if g != nil && g.Address == addr {
+			return true
+		}
+	}
+
+	return false
+}
+
 // containsApprovedCertSerial reports whether any of the ApprovedCertificates'
 // inner Certs slices contains the given serial.
 func containsApprovedCertSerial(list []pkitypes.ApprovedCertificates, serial string) bool {
