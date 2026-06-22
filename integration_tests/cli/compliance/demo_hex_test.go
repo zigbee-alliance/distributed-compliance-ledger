@@ -143,6 +143,21 @@ func TestComplianceDemoHex(t *testing.T) {
 		require.Contains(t, txResult.RawLog, "already certified on the ledger")
 	})
 
+	t.Run("ReCertify_SameAccount_Fails", func(t *testing.T) {
+		txResult, err := CertifyModel(CertifyModelOpts{
+			VIDHex: vidHex, PIDHex: pidHex,
+			SoftwareVersion:       sv,
+			SoftwareVersionString: svs,
+			CertificationType:     zigbeeCertType,
+			CertificationDate:     certificationDate,
+			CDCertificateID:       cdCertID,
+			From:                  zbAccount,
+		})
+		require.NoError(t, err)
+		require.Equal(t, uint32(303), txResult.Code)
+		require.Contains(t, txResult.RawLog, "already certified on the ledger")
+	})
+
 	t.Run("QueryAfterCertification", func(t *testing.T) {
 		certified, err := GetCertifiedModel(ComplianceQueryOpts{
 			VIDHex: vidHex, PIDHex: pidHex,
@@ -172,6 +187,32 @@ func TestComplianceDemoHex(t *testing.T) {
 		require.True(t, containsComplianceInfoCertType(dsc.ComplianceInfo, int32(vid), int32(pid), matterCertType))
 		require.True(t, containsComplianceInfoCertType(dsc.ComplianceInfo, int32(vid), int32(pid), zigbeeCertType))
 		for _, ci := range dsc.ComplianceInfo {
+			require.Equal(t, uint32(2), ci.SoftwareVersionCertificationStatus)
+		}
+
+		// Companion records for BOTH cert types: certified=true, revoked=false,
+		// provisional=false; compliance-info status 2.
+		for _, ct := range []string{zigbeeCertType, matterCertType} {
+			q := ComplianceQueryOpts{VIDHex: vidHex, PIDHex: pidHex, SoftwareVersion: sv, CertificationType: ct}
+
+			cert, err := GetCertifiedModel(q)
+			require.NoError(t, err)
+			require.NotNil(t, cert, "certified-model missing for %s", ct)
+			require.True(t, cert.Value)
+
+			rev, err := GetRevokedModel(q)
+			require.NoError(t, err)
+			require.NotNil(t, rev, "revoked-model missing for %s", ct)
+			require.False(t, rev.Value)
+
+			prov, err := GetProvisionalModel(q)
+			require.NoError(t, err)
+			require.NotNil(t, prov, "provisional-model missing for %s", ct)
+			require.False(t, prov.Value)
+
+			ci, err := GetComplianceInfo(q)
+			require.NoError(t, err)
+			require.NotNil(t, ci)
 			require.Equal(t, uint32(2), ci.SoftwareVersionCertificationStatus)
 		}
 	})
@@ -239,6 +280,25 @@ func TestComplianceDemoHex(t *testing.T) {
 		require.NoError(t, err)
 		require.NotNil(t, revoked)
 		require.True(t, revoked.Value)
+
+		// Zigbee companions flip: certified=false, provisional=false.
+		certified, err := GetCertifiedModel(zbHex)
+		require.NoError(t, err)
+		require.NotNil(t, certified)
+		require.False(t, certified.Value)
+
+		provisional, err := GetProvisionalModel(zbHex)
+		require.NoError(t, err)
+		require.NotNil(t, provisional)
+		require.False(t, provisional.Value)
+
+		// Matter side is untouched — still certified (status 2).
+		matterInfo, err := GetComplianceInfo(ComplianceQueryOpts{
+			VIDHex: vidHex, PIDHex: pidHex, SoftwareVersion: sv, CertificationType: matterCertType,
+		})
+		require.NoError(t, err)
+		require.NotNil(t, matterInfo)
+		require.Equal(t, uint32(2), matterInfo.SoftwareVersionCertificationStatus)
 	})
 
 	t.Run("ReCertifyAfterRevoke_Success", func(t *testing.T) {
@@ -273,5 +333,19 @@ func TestComplianceDemoHex(t *testing.T) {
 		require.NoError(t, err)
 		require.NotNil(t, certified)
 		require.True(t, certified.Value)
+
+		// Revoked flips back to false on re-certification.
+		revoked, err := GetRevokedModel(zbHex)
+		require.NoError(t, err)
+		require.NotNil(t, revoked)
+		require.False(t, revoked.Value)
+
+		// Matter is still certified (status 2).
+		matterInfo, err := GetComplianceInfo(ComplianceQueryOpts{
+			VIDHex: vidHex, PIDHex: pidHex, SoftwareVersion: sv, CertificationType: matterCertType,
+		})
+		require.NoError(t, err)
+		require.NotNil(t, matterInfo)
+		require.Equal(t, uint32(2), matterInfo.SoftwareVersionCertificationStatus)
 	})
 }

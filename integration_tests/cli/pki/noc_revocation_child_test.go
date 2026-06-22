@@ -149,6 +149,23 @@ func TestPKINocRevocationWithRevokingChild(t *testing.T) {
 		require.False(t, containsApprovedCertSerial(allDa, nocRootCert1SerialNumber))
 		require.False(t, containsApprovedCertSerial(allDa, nocCert1SerialNumber))
 		require.False(t, containsApprovedCertSerial(allDa, vvscLeafCert1SerialNumber))
+
+		// The single-record revoked NOC root query returns the revoked root.
+		revokedRoot, err := GetRevokedNocRootCert(nocRootCert1Subject, nocRootCert1SubjectKeyID)
+		require.NoError(t, err)
+		require.NotNil(t, revokedRoot)
+		require.Equal(t, nocRootCert1Subject, revokedRoot.Subject)
+
+		// Namespace separation: a revoked NOC root must not leak into the DA
+		// revoked-root list (all-revoked-x509-root-certs).
+		daRevokedRoots, err := GetAllRevokedX509RootCerts()
+		require.NoError(t, err)
+		if daRevokedRoots != nil {
+			for _, id := range daRevokedRoots.Certs {
+				require.NotEqual(t, nocRootCert1Subject, id.Subject)
+				require.NotEqual(t, vvscRootCert1Subject, id.Subject)
+			}
+		}
 	})
 
 	t.Run("RevokeNocIcaCertWithChildFlag", func(t *testing.T) {

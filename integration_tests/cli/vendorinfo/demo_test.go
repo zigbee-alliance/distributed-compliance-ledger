@@ -146,9 +146,11 @@ func TestVendorInfoDemo(t *testing.T) {
 	})
 
 	t.Run("AddVendorForWrongVID_Fails", func(t *testing.T) {
-		// vid1 is outside the vendor account's associated VID, so the add must be
-		// rejected naming that VID.
-		vid1 := rand.Intn(60000) + 61000
+		// vid1 must be a *valid* VID (<= 65535) that differs from the vendor
+		// account's VID, so the add reaches the vendor-association check rather
+		// than the VID upper-bound validation. vid/vid2 are both <= 60000, so
+		// [60001, 65535] is always distinct.
+		vid1 := rand.Intn(5535) + 60001
 		txResult, err := AddVendor(vendorAccount, VendorOpts{
 			VID:              vid1,
 			CompanyLegalName: updatedCompanyLegalName,

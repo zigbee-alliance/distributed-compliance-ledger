@@ -147,6 +147,7 @@ func TestPKINocCerts(t *testing.T) {
 		require.Equal(t, nocRootCert1SubjectKeyID, c1.SubjectKeyId)
 		require.Equal(t, nocRootCert1SubjectAsText, c1.SubjectAsText)
 		require.Equal(t, int32(nocVid), c1.Vid)
+		require.Equal(t, uint32(0), c1.SchemaVersion)
 
 		// Query by VID + SKID for cert1
 		cert, err := GetNocCert("--vid", fmt.Sprintf("%d", nocVid), "--subject-key-id", nocRootCert1SubjectKeyID)

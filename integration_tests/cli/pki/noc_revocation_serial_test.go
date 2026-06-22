@@ -157,6 +157,23 @@ func TestPKINocRevocationWithSerialNumber(t *testing.T) {
 				require.NotEqual(t, nocRootCert1Subject, c.Subject)
 			}
 		}
+
+		// The single-record revoked NOC root query returns the revoked root.
+		revokedRoot, err := GetRevokedNocRootCert(nocRootCert1Subject, nocRootCert1SubjectKeyID)
+		require.NoError(t, err)
+		require.NotNil(t, revokedRoot)
+		require.Equal(t, nocRootCert1Subject, revokedRoot.Subject)
+
+		// Namespace separation: revoked NOC roots must not leak into the DA
+		// revoked-root list.
+		daRevokedRoots, err := GetAllRevokedX509RootCerts()
+		require.NoError(t, err)
+		if daRevokedRoots != nil {
+			for _, id := range daRevokedRoots.Certs {
+				require.NotEqual(t, nocRootCert1Subject, id.Subject)
+				require.NotEqual(t, vvscRootCert1Subject, id.Subject)
+			}
+		}
 	})
 
 	t.Run("RevokeNocIcaCertBySerial", func(t *testing.T) {
