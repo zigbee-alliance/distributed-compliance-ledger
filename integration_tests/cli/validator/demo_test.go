@@ -32,7 +32,7 @@ import (
 )
 
 // proposedHasVoter reports whether the proposed-disable record has addr as the
-// creator or among its approvals.
+// creator, among its approvals, or among its rejects.
 func proposedHasVoter(p *validatortypes.ProposedDisableValidator, addr string) bool {
 	if p == nil {
 		return false
@@ -41,6 +41,11 @@ func proposedHasVoter(p *validatortypes.ProposedDisableValidator, addr string) b
 		return true
 	}
 	for _, a := range p.Approvals {
+		if a != nil && a.Address == addr {
+			return true
+		}
+	}
+	for _, a := range p.Rejects {
 		if a != nil && a.Address == addr {
 			return true
 		}
