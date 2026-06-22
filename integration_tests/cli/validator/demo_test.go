@@ -95,6 +95,24 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 	validatorOwner, validatorAddress := resolveFirstValidator(t)
 	t.Logf("Using validator owner=%s address=%s", validatorOwner, validatorAddress)
 
+	t.Run("QueryUnknownNode_NotFound", func(t *testing.T) {
+		// A never-added address has neither a node nor a last-power record
+		// (validator-demo.sh:113-119).
+		name := utils.RandString()
+		_, _ = utils.ExecuteCLI("keys", "add", name, "--keyring-backend", "test", "--no-backup")
+		addrOut, err := utils.ExecuteCLI("keys", "show", name, "-a", "--keyring-backend", "test")
+		require.NoError(t, err)
+		unknownAddr := strings.TrimSpace(string(addrOut))
+
+		node, err := GetNode(unknownAddr)
+		require.NoError(t, err)
+		require.Nil(t, node)
+
+		power, err := GetLastPower(unknownAddr)
+		require.NoError(t, err)
+		require.Nil(t, power)
+	})
+
 	t.Run("ProposeAndRejectDisableValidator_NoEffect", func(t *testing.T) {
 		// Alice proposes to disable
 		txResult, err := ProposeDisableNode(validatorAddress, alice)
@@ -182,6 +200,48 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 		disabled, err = GetDisabledNode(validatorAddress)
 		require.NoError(t, err)
 		require.Nil(t, disabled)
+	})
+
+	t.Run("NodeAdminSelfDisableAndReEnable", func(t *testing.T) {
+		// The node admin (validator owner) disables its own validator
+		// (validator-demo.sh:248-294). Unlike the trustee-voting path, this sets
+		// disabledByNodeAdmin=true with no approvals, and jails the validator
+		// synchronously.
+		txResult, err := DisableNode(validatorOwner)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		disabled, err := GetDisabledNode(validatorAddress)
+		require.NoError(t, err)
+		require.NotNil(t, disabled)
+		require.Equal(t, validatorAddress, disabled.Address)
+		require.True(t, disabled.DisabledByNodeAdmin)
+		require.Empty(t, disabled.Approvals)
+
+		// The validator is jailed while disabled.
+		v, err := GetNode(validatorAddress)
+		require.NoError(t, err)
+		require.NotNil(t, v)
+		require.True(t, v.Jailed)
+
+		// The node admin re-enables: the disabled record clears and the
+		// validator is unjailed (handler calls Unjail + RemoveDisabledValidator).
+		txResult, err = EnableNode(validatorOwner)
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		disabled, err = GetDisabledNode(validatorAddress)
+		require.NoError(t, err)
+		require.Nil(t, disabled)
+
+		v, err = GetNode(validatorAddress)
+		require.NoError(t, err)
+		require.NotNil(t, v)
+		require.False(t, v.Jailed)
 	})
 
 	t.Run("ProposeApproveRejectRejectFailsSecondTime", func(t *testing.T) {

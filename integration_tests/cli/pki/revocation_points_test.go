@@ -34,6 +34,10 @@ const (
 	rootCertWithVidRevSubject      = "MIGYMQswCQYDVQQGEwJVUzERMA8GA1UECBMITmV3IFlvcmsxETAPBgNVBAcTCE5ldyBZb3JrMRgwFgYDVQQKEw9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsTEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMTD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgETBEZGRjE="
 	rootCertWithVidRevSubjectKeyID = "6B:8C:77:1E:AD:CB:A8:3C:33:9C:2F:10:27:5F:42:03:1D:0A:F4:8E"
 
+	// intermediate_cert_with_vid_2 is VID-scoped to FFF2 (65522) but chains to
+	// root_cert_with_vid (FFF1=65521) — used for the add-x509-cert 440 case.
+	intermediateCertWithVid2Path = "../../constants/intermediate_cert_with_vid_2"
+
 	revPointVid          = 65521
 	revPointVid65522     = 65522
 	revPointVid24582     = 24582
@@ -165,6 +169,18 @@ func TestPKIRevocationPoints(t *testing.T) {
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
+	})
+
+	t.Run("AddChildVidNotEqualRootVid_Fails", func(t *testing.T) {
+		// Port of pki-add-vendor-x509-certificates.sh:79-82 (code 440): adding an
+		// intermediate whose VID (65522) differs from its VID-scoped root's VID
+		// (root_cert_with_vid, 65521) is rejected. This lives here because this
+		// test owns root_cert_with_vid on the ledger; the add fails, so no ledger
+		// state changes. The childVid≠rootVid check precedes the account-VID check,
+		// so 440 fires regardless of the signer's VID.
+		txResult, err := AddX509Cert(intermediateCertWithVid2Path, vendorAccount65522)
+		require.NoError(t, err)
+		require.Equal(t, uint32(440), txResult.Code, "expected cert-vid-not-equal-root-vid (440), raw: %s", txResult.RawLog)
 	})
 
 	t.Run("AddRevocationPointForVidScopedPAA", func(t *testing.T) {

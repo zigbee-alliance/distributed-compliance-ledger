@@ -8,6 +8,7 @@ import (
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 const (
@@ -27,6 +28,71 @@ func TestPKICombineCerts(t *testing.T) {
 
 	vendorAccount := fmt.Sprintf("vendor_account_%d", vid)
 	cliputils.CreateVendorAccount(t, vendorAccount, vid)
+
+	subj := rootWithSameSubjectAndSkidSubject
+	skid := rootWithSameSubjectAndSkidSubjectKeyID
+
+	// certsContainID reports whether a list of CertificateIdentifiers contains
+	// (subj, skid).
+	certsContainID := func(ids []*pkitypes.CertificateIdentifier) bool {
+		for _, id := range ids {
+			if id != nil && id.Subject == subj && id.SubjectKeyId == skid {
+				return true
+			}
+		}
+
+		return false
+	}
+	// certsContainSKID reports whether a list of Certificates contains skid.
+	certsContainSKID := func(certs []*pkitypes.Certificate) bool {
+		for _, c := range certs {
+			if c != nil && c.SubjectKeyId == skid {
+				return true
+			}
+		}
+
+		return false
+	}
+	// approvedContain reports whether a list of ApprovedCertificates contains
+	// (subj, skid).
+	approvedContain := func(list []pkitypes.ApprovedCertificates) bool {
+		for i := range list {
+			if list[i].Subject == subj && list[i].SubjectKeyId == skid {
+				return true
+			}
+		}
+
+		return false
+	}
+
+	// Section 1 of pki-combine-certs.sh, scoped to this test's own subject (the
+	// global all-* lists already hold certs from earlier tests on the shared
+	// ledger, so only per-subject emptiness can be asserted here).
+	t.Run("QueryBeforeAdd_NotFound", func(t *testing.T) {
+		x509, err := GetX509Cert(subj, skid)
+		require.NoError(t, err)
+		require.Nil(t, x509)
+
+		noc, err := GetNocCert("--subject", subj, "--subject-key-id", skid)
+		require.NoError(t, err)
+		require.Nil(t, noc)
+
+		proposed, err := GetProposedX509RootCert(subj, skid)
+		require.NoError(t, err)
+		require.Nil(t, proposed)
+
+		revoked, err := GetRevokedX509Cert(subj, skid)
+		require.NoError(t, err)
+		require.Nil(t, revoked)
+
+		bySubject, err := GetX509CertsBySubject(subj)
+		require.NoError(t, err)
+		require.Nil(t, bySubject)
+
+		children, err := GetChildX509Certs(subj, skid)
+		require.NoError(t, err)
+		require.Nil(t, children)
+	})
 
 	t.Run("ProposeAndApproveFirstRootCert", func(t *testing.T) {
 		txResult, err := ProposeAddX509RootCert(rootWithSameSubjectAndSkid1Path, jack, X509ProposeOpts{VID: vid})
@@ -68,5 +134,66 @@ func TestPKICombineCerts(t *testing.T) {
 		require.NotNil(t, cert)
 		require.Equal(t, rootWithSameSubjectAndSkidSubject, cert.Subject)
 		require.Len(t, cert.Certs, 2)
+	})
+
+	// Section 3 of pki-combine-certs.sh: the query commands dispatch correctly
+	// and the DA (x509) and NOC namespaces are kept separate — a DA certificate
+	// is visible through every x509/global query but invisible through every NOC
+	// query. (The shell exercises this across a DA+NOC+VVSC chain; those chains
+	// are owned by TestPKIDemo / TestPKINocCerts here, so the separation is
+	// asserted from the DA side using this test's own root.)
+	t.Run("QueryDispatchAndNamespaceSeparation", func(t *testing.T) {
+		// Visible through the DA / global single-cert queries.
+		x509, err := GetX509Cert(subj, skid)
+		require.NoError(t, err)
+		require.NotNil(t, x509)
+		require.True(t, certsContainSKID(x509.Certs))
+
+		global, err := GetCert(subj, skid)
+		require.NoError(t, err)
+		require.NotNil(t, global)
+		require.True(t, certsContainSKID(global.Certs))
+
+		bySkid, err := GetX509CertBySKID(skid)
+		require.NoError(t, err)
+		require.NotNil(t, bySkid)
+		require.True(t, certsContainSKID(bySkid.Certs))
+
+		// Invisible through the NOC single-cert query (namespace separation).
+		nocCert, err := GetNocCert("--subject", subj, "--subject-key-id", skid)
+		require.NoError(t, err)
+		require.Nil(t, nocCert)
+
+		// Visible through the DA by-subject query; invisible through NOC by-subject.
+		bySubject, err := GetX509CertsBySubject(subj)
+		require.NoError(t, err)
+		require.NotNil(t, bySubject)
+		require.Contains(t, bySubject.SubjectKeyIds, skid)
+
+		nocBySubject, err := GetNocSubjectCerts(subj)
+		require.NoError(t, err)
+		require.Nil(t, nocBySubject)
+
+		// Visible through all-x509-certs and all-x509-root-certs; absent from
+		// all-noc-x509-certs.
+		allX509, err := GetAllX509Certs()
+		require.NoError(t, err)
+		require.True(t, approvedContain(allX509))
+
+		allRoots, err := GetAllX509RootCerts()
+		require.NoError(t, err)
+		require.NotNil(t, allRoots)
+		require.True(t, certsContainID(allRoots.Certs))
+
+		allNoc, err := GetAllNocX509Certs()
+		require.NoError(t, err)
+		require.NotNil(t, allNoc)
+		require.False(t, certsContainSKID(allNoc.Certs))
+
+		// No child certs exist under this root (its children are added later by
+		// the revocation tests).
+		children, err := GetChildX509Certs(subj, skid)
+		require.NoError(t, err)
+		require.Nil(t, children)
 	})
 }
