@@ -718,15 +718,20 @@ func GetAllNocX509IcaCerts() ([]pkitypes.NocIcaCertificates, error) {
 }
 
 // GetAllNocX509Certs queries all NOC certificates (root + ICA). The CLI emits
-// a single AllCertificates wrapper with a Certs list.
+// a QueryNocCertificatesResponse wrapping a list of NocCertificates, each
+// carrying its own Certs slice. We flatten the slices into a single
+// AllCertificates wrapper so callers can iterate over one Certs list.
 func GetAllNocX509Certs() (*pkitypes.AllCertificates, error) {
-	var res pkitypes.AllCertificates
-	found, err := getSingle(&res, "query", "pki", "all-noc-x509-certs", "-o", "json")
-	if err != nil || !found {
+	var res pkitypes.QueryNocCertificatesResponse
+	if err := getList(&res, "query", "pki", "all-noc-x509-certs", "-o", "json"); err != nil {
 		return nil, err
 	}
+	all := &pkitypes.AllCertificates{}
+	for i := range res.NocCertificates {
+		all.Certs = append(all.Certs, res.NocCertificates[i].Certs...)
+	}
 
-	return &res, nil
+	return all, nil
 }
 
 // GetNocCert queries a NOC certificate by various flags. Pass --subject /
@@ -899,6 +904,19 @@ func containsApprovedCertSubjectSerial(list []pkitypes.ApprovedCertificates, sub
 func containsRevokedCertSerial(list []pkitypes.RevokedCertificates, serial string) bool {
 	for i := range list {
 		if findCertBySerial(list[i].Certs, serial) != nil {
+			return true
+		}
+	}
+
+	return false
+}
+
+// containsRevokedCertSubjectSerial reports whether any RevokedCertificates entry
+// has a cert matching both the subject and the serial — used when multiple
+// unrelated certs in the ledger share a serial number.
+func containsRevokedCertSubjectSerial(list []pkitypes.RevokedCertificates, subject, serial string) bool {
+	for i := range list {
+		if containsCertSubjectSerial(list[i].Certs, subject, serial) {
 			return true
 		}
 	}

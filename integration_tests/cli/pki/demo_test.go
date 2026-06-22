@@ -820,7 +820,7 @@ func pkiDemoGoogleCertQueryAllEmpty(t *testing.T) {
 
 	all, err := GetAllX509Certs()
 	require.NoError(t, err)
-	require.False(t, containsApprovedCertSerial(all, googleCertSerialNumber))
+	require.False(t, containsApprovedCertSubjectSerial(all, googleCertSubject, googleCertSerialNumber))
 
 	proposed, err := GetProposedX509RootCert(googleCertSubject, googleCertSubjectKeyID)
 	require.NoError(t, err)
@@ -838,7 +838,7 @@ func pkiDemoGoogleCertQueryAllEmpty(t *testing.T) {
 
 	allRevoked, err := GetAllRevokedX509Certs()
 	require.NoError(t, err)
-	require.False(t, containsRevokedCertSerial(allRevoked, googleCertSerialNumber))
+	require.False(t, containsRevokedCertSubjectSerial(allRevoked, googleCertSubject, googleCertSerialNumber))
 
 	bySubject, err := GetX509CertsBySubject(googleCertSubject)
 	require.NoError(t, err)
@@ -905,7 +905,7 @@ func pkiDemoProposeGoogleRootCert(t *testing.T, jack, userAccount string) {
 	// Approved cert must be absent.
 	all, err := GetAllX509Certs()
 	require.NoError(t, err)
-	require.False(t, containsApprovedCertSerial(all, googleCertSerialNumber))
+	require.False(t, containsApprovedCertSubjectSerial(all, googleCertSubject, googleCertSerialNumber))
 
 	cert, err := GetX509Cert(googleCertSubject, googleCertSubjectKeyID)
 	require.NoError(t, err)
@@ -913,7 +913,7 @@ func pkiDemoProposeGoogleRootCert(t *testing.T, jack, userAccount string) {
 
 	allRevoked, err := GetAllRevokedX509Certs()
 	require.NoError(t, err)
-	require.False(t, containsRevokedCertSerial(allRevoked, googleCertSerialNumber))
+	require.False(t, containsRevokedCertSubjectSerial(allRevoked, googleCertSubject, googleCertSerialNumber))
 
 	allRoots, err := GetAllX509RootCerts()
 	require.NoError(t, err)
@@ -949,7 +949,7 @@ func pkiDemoApproveGoogleRootCert(t *testing.T, alice string) {
 
 	all, err := GetAllX509Certs()
 	require.NoError(t, err)
-	require.False(t, containsApprovedCertSerial(all, googleCertSerialNumber))
+	require.False(t, containsApprovedCertSubjectSerial(all, googleCertSubject, googleCertSerialNumber))
 
 	// Alice approves.
 	txResult, err := ApproveAddX509RootCert(googleCertSubject, googleCertSubjectKeyID, alice)
@@ -982,7 +982,7 @@ func pkiDemoApproveGoogleRootCert(t *testing.T, alice string) {
 
 	all, err = GetAllX509Certs()
 	require.NoError(t, err)
-	require.True(t, containsApprovedCertSerial(all, googleCertSerialNumber))
+	require.True(t, containsApprovedCertSubjectSerial(all, googleCertSubject, googleCertSerialNumber))
 
 	allRoots, err := GetAllX509RootCerts()
 	require.NoError(t, err)
@@ -997,7 +997,7 @@ func pkiDemoApproveGoogleRootCert(t *testing.T, alice string) {
 
 	allRevoked, err := GetAllRevokedX509Certs()
 	require.NoError(t, err)
-	require.False(t, containsRevokedCertSerial(allRevoked, googleCertSerialNumber))
+	require.False(t, containsRevokedCertSubjectSerial(allRevoked, googleCertSubject, googleCertSerialNumber))
 }
 
 // ── Section 12: Propose Revoke Google Root Cert ─────────────────────────────
@@ -1028,7 +1028,7 @@ func pkiDemoProposeRevokeGoogleRootCert(t *testing.T, jack string) {
 
 	allRevoked, err := GetAllRevokedX509Certs()
 	require.NoError(t, err)
-	require.False(t, containsRevokedCertSerial(allRevoked, googleCertSerialNumber))
+	require.False(t, containsRevokedCertSubjectSerial(allRevoked, googleCertSubject, googleCertSerialNumber))
 
 	allRevokedRoots, err := GetAllRevokedX509RootCerts()
 	require.NoError(t, err)
@@ -1040,7 +1040,7 @@ func pkiDemoProposeRevokeGoogleRootCert(t *testing.T, jack string) {
 
 	all, err := GetAllX509Certs()
 	require.NoError(t, err)
-	require.True(t, containsApprovedCertSerial(all, googleCertSerialNumber))
+	require.True(t, containsApprovedCertSubjectSerial(all, googleCertSubject, googleCertSerialNumber))
 
 	allRoots, err := GetAllX509RootCerts()
 	require.NoError(t, err)
@@ -1077,7 +1077,7 @@ func pkiDemoApproveRevokeGoogleRootCert(t *testing.T, alice string) {
 
 	allRevoked, err := GetAllRevokedX509Certs()
 	require.NoError(t, err)
-	require.True(t, containsRevokedCertSerial(allRevoked, googleCertSerialNumber))
+	require.True(t, containsRevokedCertSubjectSerial(allRevoked, googleCertSubject, googleCertSerialNumber))
 
 	allRevokedRoots, err := GetAllRevokedX509RootCerts()
 	require.NoError(t, err)
@@ -1100,7 +1100,7 @@ func pkiDemoApproveRevokeGoogleRootCert(t *testing.T, alice string) {
 
 	all, err := GetAllX509Certs()
 	require.NoError(t, err)
-	require.False(t, containsApprovedCertSerial(all, googleCertSerialNumber))
+	require.False(t, containsApprovedCertSubjectSerial(all, googleCertSubject, googleCertSerialNumber))
 
 	allRoots, err := GetAllX509RootCerts()
 	require.NoError(t, err)

@@ -153,7 +153,7 @@ func TestPKINocCerts(t *testing.T) {
 		require.NoError(t, err)
 		require.NotNil(t, cert)
 		require.True(t, containsCertSubjectSerial(cert.Certs, nocRootCert1Subject, nocRootCert1SerialNumber))
-		require.Equal(t, uint64(1), cert.Tq)
+		require.Equal(t, float32(1), cert.Tq)
 
 		// Query by VID + SKID for cert2
 		cert, err = GetNocCert("--vid", fmt.Sprintf("%d", nocVid), "--subject-key-id", nocRootCert2SubjectKeyID)
