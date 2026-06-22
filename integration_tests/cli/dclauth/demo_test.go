@@ -519,36 +519,41 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Jack proposes new_trustee2, then can reject and re-approve
+		// Jack proposes new_trustee2 (Trustee). With 4 trustees now, a Trustee
+		// account needs ceil(2/3*4)=3 approvals.
 		txResult, err = ProposeAccount(newTrustee2Addr, newTrustee2Pubkey, "Trustee", jack)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
-		// Jack can reject even after proposing
-		txResult, err = RejectAccount(newTrustee2Addr, jack, AccountActionOpts{Info: "Jack is rejecting this account"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
-
-		// Jack re-approves
-		txResult, err = ApproveAccount(newTrustee2Addr, jack, AccountActionOpts{Info: "Jack re-approving"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
-
-		// Alice approves → 2nd approval with 4 trustees = quorum (ceil(4*2/3)=3, need 3... hmm)
-		// Actually with 4 trustees: ceil(4*2/3)=ceil(2.67)=3 approvals needed.
-		// Jack proposed (1) + Alice (2) + Bob (3) → active.
+		// Alice approves FIRST, so the proposal has two approvals (jack, alice)
+		// before jack rejects below. A reject that drops the proposal to a single
+		// remaining approval is fine, but rejecting a *sole*-approval proposal
+		// deletes it entirely (RejectAddAccount removes a pending account when
+		// len(Approvals)==1 && len(Rejects)==0) — so alice must approve before
+		// jack's reject for the re-approve flow to have anything to act on.
 		txResult, err = ApproveAccount(newTrustee2Addr, alice)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
 		require.NoError(t, err)
 
+		// Jack can reject even after proposing (alice's approval keeps it alive).
+		txResult, err = RejectAccount(newTrustee2Addr, jack, AccountActionOpts{Info: "Jack is rejecting this account"})
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// Jack re-approves (approvals: alice, jack = 2).
+		txResult, err = ApproveAccount(newTrustee2Addr, jack, AccountActionOpts{Info: "Jack re-approving"})
+		require.NoError(t, err)
+		require.Equal(t, uint32(0), txResult.Code)
+		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+		require.NoError(t, err)
+
+		// Bob approves → 3rd approval reaches the ceil(2/3*4)=3 quorum → active.
 		txResult, err = ApproveAccount(newTrustee2Addr, bob)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
