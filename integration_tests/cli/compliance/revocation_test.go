@@ -342,14 +342,7 @@ func TestComplianceRevocation(t *testing.T) {
 		rejectTx := func(want string, args ...string) {
 			t.Helper()
 			txResult, err := utils.ExecuteTx(args...)
-			combined := ""
-			if err != nil {
-				combined += err.Error()
-			}
-			if txResult != nil {
-				combined += txResult.RawLog
-			}
-			require.Contains(t, combined, want, "args: %v", args)
+			require.Contains(t, cliputils.TxFailureText(txResult, err), want, "args: %v", args)
 		}
 
 		shortCdID := "1234567890abcdefgh"  // 18 chars

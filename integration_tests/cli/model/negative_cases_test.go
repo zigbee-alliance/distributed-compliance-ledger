@@ -9,7 +9,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/compliance"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
 func TestModelNegativeCases(t *testing.T) {
@@ -113,37 +112,16 @@ func TestModelNegativeCases(t *testing.T) {
 		for _, tc := range cases {
 			tc := tc
 			txResult, err := AddModel(tc.opts)
-			combined := ""
-			if err != nil {
-				combined = err.Error()
-			}
-			if txResult != nil {
-				combined += txResult.RawLog
-			}
-			require.Contains(t, combined, tc.want, "case %s", tc.label)
+			require.Contains(t, cliputils.TxFailureText(txResult, err), tc.want, "case %s", tc.label)
 		}
 	})
 
 	t.Run("AddModel_EmptyProductName_Fails", func(t *testing.T) {
-		// AddModel substitutes its "TestProduct" default for an empty ProductName,
-		// so we can't drive this case through the typed helper. Send the raw flags.
-		out, err := utils.ExecuteCLI("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--deviceTypeID", "1",
-			"--productName", "",
-			"--productLabel", "TestingProductLabel",
-			"--partNumber", "1",
-			"--commissioningCustomFlow", "0",
-			"--enhancedSetupFlowOptions", "0",
-			"--from", vendorAccount,
-			"--yes", "-o", "json", "--keyring-backend", "test",
-		)
-		combined := string(out)
-		if err != nil {
-			combined += err.Error()
-		}
-		require.Contains(t, combined, "ProductName is a required field")
+		txResult, err := AddModel(AddModelOpts{
+			VID: vid, PID: pid, From: vendorAccount,
+			ProductName: EmptyField,
+		})
+		cliputils.RequireTxFailContains(t, txResult, err, "ProductName is a required field")
 	})
 
 	t.Run("AddModel_EmptyFrom_Fails", func(t *testing.T) {
@@ -153,36 +131,20 @@ func TestModelNegativeCases(t *testing.T) {
 		require.Contains(t, err.Error(), "invalid creator address")
 	})
 
-	// rawAddModelRejected runs an add-model with the given flag overrides (the
-	// helper substitutes defaults for empty Product fields, so the empty-field
-	// cases must be sent raw) and asserts the failure message.
-	rawAddModelRejected := func(want string, extra ...string) {
-		t.Helper()
-		args := append([]string{"tx", "model", "add-model"}, extra...)
-		args = append(args, "--yes", "-o", "json", "--keyring-backend", "test")
-		out, err := utils.ExecuteCLI(args...)
-		combined := string(out)
-		if err != nil {
-			combined += err.Error()
-		}
-		require.Contains(t, combined, want)
-	}
-
 	t.Run("AddModel_EmptyProductLabel_Fails", func(t *testing.T) {
-		rawAddModelRejected("ProductLabel is a required field",
-			"--vid", fmt.Sprintf("%d", vid), "--pid", fmt.Sprintf("%d", pid),
-			"--deviceTypeID", "1", "--productName", "TestProduct", "--productLabel", "",
-			"--partNumber", "1", "--commissioningCustomFlow", "0",
-			"--enhancedSetupFlowOptions", "0", "--from", vendorAccount)
+		txResult, err := AddModel(AddModelOpts{
+			VID: vid, PID: pid, From: vendorAccount,
+			ProductLabel: EmptyField,
+		})
+		cliputils.RequireTxFailContains(t, txResult, err, "ProductLabel is a required field")
 	})
 
 	t.Run("AddModel_EmptyPartNumber_Fails", func(t *testing.T) {
-		rawAddModelRejected("PartNumber is a required field",
-			"--vid", fmt.Sprintf("%d", vid), "--pid", fmt.Sprintf("%d", pid),
-			"--deviceTypeID", "1", "--productName", "TestProduct",
-			"--productLabel", "TestingProductLabel", "--partNumber", "",
-			"--commissioningCustomFlow", "0", "--enhancedSetupFlowOptions", "0",
-			"--from", vendorAccount)
+		txResult, err := AddModel(AddModelOpts{
+			VID: vid, PID: pid, From: vendorAccount,
+			PartNumber: EmptyField,
+		})
+		cliputils.RequireTxFailContains(t, txResult, err, "PartNumber is a required field")
 	})
 
 	t.Run("AddModel_DiscoveryBitmaskTooHigh_Fails", func(t *testing.T) {
@@ -191,23 +153,14 @@ func TestModelNegativeCases(t *testing.T) {
 			VID: vid, PID: rand.Intn(65534) + 1, From: vendorAccount,
 			DiscoveryCapabilitiesBitmask: 31,
 		})
-		combined := ""
-		if err != nil {
-			combined = err.Error()
-		}
-		if txResult != nil {
-			combined += txResult.RawLog
-		}
-		require.Contains(t, combined, "DiscoveryCapabilitiesBitmask must not be greater than 30")
+		cliputils.RequireTxFailContains(t, txResult, err, "DiscoveryCapabilitiesBitmask must not be greater than 30")
 	})
 
 	t.Run("AddModel_NoFromFlag_Fails", func(t *testing.T) {
-		// Omit --from entirely (distinct from the empty-string case above).
-		rawAddModelRejected(`required flag(s) "from" not set`,
-			"--vid", fmt.Sprintf("%d", vid), "--pid", fmt.Sprintf("%d", pid),
-			"--deviceTypeID", "1", "--productName", "TestProduct",
-			"--productLabel", "TestingProductLabel", "--partNumber", "1",
-			"--commissioningCustomFlow", "0", "--enhancedSetupFlowOptions", "0")
+		// Omit --from entirely (distinct from the empty-string case above): the CLI
+		// must reject the command for a missing required flag before broadcast.
+		txResult, err := AddModel(AddModelOpts{VID: vid, PID: pid, OmitFrom: true})
+		cliputils.RequireTxFailContains(t, txResult, err, `required flag(s) "from" not set`)
 	})
 
 	t.Run("AddModelVersion_OtaNegatives", func(t *testing.T) {
@@ -226,14 +179,7 @@ func TestModelNegativeCases(t *testing.T) {
 			OtaChecksumType: 2,
 			From:            vendorAccount,
 		})
-		combined := ""
-		if err != nil {
-			combined = err.Error()
-		}
-		if txResult != nil {
-			combined += txResult.RawLog
-		}
-		require.Contains(t, combined, "OtaChecksumType 2 is not supported")
+		cliputils.RequireTxFailContains(t, txResult, err, "OtaChecksumType 2 is not supported")
 
 		// otaChecksum longer than 88 chars is rejected by ValidateBasic.
 		txResult, err = AddModelVersion(AddModelVersionOpts{
@@ -243,13 +189,6 @@ func TestModelNegativeCases(t *testing.T) {
 			OtaChecksumType: 1,
 			From:            vendorAccount,
 		})
-		combined = ""
-		if err != nil {
-			combined = err.Error()
-		}
-		if txResult != nil {
-			combined += txResult.RawLog
-		}
-		require.Contains(t, combined, "maximum length for OtaChecksum allowed is 88")
+		cliputils.RequireTxFailContains(t, txResult, err, "maximum length for OtaChecksum allowed is 88")
 	})
 }

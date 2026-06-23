@@ -57,6 +57,28 @@ type AddModelOpts struct {
 	SchemaVersion string
 
 	From string
+	// OmitFrom drops the --from flag entirely (for the required-flag negative
+	// test). When false, --from From is always sent, including From="".
+	OmitFrom bool
+}
+
+// EmptyField is a sentinel for the defaulted AddModelOpts string fields
+// (ProductName, ProductLabel, PartNumber): assigning it sends an explicit empty
+// flag value instead of the test-friendly default, so negative tests can
+// exercise the chain's required-field validation.
+const EmptyField = "\x00"
+
+// orDefault maps the zero value to def and the EmptyField sentinel to an empty
+// string, passing any other value through unchanged.
+func orDefault(v, def string) string {
+	switch v {
+	case "":
+		return def
+	case EmptyField:
+		return ""
+	default:
+		return v
+	}
 }
 
 // AddModel executes the add-model transaction.
@@ -65,30 +87,22 @@ func AddModel(opts AddModelOpts) (*utils.TxResult, error) {
 	if deviceType == 0 {
 		deviceType = 1
 	}
-	productName := opts.ProductName
-	if productName == "" {
-		productName = "TestProduct"
-	}
-	productLabel := opts.ProductLabel
-	if productLabel == "" {
-		productLabel = "TestingProductLabel"
-	}
-	partNumber := opts.PartNumber
-	if partNumber == "" {
-		partNumber = "1"
-	}
 
 	args := []string{
 		"tx", "model", "add-model",
 		"--vid", cliputils.FlagOrHex(opts.VID, opts.VIDHex),
 		"--pid", cliputils.FlagOrHex(opts.PID, opts.PIDHex),
 		"--deviceTypeID", strconv.Itoa(deviceType),
-		"--productName", productName,
-		"--productLabel", productLabel,
-		"--partNumber", partNumber,
+		"--productName", orDefault(opts.ProductName, "TestProduct"),
+		"--productLabel", orDefault(opts.ProductLabel, "TestingProductLabel"),
+		"--partNumber", orDefault(opts.PartNumber, "1"),
 		"--commissioningCustomFlow", strconv.Itoa(opts.CommissioningCustomFlow),
 		"--enhancedSetupFlowOptions", strconv.Itoa(opts.EnhancedSetupFlowOptions),
-		"--from", opts.From,
+	}
+	// OmitFrom drops the required --from flag entirely (vs From="" which sends an
+	// empty value) so negative tests can exercise the CLI's required-flag check.
+	if !opts.OmitFrom {
+		args = append(args, "--from", opts.From)
 	}
 
 	if opts.EnhancedSetupFlowTCUrl != "" {

@@ -125,7 +125,7 @@ func TestUpgradeDemo(t *testing.T) {
 		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ApproveUpgrade(upgradeName, alice)
-		require.Contains(t, cliputils.TxFailureText(txResult, err), "unauthorized")
+		cliputils.RequireTxFailContains(t, txResult, err, "unauthorized")
 	})
 
 	t.Run("CannotApproveTwice", func(t *testing.T) {
@@ -138,7 +138,7 @@ func TestUpgradeDemo(t *testing.T) {
 		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ApproveUpgrade(upgradeName, bob)
-		require.Contains(t, cliputils.TxFailureText(txResult, err), "unauthorized")
+		cliputils.RequireTxFailContains(t, txResult, err, "unauthorized")
 	})
 
 	t.Run("CannotProposeTwice", func(t *testing.T) {
@@ -148,14 +148,14 @@ func TestUpgradeDemo(t *testing.T) {
 		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ProposeUpgrade(upgradeName, farFutureHeight, alice)
-		require.Contains(t, cliputils.TxFailureText(txResult, err), "proposed upgrade already exists")
+		cliputils.RequireTxFailContains(t, txResult, err, "proposed upgrade already exists")
 	})
 
 	t.Run("UpgradeHeightInPast_Fails", func(t *testing.T) {
 		upgradeName := fmt.Sprintf("upgrade_%s", utils.RandString())
 
 		txResult, err := ProposeUpgrade(upgradeName, "1", alice)
-		require.Contains(t, cliputils.TxFailureText(txResult, err), "upgrade cannot be scheduled in the past")
+		cliputils.RequireTxFailContains(t, txResult, err, "upgrade cannot be scheduled in the past")
 	})
 
 	t.Run("ProposeAndRejectUpgrade_v1_2_1", func(t *testing.T) {
@@ -274,11 +274,11 @@ func TestUpgradeDemo(t *testing.T) {
 
 		// Approving now fails: the plan height is in the past.
 		txResult, err = ApproveUpgrade(upgradeNameV122, alice)
-		require.Contains(t, cliputils.TxFailureText(txResult, err), "upgrade cannot be scheduled in the past")
+		cliputils.RequireTxFailContains(t, txResult, err, "upgrade cannot be scheduled in the past")
 
 		// Re-proposing at the (still) stale height also fails the schedule check.
 		txResult, err = ProposeUpgrade(upgradeNameV122, fmt.Sprintf("%d", planHeight), jack, ProposeUpgradeOpts{UpgradeInfo: upgradeInfoV122})
-		require.Contains(t, cliputils.TxFailureText(txResult, err), "upgrade cannot be scheduled in the past")
+		cliputils.RequireTxFailContains(t, txResult, err, "upgrade cannot be scheduled in the past")
 
 		// Re-proposing at a fresh far-future height replaces the stale proposal.
 		txResult, err = ProposeUpgrade(upgradeNameV122, farFutureHeight, jack, ProposeUpgradeOpts{UpgradeInfo: upgradeInfoV122})

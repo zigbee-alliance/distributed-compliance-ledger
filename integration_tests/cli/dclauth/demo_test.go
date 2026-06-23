@@ -3,10 +3,10 @@ package dclauth
 import (
 	"fmt"
 	"math/rand"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/model"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
@@ -308,29 +308,13 @@ func TestAuthDemoNodeAdmin(t *testing.T) {
 		// rejected account cannot transact (auth-demo.sh:627-631).
 		mvid := rand.Intn(65534) + 1
 		mpid := rand.Intn(65534) + 1
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", mvid),
-			"--pid", fmt.Sprintf("%d", mpid),
-			"--productName", "Device #2",
-			"--productLabel", "Device Description",
-			"--commissioningCustomFlow", "0",
-			"--deviceTypeID", "12",
-			"--partNumber", "12",
-			"--enhancedSetupFlowOptions", "0",
-			"--from", name,
-		)
-		combined := ""
-		if err != nil {
-			combined += err.Error()
-		}
-		if txResult != nil {
-			combined += txResult.RawLog
-		}
-		require.Contains(t, combined, "key not found")
+		txResult, err := model.AddModel(model.AddModelOpts{
+			VID: mvid, PID: mpid, From: name,
+			ProductName: "Device #2", ProductLabel: "Device Description",
+			DeviceTypeID: 12, PartNumber: "12",
+		})
+		cliputils.RequireTxFailContains(t, txResult, err, "key not found")
 	})
-
-	// Unused variables referenced to avoid compiler errors
-	_ = strings.TrimSpace
 }
 
 // TestAuthDemoJackRejectOwnProposal tests that a single trustee can propose and then
@@ -734,66 +718,39 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 		productName := "Device #1"
 
 		// Add a model for the vendor's own VID → success.
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", mpid),
-			"--productName", productName,
-			"--productLabel", "Device Description",
-			"--commissioningCustomFlow", "0",
-			"--deviceTypeID", "12",
-			"--partNumber", "12",
-			"--enhancedSetupFlowOptions", "0",
-			"--from", vendorName,
-		)
+		txResult, err := model.AddModel(model.AddModelOpts{
+			VID: vid, PID: mpid, From: vendorName,
+			ProductName: productName, ProductLabel: "Device Description",
+			DeviceTypeID: 12, PartNumber: "12",
+		})
 		cliputils.RequireTxOK(t, txResult, err)
 
 		// Add a model for a different VID → rejected: the vendor is not associated
 		// with that VID. (vid ≤ 65534, so wrongVid ≤ 65535 stays a valid VID and
 		// reaches the vendor-VID permission check.)
 		wrongVid := vid + 1
-		txResult, err = utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", wrongVid),
-			"--pid", fmt.Sprintf("%d", mpid),
-			"--productName", productName,
-			"--productLabel", "Device Description",
-			"--commissioningCustomFlow", "0",
-			"--deviceTypeID", "12",
-			"--partNumber", "12",
-			"--enhancedSetupFlowOptions", "0",
-			"--from", vendorName,
-		)
-		combined := ""
-		if err != nil {
-			combined += err.Error()
-		}
-		if txResult != nil {
-			combined += txResult.RawLog
-		}
-		require.Contains(t, combined,
+		txResult, err = model.AddModel(model.AddModelOpts{
+			VID: wrongVid, PID: mpid, From: vendorName,
+			ProductName: productName, ProductLabel: "Device Description",
+			DeviceTypeID: 12, PartNumber: "12",
+		})
+		cliputils.RequireTxFailContains(t, txResult, err,
 			fmt.Sprintf("transaction should be signed by a vendor account containing the vendorID %d", wrongVid))
 
 		// Update the model → success.
-		txResult, err = utils.ExecuteTx("tx", "model", "update-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", mpid),
-			"--productName", productName,
-			"--productLabel", "Device Description",
-			"--partNumber", "12",
-			"--enhancedSetupFlowOptions", "2",
-			"--from", vendorName,
-		)
+		txResult, err = model.UpdateModel(model.UpdateModelOpts{
+			VID: vid, PID: mpid, From: vendorName,
+			ProductName: productName, ProductLabel: "Device Description",
+			PartNumber: "12", EnhancedSetupFlowOptions: 2,
+		})
 		cliputils.RequireTxOK(t, txResult, err)
 
 		// Query the model and confirm it is present with the expected fields.
-		out, err := utils.ExecuteCLI("query", "model", "get-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", mpid),
-			"-o", "json",
-		)
+		m, err := model.GetModel(vid, mpid)
 		require.NoError(t, err)
-		require.False(t, utils.IsNotFound(out))
-		require.Contains(t, string(out), productName)
-		require.Contains(t, string(out), fmt.Sprintf("%d", mpid))
+		require.NotNil(t, m)
+		require.Equal(t, productName, m.ProductName)
+		require.Equal(t, int32(mpid), m.Pid)
 	})
 }
 
@@ -898,22 +855,13 @@ func TestAuthDemoVendorAccount(t *testing.T) {
 		userPubkey, err := cliputils.GetPubkey(name)
 		require.NoError(t, err)
 
-		out, err := utils.ExecuteCLI("tx", "auth", "propose-add-account",
-			"--info", "Jack is proposing this account",
-			"--address", userAddr,
-			"--pubkey", userPubkey,
-			"--roles", "Vendor",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid_ranges", invalidPidRanges,
-			"--from", jack,
-			"--yes", "-o", "json", "--keyring-backend", "test",
-		)
-		// Expect error about invalid PID range.
-		combined := string(out)
-		if err != nil {
-			combined += err.Error()
-		}
-		require.Contains(t, combined, "invalid PID Range is provided")
+		txResult, err := ProposeAccount(userAddr, userPubkey, "Vendor", jack, ProposeAccountOpts{
+			Info:      "Jack is proposing this account",
+			VID:       vid,
+			PidRanges: invalidPidRanges,
+		})
+		// Expect error about invalid PID range (rejected at ValidateBasic).
+		cliputils.RequireTxFailContains(t, txResult, err, "invalid PID Range is provided")
 
 		prop, _ := GetProposedAccount(userAddr)
 		require.Nil(t, prop)

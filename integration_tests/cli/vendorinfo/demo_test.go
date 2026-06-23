@@ -146,7 +146,7 @@ func TestVendorInfoDemo(t *testing.T) {
 			CompanyLegalName: updatedCompanyLegalName,
 			VendorName:       vendorName,
 		})
-		require.Contains(t, cliputils.TxFailureText(txResult, err),
+		cliputils.RequireTxFailContains(t, txResult, err,
 			fmt.Sprintf("transaction should be signed by a vendor account associated with the vendorID %d", vid1))
 	})
 
@@ -157,7 +157,7 @@ func TestVendorInfoDemo(t *testing.T) {
 			CompanyLegalName: updatedCompanyLegalName,
 			VendorName:       vendorName,
 		})
-		require.Contains(t, cliputils.TxFailureText(txResult, err),
+		cliputils.RequireTxFailContains(t, txResult, err,
 			fmt.Sprintf("transaction should be signed by a vendor account associated with the vendorID %d", vid))
 	})
 

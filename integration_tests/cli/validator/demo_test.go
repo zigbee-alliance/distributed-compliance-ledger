@@ -100,10 +100,9 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 		// A never-added address has neither a node nor a last-power record
 		// (validator-demo.sh:113-119).
 		name := utils.RandString()
-		_, _ = utils.ExecuteCLI("keys", "add", name, "--keyring-backend", "test", "--no-backup")
-		addrOut, err := utils.ExecuteCLI("keys", "show", name, "-a", "--keyring-backend", "test")
+		require.NoError(t, cliputils.AddKey(name))
+		unknownAddr, err := cliputils.GetAddress(name)
 		require.NoError(t, err)
-		unknownAddr := strings.TrimSpace(string(addrOut))
 
 		node, err := GetNode(unknownAddr)
 		require.NoError(t, err)

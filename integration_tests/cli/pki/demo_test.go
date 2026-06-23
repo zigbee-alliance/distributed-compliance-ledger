@@ -2,7 +2,6 @@ package pki
 
 import (
 	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -1158,9 +1157,8 @@ func pkiDemoRejectTestRootCertMultiTrustee(t *testing.T, jack, alice, bob string
 	t.Helper()
 	// Add a 4th trustee to raise approval/rejection thresholds
 	newTrustee1 := cliputils.CreateAccount(t, "Trustee")
-	newTrustee1AddrOut, err := utils.ExecuteCLI("keys", "show", newTrustee1, "-a", "--keyring-backend", "test")
+	newTrustee1Addr, err := cliputils.GetAddress(newTrustee1)
 	require.NoError(t, err)
-	newTrustee1Addr := strings.TrimSpace(string(newTrustee1AddrOut))
 
 	// Bob approves the test cert (2 approvals with 4 trustees — not enough, need 3)
 	txResult, err := ApproveAddX509RootCert(testCertSubject, testCertSubjectKeyID, bob)
