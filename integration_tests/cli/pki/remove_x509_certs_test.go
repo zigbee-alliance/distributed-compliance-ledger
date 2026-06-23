@@ -7,7 +7,6 @@ import (
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
 const (
@@ -50,23 +49,14 @@ func TestPKIRemoveX509Certificates(t *testing.T) {
 
 		// Add intermediate certs
 		txResult, err := AddX509Cert(removeX509IntermCert1Path, vendorAccount65521)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = AddX509Cert(removeX509IntermCert2Path, vendorAccount65521)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Add leaf cert
 		txResult, err = AddX509Cert(removeX509LeafCertPath, vendorAccount65521)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		all, err := GetAllX509Certs()
 		require.NoError(t, err)
@@ -79,10 +69,7 @@ func TestPKIRemoveX509Certificates(t *testing.T) {
 	t.Run("RevokeAndRemoveIntermCert", func(t *testing.T) {
 		// Revoke first intermediate cert
 		txResult, err := RevokeX509Cert(removeX509IntermCertSubject, removeX509IntermCertSubjectKeyID, vendorAccount65521, RevokeNocCertOpts{SerialNumber: removeX509IntermCert1SerialNum})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Try to remove with invalid serial
 		txResult, err = RemoveX509Cert(removeX509IntermCertSubject, removeX509IntermCertSubjectKeyID, vendorAccount65521, RevokeNocCertOpts{SerialNumber: "invalid"})
@@ -101,10 +88,7 @@ func TestPKIRemoveX509Certificates(t *testing.T) {
 
 		// Remove revoked intermediate cert by serial
 		txResult, err = RemoveX509Cert(removeX509IntermCertSubject, removeX509IntermCertSubjectKeyID, vendorAccount65521, RevokeNocCertOpts{SerialNumber: removeX509IntermCert1SerialNum})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Only second intermediate cert should remain
 		cert, err := GetX509Cert(removeX509IntermCertSubject, removeX509IntermCertSubjectKeyID)
@@ -115,10 +99,7 @@ func TestPKIRemoveX509Certificates(t *testing.T) {
 
 		// Remove remaining intermediate cert by subject+subjectKeyID
 		txResult, err = RemoveX509Cert(removeX509IntermCertSubject, removeX509IntermCertSubjectKeyID, vendorAccount65521)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		cert, err = GetX509Cert(removeX509IntermCertSubject, removeX509IntermCertSubjectKeyID)
 		require.NoError(t, err)
@@ -143,10 +124,7 @@ func TestPKIRemoveX509Certificates(t *testing.T) {
 
 	t.Run("RemoveLeafCert", func(t *testing.T) {
 		txResult, err := RemoveX509Cert(removeX509LeafCertSubject, removeX509LeafCertSubjectKeyID, vendorAccount65521)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		cert, err := GetX509Cert(removeX509LeafCertSubject, removeX509LeafCertSubjectKeyID)
 		require.NoError(t, err)

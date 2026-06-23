@@ -7,7 +7,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
 func TestModelDemo(t *testing.T) {
@@ -46,10 +45,7 @@ func TestModelDemo(t *testing.T) {
 			SchemaVersion: "0",
 			From:          vendorAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("AddModelWithPidRanges", func(t *testing.T) {
@@ -66,10 +62,7 @@ func TestModelDemo(t *testing.T) {
 			DiscoveryCapabilitiesBitmask: 1,
 			From:                         vendorAccountWithPids,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("QueryModel", func(t *testing.T) {
@@ -120,10 +113,7 @@ func TestModelDemo(t *testing.T) {
 			MaintenanceURL:              newMaintenanceURL,
 			CommissioningFallbackURL:    newFallbackURL,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		m, err := GetModel(vidWithPids, pid)
 		require.NoError(t, err)
@@ -146,10 +136,7 @@ func TestModelDemo(t *testing.T) {
 			MaxApplicableSoftwareVersion: 15,
 			From:                         vendorAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = AddModelVersion(AddModelVersionOpts{
 			VID: vidWithPids, PID: pid,
@@ -159,10 +146,7 @@ func TestModelDemo(t *testing.T) {
 			MaxApplicableSoftwareVersion: 15,
 			From:                         vendorAccountWithPids,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("QueryAllModelsAndVendorModels", func(t *testing.T) {
@@ -193,10 +177,7 @@ func TestModelDemo(t *testing.T) {
 			EnhancedSetupFlowOptions:            2,
 			FactoryResetStepsHint:               newFactoryResetStepsHint,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("QueryUpdatedModel", func(t *testing.T) {
@@ -221,10 +202,7 @@ func TestModelDemo(t *testing.T) {
 			VID: vid, PID: pid, From: vendorAccount,
 			SupportURL: supportURL,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		m, err := GetModel(vid, pid)
 		require.NoError(t, err)
@@ -234,16 +212,10 @@ func TestModelDemo(t *testing.T) {
 
 	t.Run("DeleteModels", func(t *testing.T) {
 		txResult, err := DeleteModel(vid, pid, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = DeleteModel(vidWithPids, pid, vendorAccountWithPids)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("QueryAfterDeletion", func(t *testing.T) {
@@ -272,10 +244,7 @@ func TestModelDemo(t *testing.T) {
 		pid3 := rand.Intn(65534) + 1
 
 		txResult, err := AddModel(AddModelOpts{VID: vid3, PID: pid3, ProductLabel: "VendorAdmin Product", From: vendorAdmin})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		m, err := GetModel(vid3, pid3)
 		require.NoError(t, err)
@@ -286,10 +255,7 @@ func TestModelDemo(t *testing.T) {
 			VID: vid3, PID: pid3, From: vendorAdmin,
 			ProductLabel: "Updated by VendorAdmin",
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		m, err = GetModel(vid3, pid3)
 		require.NoError(t, err)
@@ -297,10 +263,7 @@ func TestModelDemo(t *testing.T) {
 		require.Equal(t, "Updated by VendorAdmin", m.ProductLabel)
 
 		txResult, err = DeleteModel(vid3, pid3, vendorAdmin)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		m, err = GetModel(vid3, pid3)
 		require.NoError(t, err)

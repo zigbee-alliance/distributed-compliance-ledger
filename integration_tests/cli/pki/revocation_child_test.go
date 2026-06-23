@@ -20,7 +20,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
 const (
@@ -63,24 +62,15 @@ func TestPKIRevocationWithRevokingChild(t *testing.T) {
 
 		// Add intermediate cert 1
 		txResult, err := AddX509Cert(revChildIntermCert1Path, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Add intermediate cert 2
 		txResult, err = AddX509Cert(revChildIntermCert2Path, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Add leaf cert
 		txResult, err = AddX509Cert(revChildLeafCertPath, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Verify all certs exist
 		all, err := GetAllX509Certs()
@@ -94,10 +84,7 @@ func TestPKIRevocationWithRevokingChild(t *testing.T) {
 	t.Run("RevokeIntermediateCertWithChildFlag", func(t *testing.T) {
 		// Revoke intermediate certs and their child certificates
 		txResult, err := RevokeX509Cert(revChildIntermCertSubject, revChildIntermCertSubjectKeyID, vendorAccount, RevokeNocCertOpts{RevokeChild: true})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Revoked certs should contain both intermediate and leaf
 		revoked, err := GetAllRevokedX509Certs()
@@ -119,36 +106,21 @@ func TestPKIRevocationWithRevokingChild(t *testing.T) {
 	t.Run("ReAddCertsAfterRevocation", func(t *testing.T) {
 		// Remove revoked certs from revoked list
 		txResult, err := RemoveX509Cert(revChildIntermCertSubject, revChildIntermCertSubjectKeyID, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = RemoveX509Cert(revChildLeafCertSubject, revChildLeafCertSubjectKeyID, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Re-add intermediate cert 1
 		txResult, err = AddX509Cert(revChildIntermCert1Path, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Re-add intermediate cert 2
 		txResult, err = AddX509Cert(revChildIntermCert2Path, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Re-add leaf cert
 		txResult, err = AddX509Cert(revChildLeafCertPath, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 }

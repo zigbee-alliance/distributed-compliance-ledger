@@ -7,7 +7,6 @@ import (
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
 const (
@@ -52,16 +51,10 @@ func TestPKIAddVendorX509Certificates(t *testing.T) {
 
 	t.Run("ProposeAndApproveRootCert", func(t *testing.T) {
 		txResult, err := ProposeAddX509RootCert(addVendorRootCertPath, jack, X509ProposeOpts{VID: pkiDemoVid})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ApproveAddX509RootCert(addVendorRootCertSubject, addVendorRootCertSubjectKeyID, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	// assertIntermediateAbsent confirms the gsr4 intermediate is not on the
@@ -98,10 +91,7 @@ func TestPKIAddVendorX509Certificates(t *testing.T) {
 	t.Run("AddIntermediate_MatchingVendorVid_Success", func(t *testing.T) {
 		// Vendor VID (1) matches the root's VID → add succeeds.
 		txResult, err := AddX509Cert(addVendorIntermCertPath, vendorAccountMatchingVid)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		cert, err := GetX509Cert(addVendorIntermCertSubject, addVendorIntermCertSubjectKeyID)
 		require.NoError(t, err)

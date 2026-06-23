@@ -26,10 +26,7 @@ func TestModelVersionDemo(t *testing.T) {
 			ProductLabel: "Test Product",
 			From:         vendorAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	sv := rand.Intn(65534) + 1
@@ -45,10 +42,7 @@ func TestModelVersionDemo(t *testing.T) {
 			CDCertificateID:       "0000000000000000001",
 			From:                  zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("AddModelVersion", func(t *testing.T) {
@@ -60,10 +54,7 @@ func TestModelVersionDemo(t *testing.T) {
 			SchemaVersion:         "0",
 			From:                  vendorAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("QueryModelVersion", func(t *testing.T) {
@@ -110,10 +101,7 @@ func TestModelVersionDemo(t *testing.T) {
 			SoftwareVersionValid:         boolPtr(false),
 			SchemaVersion:                "0",
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		mv, err := GetModelVersion(vid, pid, sv)
 		require.NoError(t, err)
@@ -133,10 +121,7 @@ func TestModelVersionDemo(t *testing.T) {
 			SoftwareVersionString: "1",
 			From:                  vendorAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		mvs, err := GetAllModelVersions(vid, pid)
 		require.NoError(t, err)
@@ -185,10 +170,7 @@ func TestModelVersionDemo(t *testing.T) {
 		require.NoError(t, err)
 
 		txResult, err = DeleteModelVersion(vid, pid, sv, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		mv, err := GetModelVersion(vid, pid, sv)
 		require.NoError(t, err)
@@ -204,18 +186,12 @@ func TestModelVersionDemo(t *testing.T) {
 		sv3 := rand.Intn(65534) + 1
 
 		txResult, err := AddModel(AddModelOpts{VID: vid3, PID: pid3, ProductLabel: "Test Product", From: vendorAdmin})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = AddModelVersion(AddModelVersionOpts{
 			VID: vid3, PID: pid3, SoftwareVersion: sv3, SoftwareVersionString: "1", From: vendorAdmin,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		mv, err := GetModelVersion(vid3, pid3, sv3)
 		require.NoError(t, err)
@@ -229,10 +205,7 @@ func TestModelVersionDemo(t *testing.T) {
 			VID: vid3, PID: pid3, SoftwareVersion: sv3, From: vendorAdmin,
 			SoftwareVersionValid: boolPtr(false),
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		mv, err = GetModelVersion(vid3, pid3, sv3)
 		require.NoError(t, err)
@@ -241,10 +214,7 @@ func TestModelVersionDemo(t *testing.T) {
 
 		// VendorAdmin deletes the version (never certified, so no compliance info).
 		txResult, err = DeleteModelVersion(vid3, pid3, sv3, vendorAdmin)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		mv, err = GetModelVersion(vid3, pid3, sv3)
 		require.NoError(t, err)

@@ -40,10 +40,7 @@ func TestComplianceDemo(t *testing.T) {
 			CDVersionNumber:       cdVersionNumber,
 			From:                  zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		dsc, err := GetDeviceSoftwareCompliance(cdCertID)
 		require.NoError(t, err)
@@ -69,10 +66,7 @@ func TestComplianceDemo(t *testing.T) {
 		txResult, err := model.AddModel(model.AddModelOpts{
 			VID: vid, PID: pid, From: vendorAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = model.AddModelVersion(model.AddModelVersionOpts{
 			VID: vid, PID: pid,
@@ -81,10 +75,7 @@ func TestComplianceDemo(t *testing.T) {
 			CDVersionNumber:       cdVersionNumber,
 			From:                  vendorAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("QueryBeforeCertification_NotFound", func(t *testing.T) {
@@ -144,9 +135,7 @@ func TestComplianceDemo(t *testing.T) {
 			CDVersionNumber:       cdVersionNumber,
 			From:                  zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(306), txResult.Code)
-		_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
+		cliputils.RequireTxFailCode(t, txResult, err, 306)
 	})
 
 	t.Run("CertifyWithInvalidCDVersionNumber_Fails", func(t *testing.T) {
@@ -162,10 +151,8 @@ func TestComplianceDemo(t *testing.T) {
 			CDVersionNumber:       2,
 			From:                  zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(306), txResult.Code)
+		cliputils.RequireTxFailCode(t, txResult, err, 306)
 		require.Contains(t, txResult.RawLog, "ledger does not have matching CDVersionNumber=2")
-		_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
 	})
 
 	t.Run("CertifyZigbee_Success", func(t *testing.T) {
@@ -179,10 +166,7 @@ func TestComplianceDemo(t *testing.T) {
 			CDVersionNumber:       cdVersionNumber,
 			From:                  zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("CertifyMatter_Success", func(t *testing.T) {
@@ -196,10 +180,7 @@ func TestComplianceDemo(t *testing.T) {
 			CDVersionNumber:       cdVersionNumber,
 			From:                  zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("ReCertify_DifferentAccount_Fails", func(t *testing.T) {
@@ -213,10 +194,8 @@ func TestComplianceDemo(t *testing.T) {
 			CDVersionNumber:       cdVersionNumber,
 			From:                  secondZbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(303), txResult.Code)
+		cliputils.RequireTxFailCode(t, txResult, err, 303)
 		require.Contains(t, txResult.RawLog, "already certified on the ledger")
-		_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
 	})
 
 	t.Run("ReCertify_SameAccount_Fails", func(t *testing.T) {
@@ -230,10 +209,8 @@ func TestComplianceDemo(t *testing.T) {
 			CDVersionNumber:       cdVersionNumber,
 			From:                  zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(303), txResult.Code)
+		cliputils.RequireTxFailCode(t, txResult, err, 303)
 		require.Contains(t, txResult.RawLog, "already certified on the ledger")
-		_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
 	})
 
 	t.Run("QueryAfterCertification", func(t *testing.T) {
@@ -323,10 +300,8 @@ func TestComplianceDemo(t *testing.T) {
 			CDVersionNumber:       cdVersionNumber,
 			From:                  zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(302), txResult.Code)
+		cliputils.RequireTxFailCode(t, txResult, err, 302)
 		require.Contains(t, txResult.RawLog, "must be after")
-		_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
 	})
 
 	revocationDate := "2020-02-02T02:20:20Z"
@@ -343,10 +318,7 @@ func TestComplianceDemo(t *testing.T) {
 			CDVersionNumber:       cdVersionNumber,
 			From:                  zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("QueryAfterRevocation", func(t *testing.T) {
@@ -417,10 +389,7 @@ func TestComplianceDemo(t *testing.T) {
 			CDVersionNumber:       cdVersionNumber,
 			From:                  zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Compliance info — back to certified with new date
 		zbQuery := ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: zigbeeCertType}
@@ -489,10 +458,7 @@ func TestComplianceDemo(t *testing.T) {
 		txResult, err := model.AddModel(model.AddModelOpts{
 			VID: vid, PID: pid2, From: vendorAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = model.AddModelVersion(model.AddModelVersionOpts{
 			VID: vid, PID: pid2,
@@ -501,10 +467,7 @@ func TestComplianceDemo(t *testing.T) {
 			CDVersionNumber:       cdVersionNumber,
 			From:                  vendorAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("CertifyWithOptionalFields", func(t *testing.T) {
@@ -531,10 +494,7 @@ func TestComplianceDemo(t *testing.T) {
 				CertificationIDOfSoftwareComponent: "someIDOfSoftwareComponent",
 			},
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Certified model
 		certified, err := GetCertifiedModel(ComplianceQueryOpts{VID: vid, PID: pid2, SoftwareVersion: sv2, CertificationType: zigbeeCertType})
@@ -608,10 +568,7 @@ func TestComplianceDemo(t *testing.T) {
 				Transport:   "ethernet",
 			},
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Verify updated fields changed, non-updated optional fields unchanged
 		zbQuery := ComplianceQueryOpts{VID: vid, PID: pid2, SoftwareVersion: sv2, CertificationType: zigbeeCertType}
@@ -651,8 +608,7 @@ func TestComplianceDemo(t *testing.T) {
 				Transport:   "bluetooth",
 			},
 		})
-		require.NoError(t, err)
-		require.NotEqual(t, uint32(0), txResult.Code)
+		cliputils.RequireTxFails(t, txResult, err)
 		require.Contains(t, txResult.RawLog, "unauthorized")
 
 		// Fields must be unchanged after vendor update attempt.
@@ -669,10 +625,7 @@ func TestComplianceDemo(t *testing.T) {
 		txResult, err := UpdateComplianceInfo(UpdateComplianceInfoOpts{
 			VID: vid, PID: pid2, SoftwareVersion: sv2, CertificationType: zigbeeCertType, From: zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Fields must remain as set by the first update.
 		info, err := GetComplianceInfo(ComplianceQueryOpts{VID: vid, PID: pid2, SoftwareVersion: sv2, CertificationType: zigbeeCertType})
@@ -708,10 +661,7 @@ func TestComplianceDemo(t *testing.T) {
 				CertificationIDOfSoftwareComponent: "brand_new_component",
 			},
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// All fields updated
 		info, err := GetComplianceInfo(ComplianceQueryOpts{VID: vid, PID: pid2, SoftwareVersion: sv2, CertificationType: zigbeeCertType})
@@ -748,10 +698,7 @@ func TestComplianceDemo(t *testing.T) {
 
 	t.Run("DeleteComplianceInfo_AndVerify", func(t *testing.T) {
 		txResult, err := DeleteComplianceInfo(vid, pid2, sv2, zigbeeCertType, zbAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Compliance info — gone.
 		info, err := GetComplianceInfo(ComplianceQueryOpts{VID: vid, PID: pid2, SoftwareVersion: sv2, CertificationType: zigbeeCertType})

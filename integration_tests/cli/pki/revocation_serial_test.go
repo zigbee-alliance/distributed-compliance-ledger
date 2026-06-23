@@ -21,7 +21,6 @@ import (
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
 // Cert fixtures — same paths as revocation_child_test.go, aliased here to
@@ -75,17 +74,13 @@ func TestPKIRevocationWithSerialNumber(t *testing.T) {
 
 	t.Run("RevokeIntermWithInvalidSerialNumber", func(t *testing.T) {
 		txResult, err := RevokeX509Cert(revSerialIntermCertSubject, revSerialIntermCertSubjectKeyID, vendorAccount, RevokeNocCertOpts{SerialNumber: "invalid"})
-		require.NoError(t, err)
-		require.NotEqual(t, uint32(0), txResult.Code)
+		cliputils.RequireTxFails(t, txResult, err)
 	})
 
 	t.Run("RevokeIntermWithSerialNumber3Only", func(t *testing.T) {
 		// Revoke with serial number 3 only — child certs should remain
 		txResult, err := RevokeX509Cert(revSerialIntermCertSubject, revSerialIntermCertSubjectKeyID, vendorAccount, RevokeNocCertOpts{SerialNumber: revSerialIntermCert1SerialNumber})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Revoked list should contain only intermediate cert with serial 3.
 		revoked, err := GetAllRevokedX509Certs()
@@ -111,10 +106,7 @@ func TestPKIRevocationWithSerialNumber(t *testing.T) {
 	t.Run("RevokeIntermWithSerial4AndChildFlag", func(t *testing.T) {
 		// Revoke intermediate with serial 4 and its children
 		txResult, err := RevokeX509Cert(revSerialIntermCertSubject, revSerialIntermCertSubjectKeyID, vendorAccount, RevokeNocCertOpts{SerialNumber: revSerialIntermCert2SerialNumber, RevokeChild: true})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Revoked list should contain two intermediates and leaf.
 		revoked, err := GetAllRevokedX509Certs()
@@ -136,35 +128,20 @@ func TestPKIRevocationWithSerialNumber(t *testing.T) {
 	t.Run("ReAddCertsForRootRevocationTest", func(t *testing.T) {
 		// Remove revoked certs
 		txResult, err := RemoveX509Cert(revSerialIntermCertSubject, revSerialIntermCertSubjectKeyID, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = RemoveX509Cert(revSerialLeafCertSubject, revSerialLeafCertSubjectKeyID, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Re-add intermediate and leaf certs
 		txResult, err = AddX509Cert(revSerialIntermCert1Path, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = AddX509Cert(revSerialIntermCert2Path, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = AddX509Cert(revSerialLeafCertPath, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Verify all certs present.
 		all, err := GetAllX509Certs()
@@ -177,23 +154,16 @@ func TestPKIRevocationWithSerialNumber(t *testing.T) {
 
 	t.Run("ProposeRevokeRootWithInvalidSerialNumber", func(t *testing.T) {
 		txResult, err := ProposeRevokeX509RootCert(revSerialRootCertSubject, revSerialRootCertSubjectKeyID, jack, X509ActionOpts{SerialNumber: "invalid"})
-		require.NoError(t, err)
-		require.NotEqual(t, uint32(0), txResult.Code)
+		cliputils.RequireTxFails(t, txResult, err)
 	})
 
 	t.Run("ProposeAndApproveRevokeRootSerial1Only", func(t *testing.T) {
 		// Propose revoke root with serial 1 (child certs should remain).
 		txResult, err := ProposeRevokeX509RootCert(revSerialRootCertSubject, revSerialRootCertSubjectKeyID, jack, X509ActionOpts{SerialNumber: revSerialRootCert1SerialNumber})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ApproveRevokeX509RootCert(revSerialRootCertSubject, revSerialRootCertSubjectKeyID, alice, X509ActionOpts{SerialNumber: revSerialRootCert1SerialNumber})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Revoked list should contain only one root entry with serial 1.
 		revoked, err := GetAllRevokedX509Certs()
@@ -225,16 +195,10 @@ func TestPKIRevocationWithSerialNumber(t *testing.T) {
 			SerialNumber: revSerialRootCert2SerialNumber,
 			RevokeChild:  true,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ApproveRevokeX509RootCert(revSerialRootCertSubject, revSerialRootCertSubjectKeyID, alice, X509ActionOpts{SerialNumber: revSerialRootCert2SerialNumber})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Revoked list should contain two root, two intermediate and leaf.
 		revoked, err := GetAllRevokedX509Certs()

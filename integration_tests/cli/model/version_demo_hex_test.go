@@ -7,7 +7,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
 func TestModelVersionDemoHex(t *testing.T) {
@@ -28,10 +27,7 @@ func TestModelVersionDemoHex(t *testing.T) {
 			ProductLabel: "Test Product",
 			From:         vendorAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("AddModelVersion_WithDecimalSV", func(t *testing.T) {
@@ -42,10 +38,7 @@ func TestModelVersionDemoHex(t *testing.T) {
 			SoftwareVersionString: "1",
 			From:                  vendorAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("QueryModelVersion_WithHexVID", func(t *testing.T) {
@@ -91,10 +84,7 @@ func TestModelVersionDemoHex(t *testing.T) {
 			MaxApplicableSoftwareVersion: 10,
 			SoftwareVersionValid:         boolPtr(false),
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		mv, err := GetModelVersionHex(vidHex, pidHex, sv)
 		require.NoError(t, err)
@@ -110,10 +100,7 @@ func TestModelVersionDemoHex(t *testing.T) {
 		txResult, err := AddModelVersion(AddModelVersionOpts{
 			VID: vid, PID: pid, SoftwareVersion: sv2, SoftwareVersionString: "1", From: vendorAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		mvs, err := GetAllModelVersionsHex(vidHex, pidHex)
 		require.NoError(t, err)

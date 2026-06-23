@@ -3,41 +3,11 @@ package model
 import (
 	"fmt"
 	"math/rand"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
-
-// requireTxOK asserts a tx executed with on-chain code 0.
-func requireTxOK(t *testing.T, txResult *utils.TxResult, err error) {
-	t.Helper()
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code, "tx raw_log: %s", txResult.RawLog)
-	_, awaitErr := utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, awaitErr)
-}
-
-// requireTxFailContains asserts a tx failed (either at CLI level or on-chain)
-// and the error message contains the expected substring.
-func requireTxFailContains(t *testing.T, txResult *utils.TxResult, err error, want string) {
-	t.Helper()
-	var msg string
-	switch {
-	case err != nil:
-		msg = err.Error()
-	case txResult == nil:
-		t.Fatalf("expected failure containing %q, got nil tx and nil err", want)
-	default:
-		require.NotEqual(t, uint32(0), txResult.Code,
-			"expected non-zero code, raw_log: %s", txResult.RawLog)
-		msg = txResult.RawLog
-	}
-	require.True(t, strings.Contains(msg, want),
-		"expected error to contain %q, got: %s", want, msg)
-}
 
 func TestModelValidationCases(t *testing.T) {
 	vid1 := rand.Intn(65534) + 1
@@ -57,7 +27,7 @@ func TestModelValidationCases(t *testing.T) {
 			ProductLabel: "Test Product",
 			From:         vendorAccount1,
 		})
-		requireTxOK(t, txResult, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		m, err := GetModel(vid1, pid1)
 		require.NoError(t, err)
@@ -94,7 +64,7 @@ func TestModelValidationCases(t *testing.T) {
 			LsfURL:                                     "https://lsf.url.info",
 			SupportURL:                                 "https://support.url.info",
 		})
-		requireTxOK(t, txResult, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		m, err := GetModel(vid1, pid2)
 		require.NoError(t, err)
@@ -143,7 +113,7 @@ func TestModelValidationCases(t *testing.T) {
 			FactoryResetStepsHint:                      3,
 			FactoryResetStepsInstruction:               "Factory Reset Steps Instruction",
 		})
-		requireTxOK(t, txResult, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		m, err := GetModel(vid1, pid3)
 		require.NoError(t, err)
@@ -164,7 +134,7 @@ func TestModelValidationCases(t *testing.T) {
 			LsfURL:       "https://lsf.url.info?v=1",
 			LsfRevision:  1,
 		})
-		requireTxOK(t, txResult, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		m, err := GetModel(vid1, pid1)
 		require.NoError(t, err)
@@ -182,7 +152,7 @@ func TestModelValidationCases(t *testing.T) {
 			VID: vid1, PID: pid1, From: vendorAccount1,
 			ProductLabel: "Updated Test Product V2",
 		})
-		requireTxOK(t, txResult, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		m, err := GetModel(vid1, pid1)
 		require.NoError(t, err)
@@ -209,7 +179,7 @@ func TestModelValidationCases(t *testing.T) {
 			LsfURL:                                     "https://lsf.url.info?v=2",
 			LsfRevision:                                2,
 		})
-		requireTxOK(t, txResult, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		m, err := GetModel(vid1, pid1)
 		require.NoError(t, err)
@@ -234,7 +204,7 @@ func TestModelValidationCases(t *testing.T) {
 			VID: vid1, PID: pid1, From: vendorAccount1,
 			ProductLabel: "Updated Test Product V4",
 		})
-		requireTxOK(t, txResult, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		m, err := GetModel(vid1, pid1)
 		require.NoError(t, err)
@@ -248,7 +218,7 @@ func TestModelValidationCases(t *testing.T) {
 		txResult, err := UpdateModel(UpdateModelOpts{
 			VID: vid1, PID: pid1, From: vendorAccount1,
 		})
-		requireTxOK(t, txResult, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		m, err := GetModel(vid1, pid1)
 		require.NoError(t, err)
@@ -265,7 +235,7 @@ func TestModelValidationCases(t *testing.T) {
 			LsfURL:      "https://lsf.url.info?v=3",
 			LsfRevision: 2,
 		})
-		requireTxFailContains(t, txResult, err, "LsfRevision should monotonically increase by 1")
+		cliputils.RequireTxFailContains(t, txResult, err, "LsfRevision should monotonically increase by 1")
 	})
 
 	t.Run("UpdateModel_LsfRevisionLess_Fails_Pid1", func(t *testing.T) {
@@ -274,7 +244,7 @@ func TestModelValidationCases(t *testing.T) {
 			LsfURL:      "https://lsf.url.info?v=3",
 			LsfRevision: 1,
 		})
-		requireTxFailContains(t, txResult, err, "LsfRevision should monotonically increase by 1")
+		cliputils.RequireTxFailContains(t, txResult, err, "LsfRevision should monotonically increase by 1")
 	})
 
 	// --- Model Version: minimum fields, then increment-style updates ---
@@ -291,7 +261,7 @@ func TestModelValidationCases(t *testing.T) {
 			MaxApplicableSoftwareVersion: 20,
 			From:                         vendorAccount1,
 		})
-		requireTxOK(t, txResult, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		mv, err := GetModelVersion(vid1, pid1, svBasic)
 		require.NoError(t, err)
@@ -311,7 +281,7 @@ func TestModelValidationCases(t *testing.T) {
 			VID: vid1, PID: pid1, SoftwareVersion: svBasic, From: vendorAccount1,
 			SoftwareVersionValid: boolPtr(false),
 		})
-		requireTxOK(t, txResult, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		mv, err := GetModelVersion(vid1, pid1, svBasic)
 		require.NoError(t, err)
@@ -331,7 +301,7 @@ func TestModelValidationCases(t *testing.T) {
 			MinApplicableSoftwareVersion: 2,
 			MaxApplicableSoftwareVersion: 20,
 		})
-		requireTxOK(t, txResult, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		mv, err := GetModelVersion(vid1, pid1, svBasic)
 		require.NoError(t, err)
@@ -367,7 +337,7 @@ func TestModelValidationCases(t *testing.T) {
 			ReleaseNotesURL:              "https://release.notes.url.info",
 			OtaChecksumType:              1,
 		})
-		requireTxOK(t, txResult, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		mv, err := GetModelVersion(vid1, pid1, svFull)
 		require.NoError(t, err)
@@ -390,7 +360,7 @@ func TestModelValidationCases(t *testing.T) {
 		txResult, err := UpdateModelVersion(UpdateModelVersionOpts{
 			VID: vid1, PID: pid1, SoftwareVersion: svFull, From: vendorAccount1,
 		})
-		requireTxOK(t, txResult, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		mv, err := GetModelVersion(vid1, pid1, svFull)
 		require.NoError(t, err)
@@ -405,7 +375,7 @@ func TestModelValidationCases(t *testing.T) {
 			VID: vid1, PID: pid1, SoftwareVersion: svFull, From: vendorAccount1,
 			SoftwareVersionValid: boolPtr(false),
 		})
-		requireTxOK(t, txResult, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		mv, err := GetModelVersion(vid1, pid1, svFull)
 		require.NoError(t, err)
@@ -423,7 +393,7 @@ func TestModelValidationCases(t *testing.T) {
 			MaxApplicableSoftwareVersion: 25,
 			MinApplicableSoftwareVersion: 15,
 		})
-		requireTxOK(t, txResult, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		mv, err := GetModelVersion(vid1, pid1, svFull)
 		require.NoError(t, err)
@@ -441,7 +411,7 @@ func TestModelValidationCases(t *testing.T) {
 			VID: vid1, PID: pid1, SoftwareVersion: svFull, From: vendorAccount1,
 			OtaFileSize: 12345,
 		})
-		requireTxFailContains(t, txResult, err,
+		cliputils.RequireTxFailContains(t, txResult, err,
 			"OtaUrl is not provided. OtaFileSize, OtaChecksum, and OtaChecksumType fields must not be provided")
 	})
 
@@ -466,7 +436,7 @@ func TestModelValidationCases(t *testing.T) {
 			SpecificationVersion:         6,
 			OtaChecksumType:              1,
 		})
-		requireTxOK(t, txResult, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		mv, err := GetModelVersion(vid1, pid1, svBounds)
 		require.NoError(t, err)
@@ -480,7 +450,7 @@ func TestModelValidationCases(t *testing.T) {
 			MaxApplicableSoftwareVersion: 3,
 			MinApplicableSoftwareVersion: 5,
 		})
-		requireTxFailContains(t, txResult, err,
+		cliputils.RequireTxFailContains(t, txResult, err,
 			"MaxApplicableSoftwareVersion must not be less than MinApplicableSoftwareVersion")
 	})
 
@@ -490,7 +460,7 @@ func TestModelValidationCases(t *testing.T) {
 			MaxApplicableSoftwareVersion: 32,
 			MinApplicableSoftwareVersion: 33,
 		})
-		requireTxFailContains(t, txResult, err,
+		cliputils.RequireTxFailContains(t, txResult, err,
 			"MaxApplicableSoftwareVersion must not be less than MinApplicableSoftwareVersion")
 	})
 
@@ -508,13 +478,13 @@ func TestModelValidationCases(t *testing.T) {
 			MaxApplicableSoftwareVersion: 20,
 			From:                         vendorAccount1,
 		})
-		requireTxOK(t, txResult, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = UpdateModelVersion(UpdateModelVersionOpts{
 			VID: vid1, PID: pid1, SoftwareVersion: svNoOta, From: vendorAccount1,
 			OtaURL: "https://ota.url.com",
 		})
-		requireTxFailContains(t, txResult, err,
+		cliputils.RequireTxFailContains(t, txResult, err,
 			"OtaFileSize, OtaChecksum and OtaChecksumType are required if OtaUrl is provided")
 	})
 
@@ -539,7 +509,7 @@ func TestModelValidationCases(t *testing.T) {
 			ReleaseNotesURL:              "https://release.notes.url.info",
 			OtaChecksumType:              1,
 		})
-		requireTxOK(t, txResult, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		mv, err := GetModelVersion(vid1, pid1, svNoSpecVer)
 		require.NoError(t, err)
@@ -569,7 +539,7 @@ func TestModelValidationCases(t *testing.T) {
 			ReleaseNotesURL:              "https://release.notes.url.info",
 			OtaChecksumType:              1,
 		})
-		requireTxOK(t, txResult, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("UpdateModelVersion_SpecVerFlag_Rejected", func(t *testing.T) {
@@ -601,7 +571,7 @@ func TestModelValidationCases(t *testing.T) {
 			SchemaVersion: "0",
 			From:          vendorAccount1,
 		})
-		requireTxOK(t, txResult, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		m, err := GetModel(vid1, extraPid)
 		require.NoError(t, err)

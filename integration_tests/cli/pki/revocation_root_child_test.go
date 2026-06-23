@@ -18,8 +18,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
 // TestPKIRevokeRootCertWholeSubjectWithChild ports the whole-subject (no serial
@@ -66,10 +66,7 @@ func TestPKIRevokeRootCertWholeSubjectWithChild(t *testing.T) {
 		// its children. With 3 trustees this single proposal is not yet enough
 		// (revocation needs 2/3), so the root stays approved until the approval.
 		txResult, err := ProposeRevokeX509RootCert(addVendorRootCertSubject, addVendorRootCertSubjectKeyID, jack, X509ActionOpts{RevokeChild: true})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Pending revocation is recorded.
 		proposedRev, err := GetProposedRevokedX509RootCert(addVendorRootCertSubject, addVendorRootCertSubjectKeyID)
@@ -88,10 +85,7 @@ func TestPKIRevokeRootCertWholeSubjectWithChild(t *testing.T) {
 	t.Run("ApproveRevokeRootWholeSubjectWithChild", func(t *testing.T) {
 		// Second trustee approves → 2/3 quorum reached → root revoked.
 		txResult, err := ApproveRevokeX509RootCert(addVendorRootCertSubject, addVendorRootCertSubjectKeyID, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Root is now revoked and no longer approved.
 		revokedRoot, err := GetRevokedX509Cert(addVendorRootCertSubject, addVendorRootCertSubjectKeyID)

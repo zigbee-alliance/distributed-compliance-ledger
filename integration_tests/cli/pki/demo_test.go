@@ -195,8 +195,7 @@ func pkiDemoQueryAllEmpty(t *testing.T) {
 func pkiDemoProposeRootCertNotTrustee(t *testing.T, userAccount string) {
 	t.Helper()
 	txResult, err := ProposeAddX509RootCert(rootCertPath, userAccount, X509ProposeOpts{VID: pkiDemoVid})
-	require.NoError(t, err)
-	require.NotEqual(t, uint32(0), txResult.Code)
+	cliputils.RequireTxFails(t, txResult, err)
 	_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
 }
 
@@ -206,10 +205,7 @@ func pkiDemoProposeRootCertTrustee(t *testing.T, jack string) {
 		VID:           pkiDemoVid,
 		SchemaVersion: "0",
 	})
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	cliputils.RequireTxOK(t, txResult, err)
 
 	// All proposed root certs — contains our cert.
 	allProposed, err := GetAllProposedX509RootCerts()
@@ -285,10 +281,7 @@ func pkiDemoProposeRootCertTrustee(t *testing.T, jack string) {
 func pkiDemoApproveRootCert(t *testing.T, alice string) {
 	t.Helper()
 	txResult, err := ApproveAddX509RootCert(rootCertSubject, rootCertSubjectKeyID, alice)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	cliputils.RequireTxOK(t, txResult, err)
 
 	// Approved cert by subject+skid.
 	cert, err := GetX509Cert(rootCertSubject, rootCertSubjectKeyID)
@@ -359,10 +352,7 @@ func pkiDemoApproveRootCert(t *testing.T, alice string) {
 func pkiDemoAddIntermediateCert(t *testing.T, vendorAccount string) {
 	t.Helper()
 	txResult, err := AddX509Cert(intermediateCertPath, vendorAccount, X509ProposeOpts{SchemaVersion: "0"})
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	cliputils.RequireTxOK(t, txResult, err)
 
 	// Intermediate cert by subject+skid.
 	cert, err := GetX509Cert(intermediateCertSubject, intermediateCertSubjectKeyID)
@@ -419,10 +409,7 @@ func pkiDemoAddIntermediateCert(t *testing.T, vendorAccount string) {
 func pkiDemoAddLeafCert(t *testing.T, vendorAccount string) {
 	t.Helper()
 	txResult, err := AddX509Cert(leafCertPath, vendorAccount)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	cliputils.RequireTxOK(t, txResult, err)
 
 	// Leaf cert by subject+skid.
 	cert, err := GetX509Cert(leafCertSubject, leafCertSubjectKeyID)
@@ -540,25 +527,18 @@ func pkiDemoRevokeIntermediateCertUnauthorized(t *testing.T, userAccount, vendor
 	t.Helper()
 	// Non-vendor account cannot revoke
 	txResult, err := RevokeX509Cert(intermediateCertSubject, intermediateCertSubjectKeyID, userAccount)
-	require.NoError(t, err)
-	require.Equal(t, uint32(4), txResult.Code)
-	_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
+	cliputils.RequireTxFailCode(t, txResult, err, 4)
 
 	// Vendor with different VID cannot revoke
 	txResult, err = RevokeX509Cert(intermediateCertSubject, intermediateCertSubjectKeyID, vendorAccount65522)
-	require.NoError(t, err)
-	require.Equal(t, uint32(4), txResult.Code)
-	_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
+	cliputils.RequireTxFailCode(t, txResult, err, 4)
 }
 
 func pkiDemoRevokeIntermediateCert(t *testing.T, vendorAccount string) {
 	t.Helper()
 	// Revoke intermediate without --revoke-child: leaf must survive
 	txResult, err := RevokeX509Cert(intermediateCertSubject, intermediateCertSubjectKeyID, vendorAccount)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	cliputils.RequireTxOK(t, txResult, err)
 
 	// No proposed-to-revoke entries (intermediate is not a root cert).
 	allProposedRev, err := GetAllProposedRevokedX509RootCerts()
@@ -656,10 +636,7 @@ func pkiDemoRevokeIntermediateCert(t *testing.T, vendorAccount string) {
 func pkiDemoProposeRevokeRootCert(t *testing.T, jack string) {
 	t.Helper()
 	txResult, err := ProposeRevokeX509RootCert(rootCertSubject, rootCertSubjectKeyID, jack)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	cliputils.RequireTxOK(t, txResult, err)
 
 	// Proposed-to-revoke contains root.
 	proposedRev, err := GetProposedRevokedX509RootCert(rootCertSubject, rootCertSubjectKeyID)
@@ -733,10 +710,7 @@ func pkiDemoProposeRevokeRootCert(t *testing.T, jack string) {
 func pkiDemoApproveRevokeRootCert(t *testing.T, alice string) {
 	t.Helper()
 	txResult, err := ApproveRevokeX509RootCert(rootCertSubject, rootCertSubjectKeyID, alice)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	cliputils.RequireTxOK(t, txResult, err)
 
 	// Proposed-to-revoke list empty.
 	allProposedRev, err := GetAllProposedRevokedX509RootCerts()
@@ -895,16 +869,12 @@ func pkiDemoProposeGoogleRootCert(t *testing.T, jack, userAccount string) {
 	t.Helper()
 	// Non-trustee fails
 	txResult, err := ProposeAddX509RootCert(googleCertPath, userAccount, X509ProposeOpts{VID: googleCertVid})
-	require.NoError(t, err)
-	require.NotEqual(t, uint32(0), txResult.Code)
+	cliputils.RequireTxFails(t, txResult, err)
 	_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
 
 	// Trustee proposes
 	txResult, err = ProposeAddX509RootCert(googleCertPath, jack, X509ProposeOpts{VID: googleCertVid})
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	cliputils.RequireTxOK(t, txResult, err)
 
 	// Proposed cert present.
 	proposed, err := GetProposedX509RootCert(googleCertSubject, googleCertSubjectKeyID)
@@ -967,10 +937,7 @@ func pkiDemoApproveGoogleRootCert(t *testing.T, alice string) {
 
 	// Alice approves.
 	txResult, err := ApproveAddX509RootCert(googleCertSubject, googleCertSubjectKeyID, alice)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	cliputils.RequireTxOK(t, txResult, err)
 
 	// Now approved.
 	cert, err := GetX509Cert(googleCertSubject, googleCertSubjectKeyID)
@@ -1019,10 +986,7 @@ func pkiDemoApproveGoogleRootCert(t *testing.T, alice string) {
 func pkiDemoProposeRevokeGoogleRootCert(t *testing.T, jack string) {
 	t.Helper()
 	txResult, err := ProposeRevokeX509RootCert(googleCertSubject, googleCertSubjectKeyID, jack)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	cliputils.RequireTxOK(t, txResult, err)
 
 	proposedRev, err := GetProposedRevokedX509RootCert(googleCertSubject, googleCertSubjectKeyID)
 	require.NoError(t, err)
@@ -1078,10 +1042,7 @@ func pkiDemoProposeRevokeGoogleRootCert(t *testing.T, jack string) {
 func pkiDemoApproveRevokeGoogleRootCert(t *testing.T, alice string) {
 	t.Helper()
 	txResult, err := ApproveRevokeX509RootCert(googleCertSubject, googleCertSubjectKeyID, alice)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	cliputils.RequireTxOK(t, txResult, err)
 
 	allProposedRev, err := GetAllProposedRevokedX509RootCerts()
 	require.NoError(t, err)
@@ -1141,17 +1102,11 @@ func pkiDemoProposeAndRejectTestCertSingleTrustee(t *testing.T, jack string) {
 	t.Helper()
 	// Jack proposes
 	txResult, err := ProposeAddX509RootCert(testCertPath, jack, X509ProposeOpts{VID: testCertVid})
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	cliputils.RequireTxOK(t, txResult, err)
 
 	// Jack rejects (same trustee who proposed)
 	txResult, err = RejectAddX509RootCert(testCertSubject, testCertSubjectKeyID, jack)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	cliputils.RequireTxOK(t, txResult, err)
 
 	// Cert gone from proposed.
 	proposed, err := GetProposedX509RootCert(testCertSubject, testCertSubjectKeyID)
@@ -1179,16 +1134,12 @@ func pkiDemoProposeTestRootCert(t *testing.T, jack, userAccount string) {
 	t.Helper()
 	// Non-trustee fails
 	txResult, err := ProposeAddX509RootCert(testCertPath, userAccount, X509ProposeOpts{VID: testCertVid})
-	require.NoError(t, err)
-	require.NotEqual(t, uint32(0), txResult.Code)
+	cliputils.RequireTxFails(t, txResult, err)
 	_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
 
 	// Trustee proposes
 	txResult, err = ProposeAddX509RootCert(testCertPath, jack, X509ProposeOpts{VID: testCertVid})
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	cliputils.RequireTxOK(t, txResult, err)
 
 	// Proposed cert present.
 	proposed, err := GetProposedX509RootCert(testCertSubject, testCertSubjectKeyID)
@@ -1213,36 +1164,23 @@ func pkiDemoRejectTestRootCertMultiTrustee(t *testing.T, jack, alice, bob string
 
 	// Bob approves the test cert (2 approvals with 4 trustees — not enough, need 3)
 	txResult, err := ApproveAddX509RootCert(testCertSubject, testCertSubjectKeyID, bob)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	cliputils.RequireTxOK(t, txResult, err)
 
 	// Jack rejects (removes Jack's approval, adds rejection: 1 approval Bob, 1 rejection Jack)
 	txResult, err = RejectAddX509RootCert(testCertSubject, testCertSubjectKeyID, jack)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	cliputils.RequireTxOK(t, txResult, err)
 
 	// Jack can approve even after rejecting (switches back: 2 approvals Jack+Bob)
 	txResult, err = ApproveAddX509RootCert(testCertSubject, testCertSubjectKeyID, jack)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	cliputils.RequireTxOK(t, txResult, err)
 
 	// Jack rejects again (1 approval Bob, 1 rejection Jack)
 	txResult, err = RejectAddX509RootCert(testCertSubject, testCertSubjectKeyID, jack)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	cliputils.RequireTxOK(t, txResult, err)
 
 	// Jack cannot reject twice in a row
 	txResult, err = RejectAddX509RootCert(testCertSubject, testCertSubjectKeyID, jack)
-	require.NoError(t, err)
-	require.NotEqual(t, uint32(0), txResult.Code)
+	cliputils.RequireTxFails(t, txResult, err)
 	_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
 
 	// Cert still in proposed — not yet at rejection quorum.
@@ -1261,29 +1199,17 @@ func pkiDemoRejectTestRootCertMultiTrustee(t *testing.T, jack, alice, bob string
 
 	// Alice rejects — now 2 rejections with 4 trustees = rejection quorum reached
 	txResult, err = RejectAddX509RootCert(testCertSubject, testCertSubjectKeyID, alice)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	cliputils.RequireTxOK(t, txResult, err)
 
 	// Revoke new_trustee1 (back to 3 trustees)
 	txResult, err = dclauth.ProposeRevokeAccount(newTrustee1Addr, alice)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	cliputils.RequireTxOK(t, txResult, err)
 
 	txResult, err = dclauth.ApproveRevokeAccount(newTrustee1Addr, bob)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	cliputils.RequireTxOK(t, txResult, err)
 
 	txResult, err = dclauth.ApproveRevokeAccount(newTrustee1Addr, jack)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	cliputils.RequireTxOK(t, txResult, err)
 
 	// Cert is now rejected.
 	rejected, err := GetRejectedX509RootCert(testCertSubject, testCertSubjectKeyID)
@@ -1337,16 +1263,12 @@ func pkiDemoProposeTestRootCertAgain(t *testing.T, jack, userAccount string) {
 	t.Helper()
 	// Non-trustee fails
 	txResult, err := ProposeAddX509RootCert(testCertPath, userAccount, X509ProposeOpts{VID: testCertVid})
-	require.NoError(t, err)
-	require.NotEqual(t, uint32(0), txResult.Code)
+	cliputils.RequireTxFails(t, txResult, err)
 	_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
 
 	// Trustee proposes again
 	txResult, err = ProposeAddX509RootCert(testCertPath, jack, X509ProposeOpts{VID: testCertVid})
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	cliputils.RequireTxOK(t, txResult, err)
 
 	// Proposed cert present again.
 	proposed, err := GetProposedX509RootCert(testCertSubject, testCertSubjectKeyID)
@@ -1370,10 +1292,7 @@ func pkiDemoApproveTestRootCert(t *testing.T, alice string) {
 	t.Helper()
 	// Alice approves — with 3 trustees (jack+alice+bob), 2 approvals = quorum
 	txResult, err := ApproveAddX509RootCert(testCertSubject, testCertSubjectKeyID, alice)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code)
-	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, err)
+	cliputils.RequireTxOK(t, txResult, err)
 
 	// Approved by subject+skid.
 	cert, err := GetX509Cert(testCertSubject, testCertSubjectKeyID)

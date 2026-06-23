@@ -30,24 +30,18 @@ func TestModelNegativeCases(t *testing.T) {
 
 	t.Run("AddModel_NotVendor_Fails", func(t *testing.T) {
 		txResult, err := AddModel(AddModelOpts{VID: vid, PID: pid, From: certificationHouse})
-		require.NoError(t, err)
-		require.Equal(t, uint32(4), txResult.Code)
-		_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
+		cliputils.RequireTxFailCode(t, txResult, err, 4)
 	})
 
 	t.Run("AddModel_VendorNonAssociatedPID_Fails", func(t *testing.T) {
 		txResult, err := AddModel(AddModelOpts{VID: vidWithPids, PID: 101, From: vendorAccountWithPids})
-		require.NoError(t, err)
-		require.Equal(t, uint32(4), txResult.Code)
-		_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
+		cliputils.RequireTxFailCode(t, txResult, err, 4)
 	})
 
 	t.Run("AddModel_WrongVendorID_Fails", func(t *testing.T) {
 		vid1 := rand.Intn(65534) + 1
 		txResult, err := AddModel(AddModelOpts{VID: vid1, PID: pid, From: vendorAccount})
-		require.NoError(t, err)
-		require.Equal(t, uint32(4), txResult.Code)
-		_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
+		cliputils.RequireTxFailCode(t, txResult, err, 4)
 	})
 
 	t.Run("AddModelTwice_Fails", func(t *testing.T) {
@@ -57,16 +51,11 @@ func TestModelNegativeCases(t *testing.T) {
 			PID:  pid,
 			From: vendorAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Second add fails with code 501 (model already exists).
 		txResult, err = AddModel(AddModelOpts{VID: vid, PID: pid, From: vendorAccount})
-		require.NoError(t, err)
-		require.Equal(t, uint32(501), txResult.Code)
-		_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
+		cliputils.RequireTxFailCode(t, txResult, err, 501)
 	})
 
 	sv := rand.Intn(65534) + 1
@@ -79,10 +68,7 @@ func TestModelNegativeCases(t *testing.T) {
 			SoftwareVersionString: softwareVersionString,
 			From:                  vendorAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		certificationDate := "2020-01-01T00:00:01Z"
 		txResult, err = compliance.CertifyModel(compliance.CertifyModelOpts{
@@ -94,16 +80,11 @@ func TestModelNegativeCases(t *testing.T) {
 			CDCertificateID:       "1230000000000000000",
 			From:                  zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Delete certified model — should fail with code 525.
 		txResult, err = DeleteModel(vid, pid, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(525), txResult.Code)
-		_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
+		cliputils.RequireTxFailCode(t, txResult, err, 525)
 	})
 
 	t.Run("AddModel_UnknownAccount_Fails", func(t *testing.T) {
@@ -235,10 +216,7 @@ func TestModelNegativeCases(t *testing.T) {
 		mvSv := rand.Intn(65534) + 1
 		mvSvs := fmt.Sprintf("%d", rand.Intn(65534)+1)
 		txResult, err := AddModel(AddModelOpts{VID: vid, PID: mvPid, From: vendorAccount})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// otaChecksumType outside the IANA allow-list is rejected at the handler.
 		txResult, err = AddModelVersion(AddModelVersionOpts{

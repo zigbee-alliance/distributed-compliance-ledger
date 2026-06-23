@@ -20,7 +20,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
 const (
@@ -51,10 +50,7 @@ func TestVendorInfoDemoHex(t *testing.T) {
 			CompanyLegalName: companyLegalName,
 			VendorName:       vendorName,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("QueryVendorInfoWithHexVID", func(t *testing.T) {
@@ -77,10 +73,7 @@ func TestVendorInfoDemoHex(t *testing.T) {
 			VendorLandingPageURL: vendorLandingPageURL,
 			VendorName:           vendorName,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		v, err := GetVendorHex(hexVid)
 		require.NoError(t, err)

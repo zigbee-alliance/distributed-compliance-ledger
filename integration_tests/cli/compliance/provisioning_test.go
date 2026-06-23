@@ -86,10 +86,7 @@ func TestComplianceProvisioning(t *testing.T) {
 			CDCertificateID:       cdCertID,
 			From:                  zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		info, err := GetComplianceInfo(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certTypeZb})
 		require.NoError(t, err)
@@ -127,10 +124,7 @@ func TestComplianceProvisioning(t *testing.T) {
 			Reason:                provisionReason,
 			From:                  zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("ProvisionMatter_Success", func(t *testing.T) {
@@ -144,10 +138,7 @@ func TestComplianceProvisioning(t *testing.T) {
 			Reason:                provisionReason,
 			From:                  zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	// ── Re-provision is rejected whether by a different or the same account ──
@@ -270,10 +261,7 @@ func TestComplianceProvisioning(t *testing.T) {
 			From:                  zbAccount,
 			Reason:                certificationReason,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// device-software-compliance for cdCertID now contains pid2.
 		dsc, err := GetDeviceSoftwareCompliance(cdCertID)
@@ -322,10 +310,7 @@ func TestComplianceProvisioning(t *testing.T) {
 			Reason:                revocationReasonZb,
 			From:                  zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Provisioning an already-revoked model is rejected with 304.
 		txResult, err = ProvisionModel(ProvisionModelOpts{
@@ -356,10 +341,7 @@ func TestComplianceProvisioning(t *testing.T) {
 			Reason:                certificationReason,
 			From:                  zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("RevokeProvisionedModel_Matter", func(t *testing.T) {
@@ -372,10 +354,7 @@ func TestComplianceProvisioning(t *testing.T) {
 			Reason:                revocationReasonMatter,
 			From:                  zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	// ── After certify(ZB)+revoke(Matter): verify the per-record states ──
@@ -498,10 +477,7 @@ func TestComplianceProvisioning(t *testing.T) {
 				CertificationIDOfSoftwareComponent: "someIDOfSoftwareComponent1",
 			},
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		provisional, err := GetProvisionalModel(ComplianceQueryOpts{VID: vid, PID: pidOpt, SoftwareVersion: svOpt, CertificationType: certTypeZb})
 		require.NoError(t, err)
@@ -553,10 +529,7 @@ func TestComplianceProvisioning(t *testing.T) {
 				CertificationIDOfSoftwareComponent: "someIDOfSoftwareComponent2",
 			},
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		certified, err := GetCertifiedModel(ComplianceQueryOpts{VID: vid, PID: pidOpt, SoftwareVersion: svOpt, CertificationType: certTypeZb})
 		require.NoError(t, err)

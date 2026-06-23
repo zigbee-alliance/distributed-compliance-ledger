@@ -6,7 +6,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
 // After TestPKINocRevocationWithRevokingChild, noc_root_cert_1/copy, noc_cert_1,
@@ -20,66 +19,39 @@ func TestPKINocRevocationWithSerialNumber(t *testing.T) {
 	t.Run("RevokeNocRootCertBySerial", func(t *testing.T) {
 		// Remove revoked NOC root certs so they can be re-added.
 		txResult, err := RemoveNocRootCert(nocRootCert1Subject, nocRootCert1SubjectKeyID, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Remove revoked NOC ICA so it can be re-added.
 		txResult, err = RemoveNocCert(nocCert1Subject, nocCert1SubjectKeyID, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Remove revoked VVSC leaf + VVSC ICA so they can be re-added.
 		// VVSC root was also revoked but VvscRoot1Copy (active, same SKID) still
 		// satisfies AuthorityKeyID resolution for the chain walk, so we don't
 		// remove/re-add the VVSC root here — re-adding only ICA1 + Leaf1 is enough.
 		txResult, err = RemoveNocCert(vvscLeafCert1Subject, vvscLeafCert1SubjectKeyID, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = RemoveNocCert(vvscIcaCert1Subject, vvscIcaCert1SubjectKeyID, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Re-add NOC root certs
 		txResult, err = AddNocRootCert(nocRootCert1Path, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = AddNocRootCert(nocRootCert1CopyPath, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Re-add NOC ICA cert
 		txResult, err = AddNocX509IcaCert(nocCert1Path, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Re-add VVSC ICA1 + Leaf1 (chained under VvscRoot1Copy which is still active).
 		txResult, err = AddNocX509IcaCert(vvscIcaCert1Path, vendorAccount, AddNocCertOpts{IsVidVerificationSigner: true})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = AddNocX509IcaCert(vvscLeafCert1Path, vendorAccount, AddNocCertOpts{IsVidVerificationSigner: true})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Try to revoke with invalid serial number
 		txResult, err = RevokeNocRootCert(nocRootCert1Subject, nocRootCert1SubjectKeyID, vendorAccount, RevokeNocCertOpts{SerialNumber: "invalid"})
@@ -88,10 +60,7 @@ func TestPKINocRevocationWithSerialNumber(t *testing.T) {
 
 		// Revoke only first root cert by serial number (child certs should NOT be revoked)
 		txResult, err = RevokeNocRootCert(nocRootCert1Subject, nocRootCert1SubjectKeyID, vendorAccount, RevokeNocCertOpts{SerialNumber: nocRootCert1SerialNumber})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Only first root cert should be in revoked list.
 		revokedRoots, err := GetAllRevokedNocRootCerts()
@@ -117,10 +86,7 @@ func TestPKINocRevocationWithSerialNumber(t *testing.T) {
 		// Revoke second root cert with revoke-child=true. Cascade hits NocCert1
 		// (under the NOC chain) — the VVSC chain is structurally disjoint.
 		txResult, err = RevokeNocRootCert(nocRootCert1Subject, nocRootCert1SubjectKeyID, vendorAccount, RevokeNocCertOpts{SerialNumber: nocRootCert1CopySerialNumber, RevokeChild: true})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Also revoke the VVSC root with revoke-child=true. The VVSC chain
 		// VvscRoot1 → VvscIca1 → VvscLeaf1 is structurally disjoint from the
@@ -128,10 +94,7 @@ func TestPKINocRevocationWithSerialNumber(t *testing.T) {
 		// explicit VVSC root revocation the leaf would remain active and the
 		// revoked-ICA assertion below would fail.
 		txResult, err = RevokeNocRootCert(vvscRootCert1Subject, vvscRootCert1SubjectKeyID, vendorAccount, RevokeNocCertOpts{RevokeChild: true})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Both NOC root certs should be revoked.
 		revokedRoots, err = GetAllRevokedNocRootCerts()
@@ -182,35 +145,20 @@ func TestPKINocRevocationWithSerialNumber(t *testing.T) {
 		// nocLeafCert2*) were revoked by RevokeNocIcaCertWithChildFlag. Remove them
 		// so they can be re-added.
 		txResult, err := RemoveNocCert(nocCert2Subject, nocCert2SubjectKeyID, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = RemoveNocCert(nocLeafCert2Subject, nocLeafCert2SubjectKeyID, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = RemoveNocCert(vvscIcaCert2Subject, vvscIcaCert2SubjectKeyID, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Re-add OperationalPKI ICA certs (noc_root_cert_2 is already active — no need to re-add)
 		txResult, err = AddNocX509IcaCert(nocCert2Path, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = AddNocX509IcaCert(nocRevChildCert2CopyPath, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Subtest 1's cascade (revoke vvsc_root_cert_1 with --revoke-child at line 130)
 		// soft-deleted VvscRoot1Copy into the revoked root pool, so no active VVSC
@@ -218,29 +166,17 @@ func TestPKINocRevocationWithSerialNumber(t *testing.T) {
 		// entries (clears their UniqueCertificate records) and re-add VvscRoot1 so
 		// verifyVVSCCertificate's chain walk for VvscIca2 below resolves.
 		txResult, err = RemoveNocRootCert(vvscRootCert1Subject, vvscRootCert1SubjectKeyID, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = AddNocRootCert(vvscRootCert1Path, vendorAccount, AddNocCertOpts{IsVidVerificationSigner: true})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Re-add VVSC ICA2 + VVSC leaf 2 (chained under the freshly re-added VvscRoot1).
 		txResult, err = AddNocX509IcaCert(vvscIcaCert2Path, vendorAccount, AddNocCertOpts{IsVidVerificationSigner: true})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = AddNocX509IcaCert(nocLeafCert2Path, vendorAccount, AddNocCertOpts{IsVidVerificationSigner: true})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Try to revoke with invalid serial number
 		txResult, err = RevokeNocX509IcaCert(nocCert2Subject, nocCert2SubjectKeyID, vendorAccount, RevokeNocCertOpts{SerialNumber: "invalid"})
@@ -249,10 +185,7 @@ func TestPKINocRevocationWithSerialNumber(t *testing.T) {
 
 		// Revoke only first ICA cert by serial (child should not be revoked)
 		txResult, err = RevokeNocX509IcaCert(nocCert2Subject, nocCert2SubjectKeyID, vendorAccount, RevokeNocCertOpts{SerialNumber: nocCert2SerialNumber})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		revokedIcas, err := GetAllRevokedNocX509IcaCerts()
 		require.NoError(t, err)
@@ -270,17 +203,11 @@ func TestPKINocRevocationWithSerialNumber(t *testing.T) {
 		// Revoke second NOC ICA cert with revoke-child=true. Cascade is contained
 		// to the NOC chain — the VVSC leaf is structurally disjoint (Matter §6.5.12).
 		txResult, err = RevokeNocX509IcaCert(nocCert2Subject, nocCert2SubjectKeyID, vendorAccount, RevokeNocCertOpts{SerialNumber: nocRevChildCert2CopySerialNumber, RevokeChild: true})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Also revoke VvscIca2 with revoke-child=true so the cascade picks up VVSC leaf 2.
 		txResult, err = RevokeNocX509IcaCert(vvscIcaCert2Subject, vvscIcaCert2SubjectKeyID, vendorAccount, RevokeNocCertOpts{RevokeChild: true})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// All ICAs (NOC + VVSC) and the VVSC leaf should be revoked.
 		revokedIcas, err = GetAllRevokedNocX509IcaCerts()

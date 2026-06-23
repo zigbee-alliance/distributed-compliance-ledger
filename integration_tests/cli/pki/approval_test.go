@@ -123,8 +123,7 @@ func TestPKIApproval(t *testing.T) {
 
 	t.Run("NonTrustee_CannotProposeRootCert", func(t *testing.T) {
 		txResult, err := ProposeAddX509RootCert(approvalTestRootCertPath, userAccount, X509ProposeOpts{VID: approvalTestVid})
-		require.NoError(t, err)
-		require.NotEqual(t, uint32(0), txResult.Code)
+		cliputils.RequireTxFails(t, txResult, err)
 	})
 
 	t.Run("ProposeAndApproveWithQuorum", func(t *testing.T) {

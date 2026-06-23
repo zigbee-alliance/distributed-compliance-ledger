@@ -275,6 +275,60 @@ func GetList(v interface{}, args ...string) error {
 	return nil
 }
 
+// RequireTxOK asserts a tx broadcast succeeded client-side, executed with
+// on-chain code 0, and confirms it on-chain.
+func RequireTxOK(t *testing.T, txResult *utils.TxResult, err error) {
+	t.Helper()
+	require.NoError(t, err)
+	require.Equal(t, uint32(0), txResult.Code, "tx raw_log: %s", txResult.RawLog)
+	_, awaitErr := utils.AwaitTxConfirmation(txResult.TxHash)
+	require.NoError(t, awaitErr)
+}
+
+// RequireTxFailContains asserts a tx failed (either at the CLI/broadcast level
+// via err, or on-chain via a non-zero code) and that the surfaced message
+// contains the expected substring.
+func RequireTxFailContains(t *testing.T, txResult *utils.TxResult, err error, want string) {
+	t.Helper()
+	var msg string
+	switch {
+	case err != nil:
+		msg = err.Error()
+	case txResult == nil:
+		t.Fatalf("expected failure containing %q, got nil tx and nil err", want)
+	default:
+		require.NotEqual(t, uint32(0), txResult.Code,
+			"expected non-zero code, raw_log: %s", txResult.RawLog)
+		msg = txResult.RawLog
+	}
+	require.True(t, strings.Contains(msg, want),
+		"expected error to contain %q, got: %s", want, msg)
+}
+
+// RequireTxFails asserts a tx broadcast succeeded client-side but failed
+// on-chain with some non-zero code, when the exact code is unimportant. Use
+// RequireTxFailCode to assert a specific code, or RequireTxFailContains to match
+// the error message. It does not await confirmation: a tx rejected at CheckTx
+// never enters a block, so callers that need to drain a delivered-but-failed tx
+// should follow with their own AwaitTxConfirmation.
+func RequireTxFails(t *testing.T, txResult *utils.TxResult, err error) {
+	t.Helper()
+	require.NoError(t, err)
+	require.NotEqual(t, uint32(0), txResult.Code, "tx raw_log: %s", txResult.RawLog)
+}
+
+// RequireTxFailCode asserts a tx broadcast succeeded client-side but failed
+// on-chain with exactly the given code, then drains it from the mempool. Use
+// RequireTxFailContains instead when asserting on the error message; pair this
+// with a follow-up require.Contains(t, txResult.RawLog, …) when both the code
+// and the message matter.
+func RequireTxFailCode(t *testing.T, txResult *utils.TxResult, err error, code uint32) {
+	t.Helper()
+	require.NoError(t, err)
+	require.Equal(t, code, txResult.Code, "tx raw_log: %s", txResult.RawLog)
+	_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
+}
+
 // TxFailureText collects a rejected tx's error text and/or RawLog so the exact
 // chain message can be asserted whether the failure surfaces client-side (err)
 // or in the broadcast/DeliverTx result.

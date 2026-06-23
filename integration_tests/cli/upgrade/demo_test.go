@@ -51,10 +51,7 @@ func TestUpgradeDemo(t *testing.T) {
 	t.Run("ProposeApproveUpgrade_v1_2_0", func(t *testing.T) {
 		// trusteeAccount proposes
 		txResult, err := ProposeUpgrade(upgradeNameV120, farFutureHeight, trusteeAccount, ProposeUpgradeOpts{UpgradeInfo: upgradeInfoV120})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Verify proposed upgrade
 		proposed, err := GetProposedUpgrade(upgradeNameV120)
@@ -66,24 +63,15 @@ func TestUpgradeDemo(t *testing.T) {
 
 		// alice approves
 		txResult, err = ApproveUpgrade(upgradeNameV120, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// alice rejects (revotes)
 		txResult, err = RejectUpgrade(upgradeNameV120, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// alice approves again
 		txResult, err = ApproveUpgrade(upgradeNameV120, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Approved upgrade should NOT yet be in approved store (threshold not reached)
 		approved, err := GetApprovedUpgrade(upgradeNameV120)
@@ -107,10 +95,7 @@ func TestUpgradeDemo(t *testing.T) {
 
 		// bob approves — threshold now reached
 		txResult, err = ApproveUpgrade(upgradeNameV120, bob)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Upgrade plan should now be scheduled
 		plan, err := GetUpgradePlan()
@@ -137,10 +122,7 @@ func TestUpgradeDemo(t *testing.T) {
 		upgradeName := fmt.Sprintf("upgrade_%s", utils.RandString())
 
 		txResult, err := ProposeUpgrade(upgradeName, farFutureHeight, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ApproveUpgrade(upgradeName, alice)
 		require.Contains(t, cliputils.TxFailureText(txResult, err), "unauthorized")
@@ -150,16 +132,10 @@ func TestUpgradeDemo(t *testing.T) {
 		upgradeName := fmt.Sprintf("upgrade_%s", utils.RandString())
 
 		txResult, err := ProposeUpgrade(upgradeName, farFutureHeight, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ApproveUpgrade(upgradeName, bob)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ApproveUpgrade(upgradeName, bob)
 		require.Contains(t, cliputils.TxFailureText(txResult, err), "unauthorized")
@@ -169,10 +145,7 @@ func TestUpgradeDemo(t *testing.T) {
 		upgradeName := fmt.Sprintf("upgrade_%s", utils.RandString())
 
 		txResult, err := ProposeUpgrade(upgradeName, farFutureHeight, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ProposeUpgrade(upgradeName, farFutureHeight, alice)
 		require.Contains(t, cliputils.TxFailureText(txResult, err), "proposed upgrade already exists")
@@ -188,17 +161,11 @@ func TestUpgradeDemo(t *testing.T) {
 	t.Run("ProposeAndRejectUpgrade_v1_2_1", func(t *testing.T) {
 		// Use a fresh far-future height
 		txResult, err := ProposeUpgrade(upgradeNameV121, farFutureHeight, trusteeAccount, ProposeUpgradeOpts{UpgradeInfo: upgradeInfoV121})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// alice approves
 		txResult, err = ApproveUpgrade(upgradeNameV121, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Still in proposed
 		proposed, err := GetProposedUpgrade(upgradeNameV121)
@@ -208,24 +175,15 @@ func TestUpgradeDemo(t *testing.T) {
 
 		// trusteeAccount rejects (revotes)
 		txResult, err = RejectUpgrade(upgradeNameV121, trusteeAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// trusteeAccount approves again
 		txResult, err = ApproveUpgrade(upgradeNameV121, trusteeAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// alice rejects
 		txResult, err = RejectUpgrade(upgradeNameV121, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Still in proposed (not enough rejections)
 		proposed, err = GetProposedUpgrade(upgradeNameV121)
@@ -244,10 +202,7 @@ func TestUpgradeDemo(t *testing.T) {
 
 		// bob rejects — threshold reached
 		txResult, err = RejectUpgrade(upgradeNameV121, bob)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Now in rejected store
 		rejected, err = GetRejectedUpgrade(upgradeNameV121)
@@ -274,17 +229,11 @@ func TestUpgradeDemo(t *testing.T) {
 
 		// jack proposes
 		txResult, err := ProposeUpgrade(upgradeNameV141, planHeight, jack, ProposeUpgradeOpts{UpgradeInfo: upgradeInfoV141})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// jack rejects own proposal
 		txResult, err = RejectUpgrade(upgradeNameV141, jack)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Should not be in proposed
 		proposed, err := GetProposedUpgrade(upgradeNameV141)
@@ -312,10 +261,7 @@ func TestUpgradeDemo(t *testing.T) {
 		planHeight := h + 10
 
 		txResult, err := ProposeUpgrade(upgradeNameV122, fmt.Sprintf("%d", planHeight), jack, ProposeUpgradeOpts{UpgradeInfo: upgradeInfoV122})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		proposed, err := GetProposedUpgrade(upgradeNameV122)
 		require.NoError(t, err)
@@ -336,10 +282,7 @@ func TestUpgradeDemo(t *testing.T) {
 
 		// Re-proposing at a fresh far-future height replaces the stale proposal.
 		txResult, err = ProposeUpgrade(upgradeNameV122, farFutureHeight, jack, ProposeUpgradeOpts{UpgradeInfo: upgradeInfoV122})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		proposed, err = GetProposedUpgrade(upgradeNameV122)
 		require.NoError(t, err)

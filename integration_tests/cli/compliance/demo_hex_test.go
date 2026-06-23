@@ -8,7 +8,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/model"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
 func TestComplianceDemoHex(t *testing.T) {
@@ -35,10 +34,7 @@ func TestComplianceDemoHex(t *testing.T) {
 		txResult, err := model.AddModel(model.AddModelOpts{
 			VIDHex: vidHex, PIDHex: pidHex, From: vendorAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = model.AddModelVersion(model.AddModelVersionOpts{
 			VIDHex: vidHex, PIDHex: pidHex,
@@ -46,10 +42,7 @@ func TestComplianceDemoHex(t *testing.T) {
 			SoftwareVersionString: svs,
 			From:                  vendorAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("QueryBeforeCertification_NotFound", func(t *testing.T) {
@@ -91,9 +84,7 @@ func TestComplianceDemoHex(t *testing.T) {
 			CDCertificateID:       cdCertID,
 			From:                  zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(306), txResult.Code)
-		_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
+		cliputils.RequireTxFailCode(t, txResult, err, 306)
 	})
 
 	t.Run("CertifyZigbee_WithHexVID_Success", func(t *testing.T) {
@@ -106,10 +97,7 @@ func TestComplianceDemoHex(t *testing.T) {
 			CDCertificateID:       cdCertID,
 			From:                  zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("CertifyMatter_WithHexVID_Success", func(t *testing.T) {
@@ -122,10 +110,7 @@ func TestComplianceDemoHex(t *testing.T) {
 			CDCertificateID:       cdCertID,
 			From:                  zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("ReCertify_DifferentAccount_Fails", func(t *testing.T) {
@@ -246,10 +231,7 @@ func TestComplianceDemoHex(t *testing.T) {
 			Reason:                revocationReason,
 			From:                  zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("QueryAfterRevocation", func(t *testing.T) {
@@ -312,10 +294,7 @@ func TestComplianceDemoHex(t *testing.T) {
 			CDCertificateID:       cdCertID,
 			From:                  zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		zbHex := ComplianceQueryOpts{
 			VIDHex: vidHex, PIDHex: pidHex,

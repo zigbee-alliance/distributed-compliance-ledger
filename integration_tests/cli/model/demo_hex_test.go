@@ -7,7 +7,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
 func TestModelDemoHex(t *testing.T) {
@@ -41,10 +40,7 @@ func TestModelDemoHex(t *testing.T) {
 			ProductLabel: productLabel,
 			From:         vendorAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("QueryModel", func(t *testing.T) {
@@ -73,10 +69,7 @@ func TestModelDemoHex(t *testing.T) {
 			EnhancedSetupFlowOptions: 2,
 			ProductLabel:             description,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		m, err := GetModelHex(vidHex, pidHex)
 		require.NoError(t, err)
@@ -94,10 +87,7 @@ func TestModelDemoHex(t *testing.T) {
 			EnhancedSetupFlowOptions: 2,
 			SupportURL:               supportURL,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		m, err := GetModelHex(vidHex, pidHex)
 		require.NoError(t, err)
@@ -107,10 +97,7 @@ func TestModelDemoHex(t *testing.T) {
 
 	t.Run("DeleteModel", func(t *testing.T) {
 		txResult, err := DeleteModelHex(vidHex, pidHex, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		m, err := GetModelHex(vidHex, pidHex)
 		require.NoError(t, err)

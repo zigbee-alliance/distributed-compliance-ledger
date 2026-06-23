@@ -38,10 +38,7 @@ func TestAuthDemoHex(t *testing.T) {
 
 	t.Run("ProposeVendorAccountWithHexVID", func(t *testing.T) {
 		txResult, err := ProposeAccount(userAddr, userPubkey, "Vendor", jack, ProposeAccountOpts{Info: "Jack is proposing this account", VIDHex: vidHex})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Vendor accounts need only 1/3 approvals — should be active immediately.
 		all, err := GetAllAccounts()
@@ -76,10 +73,7 @@ func TestAuthDemoHex(t *testing.T) {
 			PartNumber:   "12",
 			From:         userAddr,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("AddModelWithWrongVID_Fails", func(t *testing.T) {
@@ -116,10 +110,7 @@ func TestAuthDemoHex(t *testing.T) {
 			PartNumber:               "12",
 			EnhancedSetupFlowOptions: 2,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("QueryModel", func(t *testing.T) {

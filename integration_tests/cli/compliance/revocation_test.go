@@ -110,10 +110,7 @@ func TestComplianceRevocation(t *testing.T) {
 			Reason:                revocationReason,
 			From:                  zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("ReRevoke_DifferentAccount_Fails", func(t *testing.T) {
@@ -154,10 +151,7 @@ func TestComplianceRevocation(t *testing.T) {
 			Reason:                revocationReason,
 			From:                  zbAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	// ── Verify all states while revoked (ZB + Matter) ──
@@ -250,10 +244,7 @@ func TestComplianceRevocation(t *testing.T) {
 			From:                  zbAccount,
 			Reason:                certificationReason,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// revoked: ZB now false, matter still true.
 		revokedZb, err := GetRevokedModel(ComplianceQueryOpts{VID: vid, PID: pid, SoftwareVersion: sv, CertificationType: certType})

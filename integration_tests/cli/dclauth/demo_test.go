@@ -69,10 +69,7 @@ func TestAuthDemoNodeAdmin(t *testing.T) {
 
 	t.Run("JackProposes", func(t *testing.T) {
 		txResult, err := ProposeAccount(userAddr, userPubkey, "NodeAdmin", jack, ProposeAccountOpts{Info: "Jack is proposing this account"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Account not yet active.
 		all, err := GetAllAccounts()
@@ -100,10 +97,7 @@ func TestAuthDemoNodeAdmin(t *testing.T) {
 
 	t.Run("AliceApproves", func(t *testing.T) {
 		txResult, err := ApproveAccount(userAddr, alice, AccountActionOpts{Info: "Alice is approving this account"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Alice cannot reject after approving
 		txBad, err := RejectAccount(userAddr, alice, AccountActionOpts{Info: "Alice is rejecting this account"})
@@ -140,10 +134,7 @@ func TestAuthDemoNodeAdmin(t *testing.T) {
 
 	t.Run("AliceProposeRevoke", func(t *testing.T) {
 		txResult, err := ProposeRevokeAccount(userAddr, alice, AccountActionOpts{Info: "Alice proposes to revoke account"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Still in active accounts (not enough approvals to revoke).
 		all, err := GetAllAccounts()
@@ -171,10 +162,7 @@ func TestAuthDemoNodeAdmin(t *testing.T) {
 
 	t.Run("BobApprovesRevoke", func(t *testing.T) {
 		txResult, err := ApproveRevokeAccount(userAddr, bob)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Now revoked.
 		allRevoked, err := GetAllRevokedAccounts()
@@ -205,10 +193,7 @@ func TestAuthDemoNodeAdmin(t *testing.T) {
 	t.Run("ReAddAfterRevoke_ProposeApprove", func(t *testing.T) {
 		// Jack proposes again.
 		txResult, err := ProposeAccount(userAddr, userPubkey, "NodeAdmin", jack, ProposeAccountOpts{Info: "Jack is proposing this account"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Still revoked in revoked list.
 		allRevoked, err := GetAllRevokedAccounts()
@@ -227,10 +212,7 @@ func TestAuthDemoNodeAdmin(t *testing.T) {
 
 		// Alice approves.
 		txResult, err = ApproveAccount(userAddr, alice, AccountActionOpts{Info: "Alice is approving this account"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// No longer in revoked list.
 		allRevoked, err = GetAllRevokedAccounts()
@@ -246,30 +228,18 @@ func TestAuthDemoNodeAdmin(t *testing.T) {
 	t.Run("RejectScenario", func(t *testing.T) {
 		// Propose-revoke again then approve-revoke
 		txResult, err := ProposeRevokeAccount(userAddr, alice, AccountActionOpts{Info: "Alice proposes to revoke account"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ApproveRevokeAccount(userAddr, bob)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Jack proposes again for rejection test
 		txResult, err = ProposeAccount(userAddr, userPubkey, "NodeAdmin", jack, ProposeAccountOpts{Info: "Jack is proposing this account"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Alice rejects
 		txResult, err = RejectAccount(userAddr, alice, AccountActionOpts{Info: "Alice is rejecting this account"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Still in proposed (alice rejected but not enough rejections).
 		allProposed, err := GetAllProposedAccounts()
@@ -286,10 +256,7 @@ func TestAuthDemoNodeAdmin(t *testing.T) {
 
 		// Bob rejects.
 		txResult, err = RejectAccount(userAddr, bob, AccountActionOpts{Info: "Bob is rejecting this account"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Bob cannot reject again.
 		txBad, errBad := RejectAccount(userAddr, bob, AccountActionOpts{Info: "Bob is rejecting this account"})
@@ -383,17 +350,11 @@ func TestAuthDemoJackRejectOwnProposal(t *testing.T) {
 
 	t.Run("ProposeAndSelfReject", func(t *testing.T) {
 		txResult, err := ProposeAccount(userAddr, userPubkey, "NodeAdmin", jack, ProposeAccountOpts{Info: "Jack is proposing this account"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Jack rejects his own proposal
 		txResult, err = RejectAccount(userAddr, jack, AccountActionOpts{Info: "Jack is rejecting this account"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Not in proposed (jack removed his approval+proposal).
 		prop, err := GetProposedAccount(userAddr)
@@ -509,24 +470,15 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 	t.Run("AddTwoNewTrustees", func(t *testing.T) {
 		// Jack proposes + Alice approves new_trustee1 → 4 trustees
 		txResult, err := ProposeAccount(newTrustee1Addr, newTrustee1Pubkey, "Trustee", jack)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ApproveAccount(newTrustee1Addr, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Jack proposes new_trustee2 (Trustee). With 4 trustees now, a Trustee
 		// account needs ceil(2/3*4)=3 approvals.
 		txResult, err = ProposeAccount(newTrustee2Addr, newTrustee2Pubkey, "Trustee", jack)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Alice approves FIRST, so the proposal has two approvals (jack, alice)
 		// before jack rejects below. A reject that drops the proposal to a single
@@ -535,31 +487,19 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 		// len(Approvals)==1 && len(Rejects)==0) — so alice must approve before
 		// jack's reject for the re-approve flow to have anything to act on.
 		txResult, err = ApproveAccount(newTrustee2Addr, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Jack can reject even after proposing (alice's approval keeps it alive).
 		txResult, err = RejectAccount(newTrustee2Addr, jack, AccountActionOpts{Info: "Jack is rejecting this account"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Jack re-approves (approvals: alice, jack = 2).
 		txResult, err = ApproveAccount(newTrustee2Addr, jack, AccountActionOpts{Info: "Jack re-approving"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Bob approves → 3rd approval reaches the ceil(2/3*4)=3 quorum → active.
 		txResult, err = ApproveAccount(newTrustee2Addr, bob)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Both new trustees are now active.
 		acc1, err := GetAccount(newTrustee1Addr)
@@ -586,10 +526,7 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 	t.Run("VendorWith5TrusteesNeeds2Approvals", func(t *testing.T) {
 		// Jack proposes (1 approval)
 		txResult, err := ProposeAccount(vendorAddr, vendorPubkey, "Vendor", jack, ProposeAccountOpts{Info: "Jack is proposing this account", VID: vid})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// With 5 trustees, vendor needs ceil(5/3)=2 approvals, so Jack's proposal alone is not enough.
 		acc, err := GetAccount(vendorAddr)
@@ -602,10 +539,7 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 
 		// Alice approves → 2 approvals = quorum → account active.
 		txResult, err = ApproveAccount(vendorAddr, alice, AccountActionOpts{Info: "Alice is approving this account"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		acc, err = GetAccount(vendorAddr)
 		require.NoError(t, err)
@@ -622,17 +556,11 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 	t.Run("RevokeVendorWith5Trustees", func(t *testing.T) {
 		// Alice proposes revocation (1)
 		txResult, err := ProposeRevokeAccount(vendorAddr, alice, AccountActionOpts{Info: "Alice proposes to revoke"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Bob approves (2) — still not enough, need 4 with 5 trustees
 		txResult, err = ApproveRevokeAccount(vendorAddr, bob)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Account still active (need 4 approvals).
 		acc, err := GetAccount(vendorAddr)
@@ -643,28 +571,16 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 		// Revoke new_trustee1 → 4 trustees total
 		// With 4 trustees: revocation needs ceil(8/3)=3 approvals → we have alice+bob already
 		txResult, err = ProposeRevokeAccount(newTrustee1Addr, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ApproveRevokeAccount(newTrustee1Addr, bob)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ApproveRevokeAccount(newTrustee1Addr, jack)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ApproveRevokeAccount(newTrustee1Addr, newTrustee1Name)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// new_trustee1 is revoked → 4 trustees remain.
 		revT1, err := GetRevokedAccount(newTrustee1Addr)
@@ -675,10 +591,7 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 		// Now approve vendor revocation — with 4 trustees need ceil(8/3)=3 approvals.
 		// alice(1) + bob(2) + jack(3) = 3 → quorum.
 		txResult, err = ApproveRevokeAccount(vendorAddr, jack)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Vendor is now revoked.
 		revVendor, err := GetRevokedAccount(vendorAddr)
@@ -694,17 +607,11 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 	t.Run("RejectWithDynamicTrusteeCount", func(t *testing.T) {
 		// Jack re-proposes the revoked vendor
 		txResult, err := ProposeAccount(vendorAddr, vendorPubkey, "Vendor,NodeAdmin", jack, ProposeAccountOpts{Info: "Jack is proposing this account", VID: vid})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Bob rejects (1 rejection — not enough with 4 trustees, need 3)
 		txResult, err = RejectAccount(vendorAddr, bob, AccountActionOpts{Info: "Bob is rejecting this account"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Still in proposed.
 		allProposed, err := GetAllProposedAccounts()
@@ -713,22 +620,13 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 
 		// Revoke new_trustee2 → 3 trustees (jack, alice, bob).
 		txResult, err = ProposeRevokeAccount(newTrustee2Addr, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ApproveRevokeAccount(newTrustee2Addr, bob)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ApproveRevokeAccount(newTrustee2Addr, jack)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// new_trustee2 is revoked → 3 trustees.
 		revT2, err := GetRevokedAccount(newTrustee2Addr)
@@ -738,10 +636,7 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 
 		// Alice rejects → with 3 trustees need ceil(6/3)=2 rejections → bob+alice=2 → quorum.
 		txResult, err = RejectAccount(vendorAddr, alice, AccountActionOpts{Info: "Alice is rejecting this account"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Account is now in rejected list.
 		allRejected, err := GetAllRejectedAccounts()
@@ -766,16 +661,10 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 		// Add a 4th trustee: with 3 trustees a Trustee needs ceil(2/3*3)=2
 		// approvals → jack proposes + alice approves → active → 4 trustees.
 		txResult, err := ProposeAccount(newTrustee3Addr, newTrustee3Pubkey, "Trustee", jack, ProposeAccountOpts{Info: "Jack is proposing this account"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ApproveAccount(newTrustee3Addr, alice, AccountActionOpts{Info: "Alice is approving this account"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		acc, err := GetAccount(newTrustee3Addr)
 		require.NoError(t, err)
@@ -784,17 +673,11 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 		// Re-propose the (rejected) vendor as Vendor,NodeAdmin. The NodeAdmin
 		// role uses the 2/3 quorum → with 4 trustees needs ceil(2/3*4)=3.
 		txResult, err = ProposeAccount(vendorAddr, vendorPubkey, "Vendor,NodeAdmin", jack, ProposeAccountOpts{Info: "Jack is proposing this account", VID: vid})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Bob approves → 2 approvals, still 1 short with 4 trustees.
 		txResult, err = ApproveAccount(vendorAddr, bob, AccountActionOpts{Info: "Bob is approving this account"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		acc, err = GetAccount(vendorAddr)
 		require.NoError(t, err)
@@ -807,22 +690,13 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 		// Revoke the 4th trustee → back to 3 trustees. Revocation needs
 		// ceil(2/3*4)=3 approvals: alice proposes + bob + jack.
 		txResult, err = ProposeRevokeAccount(newTrustee3Addr, alice, AccountActionOpts{Info: "Alice proposes to revoke account"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ApproveRevokeAccount(newTrustee3Addr, bob)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ApproveRevokeAccount(newTrustee3Addr, jack)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		revT3, err := GetRevokedAccount(newTrustee3Addr)
 		require.NoError(t, err)
@@ -841,10 +715,7 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 
 		// Alice approves → re-evaluates quorum → account becomes active.
 		txResult, err = ApproveAccount(vendorAddr, alice, AccountActionOpts{Info: "Alice is approving this account"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		acc, err = GetAccount(vendorAddr)
 		require.NoError(t, err)
@@ -874,10 +745,7 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 			"--enhancedSetupFlowOptions", "0",
 			"--from", vendorName,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Add a model for a different VID → rejected: the vendor is not associated
 		// with that VID. (vid ≤ 65534, so wrongVid ≤ 65535 stays a valid VID and
@@ -914,10 +782,7 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 			"--enhancedSetupFlowOptions", "2",
 			"--from", vendorName,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Query the model and confirm it is present with the expected fields.
 		out, err := utils.ExecuteCLI("query", "model", "get-model",
@@ -955,10 +820,7 @@ func TestAuthDemoVendorAccount(t *testing.T) {
 
 		// Jack proposes Vendor — only needs 1/3 trustee approvals, so jack's proposal is enough
 		txResult, err := ProposeAccount(userAddr, userPubkey, "Vendor", jack, ProposeAccountOpts{Info: "Jack is proposing this account", VID: vid})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// With Vendor role, 1 approval is sufficient so account is already active.
 		all, err := GetAllAccounts()
@@ -1002,10 +864,7 @@ func TestAuthDemoVendorAccount(t *testing.T) {
 		require.NoError(t, err)
 
 		txResult, err := ProposeAccount(userAddr, userPubkey, "Vendor", jack, ProposeAccountOpts{Info: "Jack is proposing this account", VID: vidWithPids, PidRanges: pidRanges})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		all, err := GetAllAccounts()
 		require.NoError(t, err)
@@ -1082,10 +941,7 @@ func TestAuthDemoVendorAccount(t *testing.T) {
 		require.NoError(t, err)
 
 		txResult, err := ProposeAccount(userAddr, userPubkey, "Vendor,NodeAdmin", jack, ProposeAccountOpts{Info: "Jack is proposing this account", VID: vid})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// NodeAdmin requires 2/3 approval so not yet active.
 		all, err := GetAllAccounts()
@@ -1102,10 +958,7 @@ func TestAuthDemoVendorAccount(t *testing.T) {
 
 		// Alice approves — now has 2 approvals, should become active.
 		txResult, err = ApproveAccount(userAddr, alice, AccountActionOpts{Info: "Alice is approving this account"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		all, err = GetAllAccounts()
 		require.NoError(t, err)

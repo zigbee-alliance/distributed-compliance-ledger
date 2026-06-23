@@ -7,7 +7,6 @@ import (
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
@@ -96,17 +95,11 @@ func TestPKICombineCerts(t *testing.T) {
 
 	t.Run("ProposeAndApproveFirstRootCert", func(t *testing.T) {
 		txResult, err := ProposeAddX509RootCert(rootWithSameSubjectAndSkid1Path, jack, X509ProposeOpts{VID: vid})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// With 3 trustees, quorum=2: jack proposes + alice approves = cert is approved.
 		txResult, err = ApproveAddX509RootCert(rootWithSameSubjectAndSkidSubject, rootWithSameSubjectAndSkidSubjectKeyID, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		cert, err := GetX509Cert(rootWithSameSubjectAndSkidSubject, rootWithSameSubjectAndSkidSubjectKeyID)
 		require.NoError(t, err)
@@ -116,17 +109,11 @@ func TestPKICombineCerts(t *testing.T) {
 
 	t.Run("ProposeAndApproveSecondRootCert_SameSubjectSkid", func(t *testing.T) {
 		txResult, err := ProposeAddX509RootCert(rootWithSameSubjectAndSkid2Path, jack, X509ProposeOpts{VID: vid})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// With 3 trustees, quorum=2: jack proposes + alice approves = cert is approved.
 		txResult, err = ApproveAddX509RootCert(rootWithSameSubjectAndSkidSubject, rootWithSameSubjectAndSkidSubjectKeyID, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Now both certs with same subject+skid should coexist (2 entries in Certs).
 		cert, err := GetX509Cert(rootWithSameSubjectAndSkidSubject, rootWithSameSubjectAndSkidSubjectKeyID)

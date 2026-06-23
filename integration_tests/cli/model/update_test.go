@@ -7,7 +7,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
 func TestModelUpdate(t *testing.T) {
@@ -31,10 +30,7 @@ func TestModelUpdate(t *testing.T) {
 			SchemaVersion: "0",
 			From:          vendorAccount,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("QueryDefaultValues", func(t *testing.T) {
@@ -64,10 +60,7 @@ func TestModelUpdate(t *testing.T) {
 			EnhancedSetupFlowOptions:            2,
 			FactoryResetStepsHint:               6,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		m, err := GetModel(vid, pid)
 		require.NoError(t, err)
@@ -92,10 +85,7 @@ func TestModelUpdate(t *testing.T) {
 			SchemaVersion:            "0",
 			EnhancedSetupFlowOptions: 2,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Omitted hints keep their previously-set values.
 		m, err := GetModel(vid, pid)
@@ -120,10 +110,7 @@ func TestModelUpdate(t *testing.T) {
 			SchemaVersion:            "0",
 			EnhancedSetupFlowOptions: 2,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Explicit zero hints are ignored — the previous values are retained.
 		m, err := GetModel(vid, pid)
@@ -143,10 +130,7 @@ func TestModelUpdate(t *testing.T) {
 			VID: vid, PID: pid, From: vendorAccount,
 			SupportURL: supportURL,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		m, err := GetModel(vid, pid)
 		require.NoError(t, err)

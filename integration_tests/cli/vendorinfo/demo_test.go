@@ -21,7 +21,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 	vendorinfotypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/types"
 )
 
@@ -70,10 +69,7 @@ func TestVendorInfoDemo(t *testing.T) {
 			VendorName:       vendorName,
 			SchemaVersion:    schemaVersion0,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("QueryVendorInfo", func(t *testing.T) {
@@ -105,10 +101,7 @@ func TestVendorInfoDemo(t *testing.T) {
 
 	t.Run("UpdateVendorInfoRequiredFieldsOnly", func(t *testing.T) {
 		txResult, err := UpdateVendor(vendorAccount, VendorOpts{VID: vid})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Omitted optional fields should keep their previous values
 		v, err := GetVendor(vid)
@@ -130,10 +123,7 @@ func TestVendorInfoDemo(t *testing.T) {
 			VendorName:           vendorName,
 			SchemaVersion:        schemaVersion0,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		v, err := GetVendor(vid)
 		require.NoError(t, err)
@@ -178,10 +168,7 @@ func TestVendorInfoDemo(t *testing.T) {
 			CompanyLegalName: updatedCompanyLegalName,
 			VendorName:       vendorName,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Update the same record by vendor admin
 		newCompanyName := "New Corp"
@@ -191,9 +178,6 @@ func TestVendorInfoDemo(t *testing.T) {
 			CompanyLegalName: newCompanyName,
 			VendorName:       newVendorName,
 		})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 }

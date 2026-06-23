@@ -7,7 +7,6 @@ import (
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
 const (
@@ -59,44 +58,26 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 	t.Run("SetupCerts", func(t *testing.T) {
 		// Add root cert
 		txResult, err := AddNocRootCert(nocRootCert1Path, vendorAccount65521)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Add NOC ICA certs
 		txResult, err = AddNocX509IcaCert(nocCert1Path, vendorAccount65521)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = AddNocX509IcaCert(nocCert1CopyPath, vendorAccount65521)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Pre-seed the VVSC chain (Matter §6.4.5.4) so the leaf below has a
 		// §6.4.10 step 12.a.iii path-length-3 chain to validate against.
 		txResult, err = AddNocRootCert(vvscRootCert1Path, vendorAccount65521, AddNocCertOpts{IsVidVerificationSigner: true})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = AddNocX509IcaCert(vvscIcaCert1Path, vendorAccount65521, AddNocCertOpts{IsVidVerificationSigner: true})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Add VVSC leaf certificate (replaces the legacy NocLeafCert1).
 		txResult, err = AddNocX509IcaCert(vvscLeafCert1Path, vendorAccount65521, AddNocCertOpts{IsVidVerificationSigner: true})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		all, err := GetAllNocX509Certs()
 		require.NoError(t, err)
@@ -110,10 +91,7 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 	t.Run("RevokeAndRemoveIcaCert", func(t *testing.T) {
 		// Revoke first ICA cert
 		txResult, err := RevokeNocX509IcaCert(removeNocIntermCertSubject, removeNocIntermCertSubjectKeyID, vendorAccount65521, RevokeNocCertOpts{SerialNumber: removeNocIntermCert1Serial})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Try to remove with invalid serial
 		txResult, err = RemoveNocCert(removeNocIntermCertSubject, removeNocIntermCertSubjectKeyID, vendorAccount65521, RevokeNocCertOpts{SerialNumber: "invalid"})
@@ -132,10 +110,7 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 
 		// Remove revoked ICA cert by serial
 		txResult, err = RemoveNocCert(removeNocIntermCertSubject, removeNocIntermCertSubjectKeyID, vendorAccount65521, RevokeNocCertOpts{SerialNumber: removeNocIntermCert1Serial})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Only second ICA cert should remain.
 		cert, err := GetNocCert("--subject", removeNocIntermCertSubject, "--subject-key-id", removeNocIntermCertSubjectKeyID)
@@ -146,10 +121,7 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 
 		// Remove remaining ICA cert by subject+subjectKeyID
 		txResult, err = RemoveNocCert(removeNocIntermCertSubject, removeNocIntermCertSubjectKeyID, vendorAccount65521)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		cert, err = GetNocCert("--subject", removeNocIntermCertSubject, "--subject-key-id", removeNocIntermCertSubjectKeyID)
 		require.NoError(t, err)
@@ -164,10 +136,7 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 
 	t.Run("RemoveLeafCert", func(t *testing.T) {
 		txResult, err := RemoveNocCert(removeNocLeafCertSubject, removeNocLeafCertSubjectKeyID, vendorAccount65521)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		cert, err := GetNocCert("--subject", removeNocLeafCertSubject, "--subject-key-id", removeNocLeafCertSubjectKeyID)
 		require.NoError(t, err)
@@ -177,17 +146,11 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 	t.Run("RemoveNocRootCert", func(t *testing.T) {
 		// Add root cert copy
 		txResult, err := AddNocRootCert(nocRootCert1CopyPath, vendorAccount65521)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Re-add ICA cert
 		txResult, err = AddNocX509IcaCert(nocCert1Path, vendorAccount65521)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Try to remove root with invalid serial
 		txResult, err = RemoveNocRootCert(removeNocRootCertSubject, removeNocRootCertSubjectKeyID, vendorAccount65521, RevokeNocCertOpts{SerialNumber: "invalid"})
@@ -206,17 +169,11 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 
 		// Revoke root cert
 		txResult, err = RevokeNocRootCert(removeNocRootCertSubject, removeNocRootCertSubjectKeyID, vendorAccount65521, RevokeNocCertOpts{SerialNumber: removeNocRootCert1SerialNumber})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Remove revoked root cert by serial
 		txResult, err = RemoveNocRootCert(removeNocRootCertSubject, removeNocRootCertSubjectKeyID, vendorAccount65521, RevokeNocCertOpts{SerialNumber: removeNocRootCert1SerialNumber})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Only copy root should remain.
 		roots, err := GetNocRootCerts(removeNocRootCertVid)
@@ -227,17 +184,11 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 
 		// Re-add root cert and then remove both
 		txResult, err = AddNocRootCert(nocRootCert1Path, vendorAccount65521)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Remove all root certs by subject+subjectKeyID (no serial)
 		txResult, err = RemoveNocRootCert(removeNocRootCertSubject, removeNocRootCertSubjectKeyID, vendorAccount65521)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		cert, err := GetNocCert("--subject", removeNocRootCertSubject, "--subject-key-id", removeNocRootCertSubjectKeyID)
 		require.NoError(t, err)

@@ -6,7 +6,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
 const (
@@ -115,24 +114,15 @@ func TestPKINocCerts(t *testing.T) {
 
 		// Add first NOC root certificate
 		txResult, err = AddNocRootCert(nocRootCert1Path, vendorAccount, AddNocCertOpts{SchemaVersion: "0"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Add second NOC root certificate
 		txResult, err = AddNocRootCert(nocRootCert2Path, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Add third NOC root certificate (different VID vendor)
 		txResult, err = AddNocRootCert(nocRootCert3Path, vendorAccount2)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("QueryNocRootCertsByVid", func(t *testing.T) {
@@ -198,10 +188,7 @@ func TestPKINocCerts(t *testing.T) {
 	t.Run("AddNocIcaCerts", func(t *testing.T) {
 		// Add first ICA cert
 		txResult, err := AddNocX509IcaCert(nocCert1Path, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// ICA certs by VID — cert1 present.
 		icas, err := GetNocX509IcaCerts(nocVid)
@@ -230,17 +217,11 @@ func TestPKINocCerts(t *testing.T) {
 
 		// Add second ICA cert
 		txResult, err = AddNocX509IcaCert(nocCert2Path, vendorAccount, AddNocCertOpts{SchemaVersion: "0"})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Add cert copy
 		txResult, err = AddNocX509IcaCert(nocCert1CopyPath, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// All ICA certs include cert1 (both serials), cert2.
 		allIcas, err := GetAllNocX509IcaCerts()
@@ -268,32 +249,20 @@ func TestPKINocCerts(t *testing.T) {
 	t.Run("AddAndRevokeNocRootCert", func(t *testing.T) {
 		// Add root cert copy
 		txResult, err := AddNocRootCert(nocRootCert1CopyPath, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Add a Matter §6.4.5.4 VVSC chain (self-issued VVSC root, VVSC intermediate,
 		// VVSC leaf) so the leaf-level operations have a §6.5.12-compliant chain to
 		// exercise. NocLeafCert1 is a NOC end-entity (cA=FALSE / NOC profile) and is
 		// no longer accepted by the stricter add-noc-x509-ica-cert handler.
 		txResult, err = AddNocRootCert(vvscRootCert1Path, vendorAccount, AddNocCertOpts{IsVidVerificationSigner: true})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = AddNocX509IcaCert(vvscIcaCert1Path, vendorAccount, AddNocCertOpts{IsVidVerificationSigner: true})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = AddNocX509IcaCert(vvscLeafCert1Path, vendorAccount, AddNocCertOpts{IsVidVerificationSigner: true})
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Verify root state before revocation.
 		allRoots, err := GetAllNocRootCerts()
@@ -317,10 +286,7 @@ func TestPKINocCerts(t *testing.T) {
 
 		// Revoke root cert without child flag — ICA must survive
 		txResult, err = RevokeNocRootCert(nocRootCert1Subject, nocRootCert1SubjectKeyID, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// All revoked NOC root certs — both serials, ICA/leaf absent.
 		revokedRoots, err := GetAllRevokedNocRootCerts()
@@ -399,10 +365,7 @@ func TestPKINocCerts(t *testing.T) {
 
 		// Revoke ICA cert without child flag — leaf must survive
 		txResult, err = RevokeNocX509IcaCert(nocCert1Subject, nocCert1SubjectKeyID, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Revoked ICA list — cert1 present, leaf absent.
 		revokedIcas, err := GetAllRevokedNocX509IcaCerts()

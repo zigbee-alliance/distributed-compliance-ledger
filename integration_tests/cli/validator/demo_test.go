@@ -117,17 +117,11 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 	t.Run("ProposeAndRejectDisableValidator_NoEffect", func(t *testing.T) {
 		// Alice proposes to disable
 		txResult, err := ProposeDisableNode(validatorAddress, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Alice rejects the proposal she just made
 		txResult, err = RejectDisableNode(validatorAddress, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Should not be in proposed list
 		proposed, err := GetProposedDisableNode(validatorAddress)
@@ -148,10 +142,7 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 	t.Run("ProposeApproveDisableAndReEnable", func(t *testing.T) {
 		// Alice proposes to disable
 		txResult, err := ProposeDisableNode(validatorAddress, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Proposed list contains the validator
 		allProposed, err := GetAllProposedDisableNodes()
@@ -167,10 +158,7 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 		// Bob approves — reaches threshold (ceil(2/3 * 3 trustees) = 2, proposer counts as 1),
 		// validator becomes disabled and the proposal is removed.
 		txResult, err = ApproveDisableNode(validatorAddress, bob)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Bob cannot reject — proposal is gone (threshold was reached)
 		txBad, errBad := RejectDisableNode(validatorAddress, bob)
@@ -192,10 +180,7 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 
 		// Node admin (validatorOwner) re-enables the validator
 		txResult, err = EnableNode(validatorOwner)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Should no longer be disabled
 		disabled, err = GetDisabledNode(validatorAddress)
@@ -209,10 +194,7 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 		// disabledByNodeAdmin=true with no approvals, and jails the validator
 		// synchronously.
 		txResult, err := DisableNode(validatorOwner)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		disabled, err := GetDisabledNode(validatorAddress)
 		require.NoError(t, err)
@@ -230,10 +212,7 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 		// The node admin re-enables: the disabled record clears and the
 		// validator is unjailed (handler calls Unjail + RemoveDisabledValidator).
 		txResult, err = EnableNode(validatorOwner)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		disabled, err = GetDisabledNode(validatorAddress)
 		require.NoError(t, err)
@@ -248,17 +227,11 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 	t.Run("ProposeApproveRejectRejectFailsSecondTime", func(t *testing.T) {
 		// Alice proposes
 		txResult, err := ProposeDisableNode(validatorAddress, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Bob approves — reaches threshold, validator becomes disabled and proposal is removed.
 		txResult, err = ApproveDisableNode(validatorAddress, bob)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Bob cannot reject — proposal is gone (threshold was reached)
 		txBad, errBad := RejectDisableNode(validatorAddress, bob)
@@ -268,26 +241,17 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 
 		// Re-enable
 		txResult, err = EnableNode(validatorOwner)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("ProposeRejectByBobAndJack_GoesToRejectedList", func(t *testing.T) {
 		// Alice proposes
 		txResult, err := ProposeDisableNode(validatorAddress, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Bob rejects
 		txResult, err = RejectDisableNode(validatorAddress, bob)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Bob cannot reject twice
 		txBad, errBad := RejectDisableNode(validatorAddress, bob)
@@ -305,10 +269,7 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 
 		// Jack rejects — now enough rejections to move to rejected list
 		txResult, err = RejectDisableNode(validatorAddress, jack)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Jack cannot reject twice
 		txBad, errBad = RejectDisableNode(validatorAddress, jack)
@@ -348,10 +309,7 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 	t.Run("RePropose_AfterRejected_StartsFresh", func(t *testing.T) {
 		// Alice proposes again — should succeed even though it was previously rejected
 		txResult, err := ProposeDisableNode(validatorAddress, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Now in proposed list
 		proposed, err := GetProposedDisableNode(validatorAddress)
@@ -367,10 +325,7 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 
 		// Clean up: reject it to leave the network in a clean state
 		txResult, err = RejectDisableNode(validatorAddress, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 }
 
