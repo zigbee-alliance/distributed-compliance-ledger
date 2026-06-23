@@ -156,14 +156,14 @@ func TestModelValidationCases(t *testing.T) {
 	// --- UpdateModel ---
 
 	t.Run("UpdateModel_MultipleFields_Pid1", func(t *testing.T) {
-		txResult, err := UpdateModel(vid1, pid1, vendorAccount1,
-			"--productName", "Updated Product Name",
-			"--productLabel", "Updated Test Product",
-			"--partNumber", "2",
-			"--lsfURL", "https://lsf.url.info?v=1",
-			"--lsfRevision", "1",
-			"--enhancedSetupFlowOptions", "0",
-		)
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid1, PID: pid1, From: vendorAccount1,
+			ProductName:  "Updated Product Name",
+			ProductLabel: "Updated Test Product",
+			PartNumber:   "2",
+			LsfURL:       "https://lsf.url.info?v=1",
+			LsfRevision:  1,
+		})
 		requireTxOK(t, txResult, err)
 
 		m, err := GetModel(vid1, pid1)
@@ -178,10 +178,10 @@ func TestModelValidationCases(t *testing.T) {
 	})
 
 	t.Run("UpdateModel_SingleField_Pid1", func(t *testing.T) {
-		txResult, err := UpdateModel(vid1, pid1, vendorAccount1,
-			"--productLabel", "Updated Test Product V2",
-			"--enhancedSetupFlowOptions", "0",
-		)
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid1, PID: pid1, From: vendorAccount1,
+			ProductLabel: "Updated Test Product V2",
+		})
 		requireTxOK(t, txResult, err)
 
 		m, err := GetModel(vid1, pid1)
@@ -193,22 +193,22 @@ func TestModelValidationCases(t *testing.T) {
 	})
 
 	t.Run("UpdateModel_AllFields_Pid1", func(t *testing.T) {
-		txResult, err := UpdateModel(vid1, pid1, vendorAccount1,
-			"--productName", "Updated Product Name V3",
-			"--partNumber", "V3",
-			"--commissioningCustomFlowURL", "https://updated.url.info",
-			"--productLabel", "Updated Test Product V3",
-			"--commissioningModeInitialStepsInstruction", "Instructions updated v3",
-			"--commissioningModeSecondaryStepsInstruction", "Secondary Instructions v3",
-			"--icdUserActiveModeTriggerInstruction", "ICD User Active Mode Trigger Instructions v3",
-			"--factoryResetStepsInstruction", "Factory Reset Instructions v3",
-			"--userManualURL", "https://userManual.info/v3",
-			"--supportURL", "https://support.url.info/v3",
-			"--productURL", "https://product.landingpage.url",
-			"--lsfURL", "https://lsf.url.info?v=2",
-			"--lsfRevision", "2",
-			"--enhancedSetupFlowOptions", "0",
-		)
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid1, PID: pid1, From: vendorAccount1,
+			ProductName:                                "Updated Product Name V3",
+			PartNumber:                                 "V3",
+			CommissioningCustomFlowURL:                 "https://updated.url.info",
+			ProductLabel:                               "Updated Test Product V3",
+			CommissioningModeInitialStepsInstruction:   "Instructions updated v3",
+			CommissioningModeSecondaryStepsInstruction: "Secondary Instructions v3",
+			IcdUserActiveModeTriggerInstruction:        "ICD User Active Mode Trigger Instructions v3",
+			FactoryResetStepsInstruction:               "Factory Reset Instructions v3",
+			UserManualURL:                              "https://userManual.info/v3",
+			SupportURL:                                 "https://support.url.info/v3",
+			ProductURL:                                 "https://product.landingpage.url",
+			LsfURL:                                     "https://lsf.url.info?v=2",
+			LsfRevision:                                2,
+		})
 		requireTxOK(t, txResult, err)
 
 		m, err := GetModel(vid1, pid1)
@@ -230,10 +230,10 @@ func TestModelValidationCases(t *testing.T) {
 	})
 
 	t.Run("UpdateModel_OneFieldPreservesOthers_Pid1", func(t *testing.T) {
-		txResult, err := UpdateModel(vid1, pid1, vendorAccount1,
-			"--productLabel", "Updated Test Product V4",
-			"--enhancedSetupFlowOptions", "0",
-		)
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid1, PID: pid1, From: vendorAccount1,
+			ProductLabel: "Updated Test Product V4",
+		})
 		requireTxOK(t, txResult, err)
 
 		m, err := GetModel(vid1, pid1)
@@ -245,9 +245,9 @@ func TestModelValidationCases(t *testing.T) {
 	})
 
 	t.Run("UpdateModel_NoFields_Pid1", func(t *testing.T) {
-		txResult, err := UpdateModel(vid1, pid1, vendorAccount1,
-			"--enhancedSetupFlowOptions", "0",
-		)
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid1, PID: pid1, From: vendorAccount1,
+		})
 		requireTxOK(t, txResult, err)
 
 		m, err := GetModel(vid1, pid1)
@@ -260,20 +260,20 @@ func TestModelValidationCases(t *testing.T) {
 	})
 
 	t.Run("UpdateModel_LsfRevisionEqual_Fails_Pid1", func(t *testing.T) {
-		txResult, err := UpdateModel(vid1, pid1, vendorAccount1,
-			"--lsfURL", "https://lsf.url.info?v=3",
-			"--lsfRevision", "2",
-			"--enhancedSetupFlowOptions", "0",
-		)
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid1, PID: pid1, From: vendorAccount1,
+			LsfURL:      "https://lsf.url.info?v=3",
+			LsfRevision: 2,
+		})
 		requireTxFailContains(t, txResult, err, "LsfRevision should monotonically increase by 1")
 	})
 
 	t.Run("UpdateModel_LsfRevisionLess_Fails_Pid1", func(t *testing.T) {
-		txResult, err := UpdateModel(vid1, pid1, vendorAccount1,
-			"--lsfURL", "https://lsf.url.info?v=3",
-			"--lsfRevision", "1",
-			"--enhancedSetupFlowOptions", "0",
-		)
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid1, PID: pid1, From: vendorAccount1,
+			LsfURL:      "https://lsf.url.info?v=3",
+			LsfRevision: 1,
+		})
 		requireTxFailContains(t, txResult, err, "LsfRevision should monotonically increase by 1")
 	})
 
@@ -307,9 +307,10 @@ func TestModelValidationCases(t *testing.T) {
 	})
 
 	t.Run("UpdateModelVersion_OnlyValidity_Basic", func(t *testing.T) {
-		txResult, err := UpdateModelVersion(vid1, pid1, svBasic, vendorAccount1,
-			"--softwareVersionValid=false",
-		)
+		txResult, err := UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid1, PID: pid1, SoftwareVersion: svBasic, From: vendorAccount1,
+			SoftwareVersionValid: boolPtr(false),
+		})
 		requireTxOK(t, txResult, err)
 
 		mv, err := GetModelVersion(vid1, pid1, svBasic)
@@ -319,16 +320,17 @@ func TestModelValidationCases(t *testing.T) {
 	})
 
 	t.Run("UpdateModelVersion_FewFields_Basic", func(t *testing.T) {
-		txResult, err := UpdateModelVersion(vid1, pid1, svBasic, vendorAccount1,
-			"--softwareVersionValid=true",
-			"--releaseNotesURL", "https://release.url.info",
-			"--otaURL", "https://ota.url.com",
-			"--otaFileSize", "123",
-			"--otaChecksum", "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk1Mzg4MjA3ZmFhNmM2NTg2YTBmNDU0MDk3YTU0ZWIzMw==",
-			"--otaChecksumType", "1",
-			"--minApplicableSoftwareVersion", "2",
-			"--maxApplicableSoftwareVersion", "20",
-		)
+		txResult, err := UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid1, PID: pid1, SoftwareVersion: svBasic, From: vendorAccount1,
+			SoftwareVersionValid:         boolPtr(true),
+			ReleaseNotesURL:              "https://release.url.info",
+			OtaURL:                       "https://ota.url.com",
+			OtaFileSize:                  123,
+			OtaChecksum:                  "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk1Mzg4MjA3ZmFhNmM2NTg2YTBmNDU0MDk3YTU0ZWIzMw==",
+			OtaChecksumType:              1,
+			MinApplicableSoftwareVersion: 2,
+			MaxApplicableSoftwareVersion: 20,
+		})
 		requireTxOK(t, txResult, err)
 
 		mv, err := GetModelVersion(vid1, pid1, svBasic)
@@ -385,7 +387,9 @@ func TestModelValidationCases(t *testing.T) {
 
 	t.Run("UpdateModelVersion_NoChange_Full", func(t *testing.T) {
 		// Update with only the required identifiers — nothing should change.
-		txResult, err := UpdateModelVersion(vid1, pid1, svFull, vendorAccount1)
+		txResult, err := UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid1, PID: pid1, SoftwareVersion: svFull, From: vendorAccount1,
+		})
 		requireTxOK(t, txResult, err)
 
 		mv, err := GetModelVersion(vid1, pid1, svFull)
@@ -397,9 +401,10 @@ func TestModelValidationCases(t *testing.T) {
 	})
 
 	t.Run("UpdateModelVersion_OnlyValidity_Full", func(t *testing.T) {
-		txResult, err := UpdateModelVersion(vid1, pid1, svFull, vendorAccount1,
-			"--softwareVersionValid=false",
-		)
+		txResult, err := UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid1, PID: pid1, SoftwareVersion: svFull, From: vendorAccount1,
+			SoftwareVersionValid: boolPtr(false),
+		})
 		requireTxOK(t, txResult, err)
 
 		mv, err := GetModelVersion(vid1, pid1, svFull)
@@ -410,13 +415,14 @@ func TestModelValidationCases(t *testing.T) {
 	})
 
 	t.Run("UpdateModelVersion_AllMutable_Full", func(t *testing.T) {
-		txResult, err := UpdateModelVersion(vid1, pid1, svFull, vendorAccount1,
-			"--softwareVersionValid=true",
-			"--otaURL", "https://updated.ota.url.info",
-			"--releaseNotesURL", "https://updated.release.notes.url.info",
-			"--maxApplicableSoftwareVersion", "25",
-			"--minApplicableSoftwareVersion", "15",
-		)
+		txResult, err := UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid1, PID: pid1, SoftwareVersion: svFull, From: vendorAccount1,
+			SoftwareVersionValid:         boolPtr(true),
+			OtaURL:                       "https://updated.ota.url.info",
+			ReleaseNotesURL:              "https://updated.release.notes.url.info",
+			MaxApplicableSoftwareVersion: 25,
+			MinApplicableSoftwareVersion: 15,
+		})
 		requireTxOK(t, txResult, err)
 
 		mv, err := GetModelVersion(vid1, pid1, svFull)
@@ -431,9 +437,10 @@ func TestModelValidationCases(t *testing.T) {
 
 	t.Run("UpdateModelVersion_OtaFieldsWithoutUrl_Fails", func(t *testing.T) {
 		// OTA already set during create — try to change otaFileSize on its own.
-		txResult, err := UpdateModelVersion(vid1, pid1, svFull, vendorAccount1,
-			"--otaFileSize", "12345",
-		)
+		txResult, err := UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid1, PID: pid1, SoftwareVersion: svFull, From: vendorAccount1,
+			OtaFileSize: 12345,
+		})
 		requireTxFailContains(t, txResult, err,
 			"OtaUrl is not provided. OtaFileSize, OtaChecksum, and OtaChecksumType fields must not be provided")
 	})
@@ -468,19 +475,21 @@ func TestModelValidationCases(t *testing.T) {
 	})
 
 	t.Run("UpdateModelVersion_MaxLessThanMin_Fails", func(t *testing.T) {
-		txResult, err := UpdateModelVersion(vid1, pid1, svBounds, vendorAccount1,
-			"--maxApplicableSoftwareVersion", "3",
-			"--minApplicableSoftwareVersion", "5",
-		)
+		txResult, err := UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid1, PID: pid1, SoftwareVersion: svBounds, From: vendorAccount1,
+			MaxApplicableSoftwareVersion: 3,
+			MinApplicableSoftwareVersion: 5,
+		})
 		requireTxFailContains(t, txResult, err,
 			"MaxApplicableSoftwareVersion must not be less than MinApplicableSoftwareVersion")
 	})
 
 	t.Run("UpdateModelVersion_MinGreaterThanMax_Fails", func(t *testing.T) {
-		txResult, err := UpdateModelVersion(vid1, pid1, svBounds, vendorAccount1,
-			"--maxApplicableSoftwareVersion", "32",
-			"--minApplicableSoftwareVersion", "33",
-		)
+		txResult, err := UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid1, PID: pid1, SoftwareVersion: svBounds, From: vendorAccount1,
+			MaxApplicableSoftwareVersion: 32,
+			MinApplicableSoftwareVersion: 33,
+		})
 		requireTxFailContains(t, txResult, err,
 			"MaxApplicableSoftwareVersion must not be less than MinApplicableSoftwareVersion")
 	})
@@ -501,9 +510,10 @@ func TestModelValidationCases(t *testing.T) {
 		})
 		requireTxOK(t, txResult, err)
 
-		txResult, err = UpdateModelVersion(vid1, pid1, svNoOta, vendorAccount1,
-			"--otaURL", "https://ota.url.com",
-		)
+		txResult, err = UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid1, PID: pid1, SoftwareVersion: svNoOta, From: vendorAccount1,
+			OtaURL: "https://ota.url.com",
+		})
 		requireTxFailContains(t, txResult, err,
 			"OtaFileSize, OtaChecksum and OtaChecksumType are required if OtaUrl is provided")
 	})
@@ -565,9 +575,10 @@ func TestModelValidationCases(t *testing.T) {
 	t.Run("UpdateModelVersion_SpecVerFlag_Rejected", func(t *testing.T) {
 		// update-model-version must reject --specificationVersion at the CLI flag
 		// parsing stage (the flag is not defined on the update subcommand).
-		_, err := UpdateModelVersion(vid1, pid1, svSpecVerImmutable, vendorAccount1,
-			"--specificationVersion", "11",
-		)
+		_, err := UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid1, PID: pid1, SoftwareVersion: svSpecVerImmutable, From: vendorAccount1,
+			SpecificationVersion: 11,
+		})
 		require.Error(t, err)
 		require.Contains(t, err.Error(), "unknown flag: --specificationVersion")
 	})

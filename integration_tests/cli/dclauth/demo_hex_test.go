@@ -108,12 +108,13 @@ func TestAuthDemoHex(t *testing.T) {
 
 	t.Run("UpdateModel", func(t *testing.T) {
 		productName := "Device #1"
-		txResult, err := model.UpdateModelHex(vidHex, pidHex, userAddr,
-			"--productName", productName,
-			"--productLabel", "Device Description",
-			"--partNumber", "12",
-			"--enhancedSetupFlowOptions", "2",
-		)
+		txResult, err := model.UpdateModel(model.UpdateModelOpts{
+			VIDHex: vidHex, PIDHex: pidHex, From: userAddr,
+			ProductName:              productName,
+			ProductLabel:             "Device Description",
+			PartNumber:               "12",
+			EnhancedSetupFlowOptions: 2,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)

@@ -167,20 +167,133 @@ func flagOrHex(n int, hex string) string {
 	return itoa(n)
 }
 
-// UpdateModel executes the update-model transaction.
-func UpdateModel(vid, pid int, from string, extra ...string) (*utils.TxResult, error) {
-	return UpdateModelHex(itoa(vid), itoa(pid), from, extra...)
+// UpdateModelOpts holds parameters for update-model. VID/PID (or their hex
+// forms) and From are always sent; every other field is emitted only when
+// non-zero/non-empty. Because proto3 cannot distinguish an explicit zero from an
+// omitted value, emitting numeric flags only when non-zero matches the update
+// handler's "treat zero as leave-unchanged" semantics.
+type UpdateModelOpts struct {
+	VID    int
+	VIDHex string
+	PID    int
+	PIDHex string
+
+	ProductName  string
+	ProductLabel string
+	PartNumber   string
+
+	CommissioningCustomFlowURL                 string
+	CommissioningFallbackURL                   string
+	CommissioningModeInitialStepsHint          int
+	CommissioningModeInitialStepsInstruction   string
+	CommissioningModeSecondaryStepsHint        int
+	CommissioningModeSecondaryStepsInstruction string
+	IcdUserActiveModeTriggerHint               int
+	IcdUserActiveModeTriggerInstruction        string
+	FactoryResetStepsHint                      int
+	FactoryResetStepsInstruction               string
+
+	UserManualURL  string
+	ProductURL     string
+	LsfURL         string
+	LsfRevision    int
+	SupportURL     string
+	MaintenanceURL string
+
+	EnhancedSetupFlowOptions    int
+	EnhancedSetupFlowTCUrl      string
+	EnhancedSetupFlowTCRevision int
+	EnhancedSetupFlowTCDigest   string
+	EnhancedSetupFlowTCFileSize int
+
+	SchemaVersion string
+
+	From string
 }
 
-// UpdateModelHex executes update-model using hex vid/pid strings.
-func UpdateModelHex(vid, pid, from string, extra ...string) (*utils.TxResult, error) {
+// UpdateModel executes the update-model transaction.
+func UpdateModel(opts UpdateModelOpts) (*utils.TxResult, error) {
 	args := []string{
 		"tx", "model", "update-model",
-		"--vid", vid,
-		"--pid", pid,
-		"--from", from,
+		"--vid", flagOrHex(opts.VID, opts.VIDHex),
+		"--pid", flagOrHex(opts.PID, opts.PIDHex),
+		"--from", opts.From,
 	}
-	args = append(args, extra...)
+	if opts.ProductName != "" {
+		args = append(args, "--productName", opts.ProductName)
+	}
+	if opts.ProductLabel != "" {
+		args = append(args, "--productLabel", opts.ProductLabel)
+	}
+	if opts.PartNumber != "" {
+		args = append(args, "--partNumber", opts.PartNumber)
+	}
+	if opts.CommissioningCustomFlowURL != "" {
+		args = append(args, "--commissioningCustomFlowURL", opts.CommissioningCustomFlowURL)
+	}
+	if opts.CommissioningFallbackURL != "" {
+		args = append(args, "--commissioningFallbackUrl", opts.CommissioningFallbackURL)
+	}
+	if opts.CommissioningModeInitialStepsHint != 0 {
+		args = append(args, "--commissioningModeInitialStepsHint", itoa(opts.CommissioningModeInitialStepsHint))
+	}
+	if opts.CommissioningModeInitialStepsInstruction != "" {
+		args = append(args, "--commissioningModeInitialStepsInstruction", opts.CommissioningModeInitialStepsInstruction)
+	}
+	if opts.CommissioningModeSecondaryStepsHint != 0 {
+		args = append(args, "--commissioningModeSecondaryStepsHint", itoa(opts.CommissioningModeSecondaryStepsHint))
+	}
+	if opts.CommissioningModeSecondaryStepsInstruction != "" {
+		args = append(args, "--commissioningModeSecondaryStepsInstruction", opts.CommissioningModeSecondaryStepsInstruction)
+	}
+	if opts.IcdUserActiveModeTriggerHint != 0 {
+		args = append(args, "--icdUserActiveModeTriggerHint", itoa(opts.IcdUserActiveModeTriggerHint))
+	}
+	if opts.IcdUserActiveModeTriggerInstruction != "" {
+		args = append(args, "--icdUserActiveModeTriggerInstruction", opts.IcdUserActiveModeTriggerInstruction)
+	}
+	if opts.FactoryResetStepsHint != 0 {
+		args = append(args, "--factoryResetStepsHint", itoa(opts.FactoryResetStepsHint))
+	}
+	if opts.FactoryResetStepsInstruction != "" {
+		args = append(args, "--factoryResetStepsInstruction", opts.FactoryResetStepsInstruction)
+	}
+	if opts.UserManualURL != "" {
+		args = append(args, "--userManualURL", opts.UserManualURL)
+	}
+	if opts.ProductURL != "" {
+		args = append(args, "--productURL", opts.ProductURL)
+	}
+	if opts.LsfURL != "" {
+		args = append(args, "--lsfURL", opts.LsfURL)
+	}
+	if opts.LsfRevision != 0 {
+		args = append(args, "--lsfRevision", itoa(opts.LsfRevision))
+	}
+	if opts.SupportURL != "" {
+		args = append(args, "--supportURL", opts.SupportURL)
+	}
+	if opts.MaintenanceURL != "" {
+		args = append(args, "--maintenanceUrl", opts.MaintenanceURL)
+	}
+	if opts.EnhancedSetupFlowOptions != 0 {
+		args = append(args, "--enhancedSetupFlowOptions", itoa(opts.EnhancedSetupFlowOptions))
+	}
+	if opts.EnhancedSetupFlowTCUrl != "" {
+		args = append(args, "--enhancedSetupFlowTCUrl", opts.EnhancedSetupFlowTCUrl)
+	}
+	if opts.EnhancedSetupFlowTCRevision != 0 {
+		args = append(args, "--enhancedSetupFlowTCRevision", itoa(opts.EnhancedSetupFlowTCRevision))
+	}
+	if opts.EnhancedSetupFlowTCDigest != "" {
+		args = append(args, "--enhancedSetupFlowTCDigest", opts.EnhancedSetupFlowTCDigest)
+	}
+	if opts.EnhancedSetupFlowTCFileSize != 0 {
+		args = append(args, "--enhancedSetupFlowTCFileSize", itoa(opts.EnhancedSetupFlowTCFileSize))
+	}
+	if opts.SchemaVersion != "" {
+		args = append(args, "--schemaVersion", opts.SchemaVersion)
+	}
 
 	return utils.ExecuteTx(args...)
 }
@@ -282,16 +395,75 @@ func AddModelVersion(opts AddModelVersionOpts) (*utils.TxResult, error) {
 	return utils.ExecuteTx(args...)
 }
 
+// UpdateModelVersionOpts holds parameters for update-model-version. The base
+// fields (VID/PID/SoftwareVersion/From) are always sent; the rest emit only when
+// non-zero/non-empty. SoftwareVersionValid is a *bool so that both true and
+// false can be sent explicitly (and omitted when nil). SpecificationVersion is
+// retained only to drive the negative "unknown flag" CLI test — update-model-
+// version does not accept it.
+type UpdateModelVersionOpts struct {
+	VID                          int
+	PID                          int
+	SoftwareVersion              int
+	MinApplicableSoftwareVersion int
+	MaxApplicableSoftwareVersion int
+	SoftwareVersionValid         *bool
+	OtaURL                       string
+	OtaFileSize                  int
+	OtaChecksum                  string
+	OtaChecksumType              int
+	ReleaseNotesURL              string
+	SpecificationVersion         int
+	SchemaVersion                string
+	From                         string
+}
+
+// boolPtr returns a pointer to b, for setting optional *bool flags inline.
+func boolPtr(b bool) *bool { return &b }
+
 // UpdateModelVersion executes the update-model-version transaction.
-func UpdateModelVersion(vid, pid, sv int, from string, extra ...string) (*utils.TxResult, error) {
+func UpdateModelVersion(opts UpdateModelVersionOpts) (*utils.TxResult, error) {
 	args := []string{
 		"tx", "model", "update-model-version",
-		"--vid", itoa(vid),
-		"--pid", itoa(pid),
-		"--softwareVersion", itoa(sv),
-		"--from", from,
+		"--vid", itoa(opts.VID),
+		"--pid", itoa(opts.PID),
+		"--softwareVersion", itoa(opts.SoftwareVersion),
+		"--from", opts.From,
 	}
-	args = append(args, extra...)
+	if opts.MinApplicableSoftwareVersion != 0 {
+		args = append(args, "--minApplicableSoftwareVersion", itoa(opts.MinApplicableSoftwareVersion))
+	}
+	if opts.MaxApplicableSoftwareVersion != 0 {
+		args = append(args, "--maxApplicableSoftwareVersion", itoa(opts.MaxApplicableSoftwareVersion))
+	}
+	if opts.SoftwareVersionValid != nil {
+		if *opts.SoftwareVersionValid {
+			args = append(args, "--softwareVersionValid=true")
+		} else {
+			args = append(args, "--softwareVersionValid=false")
+		}
+	}
+	if opts.OtaURL != "" {
+		args = append(args, "--otaURL", opts.OtaURL)
+	}
+	if opts.OtaFileSize != 0 {
+		args = append(args, "--otaFileSize", itoa(opts.OtaFileSize))
+	}
+	if opts.OtaChecksum != "" {
+		args = append(args, "--otaChecksum", opts.OtaChecksum)
+	}
+	if opts.OtaChecksumType != 0 {
+		args = append(args, "--otaChecksumType", itoa(opts.OtaChecksumType))
+	}
+	if opts.ReleaseNotesURL != "" {
+		args = append(args, "--releaseNotesURL", opts.ReleaseNotesURL)
+	}
+	if opts.SpecificationVersion != 0 {
+		args = append(args, "--specificationVersion", itoa(opts.SpecificationVersion))
+	}
+	if opts.SchemaVersion != "" {
+		args = append(args, "--schemaVersion", opts.SchemaVersion)
+	}
 
 	return utils.ExecuteTx(args...)
 }

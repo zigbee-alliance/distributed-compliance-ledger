@@ -68,10 +68,11 @@ func TestModelDemoHex(t *testing.T) {
 	description := "New Device Description"
 
 	t.Run("UpdateModel", func(t *testing.T) {
-		txResult, err := UpdateModelHex(vidHex, pidHex, vendorAccount,
-			"--enhancedSetupFlowOptions", "2",
-			"--productLabel", description,
-		)
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VIDHex: vidHex, PIDHex: pidHex, From: vendorAccount,
+			EnhancedSetupFlowOptions: 2,
+			ProductLabel:             description,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -88,10 +89,11 @@ func TestModelDemoHex(t *testing.T) {
 	supportURL := "https://newsupporturl.test"
 
 	t.Run("UpdateModelSupportURL", func(t *testing.T) {
-		txResult, err := UpdateModelHex(vidHex, pidHex, vendorAccount,
-			"--enhancedSetupFlowOptions", "2",
-			"--supportURL", supportURL,
-		)
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VIDHex: vidHex, PIDHex: pidHex, From: vendorAccount,
+			EnhancedSetupFlowOptions: 2,
+			SupportURL:               supportURL,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)

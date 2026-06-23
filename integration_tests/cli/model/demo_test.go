@@ -109,16 +109,17 @@ func TestModelDemo(t *testing.T) {
 		newDigest := "MWRjNGE0NDA0MWRjYWYxMTU0NWI3NTQzZGZlOTQyZjQ3NDJmNTY4YmU2OGZlZTI3NTQ0MWIwOTJiYjYwZGVlZA=="
 		newMaintenanceURL := "https://example.org/maintenance"
 		newFallbackURL := "https://url.newcommissioningfallbackurl.dclmodel"
-		txResult, err := UpdateModel(vidWithPids, pid, vendorAccountWithPids,
-			"--productLabel", "Updated pid-ranges model",
-			"--enhancedSetupFlowOptions", "1",
-			"--enhancedSetupFlowTCUrl", newTCUrl,
-			"--enhancedSetupFlowTCRevision", "2",
-			"--enhancedSetupFlowTCDigest", newDigest,
-			"--enhancedSetupFlowTCFileSize", "2048",
-			"--maintenanceUrl", newMaintenanceURL,
-			"--commissioningFallbackUrl", newFallbackURL,
-		)
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vidWithPids, PID: pid, From: vendorAccountWithPids,
+			ProductLabel:                "Updated pid-ranges model",
+			EnhancedSetupFlowOptions:    1,
+			EnhancedSetupFlowTCUrl:      newTCUrl,
+			EnhancedSetupFlowTCRevision: 2,
+			EnhancedSetupFlowTCDigest:   newDigest,
+			EnhancedSetupFlowTCFileSize: 2048,
+			MaintenanceURL:              newMaintenanceURL,
+			CommissioningFallbackURL:    newFallbackURL,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -182,15 +183,16 @@ func TestModelDemo(t *testing.T) {
 	newFactoryResetStepsHint := 6
 
 	t.Run("UpdateModel", func(t *testing.T) {
-		txResult, err := UpdateModel(vid, pid, vendorAccount,
-			"--productLabel", description,
-			"--schemaVersion", "0",
-			"--commissioningModeInitialStepsHint", fmt.Sprintf("%d", newCommissioningModeInitialStepsHint),
-			"--commissioningModeSecondaryStepsHint", fmt.Sprintf("%d", newCommissioningModeSecondaryStepsHint),
-			"--icdUserActiveModeTriggerHint", fmt.Sprintf("%d", newIcdUserActiveModeTriggerHint),
-			"--enhancedSetupFlowOptions", "2",
-			"--factoryResetStepsHint", fmt.Sprintf("%d", newFactoryResetStepsHint),
-		)
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid, PID: pid, From: vendorAccount,
+			ProductLabel:                        description,
+			SchemaVersion:                       "0",
+			CommissioningModeInitialStepsHint:   newCommissioningModeInitialStepsHint,
+			CommissioningModeSecondaryStepsHint: newCommissioningModeSecondaryStepsHint,
+			IcdUserActiveModeTriggerHint:        newIcdUserActiveModeTriggerHint,
+			EnhancedSetupFlowOptions:            2,
+			FactoryResetStepsHint:               newFactoryResetStepsHint,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -215,10 +217,10 @@ func TestModelDemo(t *testing.T) {
 	supportURL := "https://newsupporturl.test"
 
 	t.Run("UpdateModelSupportURL", func(t *testing.T) {
-		txResult, err := UpdateModel(vid, pid, vendorAccount,
-			"--supportURL", supportURL,
-			"--enhancedSetupFlowOptions", "0",
-		)
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid, PID: pid, From: vendorAccount,
+			SupportURL: supportURL,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -280,7 +282,10 @@ func TestModelDemo(t *testing.T) {
 		require.NotNil(t, m)
 		require.Equal(t, "VendorAdmin Product", m.ProductLabel)
 
-		txResult, err = UpdateModel(vid3, pid3, vendorAdmin, "--productLabel", "Updated by VendorAdmin")
+		txResult, err = UpdateModel(UpdateModelOpts{
+			VID: vid3, PID: pid3, From: vendorAdmin,
+			ProductLabel: "Updated by VendorAdmin",
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)

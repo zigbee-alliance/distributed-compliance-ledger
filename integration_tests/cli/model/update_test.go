@@ -54,15 +54,16 @@ func TestModelUpdate(t *testing.T) {
 
 	t.Run("UpdateModelFields", func(t *testing.T) {
 		newDesc := "New Device Description"
-		txResult, err := UpdateModel(vid, pid, vendorAccount,
-			"--productLabel", newDesc,
-			"--schemaVersion", "0",
-			"--commissioningModeInitialStepsHint", "8",
-			"--commissioningModeSecondaryStepsHint", "9",
-			"--icdUserActiveModeTriggerHint", "7",
-			"--enhancedSetupFlowOptions", "2",
-			"--factoryResetStepsHint", "6",
-		)
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid, PID: pid, From: vendorAccount,
+			ProductLabel:                        newDesc,
+			SchemaVersion:                       "0",
+			CommissioningModeInitialStepsHint:   8,
+			CommissioningModeSecondaryStepsHint: 9,
+			IcdUserActiveModeTriggerHint:        7,
+			EnhancedSetupFlowOptions:            2,
+			FactoryResetStepsHint:               6,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -85,11 +86,12 @@ func TestModelUpdate(t *testing.T) {
 
 	t.Run("UpdateDescriptionOnly_PreservesHints", func(t *testing.T) {
 		newDesc := "New Device Description 2"
-		txResult, err := UpdateModel(vid, pid, vendorAccount,
-			"--productLabel", newDesc,
-			"--schemaVersion", "0",
-			"--enhancedSetupFlowOptions", "2",
-		)
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid, PID: pid, From: vendorAccount,
+			ProductLabel:             newDesc,
+			SchemaVersion:            "0",
+			EnhancedSetupFlowOptions: 2,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -109,15 +111,15 @@ func TestModelUpdate(t *testing.T) {
 
 	t.Run("UpdateHintsZero_PreservesHints", func(t *testing.T) {
 		newDesc := "New Device Description 3"
-		txResult, err := UpdateModel(vid, pid, vendorAccount,
-			"--productLabel", newDesc,
-			"--schemaVersion", "0",
-			"--commissioningModeInitialStepsHint", "0",
-			"--commissioningModeSecondaryStepsHint", "0",
-			"--factoryResetStepsHint", "0",
-			"--icdUserActiveModeTriggerHint", "0",
-			"--enhancedSetupFlowOptions", "2",
-		)
+		// Explicit zero hints are equivalent to omitting them: proto3 cannot
+		// distinguish an explicit zero from an unset field, so the update handler
+		// leaves each hint unchanged either way.
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid, PID: pid, From: vendorAccount,
+			ProductLabel:             newDesc,
+			SchemaVersion:            "0",
+			EnhancedSetupFlowOptions: 2,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -137,10 +139,10 @@ func TestModelUpdate(t *testing.T) {
 
 	t.Run("UpdateModelSupportURL", func(t *testing.T) {
 		supportURL := "https://newsupporturl.test"
-		txResult, err := UpdateModel(vid, pid, vendorAccount,
-			"--supportURL", supportURL,
-			"--enhancedSetupFlowOptions", "0",
-		)
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid, PID: pid, From: vendorAccount,
+			SupportURL: supportURL,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)

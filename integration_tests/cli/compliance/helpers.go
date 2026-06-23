@@ -203,17 +203,45 @@ func ProvisionModel(opts ProvisionModelOpts) (*utils.TxResult, error) {
 	return utils.ExecuteTx(args...)
 }
 
+// UpdateComplianceInfoOpts holds parameters for update-compliance-info. The
+// base fields (VID/PID/SoftwareVersion/CertificationType/From) are always sent;
+// the rest emit only when non-zero/non-empty.
+type UpdateComplianceInfoOpts struct {
+	VID               int
+	PID               int
+	SoftwareVersion   int
+	CertificationType string
+	CDCertificateID   string
+	CDVersionNumber   int
+	CertificationDate string
+	Reason            string
+	Optional          OptionalFields
+	From              string
+}
+
 // UpdateComplianceInfo executes the update-compliance-info transaction.
-func UpdateComplianceInfo(vid, pid, sv int, certType, from string, extra ...string) (*utils.TxResult, error) {
+func UpdateComplianceInfo(opts UpdateComplianceInfoOpts) (*utils.TxResult, error) {
 	args := []string{
 		"tx", "compliance", "update-compliance-info",
-		"--vid", itoa(vid),
-		"--pid", itoa(pid),
-		"--softwareVersion", itoa(sv),
-		"--certificationType", certType,
-		"--from", from,
+		"--vid", itoa(opts.VID),
+		"--pid", itoa(opts.PID),
+		"--softwareVersion", itoa(opts.SoftwareVersion),
+		"--certificationType", opts.CertificationType,
+		"--from", opts.From,
 	}
-	args = append(args, extra...)
+	if opts.CDCertificateID != "" {
+		args = append(args, "--cdCertificateId", opts.CDCertificateID)
+	}
+	if opts.CDVersionNumber != 0 {
+		args = append(args, "--cdVersionNumber", itoa(opts.CDVersionNumber))
+	}
+	if opts.CertificationDate != "" {
+		args = append(args, "--certificationDate", opts.CertificationDate)
+	}
+	if opts.Reason != "" {
+		args = append(args, "--reason", opts.Reason)
+	}
+	args = append(args, opts.Optional.args()...)
 
 	return utils.ExecuteTx(args...)
 }

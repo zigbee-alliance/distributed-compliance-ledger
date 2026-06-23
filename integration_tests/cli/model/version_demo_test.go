@@ -103,12 +103,13 @@ func TestModelVersionDemo(t *testing.T) {
 	})
 
 	t.Run("UpdateModelVersion", func(t *testing.T) {
-		txResult, err := UpdateModelVersion(vid, pid, sv, vendorAccount,
-			"--minApplicableSoftwareVersion", "2",
-			"--maxApplicableSoftwareVersion", "10",
-			"--softwareVersionValid=false",
-			"--schemaVersion", "0",
-		)
+		txResult, err := UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid, PID: pid, SoftwareVersion: sv, From: vendorAccount,
+			MinApplicableSoftwareVersion: 2,
+			MaxApplicableSoftwareVersion: 10,
+			SoftwareVersionValid:         boolPtr(false),
+			SchemaVersion:                "0",
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -168,9 +169,10 @@ func TestModelVersionDemo(t *testing.T) {
 		differentVendor := fmt.Sprintf("vendor_account_%d", newVid)
 		cliputils.CreateVendorAccount(t, differentVendor, newVid)
 
-		txResult, err := UpdateModelVersion(vid, pid, sv, differentVendor,
-			"--softwareVersionValid=false",
-		)
+		txResult, err := UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid, PID: pid, SoftwareVersion: sv, From: differentVendor,
+			SoftwareVersionValid: boolPtr(false),
+		})
 		require.NoError(t, err)
 		require.Contains(t, txResult.RawLog, fmt.Sprintf("vendorID %d", vid))
 	})
@@ -223,7 +225,10 @@ func TestModelVersionDemo(t *testing.T) {
 		require.True(t, mv.SoftwareVersionValid)
 
 		// VendorAdmin invalidates the version.
-		txResult, err = UpdateModelVersion(vid3, pid3, sv3, vendorAdmin, "--softwareVersionValid=false")
+		txResult, err = UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid3, PID: pid3, SoftwareVersion: sv3, From: vendorAdmin,
+			SoftwareVersionValid: boolPtr(false),
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)

@@ -85,11 +85,12 @@ func TestModelVersionDemoHex(t *testing.T) {
 	t.Run("UpdateModelVersion_WithHexVID", func(t *testing.T) {
 		// The chain keys versions by the integer value, so a decimal update
 		// targets the same hex-created version; read it back with the hex query.
-		txResult, err := UpdateModelVersion(vid, pid, sv, vendorAccount,
-			"--minApplicableSoftwareVersion", "2",
-			"--maxApplicableSoftwareVersion", "10",
-			"--softwareVersionValid=false",
-		)
+		txResult, err := UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid, PID: pid, SoftwareVersion: sv, From: vendorAccount,
+			MinApplicableSoftwareVersion: 2,
+			MaxApplicableSoftwareVersion: 10,
+			SoftwareVersionValid:         boolPtr(false),
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -134,7 +135,10 @@ func TestModelVersionDemoHex(t *testing.T) {
 		require.NoError(t, err)
 		require.Contains(t, txResult.RawLog, fmt.Sprintf("vendorID %d", vid))
 
-		txResult, err = UpdateModelVersion(vid, pid, sv, differentVendor, "--softwareVersionValid=false")
+		txResult, err = UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid, PID: pid, SoftwareVersion: sv, From: differentVendor,
+			SoftwareVersionValid: boolPtr(false),
+		})
 		require.NoError(t, err)
 		require.Contains(t, txResult.RawLog, fmt.Sprintf("vendorID %d", vid))
 	})

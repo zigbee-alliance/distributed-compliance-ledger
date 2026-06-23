@@ -599,12 +599,15 @@ func TestComplianceDemo(t *testing.T) {
 	})
 
 	t.Run("UpdateComplianceInfo_ByCertCenter", func(t *testing.T) {
-		txResult, err := UpdateComplianceInfo(vid, pid2, sv2, zigbeeCertType, zbAccount,
-			"--reason", "new_reason",
-			"--programType", "softwareComponent",
-			"--parentChild", "child",
-			"--transport", "ethernet",
-		)
+		txResult, err := UpdateComplianceInfo(UpdateComplianceInfoOpts{
+			VID: vid, PID: pid2, SoftwareVersion: sv2, CertificationType: zigbeeCertType, From: zbAccount,
+			Reason: "new_reason",
+			Optional: OptionalFields{
+				ProgramType: "softwareComponent",
+				ParentChild: "child",
+				Transport:   "ethernet",
+			},
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -639,12 +642,15 @@ func TestComplianceDemo(t *testing.T) {
 	})
 
 	t.Run("UpdateComplianceInfo_ByVendor_Fails", func(t *testing.T) {
-		txResult, err := UpdateComplianceInfo(vid, pid2, sv2, zigbeeCertType, vendorAccount,
-			"--reason", "by_vendor_reason",
-			"--programType", "compliantPlatform",
-			"--parentChild", "parent",
-			"--transport", "bluetooth",
-		)
+		txResult, err := UpdateComplianceInfo(UpdateComplianceInfoOpts{
+			VID: vid, PID: pid2, SoftwareVersion: sv2, CertificationType: zigbeeCertType, From: vendorAccount,
+			Reason: "by_vendor_reason",
+			Optional: OptionalFields{
+				ProgramType: "compliantPlatform",
+				ParentChild: "parent",
+				Transport:   "bluetooth",
+			},
+		})
 		require.NoError(t, err)
 		require.NotEqual(t, uint32(0), txResult.Code)
 		require.Contains(t, txResult.RawLog, "unauthorized")
@@ -660,7 +666,9 @@ func TestComplianceDemo(t *testing.T) {
 	})
 
 	t.Run("UpdateComplianceInfo_NoFields_Unchanged", func(t *testing.T) {
-		txResult, err := UpdateComplianceInfo(vid, pid2, sv2, zigbeeCertType, zbAccount)
+		txResult, err := UpdateComplianceInfo(UpdateComplianceInfoOpts{
+			VID: vid, PID: pid2, SoftwareVersion: sv2, CertificationType: zigbeeCertType, From: zbAccount,
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
@@ -680,23 +688,26 @@ func TestComplianceDemo(t *testing.T) {
 	updCdCertID := fmt.Sprintf("ucrt-%014d", rand.Intn(1<<30))
 
 	t.Run("UpdateComplianceInfo_AllFields", func(t *testing.T) {
-		txResult, err := UpdateComplianceInfo(vid, pid2, sv2, zigbeeCertType, zbAccount,
-			"--cdVersionNumber", "1",
-			"--certificationDate", "2022-01-01T00:00:01Z",
-			"--reason", "brand_new_reason",
-			"--cdCertificateId", updCdCertID,
-			"--certificationRoute", "similarity",
-			"--programType", "endProduct",
-			"--programTypeVersion", "brand_new_program_type_version",
-			"--compliantPlatformUsed", "brand_new_compliant_platform_used",
-			"--compliantPlatformVersion", "brand_new_compliant_platform_version",
-			"--transport", "thread,nfc",
-			"--familyId", "FAM123456abc",
-			"--supportedClusters", "0x0006,0x0008,0x0062",
-			"--OSVersion", "brand_new_os_version",
-			"--parentChild", "parent",
-			"--certificationIDOfSoftwareComponent", "brand_new_component",
-		)
+		txResult, err := UpdateComplianceInfo(UpdateComplianceInfoOpts{
+			VID: vid, PID: pid2, SoftwareVersion: sv2, CertificationType: zigbeeCertType, From: zbAccount,
+			CDVersionNumber:   1,
+			CertificationDate: "2022-01-01T00:00:01Z",
+			Reason:            "brand_new_reason",
+			CDCertificateID:   updCdCertID,
+			Optional: OptionalFields{
+				CertificationRoute:                 "similarity",
+				ProgramType:                        "endProduct",
+				ProgramTypeVersion:                 "brand_new_program_type_version",
+				CompliantPlatformUsed:              "brand_new_compliant_platform_used",
+				CompliantPlatformVersion:           "brand_new_compliant_platform_version",
+				Transport:                          "thread,nfc",
+				FamilyID:                           "FAM123456abc",
+				SupportedClusters:                  "0x0006,0x0008,0x0062",
+				OSVersion:                          "brand_new_os_version",
+				ParentChild:                        "parent",
+				CertificationIDOfSoftwareComponent: "brand_new_component",
+			},
+		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
