@@ -47,8 +47,7 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 		upgradeInfo := UpgradeInfoForVersion(BinaryVersionV1_4_3, WrongPlanChecksumV143)
 
 		tx, err := ProposeUpgrade(dcld, WrongPlanName2, planHeight, upgradeInfo, state.Trustee1)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		for _, who := range []string{state.Trustee2, state.Trustee3, state.Trustee4} {
 			tx, err = ApproveUpgrade(dcld, WrongPlanName2, who)
@@ -560,8 +559,7 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 			"--vendorLandingPageURL", VendorLandingPageURLFor1_2R2,
 			"--from", VendorAccountFor1_2R2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	})
 
 	MustRun(t, "ModelsForR2", func(t *testing.T) {
@@ -577,8 +575,7 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 				"--partNumber", PartNumberFor1_2R2,
 				"--from", VendorAccountFor1_2R2,
 			)
-			require.NoError(t, err)
-			require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+			requireTxSuccess(t, tx, err)
 
 			tx, err = ExecuteTxWithBin(dcld,
 				"tx", "model", "add-model-version",
@@ -591,8 +588,7 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 				"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", MaxApplicableSoftwareVersionFor1_2R2),
 				"--from", VendorAccountFor1_2R2,
 			)
-			require.NoError(t, err)
-			require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+			requireTxSuccess(t, tx, err)
 		}
 
 		// Delete pid_3.
@@ -602,8 +598,7 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 			"--pid", fmt.Sprintf("%d", PID3For1_2R2),
 			"--from", VendorAccountFor1_2R2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	})
 
 	MustRun(t, "ComplianceForR2", func(t *testing.T) {
@@ -621,8 +616,7 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_2R2),
 			"--from", CertificationCenterAccountFor1_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		// provision pid_2, certify pid_2, revoke pid_2.
 		// revoke-model does not accept --cdCertificateId, so it is appended

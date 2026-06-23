@@ -181,8 +181,7 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 			"--commissioningModeSecondaryStepsHint", fmt.Sprintf("%d", CommissioningModeSecondaryStepsHintFor1_5_2),
 			"--from", VendorAccountFor1_5_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
+		requireTxSuccess(t, txResult, err)
 
 		// Add model-version for pid_1 (with specificationVersion).
 		txResult, err = ExecuteTxWithBin(dcldNew,
@@ -197,8 +196,7 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 			"--specificationVersion", fmt.Sprintf("%d", SpecificationVersionFor1_5_2),
 			"--from", VendorAccountFor1_5_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
+		requireTxSuccess(t, txResult, err)
 
 		// Add model pid_2 (no ICD fields, no factory reset).
 		txResult, err = ExecuteTxWithBin(dcldNew,
@@ -211,8 +209,7 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 			"--partNumber", PartNumberFor1_5_2,
 			"--from", VendorAccountFor1_5_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
+		requireTxSuccess(t, txResult, err)
 
 		txResult, err = ExecuteTxWithBin(dcldNew,
 			"tx", "model", "add-model-version",
@@ -225,8 +222,7 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 			"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", MaxApplicableSoftwareVersionFor1_5_2),
 			"--from", VendorAccountFor1_5_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
+		requireTxSuccess(t, txResult, err)
 
 		// Add + immediately delete model for pid_3.
 		txResult, err = ExecuteTxWithBin(dcldNew,
@@ -239,8 +235,7 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 			"--partNumber", PartNumberFor1_5_2,
 			"--from", VendorAccountFor1_5_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
+		requireTxSuccess(t, txResult, err)
 
 		txResult, err = ExecuteTxWithBin(dcldNew,
 			"tx", "model", "add-model-version",
@@ -253,8 +248,7 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 			"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", MaxApplicableSoftwareVersionFor1_5_2),
 			"--from", VendorAccountFor1_5_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
+		requireTxSuccess(t, txResult, err)
 
 		txResult, err = ExecuteTxWithBin(dcldNew,
 			"tx", "model", "delete-model",
@@ -262,8 +256,7 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 			"--pid", fmt.Sprintf("%d", PID3For1_5_2),
 			"--from", VendorAccountFor1_5_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
+		requireTxSuccess(t, txResult, err)
 
 		// Update the carry-over model from script 1.
 		txResult, err = ExecuteTxWithBin(dcldNew,
@@ -275,8 +268,7 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 			"--partNumber", PartNumberFor1_5_2,
 			"--from", state.VendorAccount,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
+		requireTxSuccess(t, txResult, err)
 
 		txResult, err = ExecuteTxWithBin(dcldNew,
 			"tx", "model", "update-model-version",
@@ -287,8 +279,7 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 			"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", MaxApplicableSoftwareVersionFor1_5_2),
 			"--from", state.VendorAccount,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code, txResult.RawLog)
+		requireTxSuccess(t, txResult, err)
 	})
 
 	// Seed compliance state for pid_1 — the v1.6.0 upgrade phase reads this
@@ -307,8 +298,7 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_5_2),
 			"--from", CertificationCenterAccountFor1_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	})
 
 	MustRun(t, "VerifyNewModels_1_5_2", func(t *testing.T) {

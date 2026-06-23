@@ -78,8 +78,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 			"--upgrade-height", fmt.Sprintf("%d", planHeight),
 			"--from", state.Trustee1,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		for _, who := range []string{state.Trustee2, state.Trustee3, state.Trustee4} {
 			tx, err = ApproveUpgrade(dcldOld, planName, who)
@@ -422,8 +421,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 			"--vendorLandingPageURL", VendorLandingPageURLForMaster,
 			"--from", VendorAccountForMaster,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		tx, err = ExecuteTxWithBin(DcldMasterBinaryPath,
 			"tx", "vendorinfo", "update-vendor",
@@ -434,8 +432,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 			"--vendorLandingPageURL", VendorLandingPageURLForMaster,
 			"--from", state.VendorAccountFor1_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	})
 
 	MustRun(t, "ModelsAndVersionsFor_Master", func(t *testing.T) {
@@ -452,8 +449,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 				"--commissioningCustomFlow", fmt.Sprintf("%d", CommissioningCustomFlow),
 				"--from", VendorAccountForMaster,
 			)
-			require.NoError(t, err)
-			require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+			requireTxSuccess(t, tx, err)
 
 			tx, err = ExecuteTxWithBin(DcldMasterBinaryPath,
 				"tx", "model", "add-model-version",
@@ -466,8 +462,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 				"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", MaxApplicableSoftwareVersionForMaster),
 				"--from", VendorAccountForMaster,
 			)
-			require.NoError(t, err)
-			require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+			requireTxSuccess(t, tx, err)
 		}
 
 		// Delete pid_3.
@@ -477,8 +472,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 			"--pid", fmt.Sprintf("%d", PID3ForMaster),
 			"--from", VendorAccountForMaster,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		// Update carry-over 0.12 pid_2 with master-era values.
 		tx, err = ExecuteTxWithBin(DcldMasterBinaryPath,
@@ -490,8 +484,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 			"--partNumber", PartNumberForMaster,
 			"--from", state.VendorAccount,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		tx, err = ExecuteTxWithBin(DcldMasterBinaryPath,
 			"tx", "model", "update-model-version",
@@ -502,8 +495,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 			"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", MaxApplicableSoftwareVersionForMaster),
 			"--from", state.VendorAccount,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	})
 
 	MustRun(t, "ComplianceFor_Master", func(t *testing.T) {
@@ -521,8 +513,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberForMaster),
 			"--from", CertificationCenterAccountFor1_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		// provision pid_2, certify pid_2, revoke pid_2.
 		// revoke-model does not accept --cdCertificateId, so it is appended

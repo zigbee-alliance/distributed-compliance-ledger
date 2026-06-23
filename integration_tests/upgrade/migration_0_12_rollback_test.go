@@ -48,8 +48,7 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 		upgradeInfo := UpgradeInfoForVersion(BinaryVersionV1_2, WrongPlanChecksumV12)
 
 		tx, err := ProposeUpgrade(dcld, WrongPlanName, planHeight, upgradeInfo, state.Trustee1)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		for _, who := range []string{state.Trustee2, state.Trustee3} {
 			tx, err = ApproveUpgrade(dcld, WrongPlanName, who)
@@ -331,8 +330,7 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 			"--vendorLandingPageURL", VendorLandingPageURLForRollback,
 			"--from", VendorAccountForRollback,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		// Update 0.12 vendor with rollback-era values (companyPreferredName etc).
 		tx, err = ExecuteTxWithBin(dcld,
@@ -344,8 +342,7 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 			"--vendorLandingPageURL", VendorLandingPageURLForRollback,
 			"--from", state.VendorAccount,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	})
 
 	MustRun(t, "ModelsForRollback", func(t *testing.T) {
@@ -361,8 +358,7 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 				"--partNumber", PartNumberForRollback,
 				"--from", VendorAccountForRollback,
 			)
-			require.NoError(t, err)
-			require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+			requireTxSuccess(t, tx, err)
 
 			tx, err = ExecuteTxWithBin(dcld,
 				"tx", "model", "add-model-version",
@@ -375,8 +371,7 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 				"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", MaxApplicableSoftwareVersionForRollback),
 				"--from", VendorAccountForRollback,
 			)
-			require.NoError(t, err)
-			require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+			requireTxSuccess(t, tx, err)
 		}
 
 		// Delete pid_3.
@@ -386,8 +381,7 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 			"--pid", fmt.Sprintf("%d", PID3ForRollback),
 			"--from", VendorAccountForRollback,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		// Update 0.12 pid_2 with rollback productLabel/partNumber.
 		tx, err = ExecuteTxWithBin(dcld,
@@ -399,8 +393,7 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 			"--partNumber", PartNumberForRollback,
 			"--from", state.VendorAccount,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		tx, err = ExecuteTxWithBin(dcld,
 			"tx", "model", "update-model-version",
@@ -411,8 +404,7 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 			"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", MaxApplicableSoftwareVersionForRollback),
 			"--from", state.VendorAccount,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	})
 
 	MustRun(t, "ComplianceForRollback", func(t *testing.T) {
@@ -430,8 +422,7 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberForRollback),
 			"--from", CertificationCenterAccountForRollback,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		// provision pid_2, certify pid_2, revoke pid_2.
 		// revoke-model does not accept --cdCertificateId, so it is appended

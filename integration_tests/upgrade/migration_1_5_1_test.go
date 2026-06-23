@@ -370,8 +370,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 			"--vendorLandingPageURL", VendorLandingPageURLFor1_5_1,
 			"--from", VendorAccountFor1_5_1,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		tx, err = ExecuteTxWithBin(dcldNew,
 			"tx", "vendorinfo", "update-vendor",
@@ -382,8 +381,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 			"--vendorLandingPageURL", VendorLandingPageURLFor1_5_1,
 			"--from", state.VendorAccountFor1_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	})
 
 	MustRun(t, "ModelsAndVersionsFor1_5_1", func(t *testing.T) {
@@ -409,8 +407,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 			FactoryResetStepsInstructionFor1_5_1,
 			"--from", VendorAccountFor1_5_1,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		// pid_1 version with specificationVersion (1.5-era).
 		tx, err = ExecuteTxWithBin(dcldNew,
@@ -425,8 +422,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 			"--specificationVersion", fmt.Sprintf("%d", SpecificationVersionFor1_5_1),
 			"--from", VendorAccountFor1_5_1,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		// pid_2 (no new fields).
 		tx, err = ExecuteTxWithBin(dcldNew,
@@ -439,8 +435,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 			"--partNumber", state.PartNumberFor1_5_1,
 			"--from", VendorAccountFor1_5_1,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 		tx, err = ExecuteTxWithBin(dcldNew,
 			"tx", "model", "add-model-version",
 			"--vid", fmt.Sprintf("%d", state.VIDFor1_5_1),
@@ -452,8 +447,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 			"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", state.MaxApplicableSoftwareVersionFor1_5_1),
 			"--from", VendorAccountFor1_5_1,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		// pid_3 add + delete.
 		tx, err = ExecuteTxWithBin(dcldNew,
@@ -466,8 +460,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 			"--partNumber", state.PartNumberFor1_5_1,
 			"--from", VendorAccountFor1_5_1,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 		tx, err = ExecuteTxWithBin(dcldNew,
 			"tx", "model", "add-model-version",
 			"--vid", fmt.Sprintf("%d", state.VIDFor1_5_1),
@@ -479,16 +472,14 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 			"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", state.MaxApplicableSoftwareVersionFor1_5_1),
 			"--from", VendorAccountFor1_5_1,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 		tx, err = ExecuteTxWithBin(dcldNew,
 			"tx", "model", "delete-model",
 			"--vid", fmt.Sprintf("%d", state.VIDFor1_5_1),
 			"--pid", fmt.Sprintf("%d", PID3For1_5_1),
 			"--from", VendorAccountFor1_5_1,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		// Update the 0.12 pid_2 model with 1.5.1 productLabel/partNumber.
 		tx, err = ExecuteTxWithBin(dcldNew,
@@ -500,8 +491,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 			"--partNumber", state.PartNumberFor1_5_1,
 			"--from", state.VendorAccount,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		tx, err = ExecuteTxWithBin(dcldNew,
 			"tx", "model", "update-model-version",
@@ -512,8 +502,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 			"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", state.MaxApplicableSoftwareVersionFor1_5_1),
 			"--from", state.VendorAccount,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	})
 
 	MustRun(t, "ComplianceFor1_5_1", func(t *testing.T) {
@@ -531,8 +520,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_5_1),
 			"--from", CertificationCenterAccountFor1_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		// provision pid_2
 		tx, err = ExecuteTxWithBin(dcldNew,
@@ -547,8 +535,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_5_1),
 			"--from", CertificationCenterAccountFor1_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		// certify pid_2
 		tx, err = ExecuteTxWithBin(dcldNew,
@@ -563,8 +550,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_5_1),
 			"--from", CertificationCenterAccountFor1_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		// revoke pid_2
 		tx, err = ExecuteTxWithBin(dcldNew,
@@ -578,8 +564,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_5_1),
 			"--from", CertificationCenterAccountFor1_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	})
 
 	MustRun(t, "AccountFlowsFor1_5_1", func(t *testing.T) {

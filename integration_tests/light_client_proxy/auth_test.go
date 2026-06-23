@@ -76,24 +76,8 @@ func TestLightClientProxyAuth(t *testing.T) {
 
 	// 2. List queries are rejected by the proxy with the expected payload.
 	mustRun(t, "ListQueries_Rejected", func(t *testing.T) {
-		t.Helper()
-		for _, q := range []string{
-			"all-accounts", "all-proposed-accounts", "all-proposed-accounts-to-revoke",
-		} {
-			out, qerr := queryWithRetry(LightClientProxyAddr,
-				"query", "auth", q,
-			)
-			// The proxy may return non-zero exit on rejection; either way the
-			// rejection text lands in `out` (or the wrapped error).
-			text := string(out)
-			if qerr != nil {
-				text = qerr.Error() + " " + text
-			}
-			require.True(t,
-				strings.Contains(text, listQueryRejection),
-				"expected %q for %s, got: %s", listQueryRejection, q, text,
-			)
-		}
+		assertListQueriesRejected(t, "auth",
+			"all-accounts", "all-proposed-accounts", "all-proposed-accounts-to-revoke")
 	})
 
 	// 3. Write user1's account against the full node: Jack proposes

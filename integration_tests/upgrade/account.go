@@ -65,6 +65,24 @@ func CreateKey(binPath, name string) (address, pubkey string, err error) {
 	return TrimTrailingWS(string(addrOut)), TrimTrailingWS(string(pubOut)), nil
 }
 
+// userKey bundles the name, address, and pubkey of a randomly-named account.
+type userKey struct {
+	name    string
+	address string
+	pubkey  string
+}
+
+// newUserKey generates a random user account locally on the test keyring.
+func newUserKey(binPath string) (userKey, error) {
+	name := RandomString()
+	addr, pub, err := CreateKey(binPath, name)
+	if err != nil {
+		return userKey{}, err
+	}
+
+	return userKey{name: name, address: addr, pubkey: pub}, nil
+}
+
 // TrimTrailingWS strips trailing newlines/whitespace from a CLI output line.
 // Promoted from the test files since several non-test helpers need it.
 func TrimTrailingWS(s string) string {

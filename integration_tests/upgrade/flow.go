@@ -21,6 +21,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
 // SoftwareUpgradeStep encapsulates one cosmovisor upgrade transition —
@@ -104,6 +105,15 @@ func (s SoftwareUpgradeStep) Run(t *testing.T) {
 	} else {
 		t.Logf("applied: %s", string(out))
 	}
+}
+
+// requireTxSuccess asserts a tx broadcast cleanly and executed with on-chain
+// code 0. ExecuteTxWithBin already waits for inclusion (polling in sync mode),
+// so — unlike cliputils.RequireTxOK — this performs no extra confirmation poll.
+func requireTxSuccess(t *testing.T, tx *utils.TxResult, err error) {
+	t.Helper()
+	require.NoError(t, err)
+	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
 }
 
 // checkResponseContains asserts a query response contains substr.

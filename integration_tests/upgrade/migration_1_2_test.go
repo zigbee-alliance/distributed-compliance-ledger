@@ -337,8 +337,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 			"--vendorLandingPageURL", VendorLandingPageURLFor1_2,
 			"--from", state.VendorAccountFor1_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		// Update the original (v0.12-era) vendor record with 1.2-era fields.
 		tx, err = ExecuteTxWithBin(dcldNew,
@@ -350,8 +349,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 			"--vendorLandingPageURL", VendorLandingPageURLFor1_2,
 			"--from", state.VendorAccount,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	})
 
 	MustRun(t, "ModelsAndVersionsFor1_2", func(t *testing.T) {
@@ -367,8 +365,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 				"--partNumber", PartNumberFor1_2,
 				"--from", state.VendorAccountFor1_2,
 			)
-			require.NoError(t, err)
-			require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+			requireTxSuccess(t, tx, err)
 
 			tx, err = ExecuteTxWithBin(dcldNew,
 				"tx", "model", "add-model-version",
@@ -381,8 +378,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 				"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", MaxApplicableSoftwareVersionFor1_2),
 				"--from", state.VendorAccountFor1_2,
 			)
-			require.NoError(t, err)
-			require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+			requireTxSuccess(t, tx, err)
 		}
 
 		// Delete the 1.2-era pid_3 model.
@@ -392,8 +388,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 			"--pid", fmt.Sprintf("%d", PID3For1_2),
 			"--from", state.VendorAccountFor1_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		// Update the 0.12-era model's productLabel/partNumber to 1.2 values.
 		tx, err = ExecuteTxWithBin(dcldNew,
@@ -405,8 +400,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 			"--partNumber", PartNumberFor1_2,
 			"--from", state.VendorAccount,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		tx, err = ExecuteTxWithBin(dcldNew,
 			"tx", "model", "update-model-version",
@@ -417,8 +411,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 			"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", MaxApplicableSoftwareVersionFor1_2),
 			"--from", state.VendorAccount,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	})
 
 	MustRun(t, "ComplianceFor1_2", func(t *testing.T) {
@@ -436,8 +429,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_2),
 			"--from", CertificationCenterAccountFor1_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		// provision pid_2
 		tx, err = ExecuteTxWithBin(dcldNew,
@@ -452,8 +444,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_2),
 			"--from", CertificationCenterAccountFor1_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		// certify pid_2 (after provision)
 		tx, err = ExecuteTxWithBin(dcldNew,
@@ -468,8 +459,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_2),
 			"--from", CertificationCenterAccountFor1_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		// revoke pid_2
 		tx, err = ExecuteTxWithBin(dcldNew,
@@ -483,8 +473,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_2),
 			"--from", CertificationCenterAccountFor1_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	})
 
 	MustRun(t, "AssignVidToTestRoot", func(t *testing.T) {
@@ -497,8 +486,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 			"--vid", TestRootCertVIDForAssign,
 			"--from", VendorAdminAccount,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	})
 
 	MustRun(t, "PKIFor1_2", func(t *testing.T) {
@@ -512,8 +500,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 			"--vid", RootCertRandomVIDFor1_2,
 			"--from", state.Trustee1,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		// trustee_2 approves, then rejects (exercises both approval paths).
 		for _, action := range []string{"approve-add-x509-root-cert", "reject-add-x509-root-cert"} {
@@ -523,8 +510,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 				"--subject-key-id", RootCertSubjectKeyIDFor1_2,
 				"--from", state.Trustee2,
 			)
-			require.NoError(t, err)
-			require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+			requireTxSuccess(t, tx, err)
 		}
 
 		// trustee_3, trustee_4, trustee_5 approve.
@@ -535,8 +521,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 				"--subject-key-id", RootCertSubjectKeyIDFor1_2,
 				"--from", who,
 			)
-			require.NoError(t, err)
-			require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+			requireTxSuccess(t, tx, err)
 		}
 
 		// test_root_cert (1.2): propose + 3 approvals.
@@ -546,8 +531,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 			"--vid", TestRootCertVIDFor1_2,
 			"--from", state.Trustee1,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 		for _, who := range []string{state.Trustee2, state.Trustee3, state.Trustee4} {
 			tx, err = ExecuteTxWithBin(dcldNew,
 				"tx", "pki", "approve-add-x509-root-cert",
@@ -555,8 +539,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 				"--subject-key-id", TestRootCertSubjectKeyIDFor1_2,
 				"--from", who,
 			)
-			require.NoError(t, err)
-			require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+			requireTxSuccess(t, tx, err)
 		}
 
 		// google_root_cert (1.2): propose only.
@@ -566,8 +549,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 			"--vid", GoogleRootCertRandomVIDFor1_2,
 			"--from", state.Trustee1,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		// Intermediate cert add + revoke.
 		tx, err = ExecuteTxWithBin(dcldNew,
@@ -575,16 +557,14 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 			"--certificate", IntermediateCertPathFor1_2,
 			"--from", state.VendorAccount,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 		tx, err = ExecuteTxWithBin(dcldNew,
 			"tx", "pki", "revoke-x509-cert",
 			"--subject", IntermediateCertSubjectFor1_2,
 			"--subject-key-id", IntermediateCertSubjectKeyIDFor1_2,
 			"--from", state.VendorAccount,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		// Propose + 3 approvals revoke 1.2 root cert.
 		tx, err = ExecuteTxWithBin(dcldNew,
@@ -593,8 +573,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 			"--subject-key-id", RootCertSubjectKeyIDFor1_2,
 			"--from", state.Trustee1,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 		for _, who := range []string{state.Trustee2, state.Trustee3, state.Trustee4} {
 			tx, err = ExecuteTxWithBin(dcldNew,
 				"tx", "pki", "approve-revoke-x509-root-cert",
@@ -602,8 +581,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 				"--subject-key-id", RootCertSubjectKeyIDFor1_2,
 				"--from", who,
 			)
-			require.NoError(t, err)
-			require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+			requireTxSuccess(t, tx, err)
 		}
 
 		// Propose revoke 1.2 test_root cert (no approvals — stays proposed).
@@ -613,8 +591,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 			"--subject-key-id", TestRootCertSubjectKeyIDFor1_2,
 			"--from", state.Trustee1,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	})
 
 	MustRun(t, "RevocationPoints", func(t *testing.T) {
@@ -632,8 +609,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 				"--issuer-subject-key-id", IssuerSubjectKeyID,
 				"--from", state.VendorAccountFor1_2,
 			)
-			require.NoError(t, err)
-			require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+			requireTxSuccess(t, tx, err)
 		}
 
 		add(state.ProductLabel, TestDataURL)
@@ -647,8 +623,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 			"--issuer-subject-key-id", IssuerSubjectKeyID,
 			"--from", state.VendorAccountFor1_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		tx, err = ExecuteTxWithBin(dcldNew,
 			"tx", "pki", "delete-revocation-point",
@@ -657,8 +632,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 			"--issuer-subject-key-id", IssuerSubjectKeyID,
 			"--from", state.VendorAccountFor1_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		add(ProductLabelFor1_2, TestDataURL)
 	})
@@ -701,16 +675,14 @@ func proposeUserAccount(t *testing.T, binPath, proposer string, approvers []stri
 	tx, err := ProposeAddAccount(binPath, address, pubkey, proposer, ProposeAddAccountArgs{
 		VID: -1, Roles: role,
 	})
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 
 	if !fullApprove {
 		return
 	}
 	for _, who := range approvers {
 		tx, err = ApproveAddAccount(binPath, address, who)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	}
 }
 
@@ -719,15 +691,13 @@ func revokeUserAccount(t *testing.T, binPath, proposer string, approvers []strin
 	t.Helper()
 
 	tx, err := ProposeRevokeAccount(binPath, address, proposer)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 
 	if !fullApprove {
 		return
 	}
 	for _, who := range approvers {
 		tx, err = ApproveRevokeAccount(binPath, address, who)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	}
 }

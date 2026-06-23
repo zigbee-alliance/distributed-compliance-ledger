@@ -107,8 +107,7 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 	tx, err := ProposeAddAccount(dcld, vendorAddr, vendorPub, state.Trustee1, ProposeAddAccountArgs{
 		VID: state.VID, Roles: "Vendor",
 	})
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 	// Vendor role uses the 1/3 quorum, so a single trustee propose-add
 	// already satisfies the threshold on the 3-trustee genesis chain — no
 	// explicit approval needed.
@@ -119,11 +118,9 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 	tx, err = ProposeAddAccount(dcld, ccAddr, ccPub, state.Trustee1, ProposeAddAccountArgs{
 		VID: -1, Roles: "CertificationCenter",
 	})
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 	tx, err = ApproveAddAccount(dcld, ccAddr, state.Trustee2)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 
 	// Trustee4 + Trustee5 (random names).
 	state.Trustee4 = RandomString()
@@ -138,24 +135,19 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 	tx, err = ProposeAddAccount(dcld, trustee4Addr, trustee4Pub, state.Trustee1, ProposeAddAccountArgs{
 		VID: -1, Roles: "Trustee",
 	})
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 	tx, err = ApproveAddAccount(dcld, trustee4Addr, state.Trustee2)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 
 	// Trustee5: jack proposes, alice + trustee4 approve.
 	tx, err = ProposeAddAccount(dcld, trustee5Addr, trustee5Pub, state.Trustee1, ProposeAddAccountArgs{
 		VID: -1, Roles: "Trustee",
 	})
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 	tx, err = ApproveAddAccount(dcld, trustee5Addr, state.Trustee2)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 	tx, err = ApproveAddAccount(dcld, trustee5Addr, state.Trustee4)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 
 	// --- VENDOR_INFO -------------------------------------------------
 
@@ -168,8 +160,7 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 		"--vendorLandingPageURL", vendorLandingPageURLV012,
 		"--from", state.VendorAccount,
 	)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 
 	// --- MODEL / MODEL_VERSION --------------------------------------
 
@@ -209,8 +200,7 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 		"--pid", fmt.Sprintf("%d", pid3V012),
 		"--from", state.VendorAccount,
 	)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 
 	// --- COMPLIANCE -------------------------------------------------
 
@@ -225,8 +215,7 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 		"--cdCertificateId", cdCertificateIDV012,
 		"--from", certificationCenterAccount,
 	)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 
 	tx, err = ExecuteTxWithBin(dcld,
 		"tx", "compliance", "certify-model",
@@ -239,8 +228,7 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 		"--cdCertificateId", cdCertificateIDV012,
 		"--from", certificationCenterAccount,
 	)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 
 	tx, err = ExecuteTxWithBin(dcld,
 		"tx", "compliance", "revoke-model",
@@ -252,8 +240,7 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 		"--revocationDate", certificationDateV012,
 		"--from", certificationCenterAccount,
 	)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 
 	tx, err = ExecuteTxWithBin(dcld,
 		"tx", "compliance", "provision-model",
@@ -266,8 +253,7 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 		"--cdCertificateId", cdCertificateIDV012,
 		"--from", certificationCenterAccount,
 	)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 
 	// --- X509 PKI ---------------------------------------------------
 
@@ -277,8 +263,7 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 		"--certificate", rootCertPath,
 		"--from", state.Trustee1,
 	)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 	for _, approver := range []string{state.Trustee2, state.Trustee3} {
 		tx, err = ExecuteTxWithBin(dcld,
 			"tx", "pki", "approve-add-x509-root-cert",
@@ -286,8 +271,7 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 			"--subject-key-id", rootCertSubjectKeyID,
 			"--from", approver,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	}
 
 	// test_root_cert: propose + 2 approvals.
@@ -296,8 +280,7 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 		"--certificate", testRootCertPath,
 		"--from", state.Trustee1,
 	)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 	for _, approver := range []string{state.Trustee2, state.Trustee3} {
 		tx, err = ExecuteTxWithBin(dcld,
 			"tx", "pki", "approve-add-x509-root-cert",
@@ -305,8 +288,7 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 			"--subject-key-id", testRootCertSubjectKeyID,
 			"--from", approver,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	}
 
 	// google_root_cert: propose then REJECT (note: cert remains in proposed
@@ -316,16 +298,14 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 		"--certificate", googleRootCertPath,
 		"--from", state.Trustee1,
 	)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 	tx, err = ExecuteTxWithBin(dcld,
 		"tx", "pki", "reject-add-x509-root-cert",
 		"--subject", googleRootCertSubject,
 		"--subject-key-id", googleRootCertSubjectKeyID,
 		"--from", state.Trustee2,
 	)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 
 	// Intermediate cert.
 	tx, err = ExecuteTxWithBin(dcld,
@@ -333,8 +313,7 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 		"--certificate", intermediateCertPath,
 		"--from", state.Trustee1,
 	)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 
 	// Revoke root_cert (propose + 2 approvals).
 	tx, err = ExecuteTxWithBin(dcld,
@@ -343,8 +322,7 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 		"--subject-key-id", rootCertSubjectKeyID,
 		"--from", state.Trustee1,
 	)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 	for _, approver := range []string{state.Trustee2, state.Trustee3} {
 		tx, err = ExecuteTxWithBin(dcld,
 			"tx", "pki", "approve-revoke-x509-root-cert",
@@ -352,8 +330,7 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 			"--subject-key-id", rootCertSubjectKeyID,
 			"--from", approver,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	}
 
 	// Propose revoke test_root_cert (no approval — left in proposed state).
@@ -363,8 +340,7 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 		"--subject-key-id", testRootCertSubjectKeyID,
 		"--from", state.Trustee1,
 	)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 
 	// --- AUTH (user_1..3 add + revoke flows) ------------------------
 
@@ -372,47 +348,39 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 	tx, err = ProposeAddAccount(dcld, user1.address, user1.pubkey, state.Trustee1, ProposeAddAccountArgs{
 		VID: -1, Roles: "CertificationCenter",
 	})
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 	for _, approver := range []string{state.Trustee2, state.Trustee3} {
 		tx, err = ApproveAddAccount(dcld, user1.address, approver)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	}
 
 	// user_2: proposed + 2 approvals (active CertCenter).
 	tx, err = ProposeAddAccount(dcld, user2.address, user2.pubkey, state.Trustee1, ProposeAddAccountArgs{
 		VID: -1, Roles: "CertificationCenter",
 	})
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 	for _, approver := range []string{state.Trustee2, state.Trustee3} {
 		tx, err = ApproveAddAccount(dcld, user2.address, approver)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	}
 
 	// user_3: proposed but NOT approved (left in proposed state).
 	tx, err = ProposeAddAccount(dcld, user3.address, user3.pubkey, state.Trustee1, ProposeAddAccountArgs{
 		VID: -1, Roles: "CertificationCenter",
 	})
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 
 	// Revoke user_1 (propose + 2 approvals).
 	tx, err = ProposeRevokeAccount(dcld, user1.address, state.Trustee1)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 	for _, approver := range []string{state.Trustee2, state.Trustee3} {
 		tx, err = ApproveRevokeAccount(dcld, user1.address, approver)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	}
 
 	// Propose revoke user_2 (no approval — left proposed).
 	tx, err = ProposeRevokeAccount(dcld, user2.address, state.Trustee1)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+	requireTxSuccess(t, tx, err)
 
 	// --- VALIDATOR_NODE --------------------------------------------
 	MustRun(t, "AddValidatorNode", func(t *testing.T) {
@@ -457,22 +425,4 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 	require.NoError(t, err)
 	checkResponseContains(t, out, googleRootCertSubject)
 	checkResponseContains(t, out, googleRootCertSubjectKeyID)
-}
-
-// userKey bundles the address + pubkey of a randomly-named account.
-type userKey struct {
-	name    string
-	address string
-	pubkey  string
-}
-
-// newUserKey generates a random user account locally on the test keyring.
-func newUserKey(binPath string) (userKey, error) {
-	name := RandomString()
-	addr, pub, err := CreateKey(binPath, name)
-	if err != nil {
-		return userKey{}, err
-	}
-
-	return userKey{name: name, address: addr, pubkey: pub}, nil
 }

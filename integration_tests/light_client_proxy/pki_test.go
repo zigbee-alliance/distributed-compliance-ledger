@@ -87,14 +87,9 @@ func TestLightClientProxyPKI(t *testing.T) {
 
 	// 2. The proxy rejects bulk list queries.
 	mustRun(t, "ListQueries_Rejected", func(t *testing.T) {
-		t.Helper()
-		for _, q := range []string{
+		assertListQueriesRejected(t, "pki",
 			"all-x509-certs", "all-revoked-x509-certs",
-			"all-proposed-x509-root-certs", "all-proposed-x509-root-certs-to-revoke",
-		} {
-			out, qerr := queryWithRetry(LightClientProxyAddr, "query", "pki", q)
-			assertRejectionContains(t, out, qerr, listQueryRejection, q)
-		}
+			"all-proposed-x509-root-certs", "all-proposed-x509-root-certs-to-revoke")
 	})
 
 	// 3. Build out the cert chain on the full node: vendor proposes (rejected),

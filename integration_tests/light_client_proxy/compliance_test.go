@@ -67,14 +67,9 @@ func TestLightClientProxyCompliance(t *testing.T) {
 
 	// 2. List queries rejected by the proxy.
 	mustRun(t, "ListQueries_Rejected", func(t *testing.T) {
-		t.Helper()
-		for _, q := range []string{
+		assertListQueriesRejected(t, "compliance",
 			"all-compliance-info", "all-certified-models",
-			"all-revoked-models", "all-provisional-models",
-		} {
-			out, qerr := queryWithRetry(LightClientProxyAddr, "query", "compliance", q)
-			assertRejectionContains(t, out, qerr, listQueryRejection, q)
-		}
+			"all-revoked-models", "all-provisional-models")
 	})
 
 	// 3. Seed: vendor account → certification center → model → certify.

@@ -304,6 +304,17 @@ func assertRejectionContains(t *testing.T, out []byte, err error, expected, labe
 		"expected %q in %s, got: %s", expected, label, text)
 }
 
+// assertListQueriesRejected asserts every all-* (list) query for the module is
+// refused by the proxy with listQueryRejection. The light-client proxy only
+// serves single-record queries, so list queries must be rejected.
+func assertListQueriesRejected(t *testing.T, module string, queries ...string) {
+	t.Helper()
+	for _, q := range queries {
+		out, qerr := queryWithRetry(LightClientProxyAddr, "query", module, q)
+		assertRejectionContains(t, out, qerr, listQueryRejection, q)
+	}
+}
+
 // mustRun is `t.Run` + `t.FailNow()` on failure, so the cascade halts at
 // the first failure instead of producing misleading follow-on errors.
 // Same pattern as upgrade.MustRun; ported here because each Test* in this

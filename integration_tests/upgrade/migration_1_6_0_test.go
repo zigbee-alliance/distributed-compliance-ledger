@@ -51,8 +51,7 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 			"--softwareVersion", fmt.Sprintf("%d", state.SoftwareVersion2For1_6_0FromScript5),
 			"--from", state.VendorAccountFor1_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		out, err := ExecuteCLIWithBin(dcldOld,
 			"query", "model", "all-model-versions",
@@ -106,8 +105,7 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 			"--pid", fmt.Sprintf("%d", state.PID3For1_6_0FromScript5),
 			"--from", state.VendorAccountFor1_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	})
 
 	// ------------------------------------------------------------------
@@ -244,8 +242,7 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 			"--commissioningModeSecondaryStepsHint", fmt.Sprintf("%d", CommissioningModeSecondaryStepsHintFor1_6_0),
 			"--from", VendorAccountFor1_6_0,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		tx, err = ExecuteTxWithBin(dcldNew,
 			"tx", "model", "add-model-version",
@@ -259,8 +256,7 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 			"--specificationVersion", fmt.Sprintf("%d", SpecificationVersionFor1_6_0),
 			"--from", VendorAccountFor1_6_0,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		tx, err = ExecuteTxWithBin(dcldNew,
 			"tx", "model", "add-model",
@@ -272,8 +268,7 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 			"--partNumber", PartNumberFor1_6_0,
 			"--from", VendorAccountFor1_6_0,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		tx, err = ExecuteTxWithBin(dcldNew,
 			"tx", "model", "add-model-version",
@@ -286,8 +281,7 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 			"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", MaxApplicableSoftwareVersionFor1_6_0),
 			"--from", VendorAccountFor1_6_0,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		// Update a v1.5.2-era model through the v1.5.2 vendor account.
 		tx, err = ExecuteTxWithBin(dcldNew,
@@ -299,8 +293,7 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 			"--partNumber", PartNumberFor1_6_0,
 			"--from", VendorAccountFor1_5_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	})
 
 	// Add a model with discoveryCapabilitiesBitmask=20 — allowed range
@@ -319,8 +312,7 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 			"--discoveryCapabilitiesBitmask", fmt.Sprintf("%d", DiscoveryCapabilitiesBitmask),
 			"--from", VendorAccountFor1_6_0,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	})
 
 	// Compliance writes after upgrade — schemaVersion=1 (default per #730),
@@ -343,8 +335,7 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 			"--schemaVersion", "1",
 			"--from", CertificationCenterAccountFor1_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 
 		tx, err = ExecuteTxWithBin(dcldNew,
 			"tx", "compliance", "provision-model",
@@ -360,8 +351,7 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 			"--schemaVersion", "1",
 			"--from", CertificationCenterAccountFor1_2,
 		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, tx.RawLog)
+		requireTxSuccess(t, tx, err)
 	})
 
 	MustRun(t, "VerifyNewModels_1_6_0", func(t *testing.T) {
