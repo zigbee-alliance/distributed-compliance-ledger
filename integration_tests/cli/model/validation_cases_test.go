@@ -79,21 +79,20 @@ func TestModelValidationCases(t *testing.T) {
 			PartNumber:              "23.456",
 			CommissioningCustomFlow: 1,
 			From:                    vendorAccount1,
-			Extra: []string{
-				"--commissioningCustomFlowURL", "https://customflow.url.info",
-				"--commissioningModeInitialStepsHint", "1",
-				"--commissioningModeInitialStepsInstruction", "Initial Instructions",
-				"--commissioningModeSecondaryStepsHint", "2",
-				"--commissioningModeSecondaryStepsInstruction", "Secondary Steps Instruction",
-				"--icdUserActiveModeTriggerHint", "4",
-				"--icdUserActiveModeTriggerInstruction", "ICD User Active Mode Trigger Instruction",
-				"--factoryResetStepsHint", "3",
-				"--factoryResetStepsInstruction", "Factory Reset Steps Instruction",
-				"--userManualURL", "https://usermanual.url",
-				"--productURL", "https://product.url.info",
-				"--lsfURL", "https://lsf.url.info",
-				"--supportURL", "https://support.url.info",
-			},
+
+			CommissioningCustomFlowURL:                 "https://customflow.url.info",
+			CommissioningModeInitialStepsHint:          1,
+			CommissioningModeInitialStepsInstruction:   "Initial Instructions",
+			CommissioningModeSecondaryStepsHint:        2,
+			CommissioningModeSecondaryStepsInstruction: "Secondary Steps Instruction",
+			IcdUserActiveModeTriggerHint:               4,
+			IcdUserActiveModeTriggerInstruction:        "ICD User Active Mode Trigger Instruction",
+			FactoryResetStepsHint:                      3,
+			FactoryResetStepsInstruction:               "Factory Reset Steps Instruction",
+			UserManualURL:                              "https://usermanual.url",
+			ProductURL:                                 "https://product.url.info",
+			LsfURL:                                     "https://lsf.url.info",
+			SupportURL:                                 "https://support.url.info",
 		})
 		requireTxOK(t, txResult, err)
 
@@ -133,17 +132,16 @@ func TestModelValidationCases(t *testing.T) {
 			PartNumber:              "23.456",
 			CommissioningCustomFlow: 1,
 			From:                    vendorAccount1,
-			Extra: []string{
-				"--commissioningCustomFlowURL", "https://customflow.url.info",
-				"--commissioningModeInitialStepsHint", "1",
-				"--commissioningModeInitialStepsInstruction", "Initial Instructions",
-				"--commissioningModeSecondaryStepsHint", "2",
-				"--commissioningModeSecondaryStepsInstruction", "Secondary Steps Instruction",
-				"--icdUserActiveModeTriggerHint", "4",
-				"--icdUserActiveModeTriggerInstruction", "ICD User Active Mode Trigger Instruction",
-				"--factoryResetStepsHint", "3",
-				"--factoryResetStepsInstruction", "Factory Reset Steps Instruction",
-			},
+
+			CommissioningCustomFlowURL:                 "https://customflow.url.info",
+			CommissioningModeInitialStepsHint:          1,
+			CommissioningModeInitialStepsInstruction:   "Initial Instructions",
+			CommissioningModeSecondaryStepsHint:        2,
+			CommissioningModeSecondaryStepsInstruction: "Secondary Steps Instruction",
+			IcdUserActiveModeTriggerHint:               4,
+			IcdUserActiveModeTriggerInstruction:        "ICD User Active Mode Trigger Instruction",
+			FactoryResetStepsHint:                      3,
+			FactoryResetStepsInstruction:               "Factory Reset Steps Instruction",
 		})
 		requireTxOK(t, txResult, err)
 
@@ -362,13 +360,10 @@ func TestModelValidationCases(t *testing.T) {
 			OtaFileSize:                  123456789,
 			OtaChecksum:                  "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=",
 			From:                         vendorAccount1,
-			Extra: []string{
-				"--firmwareInformation", "123456789012345678901234567890123456789012345678901234567890123",
-				"--softwareVersionValid=true",
-				"--specificationVersion", "4",
-				"--releaseNotesURL", "https://release.notes.url.info",
-				"--otaChecksumType", "1",
-			},
+			FirmwareInformation:          "123456789012345678901234567890123456789012345678901234567890123",
+			SpecificationVersion:         4,
+			ReleaseNotesURL:              "https://release.notes.url.info",
+			OtaChecksumType:              1,
 		})
 		requireTxOK(t, txResult, err)
 
@@ -460,12 +455,9 @@ func TestModelValidationCases(t *testing.T) {
 			OtaFileSize:                  123456789,
 			OtaChecksum:                  "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=",
 			From:                         vendorAccount1,
-			Extra: []string{
-				"--firmwareInformation", "123456789012345678901234567890123456789012345678901234567890123",
-				"--softwareVersionValid=true",
-				"--specificationVersion", "6",
-				"--otaChecksumType", "1",
-			},
+			FirmwareInformation:          "123456789012345678901234567890123456789012345678901234567890123",
+			SpecificationVersion:         6,
+			OtaChecksumType:              1,
 		})
 		requireTxOK(t, txResult, err)
 
@@ -533,12 +525,9 @@ func TestModelValidationCases(t *testing.T) {
 			OtaFileSize:                  123456789,
 			OtaChecksum:                  "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=",
 			From:                         vendorAccount1,
-			Extra: []string{
-				"--firmwareInformation", "123456789012345678901234567890123456789012345678901234567890123",
-				"--softwareVersionValid=true",
-				"--releaseNotesURL", "https://release.notes.url.info",
-				"--otaChecksumType", "1",
-			},
+			FirmwareInformation:          "123456789012345678901234567890123456789012345678901234567890123",
+			ReleaseNotesURL:              "https://release.notes.url.info",
+			OtaChecksumType:              1,
 		})
 		requireTxOK(t, txResult, err)
 
@@ -565,13 +554,10 @@ func TestModelValidationCases(t *testing.T) {
 			OtaFileSize:                  123456789,
 			OtaChecksum:                  "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=",
 			From:                         vendorAccount1,
-			Extra: []string{
-				"--firmwareInformation", "123456789012345678901234567890123456789012345678901234567890123",
-				"--softwareVersionValid=true",
-				"--specificationVersion", "33",
-				"--releaseNotesURL", "https://release.notes.url.info",
-				"--otaChecksumType", "1",
-			},
+			FirmwareInformation:          "123456789012345678901234567890123456789012345678901234567890123",
+			SpecificationVersion:         33,
+			ReleaseNotesURL:              "https://release.notes.url.info",
+			OtaChecksumType:              1,
 		})
 		requireTxOK(t, txResult, err)
 	})

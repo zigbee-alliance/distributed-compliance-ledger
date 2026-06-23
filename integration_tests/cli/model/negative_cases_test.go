@@ -244,9 +244,9 @@ func TestModelNegativeCases(t *testing.T) {
 		txResult, err = AddModelVersion(AddModelVersionOpts{
 			VID: vid, PID: mvPid, SoftwareVersion: mvSv, SoftwareVersionString: mvSvs,
 			OtaURL: "https://ota.url.com", OtaFileSize: 123,
-			OtaChecksum: "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=",
-			From:        vendorAccount,
-			Extra:       []string{"--otaChecksumType", "2"},
+			OtaChecksum:     "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=",
+			OtaChecksumType: 2,
+			From:            vendorAccount,
 		})
 		combined := ""
 		if err != nil {
@@ -261,9 +261,9 @@ func TestModelNegativeCases(t *testing.T) {
 		txResult, err = AddModelVersion(AddModelVersionOpts{
 			VID: vid, PID: mvPid, SoftwareVersion: mvSv, SoftwareVersionString: mvSvs,
 			OtaURL: "https://ota.url.com", OtaFileSize: 123,
-			OtaChecksum: strings.Repeat("a", 89),
-			From:        vendorAccount,
-			Extra:       []string{"--otaChecksumType", "1"},
+			OtaChecksum:     strings.Repeat("a", 89),
+			OtaChecksumType: 1,
+			From:            vendorAccount,
 		})
 		combined = ""
 		if err != nil {

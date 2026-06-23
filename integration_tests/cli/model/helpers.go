@@ -36,11 +36,27 @@ type AddModelOpts struct {
 	CommissioningFallbackURL     string
 	DiscoveryCapabilitiesBitmask int
 
+	// Commissioning hints/instructions and product URLs. Hints have on-chain
+	// defaults (1/4/1/1) so they are emitted only when non-zero; the rest emit
+	// when non-empty.
+	CommissioningCustomFlowURL                 string
+	CommissioningModeInitialStepsHint          int
+	CommissioningModeInitialStepsInstruction   string
+	CommissioningModeSecondaryStepsHint        int
+	CommissioningModeSecondaryStepsInstruction string
+	IcdUserActiveModeTriggerHint               int
+	IcdUserActiveModeTriggerInstruction        string
+	FactoryResetStepsHint                      int
+	FactoryResetStepsInstruction               string
+	UserManualURL                              string
+	ProductURL                                 string
+	LsfURL                                     string
+	SupportURL                                 string
+
 	// SchemaVersion is sent only when non-empty (the on-chain default is 0).
 	SchemaVersion string
 
-	From  string
-	Extra []string
+	From string
 }
 
 // AddModel executes the add-model transaction.
@@ -96,10 +112,48 @@ func AddModel(opts AddModelOpts) (*utils.TxResult, error) {
 	if opts.DiscoveryCapabilitiesBitmask != 0 {
 		args = append(args, "--discoveryCapabilitiesBitmask", itoa(opts.DiscoveryCapabilitiesBitmask))
 	}
+	if opts.CommissioningCustomFlowURL != "" {
+		args = append(args, "--commissioningCustomFlowURL", opts.CommissioningCustomFlowURL)
+	}
+	if opts.CommissioningModeInitialStepsHint != 0 {
+		args = append(args, "--commissioningModeInitialStepsHint", itoa(opts.CommissioningModeInitialStepsHint))
+	}
+	if opts.CommissioningModeInitialStepsInstruction != "" {
+		args = append(args, "--commissioningModeInitialStepsInstruction", opts.CommissioningModeInitialStepsInstruction)
+	}
+	if opts.CommissioningModeSecondaryStepsHint != 0 {
+		args = append(args, "--commissioningModeSecondaryStepsHint", itoa(opts.CommissioningModeSecondaryStepsHint))
+	}
+	if opts.CommissioningModeSecondaryStepsInstruction != "" {
+		args = append(args, "--commissioningModeSecondaryStepsInstruction", opts.CommissioningModeSecondaryStepsInstruction)
+	}
+	if opts.IcdUserActiveModeTriggerHint != 0 {
+		args = append(args, "--icdUserActiveModeTriggerHint", itoa(opts.IcdUserActiveModeTriggerHint))
+	}
+	if opts.IcdUserActiveModeTriggerInstruction != "" {
+		args = append(args, "--icdUserActiveModeTriggerInstruction", opts.IcdUserActiveModeTriggerInstruction)
+	}
+	if opts.FactoryResetStepsHint != 0 {
+		args = append(args, "--factoryResetStepsHint", itoa(opts.FactoryResetStepsHint))
+	}
+	if opts.FactoryResetStepsInstruction != "" {
+		args = append(args, "--factoryResetStepsInstruction", opts.FactoryResetStepsInstruction)
+	}
+	if opts.UserManualURL != "" {
+		args = append(args, "--userManualURL", opts.UserManualURL)
+	}
+	if opts.ProductURL != "" {
+		args = append(args, "--productURL", opts.ProductURL)
+	}
+	if opts.LsfURL != "" {
+		args = append(args, "--lsfURL", opts.LsfURL)
+	}
+	if opts.SupportURL != "" {
+		args = append(args, "--supportURL", opts.SupportURL)
+	}
 	if opts.SchemaVersion != "" {
 		args = append(args, "--schemaVersion", opts.SchemaVersion)
 	}
-	args = append(args, opts.Extra...)
 
 	return utils.ExecuteTx(args...)
 }
@@ -159,14 +213,18 @@ type AddModelVersionOpts struct {
 	MinApplicableSoftwareVersion int
 	MaxApplicableSoftwareVersion int
 
-	OtaURL      string
-	OtaFileSize int
-	OtaChecksum string
+	OtaURL          string
+	OtaFileSize     int
+	OtaChecksum     string
+	OtaChecksumType int
+
+	FirmwareInformation  string
+	SpecificationVersion int
+	ReleaseNotesURL      string
 
 	SchemaVersion string
 
-	From  string
-	Extra []string
+	From string
 }
 
 // AddModelVersion executes the add-model-version transaction.
@@ -205,10 +263,21 @@ func AddModelVersion(opts AddModelVersionOpts) (*utils.TxResult, error) {
 	if opts.OtaChecksum != "" {
 		args = append(args, "--otaChecksum", opts.OtaChecksum)
 	}
+	if opts.OtaChecksumType != 0 {
+		args = append(args, "--otaChecksumType", itoa(opts.OtaChecksumType))
+	}
+	if opts.FirmwareInformation != "" {
+		args = append(args, "--firmwareInformation", opts.FirmwareInformation)
+	}
+	if opts.SpecificationVersion != 0 {
+		args = append(args, "--specificationVersion", itoa(opts.SpecificationVersion))
+	}
+	if opts.ReleaseNotesURL != "" {
+		args = append(args, "--releaseNotesURL", opts.ReleaseNotesURL)
+	}
 	if opts.SchemaVersion != "" {
 		args = append(args, "--schemaVersion", opts.SchemaVersion)
 	}
-	args = append(args, opts.Extra...)
 
 	return utils.ExecuteTx(args...)
 }

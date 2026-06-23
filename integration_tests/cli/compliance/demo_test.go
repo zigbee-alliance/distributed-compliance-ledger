@@ -150,8 +150,8 @@ func TestComplianceDemo(t *testing.T) {
 	})
 
 	t.Run("CertifyWithInvalidCDVersionNumber_Fails", func(t *testing.T) {
-		// Override CDVersionNumber to 0 explicitly (default would be 1) — the
-		// handler must reject an unknown version.
+		// The model version was created with CDVersionNumber=1; certifying with a
+		// different value must be rejected as a mismatch.
 		txResult, err := CertifyModel(CertifyModelOpts{
 			VID: vid, PID: pid,
 			SoftwareVersion:       sv,
@@ -159,12 +159,12 @@ func TestComplianceDemo(t *testing.T) {
 			CertificationType:     zigbeeCertType,
 			CertificationDate:     certificationDate,
 			CDCertificateID:       cdCertID,
+			CDVersionNumber:       2,
 			From:                  zbAccount,
-			Extra:                 []string{"--cdVersionNumber", "0"},
 		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(306), txResult.Code)
-		require.Contains(t, txResult.RawLog, "ledger does not have matching CDVersionNumber=0")
+		require.Contains(t, txResult.RawLog, "ledger does not have matching CDVersionNumber=2")
 		_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
 	})
 
@@ -517,18 +517,18 @@ func TestComplianceDemo(t *testing.T) {
 			CDCertificateID:       cdCertID,
 			CDVersionNumber:       cdVersionNumber,
 			From:                  zbAccount,
-			Extra: []string{
-				"--programTypeVersion", "1.0",
-				"--familyId", "FAM123456abc",
-				"--supportedClusters", "0x0003,0x0004",
-				"--compliantPlatformUsed", "WIFI",
-				"--compliantPlatformVersion", "V1",
-				"--OSVersion", "someV",
-				"--certificationRoute", "fullTested",
-				"--programType", "endProduct",
-				"--transport", "wi-fi",
-				"--parentChild", "parent",
-				"--certificationIDOfSoftwareComponent", "someIDOfSoftwareComponent",
+			Optional: OptionalFields{
+				ProgramTypeVersion:                 "1.0",
+				FamilyID:                           "FAM123456abc",
+				SupportedClusters:                  "0x0003,0x0004",
+				CompliantPlatformUsed:              "WIFI",
+				CompliantPlatformVersion:           "V1",
+				OSVersion:                          "someV",
+				CertificationRoute:                 "fullTested",
+				ProgramType:                        "endProduct",
+				Transport:                          "wi-fi",
+				ParentChild:                        "parent",
+				CertificationIDOfSoftwareComponent: "someIDOfSoftwareComponent",
 			},
 		})
 		require.NoError(t, err)

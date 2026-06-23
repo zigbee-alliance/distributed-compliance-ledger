@@ -260,7 +260,6 @@ func TestPKIRevocationPoints(t *testing.T) {
 			DataURL:            revPointDataURL,
 			IssuerSubjectKeyID: revPointIssuerSKID,
 			RevocationType:     "1",
-			Extra:              []string{"--is-paa=false"},
 		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
@@ -291,7 +290,6 @@ func TestPKIRevocationPoints(t *testing.T) {
 			IssuerSubjectKeyID:   delegatorCertSubjectKeyID,
 			RevocationType:       "1",
 			CertificateDelegator: delegatorCertWithVid65521Path,
-			Extra:                []string{"--is-paa=false"},
 		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
@@ -317,7 +315,6 @@ func TestPKIRevocationPoints(t *testing.T) {
 			DataURL:            revPointDataURLNonScoped,
 			IssuerSubjectKeyID: revPointGsr4IssuerSKID,
 			RevocationType:     "1",
-			Extra:              []string{"--is-paa=false"},
 		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)

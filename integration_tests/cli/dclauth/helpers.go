@@ -15,12 +15,13 @@ import (
 )
 
 // ProposeAccountOpts holds optional flags for propose-add-account.
-// VID > 0 emits --vid; PidRanges non-empty emits --pid_ranges; Info emits --info.
+// VID > 0 emits --vid (or VIDHex for a hex-formatted value such as "0xA13");
+// PidRanges non-empty emits --pid_ranges; Info emits --info.
 type ProposeAccountOpts struct {
 	Info      string
 	VID       int
+	VIDHex    string
 	PidRanges string
-	Extra     []string
 }
 
 func (o ProposeAccountOpts) args() []string {
@@ -28,22 +29,23 @@ func (o ProposeAccountOpts) args() []string {
 	if o.Info != "" {
 		args = append(args, "--info", o.Info)
 	}
-	if o.VID != 0 {
+	if o.VIDHex != "" {
+		args = append(args, "--vid", o.VIDHex)
+	} else if o.VID != 0 {
 		args = append(args, "--vid", itoa(o.VID))
 	}
 	if o.PidRanges != "" {
 		args = append(args, "--pid_ranges", o.PidRanges)
 	}
 
-	return append(args, o.Extra...)
+	return args
 }
 
 // AccountActionOpts holds optional flags for approve-add-account /
 // reject-add-account / propose-revoke-account / approve-revoke-account /
 // reject-revoke-account. Info emits --info <value>.
 type AccountActionOpts struct {
-	Info  string
-	Extra []string
+	Info string
 }
 
 func (o AccountActionOpts) args() []string {
@@ -52,7 +54,7 @@ func (o AccountActionOpts) args() []string {
 		args = append(args, "--info", o.Info)
 	}
 
-	return append(args, o.Extra...)
+	return args
 }
 
 // ProposeAccount executes the CLI command to propose adding a new account.

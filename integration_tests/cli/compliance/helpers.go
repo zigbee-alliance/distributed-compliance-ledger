@@ -8,11 +8,51 @@ import (
 	compliancetypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
+// OptionalFields holds the optional Matter compliance fields shared by
+// certify-model and provision-model. Each non-empty field emits its flag.
+type OptionalFields struct {
+	ProgramType                        string
+	ProgramTypeVersion                 string
+	FamilyID                           string
+	SupportedClusters                  string
+	CompliantPlatformUsed              string
+	CompliantPlatformVersion           string
+	OSVersion                          string
+	CertificationRoute                 string
+	Transport                          string
+	ParentChild                        string
+	CertificationIDOfSoftwareComponent string
+}
+
+func (o OptionalFields) args() []string {
+	pairs := []struct{ flag, val string }{
+		{"--programType", o.ProgramType},
+		{"--programTypeVersion", o.ProgramTypeVersion},
+		{"--familyId", o.FamilyID},
+		{"--supportedClusters", o.SupportedClusters},
+		{"--compliantPlatformUsed", o.CompliantPlatformUsed},
+		{"--compliantPlatformVersion", o.CompliantPlatformVersion},
+		{"--OSVersion", o.OSVersion},
+		{"--certificationRoute", o.CertificationRoute},
+		{"--transport", o.Transport},
+		{"--parentChild", o.ParentChild},
+		{"--certificationIDOfSoftwareComponent", o.CertificationIDOfSoftwareComponent},
+	}
+	var args []string
+	for _, p := range pairs {
+		if p.val != "" {
+			args = append(args, p.flag, p.val)
+		}
+	}
+
+	return args
+}
+
 // CertifyModelOpts holds parameters for the certify-model transaction.
 // Use VIDHex / PIDHex to pass hex-formatted identifiers (e.g. "0xA13"); when
 // those are empty, the numeric VID / PID fields are formatted as decimal.
-// Zero-valued SpecificationVersion and CDVersionNumber default to 1.
-// Extra appends arbitrary flag tokens for fields not modeled here.
+// Zero-valued SpecificationVersion and CDVersionNumber default to 1 (pass a
+// non-zero value to exercise a mismatch).
 type CertifyModelOpts struct {
 	VID                   int
 	VIDHex                string
@@ -25,8 +65,9 @@ type CertifyModelOpts struct {
 	CertificationDate     string
 	CDCertificateID       string
 	CDVersionNumber       int
+	Reason                string
+	Optional              OptionalFields
 	From                  string
-	Extra                 []string
 }
 
 // CertifyModel executes the certify-model transaction.
@@ -53,7 +94,10 @@ func CertifyModel(opts CertifyModelOpts) (*utils.TxResult, error) {
 		"--cdVersionNumber", itoa(cdVersion),
 		"--from", opts.From,
 	}
-	args = append(args, opts.Extra...)
+	if opts.Reason != "" {
+		args = append(args, "--reason", opts.Reason)
+	}
+	args = append(args, opts.Optional.args()...)
 
 	return utils.ExecuteTx(args...)
 }
@@ -81,7 +125,6 @@ type RevokeModelOpts struct {
 	Reason                string
 	CDVersionNumber       int
 	From                  string
-	Extra                 []string
 }
 
 // RevokeModel executes the revoke-model transaction.
@@ -105,7 +148,6 @@ func RevokeModel(opts RevokeModelOpts) (*utils.TxResult, error) {
 	if opts.Reason != "" {
 		args = append(args, "--reason", opts.Reason)
 	}
-	args = append(args, opts.Extra...)
 
 	return utils.ExecuteTx(args...)
 }
@@ -125,8 +167,8 @@ type ProvisionModelOpts struct {
 	CDCertificateID       string
 	CDVersionNumber       int
 	Reason                string
+	Optional              OptionalFields
 	From                  string
-	Extra                 []string
 }
 
 // ProvisionModel executes the provision-model transaction.
@@ -156,7 +198,7 @@ func ProvisionModel(opts ProvisionModelOpts) (*utils.TxResult, error) {
 	if opts.Reason != "" {
 		args = append(args, "--reason", opts.Reason)
 	}
-	args = append(args, opts.Extra...)
+	args = append(args, opts.Optional.args()...)
 
 	return utils.ExecuteTx(args...)
 }

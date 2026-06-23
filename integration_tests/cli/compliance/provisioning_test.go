@@ -260,7 +260,6 @@ func TestComplianceProvisioning(t *testing.T) {
 	t.Run("Pid2_CertifyMatter_ThenProvisionFails", func(t *testing.T) {
 		cliputils.CreateModelAndVersion(t, vid, pid2, sv2, svs2, vendorAccount)
 
-		// CertifyModelOpts has no Reason field, so --reason is passed via Extra.
 		txResult, err := CertifyModel(CertifyModelOpts{
 			VID: vid, PID: pid2,
 			SoftwareVersion:       sv2,
@@ -269,7 +268,7 @@ func TestComplianceProvisioning(t *testing.T) {
 			CertificationDate:     certificationDate,
 			CDCertificateID:       cdCertID,
 			From:                  zbAccount,
-			Extra:                 []string{"--reason", certificationReason},
+			Reason:                certificationReason,
 		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
@@ -354,7 +353,7 @@ func TestComplianceProvisioning(t *testing.T) {
 			CertificationType:     certTypeZb,
 			CertificationDate:     certificationDate,
 			CDCertificateID:       cdCertID,
-			Extra:                 []string{"--reason", certificationReason},
+			Reason:                certificationReason,
 			From:                  zbAccount,
 		})
 		require.NoError(t, err)
@@ -485,18 +484,18 @@ func TestComplianceProvisioning(t *testing.T) {
 			CDCertificateID:       cdCertID,
 			Reason:                provisionReason,
 			From:                  zbAccount,
-			Extra: []string{
-				"--programTypeVersion", "1.0",
-				"--familyId", "FAM123456abc",
-				"--supportedClusters", "0x0003,0x0004",
-				"--compliantPlatformUsed", "WIFI",
-				"--compliantPlatformVersion", "V1",
-				"--OSVersion", "someV",
-				"--certificationRoute", "fullTested",
-				"--programType", "endProduct",
-				"--transport", "wi-fi",
-				"--parentChild", "parent",
-				"--certificationIDOfSoftwareComponent", "someIDOfSoftwareComponent1",
+			Optional: OptionalFields{
+				ProgramTypeVersion:                 "1.0",
+				FamilyID:                           "FAM123456abc",
+				SupportedClusters:                  "0x0003,0x0004",
+				CompliantPlatformUsed:              "WIFI",
+				CompliantPlatformVersion:           "V1",
+				OSVersion:                          "someV",
+				CertificationRoute:                 "fullTested",
+				ProgramType:                        "endProduct",
+				Transport:                          "wi-fi",
+				ParentChild:                        "parent",
+				CertificationIDOfSoftwareComponent: "someIDOfSoftwareComponent1",
 			},
 		})
 		require.NoError(t, err)
@@ -544,14 +543,14 @@ func TestComplianceProvisioning(t *testing.T) {
 			CertificationDate:     certificationDate,
 			CDCertificateID:       cdCertID,
 			From:                  zbAccount,
-			Extra: []string{
-				"--programType", "softwareComponent",
-				"--programTypeVersion", "2.0",
-				"--familyId", "FAM54321cba",
-				"--supportedClusters", "0x0006,0x0008",
-				"--compliantPlatformUsed", "ETHERNET",
-				"--compliantPlatformVersion", "V2",
-				"--certificationIDOfSoftwareComponent", "someIDOfSoftwareComponent2",
+			Optional: OptionalFields{
+				ProgramType:                        "softwareComponent",
+				ProgramTypeVersion:                 "2.0",
+				FamilyID:                           "FAM54321cba",
+				SupportedClusters:                  "0x0006,0x0008",
+				CompliantPlatformUsed:              "ETHERNET",
+				CompliantPlatformVersion:           "V2",
+				CertificationIDOfSoftwareComponent: "someIDOfSoftwareComponent2",
 			},
 		})
 		require.NoError(t, err)

@@ -27,7 +27,6 @@ import (
 type ProposeUpgradeOpts struct {
 	UpgradeInfo string
 	Info        string
-	Extra       []string
 }
 
 func (o ProposeUpgradeOpts) args() []string {
@@ -39,13 +38,12 @@ func (o ProposeUpgradeOpts) args() []string {
 		args = append(args, "--info", o.Info)
 	}
 
-	return append(args, o.Extra...)
+	return args
 }
 
 // UpgradeActionOpts holds optional flags for approve-upgrade / reject-upgrade.
 type UpgradeActionOpts struct {
-	Info  string
-	Extra []string
+	Info string
 }
 
 func (o UpgradeActionOpts) args() []string {
@@ -54,7 +52,7 @@ func (o UpgradeActionOpts) args() []string {
 		args = append(args, "--info", o.Info)
 	}
 
-	return append(args, o.Extra...)
+	return args
 }
 
 // ProposeUpgrade proposes a software upgrade.

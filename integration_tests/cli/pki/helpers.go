@@ -17,7 +17,6 @@ type X509ProposeOpts struct {
 	SchemaVersion string
 	Info          string
 	Time          string
-	Extra         []string
 }
 
 func (o X509ProposeOpts) args() []string {
@@ -35,7 +34,7 @@ func (o X509ProposeOpts) args() []string {
 		args = append(args, "--time", o.Time)
 	}
 
-	return append(args, o.Extra...)
+	return args
 }
 
 // X509ActionOpts holds optional flags for approve / reject /
@@ -46,7 +45,6 @@ type X509ActionOpts struct {
 	Info         string
 	RevokeChild  bool
 	SerialNumber string
-	Extra        []string
 }
 
 func (o X509ActionOpts) args() []string {
@@ -64,7 +62,7 @@ func (o X509ActionOpts) args() []string {
 		args = append(args, "--revoke-child=true")
 	}
 
-	return append(args, o.Extra...)
+	return args
 }
 
 // ProposeAddX509RootCert proposes adding an x509 root certificate.
@@ -176,7 +174,6 @@ func RevokeX509Cert(subject, subjectKeyID, from string, opts ...RevokeNocCertOpt
 type AddNocCertOpts struct {
 	IsVidVerificationSigner bool
 	SchemaVersion           string
-	Extra                   []string
 }
 
 func (o AddNocCertOpts) args() []string {
@@ -188,7 +185,7 @@ func (o AddNocCertOpts) args() []string {
 		extra = append(extra, "--schemaVersion", o.SchemaVersion)
 	}
 
-	return append(extra, o.Extra...)
+	return extra
 }
 
 // AddNocRootCert adds a NOC root certificate.
@@ -225,7 +222,6 @@ func AddNocX509IcaCert(certFile, from string, opts ...AddNocCertOpts) (*utils.Tx
 type RevokeNocCertOpts struct {
 	SerialNumber string
 	RevokeChild  bool
-	Extra        []string
 }
 
 func (o RevokeNocCertOpts) args() []string {
@@ -237,7 +233,7 @@ func (o RevokeNocCertOpts) args() []string {
 		extra = append(extra, "--revoke-child=true")
 	}
 
-	return append(extra, o.Extra...)
+	return extra
 }
 
 // RevokeNocRootCert revokes a NOC root certificate.
@@ -316,8 +312,9 @@ func RemoveNocRootCert(subject, subjectKeyID, from string, opts ...RevokeNocCert
 }
 
 // RevocationPointOpts holds parameters for add/update/delete-revocation-point.
-// Each field is sent only when non-zero/non-empty; the boolean IsPAA emits
-// --is-paa=true when set. Use Extra for unmodeled flags.
+// Each field is sent only when non-zero/non-empty. IsPAA is add-only (the
+// --is-paa flag exists only on add-revocation-point, where it is required), so
+// AddRevocationPoint always emits it; update/delete ignore it.
 type RevocationPointOpts struct {
 	VID                  int
 	VIDHex               string
@@ -332,7 +329,6 @@ type RevocationPointOpts struct {
 	RevocationType       string
 	CRLSignerCertificate string
 	SchemaVersion        string
-	Extra                []string
 }
 
 func (o RevocationPointOpts) args() []string {
@@ -342,9 +338,6 @@ func (o RevocationPointOpts) args() []string {
 	}
 	if o.PID != 0 || o.PIDHex != "" {
 		args = append(args, "--pid", flagOrHex(o.PID, o.PIDHex))
-	}
-	if o.IsPAA {
-		args = append(args, "--is-paa=true")
 	}
 	if o.Certificate != "" {
 		args = append(args, "--certificate", o.Certificate)
@@ -371,13 +364,19 @@ func (o RevocationPointOpts) args() []string {
 		args = append(args, "--schemaVersion", o.SchemaVersion)
 	}
 
-	return append(args, o.Extra...)
+	return args
 }
 
-// AddRevocationPoint adds a PKI revocation distribution point.
+// AddRevocationPoint adds a PKI revocation distribution point. The --is-paa flag
+// is required on add, so it is always emitted (true or false).
 func AddRevocationPoint(from string, opts RevocationPointOpts) (*utils.TxResult, error) {
 	args := []string{"tx", "pki", "add-revocation-point", "--from", from}
 	args = append(args, opts.args()...)
+	if opts.IsPAA {
+		args = append(args, "--is-paa=true")
+	} else {
+		args = append(args, "--is-paa=false")
+	}
 
 	return utils.ExecuteTx(args...)
 }

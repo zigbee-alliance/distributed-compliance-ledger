@@ -33,7 +33,6 @@ type VendorOpts struct {
 	CompanyPreferredName string
 	VendorLandingPageURL string
 	SchemaVersion        string
-	Extra                []string
 }
 
 func (o VendorOpts) args() []string {
@@ -57,7 +56,7 @@ func (o VendorOpts) args() []string {
 		args = append(args, "--schemaVersion", o.SchemaVersion)
 	}
 
-	return append(args, o.Extra...)
+	return args
 }
 
 // txFailureText returns a rejected tx's error text and/or RawLog so the exact

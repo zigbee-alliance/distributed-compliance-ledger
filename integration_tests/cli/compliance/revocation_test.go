@@ -229,7 +229,7 @@ func TestComplianceRevocation(t *testing.T) {
 			CertificationDate:     certificationDatePast,
 			CDCertificateID:       cdCertID,
 			From:                  zbAccount,
-			Extra:                 []string{"--reason", certificationReason},
+			Reason:                certificationReason,
 		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(302), txResult.Code)
@@ -247,7 +247,7 @@ func TestComplianceRevocation(t *testing.T) {
 			CertificationDate:     certificationDate,
 			CDCertificateID:       cdCertID,
 			From:                  zbAccount,
-			Extra:                 []string{"--reason", certificationReason},
+			Reason:                certificationReason,
 		})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
