@@ -15,7 +15,6 @@
 package upgrade
 
 import (
-	"fmt"
 	"strings"
 	"testing"
 
@@ -70,14 +69,9 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 		require.NoError(t, err)
 		planHeight := currentHeight + 20
 
-		// Master upgrade plan submission doesn't pass --upgrade-info — the
-		// binary was already seeded into cosmovisor manually above.
-		tx, err := ExecuteTxWithBin(dcldOld,
-			"tx", "dclupgrade", "propose-upgrade",
-			"--name", planName,
-			"--upgrade-height", fmt.Sprintf("%d", planHeight),
-			"--from", state.Trustee1,
-		)
+		// Master upgrade plan submission passes empty upgrade-info — the binary
+		// was already seeded into cosmovisor manually above.
+		tx, err := ProposeUpgrade(dcldOld, planName, planHeight, "", state.Trustee1)
 		requireTxSuccess(t, tx, err)
 
 		for _, who := range []string{state.Trustee2, state.Trustee3, state.Trustee4} {
@@ -104,20 +98,13 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 	MustRun(t, "VerifyPreservedAcrossAllEras", func(t *testing.T) {
 		t.Helper()
 		for _, vid := range []int{state.VID, VIDFor1_2, VIDFor1_4_3, VIDFor1_4_4, state.VIDFor1_5_1} {
-			out, qerr := ExecuteCLIWithBin(DcldMasterBinaryPath,
-				"query", "vendorinfo", "vendor",
-				"--vid", fmt.Sprintf("%d", vid),
-			)
+			out, qerr := QueryVendor(DcldMasterBinaryPath, vid)
 			require.NoError(t, qerr)
 			requireFieldEquals(t, out, "vendorID", vid)
 		}
 
 		// 1.5.2 pid_2 has 1.6.0 productLabel/partNumber (set in script 09).
-		out, err := ExecuteCLIWithBin(DcldMasterBinaryPath,
-			"query", "model", "get-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),
-			"--pid", fmt.Sprintf("%d", PID2For1_5_2),
-		)
+		out, err := QueryGetModel(DcldMasterBinaryPath, VIDFor1_5_2, PID2For1_5_2)
 		require.NoError(t, err)
 		checkResponseContains(t, out, ProductLabelFor1_6_0)
 		checkResponseContains(t, out, PartNumberFor1_6_0)
@@ -128,14 +115,14 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 	// vendorinfo all-vendors, and validator all-nodes.
 	MustRun(t, "VerifyPreservedListings_Master", func(t *testing.T) {
 		t.Helper()
-		out, err := ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "vendorinfo", "all-vendors")
+		out, err := QueryAllVendors(DcldMasterBinaryPath)
 		require.NoError(t, err)
 		for _, vid := range []int{state.VID, VIDFor1_2, VIDFor1_4_3, VIDFor1_4_4, state.VIDFor1_5_1} {
 			requireFieldEquals(t, out, "vendorID", vid)
 		}
 
 		// ----- Auth -----
-		out, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "auth", "all-accounts")
+		out, err = QueryAllAccounts(DcldMasterBinaryPath)
 		require.NoError(t, err)
 		for _, addr := range []string{
 			state.User2Address, state.User5Address, state.User8Address,
@@ -144,7 +131,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 			checkResponseContains(t, out, addr)
 		}
 
-		out, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "auth", "all-proposed-accounts")
+		out, err = QueryAllProposedAccounts(DcldMasterBinaryPath)
 		require.NoError(t, err)
 		for _, addr := range []string{
 			state.User3Address, state.User6Address, state.User9Address,
@@ -153,7 +140,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 			checkResponseContains(t, out, addr)
 		}
 
-		out, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "auth", "all-proposed-accounts-to-revoke")
+		out, err = QueryAllProposedAccountsToRevoke(DcldMasterBinaryPath)
 		require.NoError(t, err)
 		for _, addr := range []string{
 			state.User2Address, state.User5Address, state.User8Address,
@@ -162,7 +149,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 			checkResponseContains(t, out, addr)
 		}
 
-		out, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "auth", "all-revoked-accounts")
+		out, err = QueryAllRevokedAccounts(DcldMasterBinaryPath)
 		require.NoError(t, err)
 		for _, addr := range []string{
 			state.User1Address, state.User4Address, state.User7Address,
@@ -175,8 +162,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 			state.User2Address, state.User5Address, state.User8Address,
 			state.User11Address, state.User14Address,
 		} {
-			out, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
-				"query", "auth", "account", "--address", addr)
+			out, err = QueryAccount(DcldMasterBinaryPath, addr)
 			require.NoError(t, err)
 			checkResponseContains(t, out, addr)
 		}
@@ -184,8 +170,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 			state.User3Address, state.User6Address, state.User9Address,
 			state.User12Address, state.User15Address,
 		} {
-			out, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
-				"query", "auth", "proposed-account", "--address", addr)
+			out, err = QueryProposedAccount(DcldMasterBinaryPath, addr)
 			require.NoError(t, err)
 			checkResponseContains(t, out, addr)
 		}
@@ -193,8 +178,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 			state.User2Address, state.User5Address, state.User8Address,
 			state.User11Address, state.User14Address,
 		} {
-			out, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
-				"query", "auth", "proposed-account-to-revoke", "--address", addr)
+			out, err = QueryProposedAccountToRevoke(DcldMasterBinaryPath, addr)
 			require.NoError(t, err)
 			checkResponseContains(t, out, addr)
 		}
@@ -202,98 +186,58 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 			state.User1Address, state.User4Address, state.User7Address,
 			state.User10Address, state.User13Address,
 		} {
-			out, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
-				"query", "auth", "revoked-account", "--address", addr)
+			out, err = QueryRevokedAccount(DcldMasterBinaryPath, addr)
 			require.NoError(t, err)
 			checkResponseContains(t, out, addr)
 		}
 
 		// ----- Model bulk listings -----
-		out, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "model", "all-models")
+		out, err = QueryAllModels(DcldMasterBinaryPath)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", VIDFor1_4_4)
 
 		for _, vid := range []int{state.VID, VIDFor1_2, VIDFor1_4_3, VIDFor1_4_4, state.VIDFor1_5_1, VIDFor1_5_2} {
-			_, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
-				"query", "model", "vendor-models",
-				"--vid", fmt.Sprintf("%d", vid),
-			)
+			_, err = QueryVendorModels(DcldMasterBinaryPath, vid)
 			require.NoError(t, err)
 		}
 
-		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
-			"query", "model", "all-model-versions",
-			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
-			"--pid", fmt.Sprintf("%d", PID1For1_4_4),
-		)
+		_, err = QueryAllModelVersions(DcldMasterBinaryPath, VIDFor1_4_4, PID1For1_4_4)
 		require.NoError(t, err)
 
-		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
-			"query", "model", "model-version",
-			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
-			"--pid", fmt.Sprintf("%d", PID1For1_4_4),
-			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_4_4),
-		)
+		_, err = QueryModelVersion(DcldMasterBinaryPath, VIDFor1_4_4, PID1For1_4_4, SoftwareVersionFor1_4_4)
 		require.NoError(t, err)
 
 		// ----- Compliance single-record + all-* listings -----
-		out, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
-			"query", "compliance", "certified-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
-			"--pid", fmt.Sprintf("%d", PID1For1_4_4),
-			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_4_4),
-			"--certificationType", CertificationTypeFor1_4_4,
-		)
+		out, err = QueryCertifiedModel(DcldMasterBinaryPath, VIDFor1_4_4, PID1For1_4_4, SoftwareVersionFor1_4_4, CertificationTypeFor1_4_4)
 		require.NoError(t, err)
 		checkResponseContains(t, out, `"value":true`)
 
-		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
-			"query", "compliance", "revoked-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
-			"--pid", fmt.Sprintf("%d", PID2For1_4_4),
-			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_4_4),
-			"--certificationType", CertificationTypeFor1_4_4,
-		)
+		_, err = QueryRevokedModel(DcldMasterBinaryPath, VIDFor1_4_4, PID2For1_4_4, SoftwareVersionFor1_4_4, CertificationTypeFor1_4_4)
 		require.NoError(t, err)
 
-		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
-			"query", "compliance", "provisional-model",
-			"--vid", fmt.Sprintf("%d", state.VID),
-			"--pid", fmt.Sprintf("%d", pid3V012),
-			"--softwareVersion", fmt.Sprintf("%d", state.SoftwareVersion),
-			"--certificationType", certificationTypeV012,
-		)
+		_, err = QueryProvisionalModel(DcldMasterBinaryPath, state.VID, pid3V012, state.SoftwareVersion, certificationTypeV012)
 		require.NoError(t, err)
 
-		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
-			"query", "compliance", "compliance-info",
-			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
-			"--pid", fmt.Sprintf("%d", PID1For1_4_4),
-			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_4_4),
-			"--certificationType", CertificationTypeFor1_4_4,
-		)
+		_, err = QueryComplianceInfo(DcldMasterBinaryPath, VIDFor1_4_4, PID1For1_4_4, SoftwareVersionFor1_4_4, CertificationTypeFor1_4_4)
 		require.NoError(t, err)
 
 		for _, cdID := range []string{
 			cdCertificateIDV012, CDCertificateIDFor1_2, CDCertificateIDFor1_4_3, CDCertificateIDFor1_4_4,
 		} {
-			out, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
-				"query", "compliance", "device-software-compliance",
-				"--cdCertificateId", cdID,
-			)
+			out, err = QueryDeviceSoftwareCompliance(DcldMasterBinaryPath, cdID)
 			require.NoError(t, err)
 			checkResponseContains(t, out, cdID)
 		}
 
-		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "compliance", "all-certified-models")
+		_, err = QueryAllCertifiedModels(DcldMasterBinaryPath)
 		require.NoError(t, err)
-		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "compliance", "all-provisional-models")
+		_, err = QueryAllProvisionalModels(DcldMasterBinaryPath)
 		require.NoError(t, err)
-		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "compliance", "all-revoked-models")
+		_, err = QueryAllRevokedModels(DcldMasterBinaryPath)
 		require.NoError(t, err)
-		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "compliance", "all-compliance-info")
+		_, err = QueryAllComplianceInfo(DcldMasterBinaryPath)
 		require.NoError(t, err)
-		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "compliance", "all-device-software-compliance")
+		_, err = QueryAllDeviceSoftwareCompliance(DcldMasterBinaryPath)
 		require.NoError(t, err)
 
 		// ----- PKI single-record forms (global/DA/NOC) -----
@@ -302,86 +246,55 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 			{TestRootCertSubjectFor1_2, TestRootCertSubjectKeyIDFor1_2},
 			{testRootCertSubject, testRootCertSubjectKeyID},
 		} {
-			out, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
-				"query", "pki", "cert",
-				"--subject", c.subj, "--subject-key-id", c.kid,
-			)
+			out, err = QueryCert(DcldMasterBinaryPath, c.subj, c.kid)
 			require.NoError(t, err)
 			checkResponseContains(t, out, c.subj)
 
-			out, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
-				"query", "pki", "x509-cert",
-				"--subject", c.subj, "--subject-key-id", c.kid,
-			)
+			out, err = QueryX509Cert(DcldMasterBinaryPath, c.subj, c.kid)
 			require.NoError(t, err)
 			checkResponseContains(t, out, c.subj)
 
-			_, _ = ExecuteCLIWithBin(DcldMasterBinaryPath,
-				"query", "pki", "noc-x509-cert",
-				"--subject", c.subj, "--subject-key-id", c.kid,
-			)
+			_, _ = QueryNocX509Cert(DcldMasterBinaryPath, c.subj, c.kid)
 		}
 
-		_, _ = ExecuteCLIWithBin(DcldMasterBinaryPath,
-			"query", "pki", "revoked-x509-cert",
-			"--subject", IntermediateCertSubjectFor1_2,
-			"--subject-key-id", IntermediateCertSubjectKeyIDFor1_2,
-		)
-		_, _ = ExecuteCLIWithBin(DcldMasterBinaryPath,
-			"query", "pki", "revoked-noc-x509-root-cert",
-			"--subject", NOCRootCert1SubjectFor1_4_3,
-			"--subject-key-id", NOCRootCert1SubjectKeyIDFor1_4_3,
-		)
+		_, _ = QueryRevokedX509Cert(DcldMasterBinaryPath, IntermediateCertSubjectFor1_2, IntermediateCertSubjectKeyIDFor1_2)
+		_, _ = QueryRevokedNocX509RootCert(DcldMasterBinaryPath, NOCRootCert1SubjectFor1_4_3, NOCRootCert1SubjectKeyIDFor1_4_3)
 
-		out, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
-			"query", "pki", "revocation-point",
-			"--vid", fmt.Sprintf("%d", VIDFor1_2),
-			"--label", ProductLabelFor1_2,
-			"--issuer-subject-key-id", IssuerSubjectKeyID,
-		)
+		out, err = QueryRevocationPoint(DcldMasterBinaryPath, VIDFor1_2, ProductLabelFor1_2, IssuerSubjectKeyID)
 		require.NoError(t, err)
 		checkResponseContains(t, out, IssuerSubjectKeyID)
 
-		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
-			"query", "pki", "revocation-points",
-			"--issuer-subject-key-id", IssuerSubjectKeyID,
-		)
+		_, err = QueryRevocationPoints(DcldMasterBinaryPath, IssuerSubjectKeyID)
 		require.NoError(t, err)
 
-		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "pki", "all-certs")
+		_, err = QueryAllCerts(DcldMasterBinaryPath)
 		require.NoError(t, err)
-		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "pki", "all-x509-certs")
+		_, err = QueryAllX509Certs(DcldMasterBinaryPath)
 		require.NoError(t, err)
-		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "pki", "all-revoked-x509-certs")
+		_, err = QueryAllRevokedX509Certs(DcldMasterBinaryPath)
 		require.NoError(t, err)
-		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "pki", "all-revoked-x509-root-certs")
+		_, err = QueryAllRevokedX509RootCerts(DcldMasterBinaryPath)
 		require.NoError(t, err)
-		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "pki", "all-noc-x509-certs")
+		_, err = QueryAllNocX509Certs(DcldMasterBinaryPath)
 		require.NoError(t, err)
-		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "pki", "all-revoked-noc-x509-root-certs")
+		_, err = QueryAllRevokedNocX509RootCerts(DcldMasterBinaryPath)
 		require.NoError(t, err)
-		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "pki", "all-revoked-noc-x509-ica-certs")
+		_, err = QueryAllRevokedNocX509IcaCerts(DcldMasterBinaryPath)
 		require.NoError(t, err)
-		_, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "pki", "all-revocation-points")
+		_, err = QueryAllRevocationPoints(DcldMasterBinaryPath)
 		require.NoError(t, err)
 
 		for _, subj := range []string{
 			RootCertWithVIDSubjectFor1_4_3, TestRootCertSubjectFor1_2, testRootCertSubject,
 		} {
-			_, _ = ExecuteCLIWithBin(DcldMasterBinaryPath,
-				"query", "pki", "all-subject-certs", "--subject", subj,
-			)
-			_, _ = ExecuteCLIWithBin(DcldMasterBinaryPath,
-				"query", "pki", "all-subject-x509-certs", "--subject", subj,
-			)
-			_, _ = ExecuteCLIWithBin(DcldMasterBinaryPath,
-				"query", "pki", "all-noc-subject-x509-certs", "--subject", subj,
-			)
+			_, _ = QueryAllSubjectCerts(DcldMasterBinaryPath, subj)
+			_, _ = QueryAllSubjectX509Certs(DcldMasterBinaryPath, subj)
+			_, _ = QueryAllNocSubjectX509Certs(DcldMasterBinaryPath, subj)
 		}
 
 		// ----- Validator (host-side) -----
 		if state.ValidatorAddress != "" {
-			out, err = ExecuteCLIWithBin(DcldMasterBinaryPath, "query", "validator", "all-nodes")
+			out, err = QueryAllNodes(DcldMasterBinaryPath)
 			require.NoError(t, err)
 			checkResponseContains(t, out, state.ValidatorAddress)
 		}
@@ -412,135 +325,66 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 
 	MustRun(t, "VendorInfoFor_Master", func(t *testing.T) {
 		t.Helper()
-		tx, err := ExecuteTxWithBin(DcldMasterBinaryPath,
-			"tx", "vendorinfo", "add-vendor",
-			"--vid", fmt.Sprintf("%d", VIDForMaster),
-			"--vendorName", VendorNameForMaster,
-			"--companyLegalName", CompanyLegalNameForMaster,
-			"--companyPreferredName", CompanyPreferredNameForMaster,
-			"--vendorLandingPageURL", VendorLandingPageURLForMaster,
-			"--from", VendorAccountForMaster,
-		)
+		tx, err := AddVendor(DcldMasterBinaryPath, VendorArgs{VID: VIDForMaster, VendorName: VendorNameForMaster, CompanyLegalName: CompanyLegalNameForMaster, CompanyPreferredName: CompanyPreferredNameForMaster, VendorLandingPageURL: VendorLandingPageURLForMaster, From: VendorAccountForMaster})
 		requireTxSuccess(t, tx, err)
 
-		tx, err = ExecuteTxWithBin(DcldMasterBinaryPath,
-			"tx", "vendorinfo", "update-vendor",
-			"--vid", fmt.Sprintf("%d", VIDFor1_2),
-			"--vendorName", VendorNameFor1_2,
-			"--companyLegalName", CompanyLegalNameFor1_2,
-			"--companyPreferredName", CompanyPreferredNameForMaster,
-			"--vendorLandingPageURL", VendorLandingPageURLForMaster,
-			"--from", state.VendorAccountFor1_2,
-		)
+		tx, err = UpdateVendor(DcldMasterBinaryPath, VendorArgs{VID: VIDFor1_2, VendorName: VendorNameFor1_2, CompanyLegalName: CompanyLegalNameFor1_2, CompanyPreferredName: CompanyPreferredNameForMaster, VendorLandingPageURL: VendorLandingPageURLForMaster, From: state.VendorAccountFor1_2})
 		requireTxSuccess(t, tx, err)
 	})
 
 	MustRun(t, "ModelsAndVersionsFor_Master", func(t *testing.T) {
 		t.Helper()
 		for _, pid := range []int{PID1ForMaster, PID2ForMaster, PID3ForMaster} {
-			tx, err := ExecuteTxWithBin(DcldMasterBinaryPath,
-				"tx", "model", "add-model",
-				"--vid", fmt.Sprintf("%d", VIDForMaster),
-				"--pid", fmt.Sprintf("%d", pid),
-				"--deviceTypeID", fmt.Sprintf("%d", DeviceTypeIDForMaster),
-				"--productName", ProductNameForMaster,
-				"--productLabel", ProductLabelForMaster,
-				"--partNumber", PartNumberForMaster,
-				"--commissioningCustomFlow", fmt.Sprintf("%d", CommissioningCustomFlow),
-				"--from", VendorAccountForMaster,
-			)
+			tx, err := AddModel(DcldMasterBinaryPath, AddModelArgs{VID: VIDForMaster, PID: pid, DeviceTypeID: DeviceTypeIDForMaster, ProductName: ProductNameForMaster, ProductLabel: ProductLabelForMaster, PartNumber: PartNumberForMaster, CommissioningCustomFlow: intPtr(CommissioningCustomFlow), From: VendorAccountForMaster})
 			requireTxSuccess(t, tx, err)
 
-			tx, err = ExecuteTxWithBin(DcldMasterBinaryPath,
-				"tx", "model", "add-model-version",
-				"--vid", fmt.Sprintf("%d", VIDForMaster),
-				"--pid", fmt.Sprintf("%d", pid),
-				"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionForMaster),
-				"--softwareVersionString", SoftwareVersionStringForMaster,
-				"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberForMaster),
-				"--minApplicableSoftwareVersion", fmt.Sprintf("%d", MinApplicableSoftwareVersionForMaster),
-				"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", MaxApplicableSoftwareVersionForMaster),
-				"--from", VendorAccountForMaster,
-			)
+			tx, err = AddModelVersion(DcldMasterBinaryPath, AddModelVersionArgs{VID: VIDForMaster, PID: pid, SoftwareVersion: SoftwareVersionForMaster, SoftwareVersionString: SoftwareVersionStringForMaster, CDVersionNumber: CDVersionNumberForMaster, MinApplicableSoftwareVersion: MinApplicableSoftwareVersionForMaster, MaxApplicableSoftwareVersion: MaxApplicableSoftwareVersionForMaster, From: VendorAccountForMaster})
 			requireTxSuccess(t, tx, err)
 		}
 
 		// Delete pid_3.
-		tx, err := ExecuteTxWithBin(DcldMasterBinaryPath,
-			"tx", "model", "delete-model",
-			"--vid", fmt.Sprintf("%d", VIDForMaster),
-			"--pid", fmt.Sprintf("%d", PID3ForMaster),
-			"--from", VendorAccountForMaster,
-		)
+		tx, err := DeleteModel(DcldMasterBinaryPath, VIDForMaster, PID3ForMaster, VendorAccountForMaster)
 		requireTxSuccess(t, tx, err)
 
 		// Update carry-over 0.12 pid_2 with master-era values.
-		tx, err = ExecuteTxWithBin(DcldMasterBinaryPath,
-			"tx", "model", "update-model",
-			"--vid", fmt.Sprintf("%d", state.VID),
-			"--pid", fmt.Sprintf("%d", state.PID2),
-			"--productName", state.ProductName,
-			"--productLabel", ProductLabelForMaster,
-			"--partNumber", PartNumberForMaster,
-			"--from", state.VendorAccount,
-		)
+		tx, err = UpdateModel(DcldMasterBinaryPath, UpdateModelArgs{VID: state.VID, PID: state.PID2, ProductName: state.ProductName, ProductLabel: ProductLabelForMaster, PartNumber: PartNumberForMaster, From: state.VendorAccount})
 		requireTxSuccess(t, tx, err)
 
-		tx, err = ExecuteTxWithBin(DcldMasterBinaryPath,
-			"tx", "model", "update-model-version",
-			"--vid", fmt.Sprintf("%d", state.VID),
-			"--pid", fmt.Sprintf("%d", state.PID2),
-			"--softwareVersion", fmt.Sprintf("%d", state.SoftwareVersion),
-			"--minApplicableSoftwareVersion", fmt.Sprintf("%d", MinApplicableSoftwareVersionForMaster),
-			"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", MaxApplicableSoftwareVersionForMaster),
-			"--from", state.VendorAccount,
-		)
+		tx, err = UpdateModelVersion(DcldMasterBinaryPath, UpdateModelVersionArgs{VID: state.VID, PID: state.PID2, SoftwareVersion: state.SoftwareVersion, MinApplicableSoftwareVersion: MinApplicableSoftwareVersionForMaster, MaxApplicableSoftwareVersion: MaxApplicableSoftwareVersionForMaster, From: state.VendorAccount})
 		requireTxSuccess(t, tx, err)
 	})
 
 	MustRun(t, "ComplianceFor_Master", func(t *testing.T) {
 		t.Helper()
 		// certify pid_1.
-		tx, err := ExecuteTxWithBin(DcldMasterBinaryPath,
-			"tx", "compliance", "certify-model",
-			"--vid", fmt.Sprintf("%d", VIDForMaster),
-			"--pid", fmt.Sprintf("%d", PID1ForMaster),
-			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionForMaster),
-			"--softwareVersionString", SoftwareVersionStringForMaster,
-			"--certificationType", CertificationTypeForMaster,
-			"--certificationDate", CertificationDateForMaster,
-			"--cdCertificateId", CDCertificateIDForMaster,
-			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberForMaster),
-			"--from", CertificationCenterAccountFor1_2,
-		)
+		tx, err := CertifyModel(DcldMasterBinaryPath, CertifyModelArgs{VID: VIDForMaster, PID: PID1ForMaster, SoftwareVersion: SoftwareVersionForMaster, SoftwareVersionString: SoftwareVersionStringForMaster, CertificationType: CertificationTypeForMaster, CertificationDate: CertificationDateForMaster, CDCertificateID: CDCertificateIDForMaster, CDVersionNumber: CDVersionNumberForMaster, From: CertificationCenterAccountFor1_2})
 		requireTxSuccess(t, tx, err)
 
-		// provision pid_2, certify pid_2, revoke pid_2.
-		// revoke-model does not accept --cdCertificateId, so it is appended
-		// only for the provision/certify actions.
-		for _, action := range []struct{ cmd, dateFlag, dateVal string }{
-			{"provision-model", "--provisionalDate", ProvisionalDateForMaster},
-			{"certify-model", "--certificationDate", CertificationDateForMaster},
-			{"revoke-model", "--revocationDate", CertificationDateForMaster},
-		} {
-			args := []string{
-				"tx", "compliance", action.cmd,
-				"--vid", fmt.Sprintf("%d", VIDForMaster),
-				"--pid", fmt.Sprintf("%d", PID2ForMaster),
-				"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionForMaster),
-				"--softwareVersionString", SoftwareVersionStringForMaster,
-				"--certificationType", CertificationTypeForMaster,
-				action.dateFlag, action.dateVal,
-				"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberForMaster),
-				"--from", CertificationCenterAccountFor1_2,
-			}
-			if action.cmd != "revoke-model" {
-				args = append(args, "--cdCertificateId", CDCertificateIDForMaster)
-			}
-			tx, err = ExecuteTxWithBin(DcldMasterBinaryPath, args...)
-			require.NoError(t, err)
-			require.Equal(t, uint32(0), tx.Code, "%s pid_2: %s", action.cmd, tx.RawLog)
-		}
+		// provision pid_2, certify pid_2, revoke pid_2. revoke-model does not
+		// accept --cdCertificateId, so it is set only on provision/certify.
+		tx, err = ProvisionModel(DcldMasterBinaryPath, ProvisionModelArgs{
+			VID: VIDForMaster, PID: PID2ForMaster, SoftwareVersion: SoftwareVersionForMaster,
+			SoftwareVersionString: SoftwareVersionStringForMaster, CertificationType: CertificationTypeForMaster,
+			ProvisionalDate: ProvisionalDateForMaster, CDCertificateID: CDCertificateIDForMaster,
+			CDVersionNumber: CDVersionNumberForMaster, From: CertificationCenterAccountFor1_2,
+		})
+		requireTxSuccess(t, tx, err)
+
+		tx, err = CertifyModel(DcldMasterBinaryPath, CertifyModelArgs{
+			VID: VIDForMaster, PID: PID2ForMaster, SoftwareVersion: SoftwareVersionForMaster,
+			SoftwareVersionString: SoftwareVersionStringForMaster, CertificationType: CertificationTypeForMaster,
+			CertificationDate: CertificationDateForMaster, CDCertificateID: CDCertificateIDForMaster,
+			CDVersionNumber: CDVersionNumberForMaster, From: CertificationCenterAccountFor1_2,
+		})
+		requireTxSuccess(t, tx, err)
+
+		tx, err = RevokeModel(DcldMasterBinaryPath, RevokeModelArgs{
+			VID: VIDForMaster, PID: PID2ForMaster, SoftwareVersion: SoftwareVersionForMaster,
+			SoftwareVersionString: SoftwareVersionStringForMaster, CertificationType: CertificationTypeForMaster,
+			RevocationDate: CertificationDateForMaster, CDVersionNumber: CDVersionNumberForMaster,
+			From: CertificationCenterAccountFor1_2,
+		})
+		requireTxSuccess(t, tx, err)
 	})
 
 	MustRun(t, "AccountFlowsFor_Master", func(t *testing.T) {
@@ -570,19 +414,12 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	MustRun(t, "VerifyNew_Master_Data", func(t *testing.T) {
 		t.Helper()
-		out, err := ExecuteCLIWithBin(DcldMasterBinaryPath,
-			"query", "vendorinfo", "vendor",
-			"--vid", fmt.Sprintf("%d", VIDForMaster),
-		)
+		out, err := QueryVendor(DcldMasterBinaryPath, VIDForMaster)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vendorID", VIDForMaster)
 		checkResponseContains(t, out, CompanyLegalNameForMaster)
 
-		out, err = ExecuteCLIWithBin(DcldMasterBinaryPath,
-			"query", "model", "get-model",
-			"--vid", fmt.Sprintf("%d", VIDForMaster),
-			"--pid", fmt.Sprintf("%d", PID1ForMaster),
-		)
+		out, err = QueryGetModel(DcldMasterBinaryPath, VIDForMaster, PID1ForMaster)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", VIDForMaster)
 		requireFieldEquals(t, out, "pid", PID1ForMaster)

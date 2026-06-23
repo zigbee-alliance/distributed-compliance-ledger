@@ -44,20 +44,10 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	MustRun(t, "Issue593_PreUpgradeDelete", func(t *testing.T) {
 		t.Helper()
-		tx, err := ExecuteTxWithBin(dcldOld,
-			"tx", "model", "delete-model-version",
-			"--vid", fmt.Sprintf("%d", state.VIDFor1_6_0FromScript5),
-			"--pid", fmt.Sprintf("%d", state.PID3For1_6_0FromScript5),
-			"--softwareVersion", fmt.Sprintf("%d", state.SoftwareVersion2For1_6_0FromScript5),
-			"--from", state.VendorAccountFor1_2,
-		)
+		tx, err := DeleteModelVersion(dcldOld, state.VIDFor1_6_0FromScript5, state.PID3For1_6_0FromScript5, state.SoftwareVersion2For1_6_0FromScript5, state.VendorAccountFor1_2)
 		requireTxSuccess(t, tx, err)
 
-		out, err := ExecuteCLIWithBin(dcldOld,
-			"query", "model", "all-model-versions",
-			"--vid", fmt.Sprintf("%d", state.VIDFor1_6_0FromScript5),
-			"--pid", fmt.Sprintf("%d", state.PID3For1_6_0FromScript5),
-		)
+		out, err := QueryAllModelVersions(dcldOld, state.VIDFor1_6_0FromScript5, state.PID3For1_6_0FromScript5)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", state.VIDFor1_6_0FromScript5)
 		requireFieldEquals(t, out, "pid", state.PID3For1_6_0FromScript5)
@@ -69,8 +59,8 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 			"expected sv2 absent post-delete, got: %s", string(out))
 	})
 
-	// v1.4+ binaries no longer accept --broadcast-mode block.
-	_, _ = ExecuteCLIWithBin(dcldNew, "config", "broadcast-mode", "sync")
+	// Re-affirm sync mode — v1.4+ binaries no longer accept `block`.
+	_ = SetBroadcastMode(dcldNew, "sync")
 
 	step := SoftwareUpgradeStep{
 		PlanName:         PlanNameV1_6_0,
@@ -89,22 +79,13 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	MustRun(t, "Issue593_GhostModelVersionsRemoved", func(t *testing.T) {
 		t.Helper()
-		out, err := ExecuteCLIWithBin(dcldNew,
-			"query", "model", "all-model-versions",
-			"--vid", fmt.Sprintf("%d", state.VIDFor1_6_0FromScript5),
-			"--pid", fmt.Sprintf("%d", state.PID3For1_6_0FromScript5),
-		)
+		out, err := QueryAllModelVersions(dcldNew, state.VIDFor1_6_0FromScript5, state.PID3For1_6_0FromScript5)
 		require.NoError(t, err)
 		require.True(t, strings.Contains(string(out), "Not Found"),
 			"expected 'Not Found' for ghost-cleaned versions, got: %s", string(out))
 
 		// And we can now delete the model itself.
-		tx, err := ExecuteTxWithBin(dcldNew,
-			"tx", "model", "delete-model",
-			"--vid", fmt.Sprintf("%d", state.VIDFor1_6_0FromScript5),
-			"--pid", fmt.Sprintf("%d", state.PID3For1_6_0FromScript5),
-			"--from", state.VendorAccountFor1_2,
-		)
+		tx, err := DeleteModel(dcldNew, state.VIDFor1_6_0FromScript5, state.PID3For1_6_0FromScript5, state.VendorAccountFor1_2)
 		requireTxSuccess(t, tx, err)
 	})
 
@@ -115,13 +96,7 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	MustRun(t, "ComplianceCarryoverFrom_1_5_2", func(t *testing.T) {
 		t.Helper()
-		out, err := ExecuteCLIWithBin(dcldNew,
-			"query", "compliance", "compliance-info",
-			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),
-			"--pid", fmt.Sprintf("%d", PID1For1_5_2),
-			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_5_2),
-			"--certificationType", CertificationTypeFor1_5_2,
-		)
+		out, err := QueryComplianceInfo(dcldNew, VIDFor1_5_2, PID1For1_5_2, SoftwareVersionFor1_5_2, CertificationTypeFor1_5_2)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", VIDFor1_5_2)
 		requireFieldEquals(t, out, "pid", PID1For1_5_2)
@@ -129,22 +104,13 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 		checkResponseContains(t, out, CertificationTypeFor1_5_2)
 		checkResponseContains(t, out, CDCertificateIDFor1_5_2)
 
-		out, err = ExecuteCLIWithBin(dcldNew,
-			"query", "compliance", "certified-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),
-			"--pid", fmt.Sprintf("%d", PID1For1_5_2),
-			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_5_2),
-			"--certificationType", CertificationTypeFor1_5_2,
-		)
+		out, err = QueryCertifiedModel(dcldNew, VIDFor1_5_2, PID1For1_5_2, SoftwareVersionFor1_5_2, CertificationTypeFor1_5_2)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "value", true)
 		requireFieldEquals(t, out, "vid", VIDFor1_5_2)
 		requireFieldEquals(t, out, "pid", PID1For1_5_2)
 
-		out, err = ExecuteCLIWithBin(dcldNew,
-			"query", "compliance", "device-software-compliance",
-			"--cdCertificateId", CDCertificateIDFor1_5_2,
-		)
+		out, err = QueryDeviceSoftwareCompliance(dcldNew, CDCertificateIDFor1_5_2)
 		require.NoError(t, err)
 		checkResponseContains(t, out, CDCertificateIDFor1_5_2)
 		requireFieldEquals(t, out, "vid", VIDFor1_5_2)
@@ -156,43 +122,26 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	MustRun(t, "VerifyPreserved_1_5_2_Models", func(t *testing.T) {
 		t.Helper()
-		out, err := ExecuteCLIWithBin(dcldNew,
-			"query", "model", "get-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),
-			"--pid", fmt.Sprintf("%d", PID1For1_5_2),
-		)
+		out, err := QueryGetModel(dcldNew, VIDFor1_5_2, PID1For1_5_2)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", VIDFor1_5_2)
 		requireFieldEquals(t, out, "pid", PID1For1_5_2)
 		checkResponseContains(t, out, ProductLabelFor1_5_2)
 
-		out, err = ExecuteCLIWithBin(dcldNew,
-			"query", "model", "get-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),
-			"--pid", fmt.Sprintf("%d", PID2For1_5_2),
-		)
+		out, err = QueryGetModel(dcldNew, VIDFor1_5_2, PID2For1_5_2)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", VIDFor1_5_2)
 		requireFieldEquals(t, out, "pid", PID2For1_5_2)
 		checkResponseContains(t, out, ProductLabelFor1_5_2)
 
-		out, err = ExecuteCLIWithBin(dcldNew,
-			"query", "model", "get-model",
-			"--vid", fmt.Sprintf("%d", state.VID),
-			"--pid", fmt.Sprintf("%d", state.PID2),
-		)
+		out, err = QueryGetModel(dcldNew, state.VID, state.PID2)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", state.VID)
 		requireFieldEquals(t, out, "pid", state.PID2)
 		checkResponseContains(t, out, ProductLabelFor1_5_2)
 		checkResponseContains(t, out, PartNumberFor1_5_2)
 
-		out, err = ExecuteCLIWithBin(dcldNew,
-			"query", "model", "model-version",
-			"--vid", fmt.Sprintf("%d", state.VID),
-			"--pid", fmt.Sprintf("%d", state.PID2),
-			"--softwareVersion", fmt.Sprintf("%d", state.SoftwareVersion),
-		)
+		out, err = QueryModelVersion(dcldNew, state.VID, state.PID2, state.SoftwareVersion)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", state.VID)
 		requireFieldEquals(t, out, "pid", state.PID2)
@@ -200,16 +149,13 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 		requireFieldEquals(t, out, "maxApplicableSoftwareVersion", MaxApplicableSoftwareVersionFor1_5_2)
 
 		// Bulk model listings (all-models + vendor-models).
-		out, err = ExecuteCLIWithBin(dcldNew, "query", "model", "all-models")
+		out, err = QueryAllModels(dcldNew)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", VIDFor1_5_2)
 		requireFieldEquals(t, out, "pid", PID1For1_5_2)
 		requireFieldEquals(t, out, "pid", PID2For1_5_2)
 
-		out, err = ExecuteCLIWithBin(dcldNew,
-			"query", "model", "vendor-models",
-			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),
-		)
+		out, err = QueryVendorModels(dcldNew, VIDFor1_5_2)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "pid", PID1For1_5_2)
 		requireFieldEquals(t, out, "pid", PID2For1_5_2)
@@ -227,72 +173,20 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 
 	MustRun(t, "AddModelsAndVersions_1_6_0", func(t *testing.T) {
 		t.Helper()
-		tx, err := ExecuteTxWithBin(dcldNew,
-			"tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_6_0),
-			"--pid", fmt.Sprintf("%d", PID1For1_6_0),
-			"--deviceTypeID", fmt.Sprintf("%d", DeviceTypeIDFor1_6_0),
-			"--productName", ProductNameFor1_6_0,
-			"--productLabel", ProductLabelFor1_6_0,
-			"--partNumber", PartNumberFor1_6_0,
-			"--icdUserActiveModeTriggerHint", fmt.Sprintf("%d", ICDUserActiveModeTriggerHintFor1_6_0),
-			"--icdUserActiveModeTriggerInstruction", ICDUserActiveModeTriggerInstructionFor1_6_0,
-			"--factoryResetStepsHint", fmt.Sprintf("%d", FactoryResetStepsHintFor1_6_0),
-			"--factoryResetStepsInstruction", FactoryResetStepsInstructionFor1_6_0,
-			"--commissioningModeSecondaryStepsHint", fmt.Sprintf("%d", CommissioningModeSecondaryStepsHintFor1_6_0),
-			"--from", VendorAccountFor1_6_0,
-		)
+		tx, err := AddModel(dcldNew, AddModelArgs{VID: VIDFor1_6_0, PID: PID1For1_6_0, DeviceTypeID: DeviceTypeIDFor1_6_0, ProductName: ProductNameFor1_6_0, ProductLabel: ProductLabelFor1_6_0, PartNumber: PartNumberFor1_6_0, IcdUserActiveModeTriggerHint: ICDUserActiveModeTriggerHintFor1_6_0, IcdUserActiveModeTriggerInstruction: ICDUserActiveModeTriggerInstructionFor1_6_0, FactoryResetStepsHint: FactoryResetStepsHintFor1_6_0, FactoryResetStepsInstruction: FactoryResetStepsInstructionFor1_6_0, CommissioningModeSecondaryStepsHint: CommissioningModeSecondaryStepsHintFor1_6_0, From: VendorAccountFor1_6_0})
 		requireTxSuccess(t, tx, err)
 
-		tx, err = ExecuteTxWithBin(dcldNew,
-			"tx", "model", "add-model-version",
-			"--vid", fmt.Sprintf("%d", VIDFor1_6_0),
-			"--pid", fmt.Sprintf("%d", PID1For1_6_0),
-			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_6_0),
-			"--softwareVersionString", SoftwareVersionStringFor1_6_0,
-			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_6_0),
-			"--minApplicableSoftwareVersion", fmt.Sprintf("%d", MinApplicableSoftwareVersionFor1_6_0),
-			"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", MaxApplicableSoftwareVersionFor1_6_0),
-			"--specificationVersion", fmt.Sprintf("%d", SpecificationVersionFor1_6_0),
-			"--from", VendorAccountFor1_6_0,
-		)
+		tx, err = AddModelVersion(dcldNew, AddModelVersionArgs{VID: VIDFor1_6_0, PID: PID1For1_6_0, SoftwareVersion: SoftwareVersionFor1_6_0, SoftwareVersionString: SoftwareVersionStringFor1_6_0, CDVersionNumber: CDVersionNumberFor1_6_0, MinApplicableSoftwareVersion: MinApplicableSoftwareVersionFor1_6_0, MaxApplicableSoftwareVersion: MaxApplicableSoftwareVersionFor1_6_0, SpecificationVersion: SpecificationVersionFor1_6_0, From: VendorAccountFor1_6_0})
 		requireTxSuccess(t, tx, err)
 
-		tx, err = ExecuteTxWithBin(dcldNew,
-			"tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_6_0),
-			"--pid", fmt.Sprintf("%d", PID2For1_6_0),
-			"--deviceTypeID", fmt.Sprintf("%d", DeviceTypeIDFor1_6_0),
-			"--productName", ProductNameFor1_6_0,
-			"--productLabel", ProductLabelFor1_6_0,
-			"--partNumber", PartNumberFor1_6_0,
-			"--from", VendorAccountFor1_6_0,
-		)
+		tx, err = AddModel(dcldNew, AddModelArgs{VID: VIDFor1_6_0, PID: PID2For1_6_0, DeviceTypeID: DeviceTypeIDFor1_6_0, ProductName: ProductNameFor1_6_0, ProductLabel: ProductLabelFor1_6_0, PartNumber: PartNumberFor1_6_0, From: VendorAccountFor1_6_0})
 		requireTxSuccess(t, tx, err)
 
-		tx, err = ExecuteTxWithBin(dcldNew,
-			"tx", "model", "add-model-version",
-			"--vid", fmt.Sprintf("%d", VIDFor1_6_0),
-			"--pid", fmt.Sprintf("%d", PID2For1_6_0),
-			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_6_0),
-			"--softwareVersionString", SoftwareVersionStringFor1_6_0,
-			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_6_0),
-			"--minApplicableSoftwareVersion", fmt.Sprintf("%d", MinApplicableSoftwareVersionFor1_6_0),
-			"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", MaxApplicableSoftwareVersionFor1_6_0),
-			"--from", VendorAccountFor1_6_0,
-		)
+		tx, err = AddModelVersion(dcldNew, AddModelVersionArgs{VID: VIDFor1_6_0, PID: PID2For1_6_0, SoftwareVersion: SoftwareVersionFor1_6_0, SoftwareVersionString: SoftwareVersionStringFor1_6_0, CDVersionNumber: CDVersionNumberFor1_6_0, MinApplicableSoftwareVersion: MinApplicableSoftwareVersionFor1_6_0, MaxApplicableSoftwareVersion: MaxApplicableSoftwareVersionFor1_6_0, From: VendorAccountFor1_6_0})
 		requireTxSuccess(t, tx, err)
 
 		// Update a v1.5.2-era model through the v1.5.2 vendor account.
-		tx, err = ExecuteTxWithBin(dcldNew,
-			"tx", "model", "update-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),
-			"--pid", fmt.Sprintf("%d", PID2For1_5_2),
-			"--productName", ProductNameFor1_6_0,
-			"--productLabel", ProductLabelFor1_6_0,
-			"--partNumber", PartNumberFor1_6_0,
-			"--from", VendorAccountFor1_5_2,
-		)
+		tx, err = UpdateModel(dcldNew, UpdateModelArgs{VID: VIDFor1_5_2, PID: PID2For1_5_2, ProductName: ProductNameFor1_6_0, ProductLabel: ProductLabelFor1_6_0, PartNumber: PartNumberFor1_6_0, From: VendorAccountFor1_5_2})
 		requireTxSuccess(t, tx, err)
 	})
 
@@ -300,18 +194,7 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 	// widened from 0-14 to 0-30 in v1.6.0.
 	MustRun(t, "AddModelWithWidenedBitmask_1_6_0", func(t *testing.T) {
 		t.Helper()
-		tx, err := ExecuteTxWithBin(dcldNew,
-			"tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_6_0),
-			"--pid", fmt.Sprintf("%d", PIDWidenedBitmaskFor1_6_0),
-			"--deviceTypeID", fmt.Sprintf("%d", DeviceTypeIDFor1_6_0),
-			"--productName", ProductNameFor1_6_0,
-			"--productLabel", ProductLabelFor1_6_0,
-			"--partNumber", PartNumberFor1_6_0,
-			"--commissioningCustomFlow", fmt.Sprintf("%d", CommissioningCustomFlowFor1_6),
-			"--discoveryCapabilitiesBitmask", fmt.Sprintf("%d", DiscoveryCapabilitiesBitmask),
-			"--from", VendorAccountFor1_6_0,
-		)
+		tx, err := AddModel(dcldNew, AddModelArgs{VID: VIDFor1_6_0, PID: PIDWidenedBitmaskFor1_6_0, DeviceTypeID: DeviceTypeIDFor1_6_0, ProductName: ProductNameFor1_6_0, ProductLabel: ProductLabelFor1_6_0, PartNumber: PartNumberFor1_6_0, CommissioningCustomFlow: intPtr(CommissioningCustomFlowFor1_6), DiscoveryCapabilitiesBitmask: DiscoveryCapabilitiesBitmask, From: VendorAccountFor1_6_0})
 		requireTxSuccess(t, tx, err)
 	})
 
@@ -321,67 +204,29 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 	// device-software-compliance index covers both eras.
 	MustRun(t, "ComplianceWrites_SchemaV1_1_6_0", func(t *testing.T) {
 		t.Helper()
-		tx, err := ExecuteTxWithBin(dcldNew,
-			"tx", "compliance", "certify-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_6_0),
-			"--pid", fmt.Sprintf("%d", PID1For1_6_0),
-			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_6_0),
-			"--softwareVersionString", SoftwareVersionStringFor1_6_0,
-			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_6_0),
-			"--certificationType", CertificationTypeFor1_6_0,
-			"--certificationDate", CertificationDateFor1_6_0,
-			"--specificationVersion", fmt.Sprintf("%d", SpecificationVersionFor1_6_0),
-			"--cdCertificateId", CDCertificateIDFor1_5_2,
-			"--schemaVersion", "1",
-			"--from", CertificationCenterAccountFor1_2,
-		)
+		tx, err := CertifyModel(dcldNew, CertifyModelArgs{VID: VIDFor1_6_0, PID: PID1For1_6_0, SoftwareVersion: SoftwareVersionFor1_6_0, SoftwareVersionString: SoftwareVersionStringFor1_6_0, CDVersionNumber: CDVersionNumberFor1_6_0, CertificationType: CertificationTypeFor1_6_0, CertificationDate: CertificationDateFor1_6_0, SpecificationVersion: SpecificationVersionFor1_6_0, CDCertificateID: CDCertificateIDFor1_5_2, SchemaVersion: "1", From: CertificationCenterAccountFor1_2})
 		requireTxSuccess(t, tx, err)
 
-		tx, err = ExecuteTxWithBin(dcldNew,
-			"tx", "compliance", "provision-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_6_0),
-			"--pid", fmt.Sprintf("%d", PID2For1_6_0),
-			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_6_0),
-			"--softwareVersionString", SoftwareVersionStringFor1_6_0,
-			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_6_0),
-			"--certificationType", CertificationTypeFor1_6_0,
-			"--provisionalDate", ProvisionalDateFor1_6_0,
-			"--specificationVersion", fmt.Sprintf("%d", SpecificationVersionFor1_6_0),
-			"--cdCertificateId", CDCertificateIDFor1_5_2,
-			"--schemaVersion", "1",
-			"--from", CertificationCenterAccountFor1_2,
-		)
+		tx, err = ProvisionModel(dcldNew, ProvisionModelArgs{VID: VIDFor1_6_0, PID: PID2For1_6_0, SoftwareVersion: SoftwareVersionFor1_6_0, SoftwareVersionString: SoftwareVersionStringFor1_6_0, CDVersionNumber: CDVersionNumberFor1_6_0, CertificationType: CertificationTypeFor1_6_0, ProvisionalDate: ProvisionalDateFor1_6_0, SpecificationVersion: SpecificationVersionFor1_6_0, CDCertificateID: CDCertificateIDFor1_5_2, SchemaVersion: "1", From: CertificationCenterAccountFor1_2})
 		requireTxSuccess(t, tx, err)
 	})
 
 	MustRun(t, "VerifyNewModels_1_6_0", func(t *testing.T) {
 		t.Helper()
-		out, err := ExecuteCLIWithBin(dcldNew,
-			"query", "model", "get-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_6_0),
-			"--pid", fmt.Sprintf("%d", PID1For1_6_0),
-		)
+		out, err := QueryGetModel(dcldNew, VIDFor1_6_0, PID1For1_6_0)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", VIDFor1_6_0)
 		requireFieldEquals(t, out, "pid", PID1For1_6_0)
 		checkResponseContains(t, out, ProductLabelFor1_6_0)
 
-		out, err = ExecuteCLIWithBin(dcldNew,
-			"query", "model", "get-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_6_0),
-			"--pid", fmt.Sprintf("%d", PID2For1_6_0),
-		)
+		out, err = QueryGetModel(dcldNew, VIDFor1_6_0, PID2For1_6_0)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", VIDFor1_6_0)
 		requireFieldEquals(t, out, "pid", PID2For1_6_0)
 		checkResponseContains(t, out, ProductLabelFor1_6_0)
 
 		// Verify the 1.5.2 model now has 1.6.0 fields after the update.
-		out, err = ExecuteCLIWithBin(dcldNew,
-			"query", "model", "get-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_5_2),
-			"--pid", fmt.Sprintf("%d", PID2For1_5_2),
-		)
+		out, err = QueryGetModel(dcldNew, VIDFor1_5_2, PID2For1_5_2)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", VIDFor1_5_2)
 		requireFieldEquals(t, out, "pid", PID2For1_5_2)
@@ -389,12 +234,7 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 		checkResponseContains(t, out, PartNumberFor1_6_0)
 
 		// Model versions / specificationVersion.
-		out, err = ExecuteCLIWithBin(dcldNew,
-			"query", "model", "model-version",
-			"--vid", fmt.Sprintf("%d", VIDFor1_6_0),
-			"--pid", fmt.Sprintf("%d", PID1For1_6_0),
-			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_6_0),
-		)
+		out, err = QueryModelVersion(dcldNew, VIDFor1_6_0, PID1For1_6_0, SoftwareVersionFor1_6_0)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", VIDFor1_6_0)
 		requireFieldEquals(t, out, "pid", PID1For1_6_0)
@@ -405,11 +245,7 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 	// Verify the widened-bitmask model landed with its requested value.
 	MustRun(t, "VerifyWidenedBitmaskModel_1_6_0", func(t *testing.T) {
 		t.Helper()
-		out, err := ExecuteCLIWithBin(dcldNew,
-			"query", "model", "get-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_6_0),
-			"--pid", fmt.Sprintf("%d", PIDWidenedBitmaskFor1_6_0),
-		)
+		out, err := QueryGetModel(dcldNew, VIDFor1_6_0, PIDWidenedBitmaskFor1_6_0)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", VIDFor1_6_0)
 		requireFieldEquals(t, out, "pid", PIDWidenedBitmaskFor1_6_0)
@@ -420,35 +256,17 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 	// now persisted on ComplianceInfo.
 	MustRun(t, "VerifyComplianceWrites_SchemaV1_1_6_0", func(t *testing.T) {
 		t.Helper()
-		out, err := ExecuteCLIWithBin(dcldNew,
-			"query", "compliance", "certified-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_6_0),
-			"--pid", fmt.Sprintf("%d", PID1For1_6_0),
-			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_6_0),
-			"--certificationType", CertificationTypeFor1_6_0,
-		)
+		out, err := QueryCertifiedModel(dcldNew, VIDFor1_6_0, PID1For1_6_0, SoftwareVersionFor1_6_0, CertificationTypeFor1_6_0)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "value", true)
 		requireFieldEquals(t, out, "vid", VIDFor1_6_0)
 
-		out, err = ExecuteCLIWithBin(dcldNew,
-			"query", "compliance", "compliance-info",
-			"--vid", fmt.Sprintf("%d", VIDFor1_6_0),
-			"--pid", fmt.Sprintf("%d", PID1For1_6_0),
-			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_6_0),
-			"--certificationType", CertificationTypeFor1_6_0,
-		)
+		out, err = QueryComplianceInfo(dcldNew, VIDFor1_6_0, PID1For1_6_0, SoftwareVersionFor1_6_0, CertificationTypeFor1_6_0)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "schemaVersion", 1)
 		requireFieldEquals(t, out, "specificationVersion", SpecificationVersionFor1_6_0)
 
-		out, err = ExecuteCLIWithBin(dcldNew,
-			"query", "compliance", "provisional-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_6_0),
-			"--pid", fmt.Sprintf("%d", PID2For1_6_0),
-			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_6_0),
-			"--certificationType", CertificationTypeFor1_6_0,
-		)
+		out, err = QueryProvisionalModel(dcldNew, VIDFor1_6_0, PID2For1_6_0, SoftwareVersionFor1_6_0, CertificationTypeFor1_6_0)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "value", true)
 		requireFieldEquals(t, out, "vid", VIDFor1_6_0)

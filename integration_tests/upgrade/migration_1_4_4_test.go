@@ -53,10 +53,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		t.Helper()
 		// Spot-check the three vendor-info records.
 		for _, vid := range []int{state.VID, VIDFor1_2, VIDFor1_4_3} {
-			out, qerr := ExecuteCLIWithBin(dcldNew,
-				"query", "vendorinfo", "vendor",
-				"--vid", fmt.Sprintf("%d", vid),
-			)
+			out, qerr := QueryVendor(dcldNew, vid)
 			require.NoError(t, qerr)
 			requireFieldEquals(t, out, "vendorID", vid)
 		}
@@ -67,23 +64,14 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 			{VIDFor1_2, PID1For1_2}, {VIDFor1_2, PID2For1_2},
 			{VIDFor1_4_3, PID2For1_4_3},
 		} {
-			out, qerr := ExecuteCLIWithBin(dcldNew,
-				"query", "model", "get-model",
-				"--vid", fmt.Sprintf("%d", pair[0]),
-				"--pid", fmt.Sprintf("%d", pair[1]),
-			)
+			out, qerr := QueryGetModel(dcldNew, pair[0], pair[1])
 			require.NoError(t, qerr)
 			requireFieldEquals(t, out, "vid", pair[0])
 			requireFieldEquals(t, out, "pid", pair[1])
 		}
 
 		// 0.12 pid_2 now has 1.4.3 productLabel + partNumber (set in script 05).
-		out, err := ExecuteCLIWithBin(dcldNew,
-			"query", "model", "model-version",
-			"--vid", fmt.Sprintf("%d", state.VID),
-			"--pid", fmt.Sprintf("%d", state.PID2),
-			"--softwareVersion", fmt.Sprintf("%d", state.SoftwareVersion),
-		)
+		out, err := QueryModelVersion(dcldNew, state.VID, state.PID2, state.SoftwareVersion)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "minApplicableSoftwareVersion", MinApplicableSoftwareVersionFor1_4_3)
 		requireFieldEquals(t, out, "maxApplicableSoftwareVersion", MaxApplicableSoftwareVersionFor1_4_3)
@@ -91,26 +79,26 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 
 	MustRun(t, "VerifyPreservedAccounts", func(t *testing.T) {
 		t.Helper()
-		out, err := ExecuteCLIWithBin(dcldNew, "query", "auth", "all-accounts")
+		out, err := QueryAllAccounts(dcldNew)
 		require.NoError(t, err)
 		// Active accounts from all prior scripts.
 		checkResponseContains(t, out, state.User2Address)
 		checkResponseContains(t, out, state.User5Address)
 		checkResponseContains(t, out, state.User8Address)
 
-		out, err = ExecuteCLIWithBin(dcldNew, "query", "auth", "all-proposed-accounts")
+		out, err = QueryAllProposedAccounts(dcldNew)
 		require.NoError(t, err)
 		checkResponseContains(t, out, state.User3Address)
 		checkResponseContains(t, out, state.User6Address)
 		checkResponseContains(t, out, state.User9Address)
 
-		out, err = ExecuteCLIWithBin(dcldNew, "query", "auth", "all-proposed-accounts-to-revoke")
+		out, err = QueryAllProposedAccountsToRevoke(dcldNew)
 		require.NoError(t, err)
 		checkResponseContains(t, out, state.User2Address)
 		checkResponseContains(t, out, state.User5Address)
 		checkResponseContains(t, out, state.User8Address)
 
-		out, err = ExecuteCLIWithBin(dcldNew, "query", "auth", "all-revoked-accounts")
+		out, err = QueryAllRevokedAccounts(dcldNew)
 		require.NoError(t, err)
 		checkResponseContains(t, out, state.User1Address)
 		checkResponseContains(t, out, state.User4Address)
@@ -118,22 +106,22 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 
 		// Single-record account variants.
 		for _, addr := range []string{state.User5Address, state.User2Address, state.User8Address} {
-			out, err = ExecuteCLIWithBin(dcldNew, "query", "auth", "account", "--address", addr)
+			out, err = QueryAccount(dcldNew, addr)
 			require.NoError(t, err)
 			checkResponseContains(t, out, addr)
 		}
 		for _, addr := range []string{state.User6Address, state.User3Address, state.User9Address} {
-			out, err = ExecuteCLIWithBin(dcldNew, "query", "auth", "proposed-account", "--address", addr)
+			out, err = QueryProposedAccount(dcldNew, addr)
 			require.NoError(t, err)
 			checkResponseContains(t, out, addr)
 		}
 		for _, addr := range []string{state.User5Address, state.User2Address, state.User8Address} {
-			out, err = ExecuteCLIWithBin(dcldNew, "query", "auth", "proposed-account-to-revoke", "--address", addr)
+			out, err = QueryProposedAccountToRevoke(dcldNew, addr)
 			require.NoError(t, err)
 			checkResponseContains(t, out, addr)
 		}
 		for _, addr := range []string{state.User4Address, state.User1Address, state.User7Address} {
-			out, err = ExecuteCLIWithBin(dcldNew, "query", "auth", "revoked-account", "--address", addr)
+			out, err = QueryRevokedAccount(dcldNew, addr)
 			require.NoError(t, err)
 			checkResponseContains(t, out, addr)
 		}
@@ -146,97 +134,63 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 	MustRun(t, "VerifyPreservedListings_1_4_4", func(t *testing.T) {
 		t.Helper()
 		// VendorInfo: all-vendors across three eras.
-		out, err := ExecuteCLIWithBin(dcldNew, "query", "vendorinfo", "all-vendors")
+		out, err := QueryAllVendors(dcldNew)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vendorID", state.VID)
 		requireFieldEquals(t, out, "vendorID", VIDFor1_2)
 		requireFieldEquals(t, out, "vendorID", VIDFor1_4_3)
 
 		// Model bulk listings.
-		out, err = ExecuteCLIWithBin(dcldNew, "query", "model", "all-models")
+		out, err = QueryAllModels(dcldNew)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", VIDFor1_4_3)
 		requireFieldEquals(t, out, "pid", PID1For1_4_3)
 
 		for _, vid := range []int{state.VID, VIDFor1_2, VIDFor1_4_3} {
-			_, err = ExecuteCLIWithBin(dcldNew,
-				"query", "model", "vendor-models",
-				"--vid", fmt.Sprintf("%d", vid),
-			)
+			_, err = QueryVendorModels(dcldNew, vid)
 			require.NoError(t, err)
 		}
-		_, err = ExecuteCLIWithBin(dcldNew,
-			"query", "model", "all-model-versions",
-			"--vid", fmt.Sprintf("%d", VIDFor1_4_3),
-			"--pid", fmt.Sprintf("%d", PID1For1_4_3),
-		)
+		_, err = QueryAllModelVersions(dcldNew, VIDFor1_4_3, PID1For1_4_3)
 		require.NoError(t, err)
 
 		// Compliance single-record forms (gap entries).
-		out, err = ExecuteCLIWithBin(dcldNew,
-			"query", "compliance", "certified-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_4_3),
-			"--pid", fmt.Sprintf("%d", PID1For1_4_3),
-			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_4_3),
-			"--certificationType", CertificationTypeFor1_4_3,
-		)
+		out, err = QueryCertifiedModel(dcldNew, VIDFor1_4_3, PID1For1_4_3, SoftwareVersionFor1_4_3, CertificationTypeFor1_4_3)
 		require.NoError(t, err)
 		checkResponseContains(t, out, `"value":true`)
 
-		_, err = ExecuteCLIWithBin(dcldNew,
-			"query", "compliance", "revoked-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_4_3),
-			"--pid", fmt.Sprintf("%d", PID2For1_4_3),
-			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_4_3),
-			"--certificationType", CertificationTypeFor1_4_3,
-		)
+		_, err = QueryRevokedModel(dcldNew, VIDFor1_4_3, PID2For1_4_3, SoftwareVersionFor1_4_3, CertificationTypeFor1_4_3)
 		require.NoError(t, err)
 
-		_, err = ExecuteCLIWithBin(dcldNew,
-			"query", "compliance", "provisional-model",
-			"--vid", fmt.Sprintf("%d", state.VID),
-			"--pid", fmt.Sprintf("%d", pid3V012),
-			"--softwareVersion", fmt.Sprintf("%d", state.SoftwareVersion),
-			"--certificationType", certificationTypeV012,
-		)
+		_, err = QueryProvisionalModel(dcldNew, state.VID, pid3V012, state.SoftwareVersion, certificationTypeV012)
 		require.NoError(t, err)
 
-		_, err = ExecuteCLIWithBin(dcldNew,
-			"query", "compliance", "compliance-info",
-			"--vid", fmt.Sprintf("%d", VIDFor1_4_3),
-			"--pid", fmt.Sprintf("%d", PID1For1_4_3),
-			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_4_3),
-			"--certificationType", CertificationTypeFor1_4_3,
-		)
+		_, err = QueryComplianceInfo(dcldNew, VIDFor1_4_3, PID1For1_4_3, SoftwareVersionFor1_4_3, CertificationTypeFor1_4_3)
 		require.NoError(t, err)
 
 		for _, cdID := range []string{cdCertificateIDV012, CDCertificateIDFor1_2, CDCertificateIDFor1_4_3} {
-			out, err = ExecuteCLIWithBin(dcldNew,
-				"query", "compliance", "device-software-compliance",
-				"--cdCertificateId", cdID,
-			)
+			out, err = QueryDeviceSoftwareCompliance(dcldNew, cdID)
 			require.NoError(t, err)
 			checkResponseContains(t, out, cdID)
 		}
 
 		// Compliance all-* listings.
-		out, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-certified-models")
+		out, err = QueryAllCertifiedModels(dcldNew)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", VIDFor1_4_3)
 		requireFieldEquals(t, out, "pid", PID1For1_4_3)
 
-		_, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-provisional-models")
+		_, err = QueryAllProvisionalModels(dcldNew)
 		require.NoError(t, err)
 
-		out, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-revoked-models")
+		out, err = QueryAllRevokedModels(dcldNew)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", VIDFor1_4_3)
 		requireFieldEquals(t, out, "pid", PID2For1_4_3)
 
-		_, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-compliance-info")
+		_, err = QueryAllComplianceInfo(dcldNew)
 		require.NoError(t, err)
 
-		out, err = ExecuteCLIWithBin(dcldNew, "query", "compliance", "all-device-software-compliance")
+		out, err = QueryAllDeviceSoftwareCompliance(dcldNew)
 		require.NoError(t, err)
 		checkResponseContains(t, out, CDCertificateIDFor1_4_3)
 
@@ -246,32 +200,20 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 			{TestRootCertSubjectFor1_2, TestRootCertSubjectKeyIDFor1_2},
 			{testRootCertSubject, testRootCertSubjectKeyID},
 		} {
-			out, err = ExecuteCLIWithBin(dcldNew,
-				"query", "pki", "cert",
-				"--subject", c.subj, "--subject-key-id", c.kid,
-			)
+			out, err = QueryCert(dcldNew, c.subj, c.kid)
 			require.NoError(t, err)
 			checkResponseContains(t, out, c.subj)
 			checkResponseContains(t, out, c.kid)
 
-			out, err = ExecuteCLIWithBin(dcldNew,
-				"query", "pki", "x509-cert",
-				"--subject", c.subj, "--subject-key-id", c.kid,
-			)
+			out, err = QueryX509Cert(dcldNew, c.subj, c.kid)
 			require.NoError(t, err)
 			checkResponseContains(t, out, c.subj)
 			checkResponseContains(t, out, c.kid)
 
-			_, err = ExecuteCLIWithBin(dcldNew,
-				"query", "pki", "all-subject-certs",
-				"--subject", c.subj,
-			)
+			_, err = QueryAllSubjectCerts(dcldNew, c.subj)
 			require.NoError(t, err)
 
-			_, err = ExecuteCLIWithBin(dcldNew,
-				"query", "pki", "all-subject-x509-certs",
-				"--subject", c.subj,
-			)
+			_, err = QueryAllSubjectX509Certs(dcldNew, c.subj)
 			require.NoError(t, err)
 		}
 
@@ -281,14 +223,8 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 			{RootCertWithVIDSubjectFor1_4_3, RootCertWithVIDSubjectKeyIDFor1_4_3},
 			{TestRootCertSubjectFor1_2, TestRootCertSubjectKeyIDFor1_2},
 		} {
-			_, _ = ExecuteCLIWithBin(dcldNew,
-				"query", "pki", "noc-x509-cert",
-				"--subject", c.subj, "--subject-key-id", c.kid,
-			)
-			_, _ = ExecuteCLIWithBin(dcldNew,
-				"query", "pki", "all-noc-subject-x509-certs",
-				"--subject", c.subj,
-			)
+			_, _ = QueryNocX509Cert(dcldNew, c.subj, c.kid)
+			_, _ = QueryAllNocSubjectX509Certs(dcldNew, c.subj)
 		}
 
 		// Proposed + revoked + propose-to-revoke (gap entries).
@@ -296,10 +232,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 			{GoogleRootCertSubjectFor1_2, GoogleRootCertSubjectKeyIDFor1_2},
 			{googleRootCertSubject, googleRootCertSubjectKeyID},
 		} {
-			out, err = ExecuteCLIWithBin(dcldNew,
-				"query", "pki", "proposed-x509-root-cert",
-				"--subject", c.subj, "--subject-key-id", c.kid,
-			)
+			out, err = QueryProposedX509RootCert(dcldNew, c.subj, c.kid)
 			require.NoError(t, err)
 			checkResponseContains(t, out, c.subj)
 		}
@@ -309,10 +242,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 			{IntermediateCertSubjectFor1_2, IntermediateCertSubjectKeyIDFor1_2},
 			{intermediateCertSubject, intermediateCertSubjectKeyID},
 		} {
-			out, err = ExecuteCLIWithBin(dcldNew,
-				"query", "pki", "revoked-x509-cert",
-				"--subject", c.subj, "--subject-key-id", c.kid,
-			)
+			out, err = QueryRevokedX509Cert(dcldNew, c.subj, c.kid)
 			require.NoError(t, err)
 			checkResponseContains(t, out, c.subj)
 		}
@@ -322,96 +252,78 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 			{TestRootCertSubjectFor1_2, TestRootCertSubjectKeyIDFor1_2},
 			{testRootCertSubject, testRootCertSubjectKeyID},
 		} {
-			out, err = ExecuteCLIWithBin(dcldNew,
-				"query", "pki", "proposed-x509-root-cert-to-revoke",
-				"--subject", c.subj, "--subject-key-id", c.kid,
-			)
+			out, err = QueryProposedX509RootCertToRevoke(dcldNew, c.subj, c.kid)
 			require.NoError(t, err)
 			checkResponseContains(t, out, c.subj)
 		}
 
 		// Revocation points (single + by-issuer + all).
-		out, err = ExecuteCLIWithBin(dcldNew,
-			"query", "pki", "revocation-point",
-			"--vid", fmt.Sprintf("%d", VIDFor1_2),
-			"--label", ProductLabelFor1_2,
-			"--issuer-subject-key-id", IssuerSubjectKeyID,
-		)
+		out, err = QueryRevocationPoint(dcldNew, VIDFor1_2, ProductLabelFor1_2, IssuerSubjectKeyID)
 		require.NoError(t, err)
 		checkResponseContains(t, out, IssuerSubjectKeyID)
 
-		_, err = ExecuteCLIWithBin(dcldNew,
-			"query", "pki", "revocation-points",
-			"--issuer-subject-key-id", IssuerSubjectKeyID,
-		)
+		_, err = QueryRevocationPoints(dcldNew, IssuerSubjectKeyID)
 		require.NoError(t, err)
 
-		out, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-revocation-points")
+		out, err = QueryAllRevocationPoints(dcldNew)
 		require.NoError(t, err)
 		checkResponseContains(t, out, IssuerSubjectKeyID)
 
 		// Global vs DA all-* listings.
-		out, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-certs")
+		out, err = QueryAllCerts(dcldNew)
 		require.NoError(t, err)
 		checkResponseContains(t, out, RootCertWithVIDSubjectKeyIDFor1_4_3)
 		checkResponseContains(t, out, TestRootCertSubjectKeyIDFor1_2)
 		checkResponseContains(t, out, testRootCertSubjectKeyID)
 
-		out, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-x509-certs")
+		out, err = QueryAllX509Certs(dcldNew)
 		require.NoError(t, err)
 		checkResponseContains(t, out, RootCertWithVIDSubjectKeyIDFor1_4_3)
 		checkResponseContains(t, out, TestRootCertSubjectKeyIDFor1_2)
 		checkResponseContains(t, out, testRootCertSubjectKeyID)
 
-		out, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-proposed-x509-root-certs")
+		out, err = QueryAllProposedX509RootCerts(dcldNew)
 		require.NoError(t, err)
 		checkResponseContains(t, out, GoogleRootCertSubjectFor1_2)
 		checkResponseContains(t, out, googleRootCertSubject)
 
-		out, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-revoked-x509-root-certs")
+		out, err = QueryAllRevokedX509RootCerts(dcldNew)
 		require.NoError(t, err)
 		checkResponseContains(t, out, RootCertSubjectFor1_2)
 		checkResponseContains(t, out, rootCertSubject)
 
-		out, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-proposed-x509-root-certs-to-revoke")
+		out, err = QueryAllProposedX509RootCertsToRevoke(dcldNew)
 		require.NoError(t, err)
 		checkResponseContains(t, out, RootCertWithVIDSubjectFor1_4_3)
 		checkResponseContains(t, out, TestRootCertSubjectFor1_2)
 		checkResponseContains(t, out, testRootCertSubject)
 
-		out, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-revoked-x509-certs")
+		out, err = QueryAllRevokedX509Certs(dcldNew)
 		require.NoError(t, err)
 		checkResponseContains(t, out, IntermediateCertWithVIDSubjectFor1_4_3)
 
 		// NOC-side listings (added in 1.4.3 NOC flow); since NOC certs were
 		// added then removed at the script 05 tail, these should be empty —
 		// run for coverage and check for absence of removed SKIDs.
-		out, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-noc-x509-certs")
+		out, err = QueryAllNocX509Certs(dcldNew)
 		require.NoError(t, err)
 		require.False(t, strings.Contains(string(out), NOCRootCert1SubjectKeyIDFor1_4_3),
 			"NOC root SKID lingered: %s", string(out))
 
-		_, err = ExecuteCLIWithBin(dcldNew,
-			"query", "pki", "noc-x509-root-certs",
-			"--vid", fmt.Sprintf("%d", VIDFor1_4_3),
-		)
+		_, err = QueryNocX509RootCerts(dcldNew, VIDFor1_4_3)
 		require.NoError(t, err)
 
-		_, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-revoked-noc-x509-root-certs")
+		_, err = QueryAllRevokedNocX509RootCerts(dcldNew)
 		require.NoError(t, err)
 
-		_, err = ExecuteCLIWithBin(dcldNew, "query", "pki", "all-revoked-noc-x509-ica-certs")
+		_, err = QueryAllRevokedNocX509IcaCerts(dcldNew)
 		require.NoError(t, err)
 
-		_, _ = ExecuteCLIWithBin(dcldNew,
-			"query", "pki", "revoked-noc-x509-root-cert",
-			"--subject", NOCRootCert1SubjectFor1_4_3,
-			"--subject-key-id", NOCRootCert1SubjectKeyIDFor1_4_3,
-		)
+		_, _ = QueryRevokedNocX509RootCert(dcldNew, NOCRootCert1SubjectFor1_4_3, NOCRootCert1SubjectKeyIDFor1_4_3)
 
 		// Validator (host-side).
 		if state.ValidatorAddress != "" {
-			out, err = ExecuteCLIWithBin(dcldNew, "query", "validator", "all-nodes")
+			out, err = QueryAllNodes(dcldNew)
 			require.NoError(t, err)
 			checkResponseContains(t, out, state.ValidatorAddress)
 		}
@@ -442,211 +354,77 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 
 	MustRun(t, "VendorInfoFor1_4_4", func(t *testing.T) {
 		t.Helper()
-		tx, err := ExecuteTxWithBin(dcldNew,
-			"tx", "vendorinfo", "add-vendor",
-			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
-			"--vendorName", VendorNameFor1_4_4,
-			"--companyLegalName", CompanyLegalNameFor1_4_4,
-			"--companyPreferredName", CompanyPreferredNameFor1_4_4,
-			"--vendorLandingPageURL", VendorLandingPageURLFor1_4_4,
-			"--from", VendorAccountFor1_4_4,
-		)
+		tx, err := AddVendor(dcldNew, VendorArgs{VID: VIDFor1_4_4, VendorName: VendorNameFor1_4_4, CompanyLegalName: CompanyLegalNameFor1_4_4, CompanyPreferredName: CompanyPreferredNameFor1_4_4, VendorLandingPageURL: VendorLandingPageURLFor1_4_4, From: VendorAccountFor1_4_4})
 		requireTxSuccess(t, tx, err)
 
-		tx, err = ExecuteTxWithBin(dcldNew,
-			"tx", "vendorinfo", "update-vendor",
-			"--vid", fmt.Sprintf("%d", VIDFor1_2),
-			"--vendorName", VendorNameFor1_2,
-			"--companyLegalName", CompanyLegalNameFor1_2,
-			"--companyPreferredName", CompanyPreferredNameFor1_4_4,
-			"--vendorLandingPageURL", VendorLandingPageURLFor1_4_4,
-			"--from", state.VendorAccountFor1_2,
-		)
+		tx, err = UpdateVendor(dcldNew, VendorArgs{VID: VIDFor1_2, VendorName: VendorNameFor1_2, CompanyLegalName: CompanyLegalNameFor1_2, CompanyPreferredName: CompanyPreferredNameFor1_4_4, VendorLandingPageURL: VendorLandingPageURLFor1_4_4, From: state.VendorAccountFor1_2})
 		requireTxSuccess(t, tx, err)
 	})
 
 	MustRun(t, "ModelsAndVersionsFor1_4_4", func(t *testing.T) {
 		t.Helper()
 		for _, pid := range []int{PID1For1_4_4, PID2For1_4_4, PID3For1_4_4} {
-			tx, err := ExecuteTxWithBin(dcldNew,
-				"tx", "model", "add-model",
-				"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
-				"--pid", fmt.Sprintf("%d", pid),
-				"--deviceTypeID", fmt.Sprintf("%d", DeviceTypeIDFor1_4_4),
-				"--productName", ProductNameFor1_4_4,
-				"--productLabel", ProductLabelFor1_4_4,
-				"--partNumber", PartNumberFor1_4_4,
-				"--from", VendorAccountFor1_4_4,
-			)
+			tx, err := AddModel(dcldNew, AddModelArgs{VID: VIDFor1_4_4, PID: pid, DeviceTypeID: DeviceTypeIDFor1_4_4, ProductName: ProductNameFor1_4_4, ProductLabel: ProductLabelFor1_4_4, PartNumber: PartNumberFor1_4_4, From: VendorAccountFor1_4_4})
 			requireTxSuccess(t, tx, err)
 
-			tx, err = ExecuteTxWithBin(dcldNew,
-				"tx", "model", "add-model-version",
-				"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
-				"--pid", fmt.Sprintf("%d", pid),
-				"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_4_4),
-				"--softwareVersionString", SoftwareVersionStringFor1_4_4,
-				"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_4_4),
-				"--minApplicableSoftwareVersion", fmt.Sprintf("%d", MinApplicableSoftwareVersionFor1_4_4),
-				"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", MaxApplicableSoftwareVersionFor1_4_4),
-				"--from", VendorAccountFor1_4_4,
-			)
+			tx, err = AddModelVersion(dcldNew, AddModelVersionArgs{VID: VIDFor1_4_4, PID: pid, SoftwareVersion: SoftwareVersionFor1_4_4, SoftwareVersionString: SoftwareVersionStringFor1_4_4, CDVersionNumber: CDVersionNumberFor1_4_4, MinApplicableSoftwareVersion: MinApplicableSoftwareVersionFor1_4_4, MaxApplicableSoftwareVersion: MaxApplicableSoftwareVersionFor1_4_4, From: VendorAccountFor1_4_4})
 			requireTxSuccess(t, tx, err)
 		}
 
 		// Delete pid_3.
-		tx, err := ExecuteTxWithBin(dcldNew,
-			"tx", "model", "delete-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
-			"--pid", fmt.Sprintf("%d", PID3For1_4_4),
-			"--from", VendorAccountFor1_4_4,
-		)
+		tx, err := DeleteModel(dcldNew, VIDFor1_4_4, PID3For1_4_4, VendorAccountFor1_4_4)
 		requireTxSuccess(t, tx, err)
 
 		// Update carry-over 0.12 pid_2.
-		tx, err = ExecuteTxWithBin(dcldNew,
-			"tx", "model", "update-model",
-			"--vid", fmt.Sprintf("%d", state.VID),
-			"--pid", fmt.Sprintf("%d", state.PID2),
-			"--productName", state.ProductName,
-			"--productLabel", ProductLabelFor1_4_4,
-			"--partNumber", PartNumberFor1_4_4,
-			"--from", state.VendorAccount,
-		)
+		tx, err = UpdateModel(dcldNew, UpdateModelArgs{VID: state.VID, PID: state.PID2, ProductName: state.ProductName, ProductLabel: ProductLabelFor1_4_4, PartNumber: PartNumberFor1_4_4, From: state.VendorAccount})
 		requireTxSuccess(t, tx, err)
 
-		tx, err = ExecuteTxWithBin(dcldNew,
-			"tx", "model", "update-model-version",
-			"--vid", fmt.Sprintf("%d", state.VID),
-			"--pid", fmt.Sprintf("%d", state.PID2),
-			"--softwareVersion", fmt.Sprintf("%d", state.SoftwareVersion),
-			"--minApplicableSoftwareVersion", fmt.Sprintf("%d", MinApplicableSoftwareVersionFor1_4_4),
-			"--maxApplicableSoftwareVersion", fmt.Sprintf("%d", MaxApplicableSoftwareVersionFor1_4_4),
-			"--from", state.VendorAccount,
-		)
+		tx, err = UpdateModelVersion(dcldNew, UpdateModelVersionArgs{VID: state.VID, PID: state.PID2, SoftwareVersion: state.SoftwareVersion, MinApplicableSoftwareVersion: MinApplicableSoftwareVersionFor1_4_4, MaxApplicableSoftwareVersion: MaxApplicableSoftwareVersionFor1_4_4, From: state.VendorAccount})
 		requireTxSuccess(t, tx, err)
 	})
 
 	MustRun(t, "ComplianceFor1_4_4", func(t *testing.T) {
 		t.Helper()
 		// certify pid_1
-		tx, err := ExecuteTxWithBin(dcldNew,
-			"tx", "compliance", "certify-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
-			"--pid", fmt.Sprintf("%d", PID1For1_4_4),
-			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_4_4),
-			"--softwareVersionString", SoftwareVersionStringFor1_4_4,
-			"--certificationType", CertificationTypeFor1_4_4,
-			"--certificationDate", CertificationDateFor1_4_4,
-			"--cdCertificateId", CDCertificateIDFor1_4_4,
-			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_4_4),
-			"--from", CertificationCenterAccountFor1_2,
-		)
+		tx, err := CertifyModel(dcldNew, CertifyModelArgs{VID: VIDFor1_4_4, PID: PID1For1_4_4, SoftwareVersion: SoftwareVersionFor1_4_4, SoftwareVersionString: SoftwareVersionStringFor1_4_4, CertificationType: CertificationTypeFor1_4_4, CertificationDate: CertificationDateFor1_4_4, CDCertificateID: CDCertificateIDFor1_4_4, CDVersionNumber: CDVersionNumberFor1_4_4, From: CertificationCenterAccountFor1_2})
 		requireTxSuccess(t, tx, err)
 
 		// provision pid_2
-		tx, err = ExecuteTxWithBin(dcldNew,
-			"tx", "compliance", "provision-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
-			"--pid", fmt.Sprintf("%d", PID2For1_4_4),
-			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_4_4),
-			"--softwareVersionString", SoftwareVersionStringFor1_4_4,
-			"--certificationType", CertificationTypeFor1_4_4,
-			"--provisionalDate", ProvisionalDateFor1_4_4,
-			"--cdCertificateId", CDCertificateIDFor1_4_4,
-			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_4_4),
-			"--from", CertificationCenterAccountFor1_2,
-		)
+		tx, err = ProvisionModel(dcldNew, ProvisionModelArgs{VID: VIDFor1_4_4, PID: PID2For1_4_4, SoftwareVersion: SoftwareVersionFor1_4_4, SoftwareVersionString: SoftwareVersionStringFor1_4_4, CertificationType: CertificationTypeFor1_4_4, ProvisionalDate: ProvisionalDateFor1_4_4, CDCertificateID: CDCertificateIDFor1_4_4, CDVersionNumber: CDVersionNumberFor1_4_4, From: CertificationCenterAccountFor1_2})
 		requireTxSuccess(t, tx, err)
 
 		// certify pid_2
-		tx, err = ExecuteTxWithBin(dcldNew,
-			"tx", "compliance", "certify-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
-			"--pid", fmt.Sprintf("%d", PID2For1_4_4),
-			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_4_4),
-			"--softwareVersionString", SoftwareVersionStringFor1_4_4,
-			"--certificationType", CertificationTypeFor1_4_4,
-			"--certificationDate", CertificationDateFor1_4_4,
-			"--cdCertificateId", CDCertificateIDFor1_4_4,
-			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_4_4),
-			"--from", CertificationCenterAccountFor1_2,
-		)
+		tx, err = CertifyModel(dcldNew, CertifyModelArgs{VID: VIDFor1_4_4, PID: PID2For1_4_4, SoftwareVersion: SoftwareVersionFor1_4_4, SoftwareVersionString: SoftwareVersionStringFor1_4_4, CertificationType: CertificationTypeFor1_4_4, CertificationDate: CertificationDateFor1_4_4, CDCertificateID: CDCertificateIDFor1_4_4, CDVersionNumber: CDVersionNumberFor1_4_4, From: CertificationCenterAccountFor1_2})
 		requireTxSuccess(t, tx, err)
 
 		// revoke pid_2
-		tx, err = ExecuteTxWithBin(dcldNew,
-			"tx", "compliance", "revoke-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
-			"--pid", fmt.Sprintf("%d", PID2For1_4_4),
-			"--softwareVersion", fmt.Sprintf("%d", SoftwareVersionFor1_4_4),
-			"--softwareVersionString", SoftwareVersionStringFor1_4_4,
-			"--certificationType", CertificationTypeFor1_4_4,
-			"--revocationDate", CertificationDateFor1_4_4,
-			"--cdVersionNumber", fmt.Sprintf("%d", CDVersionNumberFor1_4_4),
-			"--from", CertificationCenterAccountFor1_2,
-		)
+		tx, err = RevokeModel(dcldNew, RevokeModelArgs{VID: VIDFor1_4_4, PID: PID2For1_4_4, SoftwareVersion: SoftwareVersionFor1_4_4, SoftwareVersionString: SoftwareVersionStringFor1_4_4, CertificationType: CertificationTypeFor1_4_4, RevocationDate: CertificationDateFor1_4_4, CDVersionNumber: CDVersionNumberFor1_4_4, From: CertificationCenterAccountFor1_2})
 		requireTxSuccess(t, tx, err)
 	})
 
 	MustRun(t, "PKIFor1_4_4_DARootCerts", func(t *testing.T) {
 		t.Helper()
-		tx, err := ExecuteTxWithBin(dcldNew,
-			"tx", "pki", "propose-add-x509-root-cert",
-			"--certificate", DARootCert1PathFor1_4_4,
-			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
-			"--from", state.Trustee1,
-		)
+		tx, err := ProposeAddX509RootCert(dcldNew, DARootCert1PathFor1_4_4, fmt.Sprintf("%d", VIDFor1_4_4), state.Trustee1)
 		requireTxSuccess(t, tx, err)
 
-		tx, err = ExecuteTxWithBin(dcldNew,
-			"tx", "pki", "approve-add-x509-root-cert",
-			"--subject", DARootCert1SubjectFor1_4_4,
-			"--subject-key-id", DARootCert1SubjectKeyIDFor1_4_4,
-			"--from", state.Trustee2,
-		)
+		tx, err = ApproveAddX509RootCert(dcldNew, DARootCert1SubjectFor1_4_4, DARootCert1SubjectKeyIDFor1_4_4, state.Trustee2)
 		requireTxSuccess(t, tx, err)
 
-		tx, err = ExecuteTxWithBin(dcldNew,
-			"tx", "pki", "reject-add-x509-root-cert",
-			"--subject", DARootCert1SubjectFor1_4_4,
-			"--subject-key-id", DARootCert1SubjectKeyIDFor1_4_4,
-			"--from", state.Trustee3,
-		)
+		tx, err = RejectAddX509RootCert(dcldNew, DARootCert1SubjectFor1_4_4, DARootCert1SubjectKeyIDFor1_4_4, state.Trustee3)
 		requireTxSuccess(t, tx, err)
 
-		tx, err = ExecuteTxWithBin(dcldNew,
-			"tx", "pki", "approve-add-x509-root-cert",
-			"--subject", DARootCert1SubjectFor1_4_4,
-			"--subject-key-id", DARootCert1SubjectKeyIDFor1_4_4,
-			"--from", state.Trustee4,
-		)
+		tx, err = ApproveAddX509RootCert(dcldNew, DARootCert1SubjectFor1_4_4, DARootCert1SubjectKeyIDFor1_4_4, state.Trustee4)
 		requireTxSuccess(t, tx, err)
 
-		tx, err = ExecuteTxWithBin(dcldNew,
-			"tx", "pki", "approve-add-x509-root-cert",
-			"--subject", DARootCert1SubjectFor1_4_4,
-			"--subject-key-id", DARootCert1SubjectKeyIDFor1_4_4,
-			"--from", state.Trustee5,
-		)
+		tx, err = ApproveAddX509RootCert(dcldNew, DARootCert1SubjectFor1_4_4, DARootCert1SubjectKeyIDFor1_4_4, state.Trustee5)
 		requireTxSuccess(t, tx, err)
 
 		// da_root_cert_2: propose by t1, approve by t1/t2/t3.
-		tx, err = ExecuteTxWithBin(dcldNew,
-			"tx", "pki", "propose-add-x509-root-cert",
-			"--certificate", DARootCert2PathFor1_4_4,
-			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
-			"--from", state.Trustee1,
-		)
+		tx, err = ProposeAddX509RootCert(dcldNew, DARootCert2PathFor1_4_4, fmt.Sprintf("%d", VIDFor1_4_4), state.Trustee1)
 		requireTxSuccess(t, tx, err)
 
 		for _, who := range []string{state.Trustee2, state.Trustee3, state.Trustee4} {
-			tx, err = ExecuteTxWithBin(dcldNew,
-				"tx", "pki", "approve-add-x509-root-cert",
-				"--subject", DARootCert2SubjectFor1_4_4,
-				"--subject-key-id", DARootCert2SubjectKeyIDFor1_4_4,
-				"--from", who,
-			)
+			tx, err = ApproveAddX509RootCert(dcldNew, DARootCert2SubjectFor1_4_4, DARootCert2SubjectKeyIDFor1_4_4, who)
 			requireTxSuccess(t, tx, err)
 		}
 
@@ -654,48 +432,24 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		for _, certPath := range []string{
 			DAIntermediateCert1PathFor1_4_4, DAIntermediateCert2PathFor1_4_4,
 		} {
-			tx, err = ExecuteTxWithBin(dcldNew,
-				"tx", "pki", "add-x509-cert",
-				"--certificate", certPath,
-				"--from", VendorAccountFor1_4_4,
-			)
+			tx, err = AddX509Cert(dcldNew, certPath, VendorAccountFor1_4_4)
 			requireTxSuccess(t, tx, err)
 		}
 
 		// Propose-revoke + 3 approves of da_root_cert_1.
-		tx, err = ExecuteTxWithBin(dcldNew,
-			"tx", "pki", "propose-revoke-x509-root-cert",
-			"--subject", DARootCert1SubjectFor1_4_4,
-			"--subject-key-id", DARootCert1SubjectKeyIDFor1_4_4,
-			"--from", state.Trustee1,
-		)
+		tx, err = ProposeRevokeX509RootCert(dcldNew, DARootCert1SubjectFor1_4_4, DARootCert1SubjectKeyIDFor1_4_4, state.Trustee1)
 		requireTxSuccess(t, tx, err)
 		for _, who := range []string{state.Trustee2, state.Trustee3, state.Trustee4} {
-			tx, err = ExecuteTxWithBin(dcldNew,
-				"tx", "pki", "approve-revoke-x509-root-cert",
-				"--subject", DARootCert1SubjectFor1_4_4,
-				"--subject-key-id", DARootCert1SubjectKeyIDFor1_4_4,
-				"--from", who,
-			)
+			tx, err = ApproveRevokeX509RootCert(dcldNew, DARootCert1SubjectFor1_4_4, DARootCert1SubjectKeyIDFor1_4_4, who)
 			requireTxSuccess(t, tx, err)
 		}
 
 		// Propose-revoke da_root_cert_2 (no approvals).
-		tx, err = ExecuteTxWithBin(dcldNew,
-			"tx", "pki", "propose-revoke-x509-root-cert",
-			"--subject", DARootCert2SubjectFor1_4_4,
-			"--subject-key-id", DARootCert2SubjectKeyIDFor1_4_4,
-			"--from", state.Trustee1,
-		)
+		tx, err = ProposeRevokeX509RootCert(dcldNew, DARootCert2SubjectFor1_4_4, DARootCert2SubjectKeyIDFor1_4_4, state.Trustee1)
 		requireTxSuccess(t, tx, err)
 
 		// Revoke da_intermediate_cert_1.
-		tx, err = ExecuteTxWithBin(dcldNew,
-			"tx", "pki", "revoke-x509-cert",
-			"--subject", DAIntermediateCert1SubjectFor1_4_4,
-			"--subject-key-id", DAIntermediateCert1SubjectKeyIDFor1_4_4,
-			"--from", VendorAccountFor1_4_4,
-		)
+		tx, err = RevokeX509Cert(dcldNew, DAIntermediateCert1SubjectFor1_4_4, DAIntermediateCert1SubjectKeyIDFor1_4_4, "", VendorAccountFor1_4_4)
 		requireTxSuccess(t, tx, err)
 	})
 
@@ -708,36 +462,18 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 			{NOCRootCert1V144PathFor1_4_4, NOCICACert1V144PathFor1_4_4},
 			{NOCRootCert2V144PathFor1_4_4, NOCICACert2V144PathFor1_4_4},
 		} {
-			tx, err := ExecuteTxWithBin(dcldNew,
-				"tx", "pki", "add-noc-x509-root-cert",
-				"--certificate", pair.rootPath,
-				"--from", VendorAccountFor1_4_4,
-			)
+			tx, err := AddNocX509RootCert(dcldNew, pair.rootPath, VendorAccountFor1_4_4)
 			requireTxSuccess(t, tx, err)
 
-			tx, err = ExecuteTxWithBin(dcldNew,
-				"tx", "pki", "add-noc-x509-ica-cert",
-				"--certificate", pair.icaPath,
-				"--from", VendorAccountFor1_4_4,
-			)
+			tx, err = AddNocX509IcaCert(dcldNew, pair.icaPath, VendorAccountFor1_4_4)
 			requireTxSuccess(t, tx, err)
 		}
 
 		// Revoke NOC pair #1.
-		tx, err := ExecuteTxWithBin(dcldNew,
-			"tx", "pki", "revoke-noc-x509-root-cert",
-			"--subject", NOCRootCert1V144SubjectFor1_4_4,
-			"--subject-key-id", NOCRootCert1V144SubjectKeyIDFor1_4_4,
-			"--from", VendorAccountFor1_4_4,
-		)
+		tx, err := RevokeNocX509RootCert(dcldNew, NOCRootCert1V144SubjectFor1_4_4, NOCRootCert1V144SubjectKeyIDFor1_4_4, VendorAccountFor1_4_4)
 		requireTxSuccess(t, tx, err)
 
-		tx, err = ExecuteTxWithBin(dcldNew,
-			"tx", "pki", "revoke-noc-x509-ica-cert",
-			"--subject", NOCICACert1V144SubjectFor1_4_4,
-			"--subject-key-id", NOCICACert1V144SubjectKeyIDFor1_4_4,
-			"--from", VendorAccountFor1_4_4,
-		)
+		tx, err = RevokeNocX509IcaCert(dcldNew, NOCICACert1V144SubjectFor1_4_4, NOCICACert1V144SubjectKeyIDFor1_4_4, VendorAccountFor1_4_4)
 		requireTxSuccess(t, tx, err)
 	})
 
@@ -745,40 +481,16 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		t.Helper()
 		// add → update → delete → add (one active PAA revocation point at end).
 		addPAA := func(dataURL string) {
-			tx, err := ExecuteTxWithBin(dcldNew,
-				"tx", "pki", "add-revocation-point",
-				"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
-				"--revocation-type", "1",
-				"--is-paa=true",
-				"--certificate", DARootCert2PathFor1_4_4,
-				"--label", ProductLabelFor1_4_4,
-				"--data-url", dataURL,
-				"--issuer-subject-key-id", IssuerSubjectKeyID,
-				"--from", VendorAccountFor1_4_4,
-			)
+			tx, err := AddRevocationPoint(dcldNew, AddRevocationPointArgs{VID: VIDFor1_4_4, RevocationType: "1", IsPAA: true, Certificate: DARootCert2PathFor1_4_4, Label: ProductLabelFor1_4_4, DataURL: dataURL, IssuerSubjectKeyID: IssuerSubjectKeyID, From: VendorAccountFor1_4_4})
 			requireTxSuccess(t, tx, err)
 		}
 
 		addPAA(TestDataURLFor1_4_4)
 
-		tx, err := ExecuteTxWithBin(dcldNew,
-			"tx", "pki", "update-revocation-point",
-			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
-			"--certificate", DARootCert2PathFor1_4_4,
-			"--label", ProductLabelFor1_4_4,
-			"--data-url", TestDataURLFor1_4_4+"/new",
-			"--issuer-subject-key-id", IssuerSubjectKeyID,
-			"--from", VendorAccountFor1_4_4,
-		)
+		tx, err := UpdateRevocationPoint(dcldNew, UpdateRevocationPointArgs{VID: VIDFor1_4_4, Certificate: DARootCert2PathFor1_4_4, Label: ProductLabelFor1_4_4, DataURL: TestDataURLFor1_4_4 + "/new", IssuerSubjectKeyID: IssuerSubjectKeyID, From: VendorAccountFor1_4_4})
 		requireTxSuccess(t, tx, err)
 
-		tx, err = ExecuteTxWithBin(dcldNew,
-			"tx", "pki", "delete-revocation-point",
-			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
-			"--label", ProductLabelFor1_4_4,
-			"--issuer-subject-key-id", IssuerSubjectKeyID,
-			"--from", VendorAccountFor1_4_4,
-		)
+		tx, err = DeleteRevocationPoint(dcldNew, VIDFor1_4_4, ProductLabelFor1_4_4, IssuerSubjectKeyID, VendorAccountFor1_4_4)
 		requireTxSuccess(t, tx, err)
 
 		addPAA(TestDataURLFor1_4_4)
@@ -811,30 +523,19 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	MustRun(t, "VerifyNew_1_4_4_Data", func(t *testing.T) {
 		t.Helper()
-		out, err := ExecuteCLIWithBin(dcldNew,
-			"query", "vendorinfo", "vendor",
-			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
-		)
+		out, err := QueryVendor(dcldNew, VIDFor1_4_4)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vendorID", VIDFor1_4_4)
 		checkResponseContains(t, out, CompanyLegalNameFor1_4_4)
 
-		out, err = ExecuteCLIWithBin(dcldNew,
-			"query", "model", "get-model",
-			"--vid", fmt.Sprintf("%d", VIDFor1_4_4),
-			"--pid", fmt.Sprintf("%d", PID1For1_4_4),
-		)
+		out, err = QueryGetModel(dcldNew, VIDFor1_4_4, PID1For1_4_4)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", VIDFor1_4_4)
 		requireFieldEquals(t, out, "pid", PID1For1_4_4)
 		checkResponseContains(t, out, ProductLabelFor1_4_4)
 
 		// 0.12 pid_2 now has 1.4.4 productLabel/partNumber.
-		out, err = ExecuteCLIWithBin(dcldNew,
-			"query", "model", "get-model",
-			"--vid", fmt.Sprintf("%d", state.VID),
-			"--pid", fmt.Sprintf("%d", state.PID2),
-		)
+		out, err = QueryGetModel(dcldNew, state.VID, state.PID2)
 		require.NoError(t, err)
 		checkResponseContains(t, out, ProductLabelFor1_4_4)
 		checkResponseContains(t, out, PartNumberFor1_4_4)

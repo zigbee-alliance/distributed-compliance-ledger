@@ -36,13 +36,19 @@ func UpgradeInfoForVersion(version, checksum string) string {
 // binPath. The active dcld may be running an older release than the host
 // build, hence the explicit binary path. Result is the confirmed TxResult.
 func ProposeUpgrade(binPath, planName string, planHeight int64, upgradeInfo, from string) (*utils.TxResult, error) {
-	return ExecuteTxWithBin(binPath,
+	args := []string{
 		"tx", "dclupgrade", "propose-upgrade",
 		"--name", planName,
 		"--upgrade-height", fmt.Sprintf("%d", planHeight),
-		"--upgrade-info", upgradeInfo,
-		"--from", from,
-	)
+	}
+	// upgrade-info carries the new binary's download URL + checksum; the master
+	// upgrade omits it because the binary is seeded into cosmovisor manually.
+	if upgradeInfo != "" {
+		args = append(args, "--upgrade-info", upgradeInfo)
+	}
+	args = append(args, "--from", from)
+
+	return ExecuteTxWithBin(binPath, args...)
 }
 
 // ApproveUpgrade submits a `dclupgrade approve-upgrade` tx using the binary at

@@ -138,6 +138,16 @@ func ConfigureClient(binPath string) error {
 	return nil
 }
 
+// SetBroadcastMode sets only the client broadcast-mode for the binary at
+// binPath. EnsureBinary already applies the version-appropriate mode via
+// ConfigureClient, so this is just an explicit re-affirmation where a test
+// wants to be sure (e.g. v1.4+ binaries reject `block`).
+func SetBroadcastMode(binPath, mode string) error {
+	_, err := ExecuteCLIWithBin(binPath, "config", "broadcast-mode", mode)
+
+	return err
+}
+
 // binPathSupportsOnlySyncMode reports whether the dcld binary at binPath
 // rejects `--broadcast-mode block`. Cosmos-SDK retired block mode in the
 // release that ships with dcld v1.4.3; v0.12.x and v1.2.x still accept it.
