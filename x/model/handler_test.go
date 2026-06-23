@@ -1058,7 +1058,7 @@ func TestHandler_UpdateModelEnhancedSetupFlowTCRevisionIncrement(t *testing.T) {
 	msgAddModel.EnhancedSetupFlowTCRevision = int32(testconstants.EnhancedSetupFlowTCRevision)
 	msgAddModel.EnhancedSetupFlowTCDigest = testconstants.EnhancedSetupFlowTCDigest
 	msgAddModel.EnhancedSetupFlowTCFileSize = uint32(testconstants.EnhancedSetupFlowTCFileSize)
-	msgAddModel.EnhancedSetupFlowMaintenanceUrl = testconstants.EnhancedSetupFlowMaintenanceURL
+	msgAddModel.MaintenanceUrl = testconstants.MaintenanceURL
 	_, err := setup.Handler(setup.Ctx, msgAddModel)
 	require.NoError(t, err)
 
@@ -1087,7 +1087,7 @@ func TestHandler_UpdateModelEnhancedSetupFlowTCRevisionIncorrectIncrement(t *tes
 	msgAddModel.EnhancedSetupFlowTCRevision = int32(testconstants.EnhancedSetupFlowTCRevision)
 	msgAddModel.EnhancedSetupFlowTCDigest = testconstants.EnhancedSetupFlowTCDigest
 	msgAddModel.EnhancedSetupFlowTCFileSize = uint32(testconstants.EnhancedSetupFlowTCFileSize)
-	msgAddModel.EnhancedSetupFlowMaintenanceUrl = testconstants.EnhancedSetupFlowMaintenanceURL
+	msgAddModel.MaintenanceUrl = testconstants.MaintenanceURL
 	_, err := setup.Handler(setup.Ctx, msgAddModel)
 	require.NoError(t, err)
 
@@ -1626,7 +1626,7 @@ func TestHandler_UpdateModelVersion(t *testing.T) {
 	require.Equal(t, receivedModelVersion.CdVersionNumber, msgCreateModelVersion.CdVersionNumber)
 	require.Equal(t, receivedModelVersion.FirmwareInformation, msgCreateModelVersion.FirmwareInformation)
 	require.Equal(t, receivedModelVersion.OtaChecksumType, msgCreateModelVersion.OtaChecksumType)
-	require.Equal(t, receivedModelVersion.SpecificationVersion, msgCreateModelVersion.SpecificationVersion)
+	require.Equal(t, receivedModelVersion.SpecificationVersion, msgCreateModelVersion.SpecificationVersion) //nolint:staticcheck // ignore SA1019: use of deprecated field
 	require.Equal(t, newSchemaVersion, receivedModelVersion.SchemaVersion)
 
 	// query model versions
@@ -2496,7 +2496,7 @@ func NewMsgUpdateModel(signer sdk.AccAddress) *types.MsgUpdateModel {
 		EnhancedSetupFlowTCRevision:                int32(testconstants.EnhancedSetupFlowTCRevision + 1),
 		EnhancedSetupFlowTCDigest:                  testconstants.EnhancedSetupFlowTCDigest,
 		EnhancedSetupFlowTCFileSize:                uint32(testconstants.EnhancedSetupFlowTCFileSize + 1),
-		EnhancedSetupFlowMaintenanceUrl:            testconstants.EnhancedSetupFlowMaintenanceURL + "/updated",
+		MaintenanceUrl:                             testconstants.MaintenanceURL + "/updated",
 		CommissioningFallbackUrl:                   testconstants.CommissioningFallbackURL + "/updated",
 	}
 }

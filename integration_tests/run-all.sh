@@ -103,36 +103,6 @@ make image &>${DETAILED_OUTPUT_TARGET}
 
 cleanup_pool
 
-# Upgrade procedure tests — Go-only since the migration completed. Unlike
-# the cli/light buckets, the upgrade Go suite manages its own localnet
-# lifecycle: TestUpgradeSequence calls EnsureAllBinaries (binary downloads)
-# and InitPool/CleanupPool (via pool.go) internally, so run-all.sh just
-# invokes `go test`. The bash suite at integration_tests/upgrade/*.sh and
-# the gap-check tooling under scripts/upgrade-command-diff.sh are gone.
-if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
-  log "*****************************************************************************************"
-  log "Running go test ./integration_tests/upgrade/..."
-  log "*****************************************************************************************"
-
-  if RUN_UPGRADE_GO=1 go test -count=1 -timeout 90m -v ./integration_tests/upgrade/... &>${DETAILED_OUTPUT_TARGET}; then
-    log "upgrade finished successfully"
-  else
-    log "upgrade failed"
-    exit 1
-  fi
-fi
-
-# Deploy tests
-if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "deploy" ]]; then
-  DEPLOY_SHELL_TEST="./integration_tests/deploy/test_deploy.sh"
-  if bash "$DEPLOY_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-    log "$DEPLOY_SHELL_TEST finished successfully"
-  else
-    log "$DEPLOY_SHELL_TEST failed"
-    exit 1
-  fi
-fi
-
 # Cli tests — Go-only since the migration completed. One pool per package,
 # coverage merged via collect_cover. The deleted bash suite at
 # integration_tests/cli/*.sh was proven redundant by CI coverage diff
@@ -149,7 +119,7 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
 
     dcld config keyring-backend test
 
-    if go test -count=1 -timeout 30m -v "./$CLI_GO_TEST_PACKAGE/..." &>${DETAILED_OUTPUT_TARGET}; then
+    if go test -count=1 -timeout 30m -p 1 -v "./$CLI_GO_TEST_PACKAGE/..." &>${DETAILED_OUTPUT_TARGET}; then
       log "$CLI_GO_TEST_PACKAGE finished successfully"
     else
       log "$CLI_GO_TEST_PACKAGE failed"
@@ -161,34 +131,65 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
   done
 fi
 
-# Light Client Proxy tests — Go-only since the migration completed. One pool
-# for the package; the five test funcs share the keyring and rely on
-# random-suffixed account names to avoid collisions. The bash suite at
-# integration_tests/light_client_proxy/*.sh is kept on disk for ad-hoc
-# inspection but no longer wired into CI.
-if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "light" ]]; then
-  init_pool
+# Upgrade procedure tests
+if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
+  UPGRADE_SHELL_TEST="./integration_tests/upgrade/test-upgrade.sh"
 
   log "*****************************************************************************************"
-  log "Running go test ./integration_tests/light_client_proxy/..."
+  log "Running ./integration_tests/prepare-dcld-versions.sh"
   log "*****************************************************************************************"
 
-  dcld config keyring-backend test
+  bash ./integration_tests/prepare-dcld-versions.sh
 
-  # -failfast halts the whole `go test` invocation at the first failing
-  # subtest. Each TestLightClientProxy<Module> mirrors the bash one-pool-per-
-  # script isolation contract, so once one test trips up there's no value in
-  # running the remaining four against a likely-broken localnet — and the
-  # extra failures just clutter the log.
-  if RUN_LIGHT_GO=1 go test -count=1 -failfast -timeout 30m -v ./integration_tests/light_client_proxy/... &>${DETAILED_OUTPUT_TARGET}; then
-    log "light_client_proxy finished successfully"
+  init_pool yes localnet_init_latest_stable_release "/tmp/dcld_bins/dcld_v0.12.0"
+
+  log "*****************************************************************************************"
+  log "Running $UPGRADE_SHELL_TEST"
+  log "*****************************************************************************************"
+
+  if bash "$UPGRADE_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+    log "$UPGRADE_SHELL_TEST finished successfully"
   else
-    log "light_client_proxy failed"
+    log "$UPGRADE_SHELL_TEST failed"
     exit 1
   fi
 
   collect_cover
   cleanup_pool
+fi
+
+# Deploy tests
+if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "deploy" ]]; then
+  DEPLOY_SHELL_TEST="./integration_tests/deploy/test_deploy.sh"
+  if bash "$DEPLOY_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+    log "$DEPLOY_SHELL_TEST finished successfully"
+  else
+    log "$DEPLOY_SHELL_TEST failed"
+    exit 1
+  fi
+fi
+
+# Light Client Proxy Cli shell tests
+if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "light" ]]; then
+  CLI_SHELL_TESTS=$(find integration_tests/light_client_proxy -type f -name '*.sh' -not -name "common.sh")
+
+  for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
+    init_pool
+
+    log "*****************************************************************************************"
+    log "Running $CLI_SHELL_TEST"
+    log "*****************************************************************************************"
+
+    if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+      log "$CLI_SHELL_TEST finished successfully"
+    else
+      log "$CLI_SHELL_TEST failed"
+      exit 1
+    fi
+
+    collect_cover
+    cleanup_pool
+  done
 fi
 
 # Go rest tests

@@ -6,7 +6,7 @@
 
 **Status: Implemented**
 
-Attests compliance of the Model Version to the ZB or Matter standard.
+Attests compliance of a Model Version to the Matter, Zigbee or Aliro certification.
 
 `REVOKE_MODEL_CERTIFICATION` should be used for revoking (disabling) the compliance.
 It's possible to call `CERTIFY_MODEL` for revoked model versions to enable them back.
@@ -20,36 +20,37 @@ It can be used for use cases where only revocation is tracked on the ledger to r
 from the revocation list.
 
 - Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
-  - softwareVersion: `uint32` - model software version
-  - softwareVersionSting: `string` - model software version string
+  - vid: `uint16` - Model vendor ID (positive non-zero)
+  - pid: `uint16` - Model product ID (positive non-zero)
+  - softwareVersion: `uint32` - Software Version of model
+  - softwareVersionString: `string` - Software Version String of model
+  - certificationType: `string` - Certification program applied to the model. Supported values are `zigbee`, `matter` or `aliro`.
+  - specificationVersion: `uint32` - Specification version applicable to the device model, and it matches the SpecificationVersion attribute in the Basic Information Cluster of a device running the software certified by this DeviceModel record. For example, for `1.4.2.0` version this field should contain `0x01040200`.
   - certificationDate: `string` - The date of model certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
-  - certificationType: `string` - Certification type - Currently 'zigbee', 'matter', 'access control', 'product security' types are supported
-  - cdCertificateId: `string` - CD Certificate ID 
-  - reason `optional(string)` - optional comment describing the reason of the certification
-  - cDVersionNumber `optional(uint32)` - optional field describing the CD version number
-  - familyId `optional(string)` - optional field describing the family ID
-  - supportedClusters `optional(string)` - optional field describing the supported clusters
-  - compliantPlatformUsed `optional(string)` - optional field describing the compliant platform used
-  - compliantPlatformVersion `optional(string)` - optional field describing the compliant platform version
-  - OSVersion `optional(string)` - optional field describing the OS version
-  - certificationRoute `optional(string)` - optional field describing the certification route
-  - programType `optional(string)` - optional field describing the program type
-  - programTypeVersion `optional(string)` - optional field describing the program type version
-  - transport `optional(string)` - optional field describing the transport
-  - parentChild `optional(string)` - optional field describing the parent/child - Currently 'parent' and 'child' types are supported
-  - certificationIDOfSoftwareComponent `optional(string)` - optional field describing the certification ID of software component
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
+  - cdCertificateId: `string` - Connectivity Standards Alliance certification's certificate ID for the Certification that applies to this record. The value of this field is used in the Certification Declaration's `certificate_id` field for products using the VendorID, ProductID and SoftwareVersion in this schema entry. **Must be exactly 19 characters.**
+  - reason: `optional(string)` - Optional comment describing the reason of certification
+  - cDVersionNumber: `optional(uint32)` - CD Version Number of the certification
+  - familyId: `optional(string)` - Product family to which the certified model belongs. Typical family IDs have the prefix FAM followed by a sequence of alphanumeric characters (e.g. FAM123456).
+  - supportedClusters: `optional(string)` - Application cluster IDs supported by the device, as hexadecimal numbers in a comma-separated list. For example, for an Extended Color Light (implementing Matter 1.5) this field would contain (at least) 0x0003,0x0004,0x0006,0x0008,0x0062,0x0300.
+  - certificationRoute: `optional(string)` - Various certification paths, such as Fully Tested, Certification by Similarity, Family/Portfolio Certification, Certification Transfer etc. Supported values are `fullTested`, `similarity`, `rapid-recert`, `fastTrack`, `ctp`, `family`, and `portfolio`. Note that some values could be added or removed in the future.
+  - programType: `optional(string)` - Product type. Supported values are `endProduct`, `softwareComponent` or `compliantPlatform`.
+  - programTypeVersion: `optional(string)` - Version of programType (see `programType` flag for supported programs). Can be used when `programType` is provided.
+  - transport: `optional(string)` - Underlying communication technology the device uses to connect and exchange data. Supported transports are `thread`, `wi-fi`, `ethernet`, `bluetooth` and `nfc`. When multiple transports supported - should be used with comma-separator (e.g. `wi-fi,ethernet,bluetooth`).
+  - parentChild: `optional(string)` - Parent vs. child characteristic when using the Product Family Certification or Portfolio Certification Program. Supported values are `parent` and `child`.
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to **`1`** (default 1, the v1 schema introduces `specificationVersion` and deprecates `compliantPlatformUsed` / `compliantPlatformVersion` / `OSVersion` / `certificationIdOfSoftwareComponent`).
+  - compliantPlatformUsed: `optional(string)` - **Deprecated.**  Certification ID of the compliant platform used with the product.
+  - compliantPlatformVersion: `optional(string)` - **Deprecated.**  Certified firmware version of Compliant Platform.
+  - certificationIDOfSoftwareComponent: `optional(string)` - **Deprecated.** Certification ID of a software component.
+  - OSVersion: `optional(string)` - **Deprecated.**  Name and version of an operating system separated by whitespace. For example, `Android 16` or `iOS 26.4`.
 - In State:
   - `compliance/ComplianceInfo/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
   - `compliance/CertifiedModel/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
 - Who can send:
   - CertificationCenter
 - CLI command:
-  - `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string>  --certificationType=<matter|zigbee|access control|product security> --certificationDate=<rfc3339 encoded date> --cdCertificateId=<string> --from=<account>`
+  - `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --certificationType=<zigbee|matter|aliro> --specificationVersion=<uint32> --certificationDate=<rfc3339 encoded date> --cdCertificateId=<string> --from=<account>`
 - CLI command full:
-  - `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string>  --certificationType=<matter|zigbee|access control|product security> --certificationDate=<rfc3339 encoded date> --cdCertificateId=<string> --reason=<string> --cDVersionNumber=<uint32> --familyId=<string> --supportedClusters=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --OSVersion=<string> --certificationRoute=<string> --programType=<string> --programTypeVersion=<string> --transport=<string> --parentChild=<string> --certificationIDOfSoftwareComponent=<string> --from=<account>`
+  - `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --certificationType=<zigbee|matter|aliro> --specificationVersion=<uint32> --certificationDate=<rfc3339 encoded date> --cdCertificateId=<string> --reason=<string> --cDVersionNumber=<uint32> --familyId=<string> --supportedClusters=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --OSVersion=<string> --certificationRoute=<string> --programType=<endProduct|softwareComponent|compliantPlatform> --programTypeVersion=<string> --transport=<string> --parentChild=<parent|child> --certificationIDOfSoftwareComponent=<string> --schemaVersion=<uint16> --from=<account>`
 
 ### UPDATE_COMPLIANCE_INFO
 
@@ -59,32 +60,34 @@ Updates a compliance info by VID, PID, Software Version and Certification Type.
 
 
 - Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
-  - softwareVersion: `uint32` - model software version
-  - certificationType: `string` - Certification type - Currently 'zigbee', 'matter', 'access control', 'product security' types are supported
+  - vid: `uint16` - Model vendor ID (positive non-zero)
+  - pid: `uint16` - Model product ID (positive non-zero)
+  - softwareVersion: `uint32` - Software Version of model
+  - certificationType: `string` - Certification program applied to the model. Supported values are `zigbee`, `matter` or `aliro`.
+  - specificationVersion: `optional(uint32)` - Specification version applicable to the device model, and it matches the SpecificationVersion attribute in the Basic Information Cluster of a device running the software certified by this DeviceModel record. For example, for `1.4.2.0` version this field should contain `0x01040200`.
   - certificationDate: `optional(string)` - The date of model certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
-  - cdCertificateId: `optional(string)` - CD Certificate ID
-  - reason `optional(string)` - optional comment describing the reason of the certification
-  - cDVersionNumber `optional(string)` - optional field (a uint32-parsable string) describing the CD version number, must be the same with the associated model version
-  - familyId `optional(string)` - optional field describing the family ID
-  - supportedClusters `optional(string)` - optional field describing the supported clusters
-  - compliantPlatformUsed `optional(string)` - optional field describing the compliant platform used
-  - compliantPlatformVersion `optional(string)` - optional field describing the compliant platform version
-  - OSVersion `optional(string)` - optional field describing the OS version
-  - certificationRoute `optional(string)` - optional field describing the certification route
-  - programType `optional(string)` - optional field describing the program type
-  - programTypeVersion `optional(string)` - optional field describing the program type version
-  - transport `optional(string)` - optional field describing the transport
-  - parentChild `optional(string)` - optional field describing the parent/child - Currently 'parent' and 'child' types are supported
-  - certificationIDOfSoftwareComponent `optional(string)` - optional field describing the certification ID of software component
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
+  - cdCertificateId: `optional(string)` - Connectivity Standards Alliance certification's certificate ID for the Certification that applies to this record. The value of this field is used in the Certification Declaration's `certificate_id` field for products using the VendorID, ProductID and SoftwareVersion in this schema entry. **When provided, must be exactly 19 characters.**
+  - reason: `optional(string)` - Optional comment describing the reason of certification
+  - cDVersionNumber: `optional(string)` - CD Version Number of the certification (uint32-parsable string), must be the same as the associated model version
+  - owner: `optional(string)` - Key to sign the transaction
+  - familyId: `optional(string)` - Product family to which the certified model belongs. Typical family IDs have the prefix FAM followed by a sequence of alphanumeric characters (e.g. FAM123456).
+  - supportedClusters: `optional(string)` - Application cluster IDs supported by the device, as hexadecimal numbers in a comma-separated list. For example, for an Extended Color Light (implementing Matter 1.5) this field would contain (at least) 0x0003,0x0004,0x0006,0x0008,0x0062,0x0300.
+  - certificationRoute: `optional(string)` - Various certification paths, such as Fully Tested, Certification by Similarity, Family/Portfolio Certification, Certification Transfer etc. Supported values are `fullTested`, `similarity`, `rapid-recert`, `fastTrack`, `ctp`, `family`, and `portfolio`. Note that some values could be added or removed in the future.
+  - programType: `optional(string)` - Product type. Supported values are `endProduct`, `softwareComponent` or `compliantPlatform`.
+  - programTypeVersion: `optional(string)` - Version of programType (see `programType` flag for supported programs). Can be used when `programType` is provided.
+  - transport: `optional(string)` - Underlying communication technology the device uses to connect and exchange data. Supported transports are `thread`, `wi-fi`, `ethernet`, `bluetooth` and `nfc`. When multiple transports supported - should be used with comma-separator (e.g. `wi-fi,ethernet,bluetooth`).
+  - parentChild: `optional(string)` - Parent vs. child characteristic when using the Product Family Certification or Portfolio Certification Program. Supported values are `parent` and `child`.
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to **`1`** (default 1, the v1 schema introduces `specificationVersion` and deprecates `compliantPlatformUsed` / `compliantPlatformVersion` / `OSVersion` / `certificationIdOfSoftwareComponent`).
+  - compliantPlatformUsed: `optional(string)` - **Deprecated.**  Certification ID of the compliant platform used with the product.
+  - compliantPlatformVersion: `optional(string)` - **Deprecated.**  Certified firmware version of Compliant Platform.
+  - certificationIDOfSoftwareComponent: `optional(string)` - **Deprecated.** Certification ID of a software component.
+  - OSVersion: `optional(string)` - **Deprecated.**  Name and version of an operating system separated by whitespace. For example, `Android 16` or `iOS 26.4`.
 - Who can send:
   - CertificationCenter
 - CLI command:
-  - `dcld tx compliance update-compliance-info`
+  - `dcld tx compliance update-compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter|aliro> --from=<account>`
 - CLI command full:
-  - `dcld tx compliance update-compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<string> --cdVersionNumber=<string> --certificationDate=$upd_certification_date --reason=$upd_reason --cdCertificateId=$upd_cd_certificate_id --certificationRoute=$upd_certification_route --programType=$upd_program_type --programTypeVersion=$upd_program_type_version --compliantPlatformUsed=$upd_compliant_platform_used --compliantPlatformVersion=$upd_compliant_platform_version --transport=$upd_transport --familyId=$upd_familyID --supportedClusters=$upd_supported_clusters --OSVersion=$upd_os_version --parentChild=$upd_parent_child --certificationIDOfSoftwareComponent=$upd_certification_id_of_software_component --from=$zb_account`
+  - `dcld tx compliance update-compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter|aliro> --specificationVersion=<uint32> --softwareVersionString=<string> --cdVersionNumber=<string> --certificationDate=<rfc3339 encoded date> --reason=<string> --cdCertificateId=<string> --owner=<string> --certificationRoute=<string> --programType=<endProduct|softwareComponent|compliantPlatform> --programTypeVersion=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --transport=<string> --familyId=<string> --supportedClusters=<string> --OSVersion=<string> --parentChild=<parent|child> --certificationIDOfSoftwareComponent=<string> --schemaVersion=<uint16> --from=<account>`
 - REST API:
   - `/dcl/compliance/update-compliance-info`
 
@@ -97,14 +100,14 @@ Delete compliance of the Model Version to the ZB or Matter standard.
 The corresponding Compliance Info is required to be present on the ledger
 
 - Parameters:
-  - vid: `uint16` - model vendor ID (positive non-zero)
-  - pid: `uint16` - model product ID (positive non-zero)
-  - softwareVersion: `uint32` - model software version
-  - certificationType: `string` - Certification type - Currently 'zigbee' and 'matter', 'access control', 'product security' types are supported
+  - vid: `uint16` - Model vendor ID (positive non-zero)
+  - pid: `uint16` - Model product ID (positive non-zero)
+  - softwareVersion: `uint32` - Software Version of model
+  - certificationType: `string` - Certification program applied to the model. Supported values are `zigbee`, `matter` or `aliro`.
 - Who can send:
   - CertificationCenter
 - CLI command:
-  - `dcld tx compliance delete-compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee|access control|product security> --from=<account>`
+  - `dcld tx compliance delete-compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter|aliro> --from=<account>`
 
 ### REVOKE_MODEL_CERTIFICATION
 
@@ -119,63 +122,68 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
  cases where only revocation list is stored on the ledger.
 
 - Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
-  - softwareVersion: `uint32` - model software version
-  - softwareVersionSting: `string` - model software version string
+  - vid: `uint16` - Model vendor ID (positive non-zero)
+  - pid: `uint16` - Model product ID (positive non-zero)
+  - softwareVersion: `uint32` - Software Version of model
+  - softwareVersionString: `string` - Software Version String of model
+  - certificationType: `string` - Certification program applied to the model. Supported values are `zigbee`, `matter` or `aliro`.
   - revocationDate: `string` - The date of model revocation (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
-  - certificationType: `string`  - Certification type - Currently 'zigbee' and 'matter', 'access control', 'product security' types are supported
-  - reason `optional(string)`  - optional comment describing the reason of revocation
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
+  - reason: `optional(string)` - Optional comment describing the reason of revocation
+  - cDVersionNumber: `optional(uint32)` - CD Version Number of the certification
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to **`1`** (default 1, the v1 schema introduces `specificationVersion` and deprecates `compliantPlatformUsed` / `compliantPlatformVersion` / `OSVersion` / `certificationIdOfSoftwareComponent`).
 - In State:
   - `compliance/ComplianceInfo/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
   - `compliance/RevokedModel/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
 - Who can send:
   - CertificationCenter
 - CLI command:
-  - `dcld tx compliance revoke-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee|access control|product security> --revocationDate=<rfc3339 encoded date> --reason=<string> --from=<account>`
+  - `dcld tx compliance revoke-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --certificationType=<zigbee|matter|aliro> --revocationDate=<rfc3339 encoded date> --from=<account>`
+- CLI command full:
+  - `dcld tx compliance revoke-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --certificationType=<zigbee|matter|aliro> --revocationDate=<rfc3339 encoded date> --reason=<string> --cDVersionNumber=<uint32> --schemaVersion=<uint16> --from=<account>`
 
 ### PROVISION_MODEL
 
 **Status: Implemented**
 
-Sets provisional state for the Model Version.
+Sets a provisional certification state for a Model Version. It allows production and distribution of the Model Version 
+to occur in parallel with certification (with potential software fixes yielding a higher SoftwareVersion which gets certification).
 
 The corresponding Model and Model Version are not required to be present in the ledger. It can be added later by Vendors.
 
 Can not be set if there is already a certification record on the ledger (certified or revoked).
 
 - Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
-  - softwareVersion: `uint32` - model software version
-  - softwareVersionSting: `string` - model software version string
-  - provisionalDate: `string` - The date of model provisioning (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
-  - certificationType: `string`  - Certification type - Currently 'zigbee' and 'matter', 'access control', 'product security' types are supported
-  - cdCertificateId: `string` - CD Certificate ID 
-  - reason `optional(string)`  - optional comment describing the reason of revocation
-  - cDVersionNumber `optional(uint32)` - optional field describing the CD version number
-  - familyId `optional(string)` - optional field describing the family ID
-  - supportedClusters `optional(string)` - optional field describing the supported clusters
-  - compliantPlatformUsed `optional(string)` - optional field describing the compliant platform used
-  - compliantPlatformVersion `optional(string)` - optional field describing the compliant platform version
-  - OSVersion `optional(string)` - optional field describing the OS version
-  - certificationRoute `optional(string)` - optional field describing the certification route
-  - programType `optional(string)` - optional field describing the program type
-  - programTypeVersion `optional(string)` - optional field describing the program type version
-  - transport `optional(string)` - optional field describing the transport
-  - parentChild `optional(string)` - optional field describing the parent/child - Currently 'parent' and 'child' types are supported
-  - certificationIDOfSoftwareComponent `optional(string)` - optional field describing the certification ID of software component
-  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
+  - vid: `uint16` - Model vendor ID (positive non-zero)
+  - pid: `uint16` - Model product ID (positive non-zero)
+  - softwareVersion: `uint32` - Software Version of model
+  - softwareVersionString: `string` - Software Version String of model
+  - certificationType: `string` - Certification program applied to the model. Supported values are `zigbee`, `matter` or `aliro`.
+  - specificationVersion: `uint32` - Specification version applicable to the device model, and it matches the SpecificationVersion attribute in the Basic Information Cluster of a device running the software certified by this DeviceModel record. For example, for `1.4.2.0` version this field should contain `0x01040200`.
+  - provisionalDate: `string` - The date of model provisional certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
+  - cdCertificateId: `string` - Connectivity Standards Alliance certification's certificate ID for the Certification that applies to this record. The value of this field is used in the Certification Declaration's `certificate_id` field for products using the VendorID, ProductID and SoftwareVersion in this schema entry. **Must be exactly 19 characters.**
+  - reason: `optional(string)` - Optional comment describing the reason of provisioning
+  - cDVersionNumber: `optional(uint32)` - CD Version Number of the certification
+  - familyId: `optional(string)` - Product family to which the certified model belongs. Typical family IDs have the prefix FAM followed by a sequence of alphanumeric characters (e.g. FAM123456).
+  - supportedClusters: `optional(string)` - Application cluster IDs supported by the device, as hexadecimal numbers in a comma-separated list. For example, for an Extended Color Light (implementing Matter 1.5) this field would contain (at least) 0x0003,0x0004,0x0006,0x0008,0x0062,0x0300.
+  - certificationRoute: `optional(string)` - Various certification paths, such as Fully Tested, Certification by Similarity, Family/Portfolio Certification, Certification Transfer etc. Supported values are `fullTested`, `similarity`, `rapid-recert`, `fastTrack`, `ctp`, `family`, and `portfolio`. Note that some values could be added or removed in the future.
+  - programType: `optional(string)` - Product type. Supported values are `endProduct`, `softwareComponent` or `compliantPlatform`.
+  - programTypeVersion: `optional(string)` - Version of programType (see `programType` flag for supported programs). Can be used when `programType` is provided.
+  - transport: `optional(string)` - Underlying communication technology the device uses to connect and exchange data. Supported transports are `thread`, `wi-fi`, `ethernet`, `bluetooth` and `nfc`. When multiple transports supported - should be used with comma-separator (e.g. `wi-fi,ethernet,bluetooth`).
+  - parentChild: `optional(string)` - Parent vs. child characteristic when using the Product Family Certification or Portfolio Certification Program. Supported values are `parent` and `child`.
+  - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to **`1`** (default 1, the v1 schema introduces `specificationVersion` and deprecates `compliantPlatformUsed` / `compliantPlatformVersion` / `OSVersion` / `certificationIdOfSoftwareComponent`).
+  - compliantPlatformUsed: `optional(string)` - **Deprecated.**  Certification ID of the compliant platform used with the product.
+  - compliantPlatformVersion: `optional(string)` - **Deprecated.**  Certified firmware version of Compliant Platform.
+  - certificationIDOfSoftwareComponent: `optional(string)` - **Deprecated.** Certification ID of a software component.
+  - OSVersion: `optional(string)` - **Deprecated.**  Name and version of an operating system separated by whitespace. For example, `Android 16` or `iOS 26.4`.
 - In State:
   - `compliance/ComplianceInfo/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
   - `compliance/ProvisionalModel/value/<vid>/<pid>/<softwareVersion>/<certificationType>`
 - Who can send:
   - CertificationCenter
 - CLI command:
-  - `dcld tx compliance provision-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee|access control|product security> --provisionalDate=<rfc3339 encoded date> --from=<account>`
+  - `dcld tx compliance provision-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --certificationType=<zigbee|matter|aliro> --specificationVersion=<uint32> --provisionalDate=<rfc3339 encoded date> --cdCertificateId=<string> --from=<account>`
 - CLI command full:
-  - `dcld tx compliance provision-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee|access control|product security> --provisionalDate=<rfc3339 encoded date> --cdCertificateId=<string> --reason=<string> --cDVersionNumber=<uint32> --familyId=<string> --supportedClusters=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --OSVersion=<string> --certificationRoute=<string> --programType=<string> --programTypeVersion=<string> --transport=<string> --parentChild=<string> --certificationIDOfSoftwareComponent=<string> --from=<account>`
+  - `dcld tx compliance provision-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --certificationType=<zigbee|matter|aliro> --specificationVersion=<uint32> --provisionalDate=<rfc3339 encoded date> --cdCertificateId=<string> --reason=<string> --cDVersionNumber=<uint32> --familyId=<string> --supportedClusters=<string> --compliantPlatformUsed=<string> --compliantPlatformVersion=<string> --OSVersion=<string> --certificationRoute=<string> --programType=<endProduct|softwareComponent|compliantPlatform> --programTypeVersion=<string> --transport=<string> --parentChild=<parent|child> --certificationIDOfSoftwareComponent=<string> --schemaVersion=<uint16> --from=<account>`
 
 ### GET_CERTIFIED_MODEL
 
@@ -194,12 +202,12 @@ This function returns `true` if compliance information is found on ledger and it
 You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
 
 - Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
-  - softwareVersion: `uint32` - model software version
-  - certification_type: `string`  - Certification type - Currently 'zigbee' and 'matter' types are supported
+  - vid: `uint16` - Model vendor ID (positive non-zero uint16)
+  - pid: `uint16` - Model product ID (positive non-zero uint16)
+  - softwareVersion: `uint32` - Software Version of model (uint32)
+  - certification_type: `string` - Certification program applied to the model. Supported values are `zigbee`, `matter` or `aliro`.
 - CLI command:
-  - `dcld query compliance certified-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter|access control|product security>`
+  - `dcld query compliance certified-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter|aliro>`
 - REST API:
   - GET `/dcl/compliance/certified-models/{vid}/{pid}/{software_version}/{certification_type}`
 
@@ -219,12 +227,12 @@ This function returns `true` if compliance information is found on ledger and it
 You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
 
 - Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
-  - softwareVersion: `uint32` - model software version
-  - certification_type: `string`  - Certification type - Currently 'zigbee' and 'matter' types are supported
+  - vid: `uint16` - Model vendor ID (positive non-zero uint16)
+  - pid: `uint16` - Model product ID (positive non-zero uint16)
+  - softwareVersion: `uint32` - Software Version of model (uint32)
+  - certification_type: `string` - Certification program applied to the model. Supported values are `zigbee`, `matter` or `aliro`.
 - CLI command:
-  - `dcld query compliance revoked-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter|access control|product security>`
+  - `dcld query compliance revoked-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter|aliro>`
 - REST API:
   - GET `/dcl/compliance/revoked-models/{vid}/{pid}/{software_version}/{certification_type}`
 
@@ -241,12 +249,12 @@ This function returns `true` if compliance information is found on the ledger an
 You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
 
 - Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
-  - softwareVersion: `uint32` - model software version
-  - certification_type: `string`  - Certification type - Currently 'zigbee' and 'matter' types are supported
+  - vid: `uint16` - Model vendor ID (positive non-zero uint16)
+  - pid: `uint16` - Model product ID (positive non-zero uint16)
+  - softwareVersion: `uint32` - Software Version of model (uint32)
+  - certification_type: `string` - Certification program applied to the model. Supported values are `zigbee`, `matter` or `aliro`.
 - CLI command:
-  - `dcld query compliance provisional-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter|access control|product security>`
+  - `dcld query compliance provisional-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter|aliro>`
 - REST API:
   - GET `/dcl/compliance/provisional-models/{vid}/{pid}/{software_version}/{certification_type}`
 
@@ -262,12 +270,12 @@ to get the whole compliance information without additional state check.
 This function responds with `NotFound` (404 code) if compliance information is not found in store.
 
 - Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
-  - softwareVersion: `uint32` - model software version
-  - certification_type: `string`  - Certification type - Currently 'zigbee' and 'matter' types are supported
+  - vid: `uint16` - Model vendor ID (positive non-zero uint16)
+  - pid: `uint16` - Model product ID (positive non-zero uint16)
+  - softwareVersion: `uint32` - Software Version of model (uint32)
+  - certification_type: `string` - Certification program applied to the model. Supported values are `zigbee`, `matter` or `aliro`.
 - CLI command:
-  - `dcld query compliance compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter|access control|product security>`
+  - `dcld query compliance compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter|aliro>`
 - REST API:
   - GET `/dcl/compliance/compliance-info/{vid}/{pid}/{software_version}/{certification_type}`
 

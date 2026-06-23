@@ -7,10 +7,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
-// TestModelDemo translates model-demo.sh.
 func TestModelDemo(t *testing.T) {
 	vid := rand.Intn(65534) + 1
 	vendorAccount := fmt.Sprintf("vendor_account_%d", vid)
@@ -23,17 +21,17 @@ func TestModelDemo(t *testing.T) {
 	cliputils.CreateVendorAccount(t, vendorAccountWithPids, vidWithPids, pidRanges)
 
 	t.Run("QueryNonExistentModel", func(t *testing.T) {
-		out, err := QueryModel(vid, pid)
+		m, err := GetModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, m)
 
-		out, err = QueryVendorModels(vid)
+		vm, err := GetVendorModels(vid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, vm)
 
-		out, err = QueryAllModels()
+		all, err := GetAllModels()
 		require.NoError(t, err)
-		require.NotContains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
+		require.False(t, containsModelByPid(all, int32(vid), int32(pid)))
 	})
 
 	productLabel := "Device #1"
@@ -41,107 +39,125 @@ func TestModelDemo(t *testing.T) {
 	cdVersionNum := 10
 
 	t.Run("AddModel", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--deviceTypeID", "1",
-			"--productName", "TestProduct",
-			"--productLabel", productLabel,
-			"--partNumber", "1",
-			"--commissioningCustomFlow", "0",
-			"--enhancedSetupFlowOptions", "0",
-			"--schemaVersion", "0",
-			"--from", vendorAccount,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err := AddModel(AddModelOpts{
+			VID: vid, PID: pid,
+			ProductLabel:  productLabel,
+			SchemaVersion: "0",
+			From:          vendorAccount,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("AddModelWithPidRanges", func(t *testing.T) {
-		enhancedSetupFlowTCUrl := "https://example.org/file.txt"
-		enhancedSetupFlowTCRevision := 1
-		enhancedSetupFlowTCDigest := "MWRjNGE0NDA0MWRjYWYxMTU0NWI3NTQzZGZlOTQyZjQ3NDJmNTY4YmU2OGZlZTI3NTQ0MWIwOTJiYjYwZGVlZA=="
-		enhancedSetupFlowTCFileSize := 1024
-		enhancedSetupFlowMaintenanceUrl := "https://example.org"
-		commissioningFallbackUrl := "https://url.commissioningfallbackurl.dclmodel"
-
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vidWithPids),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--deviceTypeID", "1",
-			"--productName", "TestProduct",
-			"--productLabel", productLabel,
-			"--partNumber", "1",
-			"--commissioningCustomFlow", "0",
-			"--enhancedSetupFlowOptions", "1",
-			"--enhancedSetupFlowTCUrl", enhancedSetupFlowTCUrl,
-			"--enhancedSetupFlowTCRevision", fmt.Sprintf("%d", enhancedSetupFlowTCRevision),
-			"--enhancedSetupFlowTCDigest", enhancedSetupFlowTCDigest,
-			"--enhancedSetupFlowTCFileSize", fmt.Sprintf("%d", enhancedSetupFlowTCFileSize),
-			"--enhancedSetupFlowMaintenanceUrl", enhancedSetupFlowMaintenanceUrl,
-			"--commissioningFallbackUrl", commissioningFallbackUrl,
-			"--discoveryCapabilitiesBitmask", "1",
-			"--from", vendorAccountWithPids,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err := AddModel(AddModelOpts{
+			VID: vidWithPids, PID: pid,
+			ProductLabel:                 productLabel,
+			EnhancedSetupFlowOptions:     1,
+			EnhancedSetupFlowTCUrl:       "https://example.org/file.txt",
+			EnhancedSetupFlowTCRevision:  1,
+			EnhancedSetupFlowTCDigest:    "MWRjNGE0NDA0MWRjYWYxMTU0NWI3NTQzZGZlOTQyZjQ3NDJmNTY4YmU2OGZlZTI3NTQ0MWIwOTJiYjYwZGVlZA==",
+			EnhancedSetupFlowTCFileSize:  1024,
+			MaintenanceURL:               "https://example.org",
+			CommissioningFallbackURL:     "https://url.commissioningfallbackurl.dclmodel",
+			DiscoveryCapabilitiesBitmask: 1,
+			From:                         vendorAccountWithPids,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("QueryModel", func(t *testing.T) {
-		out, err := QueryModel(vid, pid)
+		m, err := GetModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
-		require.Contains(t, string(out), fmt.Sprintf(`"productLabel":"%s"`, productLabel))
-		require.Contains(t, string(out), `"schemaVersion":0`)
-		require.Contains(t, string(out), `"enhancedSetupFlowOptions":0`)
+		require.NotNil(t, m)
+		require.Equal(t, int32(vid), m.Vid)
+		require.Equal(t, int32(pid), m.Pid)
+		require.Equal(t, productLabel, m.ProductLabel)
+		require.Equal(t, uint32(0), m.SchemaVersion)
+		require.Equal(t, int32(0), m.EnhancedSetupFlowOptions)
+	})
+
+	t.Run("QueryModelWithPidRanges", func(t *testing.T) {
+		// The vidWithPids model was added with the full enhanced-setup-flow and
+		// maintenance field set — verify each persisted.
+		m, err := GetModel(vidWithPids, pid)
+		require.NoError(t, err)
+		require.NotNil(t, m)
+		require.Equal(t, int32(vidWithPids), m.Vid)
+		require.Equal(t, int32(pid), m.Pid)
+		require.Equal(t, productLabel, m.ProductLabel)
+		require.Equal(t, int32(1), m.EnhancedSetupFlowOptions)
+		require.Equal(t, "https://example.org/file.txt", m.EnhancedSetupFlowTCUrl)
+		require.Equal(t, int32(1), m.EnhancedSetupFlowTCRevision)
+		require.Equal(t, "MWRjNGE0NDA0MWRjYWYxMTU0NWI3NTQzZGZlOTQyZjQ3NDJmNTY4YmU2OGZlZTI3NTQ0MWIwOTJiYjYwZGVlZA==", m.EnhancedSetupFlowTCDigest)
+		require.Equal(t, uint32(1024), m.EnhancedSetupFlowTCFileSize)
+		require.Equal(t, "https://example.org", m.MaintenanceUrl)
+		require.Equal(t, "https://url.commissioningfallbackurl.dclmodel", m.CommissioningFallbackUrl)
+		require.Equal(t, uint32(1), m.DiscoveryCapabilitiesBitmask)
+	})
+
+	t.Run("UpdateModelWithPidRangesFields", func(t *testing.T) {
+		// Update the vidWithPids model's enhanced-setup-flow / maintenance fields
+		// and confirm the new values persist.
+		newTCUrl := "https://example.org/file2.txt"
+		newDigest := "MWRjNGE0NDA0MWRjYWYxMTU0NWI3NTQzZGZlOTQyZjQ3NDJmNTY4YmU2OGZlZTI3NTQ0MWIwOTJiYjYwZGVlZA=="
+		newMaintenanceURL := "https://example.org/maintenance"
+		newFallbackURL := "https://url.newcommissioningfallbackurl.dclmodel"
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vidWithPids, PID: pid, From: vendorAccountWithPids,
+			ProductLabel:                "Updated pid-ranges model",
+			EnhancedSetupFlowOptions:    1,
+			EnhancedSetupFlowTCUrl:      newTCUrl,
+			EnhancedSetupFlowTCRevision: 2,
+			EnhancedSetupFlowTCDigest:   newDigest,
+			EnhancedSetupFlowTCFileSize: 2048,
+			MaintenanceURL:              newMaintenanceURL,
+			CommissioningFallbackURL:    newFallbackURL,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
+
+		m, err := GetModel(vidWithPids, pid)
+		require.NoError(t, err)
+		require.NotNil(t, m)
+		require.Equal(t, int32(1), m.EnhancedSetupFlowOptions)
+		require.Equal(t, newTCUrl, m.EnhancedSetupFlowTCUrl)
+		require.Equal(t, int32(2), m.EnhancedSetupFlowTCRevision)
+		require.Equal(t, uint32(2048), m.EnhancedSetupFlowTCFileSize)
+		require.Equal(t, newMaintenanceURL, m.MaintenanceUrl)
+		require.Equal(t, newFallbackURL, m.CommissioningFallbackUrl)
 	})
 
 	t.Run("AddModelVersions", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model-version",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--softwareVersion", fmt.Sprintf("%d", sv),
-			"--minApplicableSoftwareVersion", "1",
-			"--maxApplicableSoftwareVersion", "15",
-			"--softwareVersionString", fmt.Sprintf("%d", sv),
-			"--cdVersionNumber", fmt.Sprintf("%d", cdVersionNum),
-			"--from", vendorAccount,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		svStr := fmt.Sprintf("%d", sv)
+		txResult, err := AddModelVersion(AddModelVersionOpts{
+			VID: vid, PID: pid,
+			SoftwareVersion:              sv,
+			SoftwareVersionString:        svStr,
+			CDVersionNumber:              cdVersionNum,
+			MaxApplicableSoftwareVersion: 15,
+			From:                         vendorAccount,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		txResult, err = utils.ExecuteTx("tx", "model", "add-model-version",
-			"--vid", fmt.Sprintf("%d", vidWithPids),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--softwareVersion", fmt.Sprintf("%d", sv),
-			"--minApplicableSoftwareVersion", "1",
-			"--maxApplicableSoftwareVersion", "15",
-			"--softwareVersionString", fmt.Sprintf("%d", sv),
-			"--cdVersionNumber", fmt.Sprintf("%d", cdVersionNum),
-			"--from", vendorAccountWithPids,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err = AddModelVersion(AddModelVersionOpts{
+			VID: vidWithPids, PID: pid,
+			SoftwareVersion:              sv,
+			SoftwareVersionString:        svStr,
+			CDVersionNumber:              cdVersionNum,
+			MaxApplicableSoftwareVersion: 15,
+			From:                         vendorAccountWithPids,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("QueryAllModelsAndVendorModels", func(t *testing.T) {
-		out, err := QueryAllModels()
+		all, err := GetAllModels()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
+		require.True(t, containsModelByPid(all, int32(vid), int32(pid)))
 
-		out, err = QueryVendorModels(vid)
+		vm, err := GetVendorModels(vid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
+		require.NotNil(t, vm)
+		require.True(t, containsProductByPid(vm.Products, int32(pid)))
 	})
 
 	description := "New Device Description"
@@ -151,87 +167,106 @@ func TestModelDemo(t *testing.T) {
 	newFactoryResetStepsHint := 6
 
 	t.Run("UpdateModel", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "update-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--from", vendorAccount,
-			"--productLabel", description,
-			"--schemaVersion", "0",
-			"--commissioningModeInitialStepsHint", fmt.Sprintf("%d", newCommissioningModeInitialStepsHint),
-			"--commissioningModeSecondaryStepsHint", fmt.Sprintf("%d", newCommissioningModeSecondaryStepsHint),
-			"--icdUserActiveModeTriggerHint", fmt.Sprintf("%d", newIcdUserActiveModeTriggerHint),
-			"--enhancedSetupFlowOptions", "2",
-			"--factoryResetStepsHint", fmt.Sprintf("%d", newFactoryResetStepsHint),
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid, PID: pid, From: vendorAccount,
+			ProductLabel:                        description,
+			SchemaVersion:                       "0",
+			CommissioningModeInitialStepsHint:   newCommissioningModeInitialStepsHint,
+			CommissioningModeSecondaryStepsHint: newCommissioningModeSecondaryStepsHint,
+			IcdUserActiveModeTriggerHint:        newIcdUserActiveModeTriggerHint,
+			EnhancedSetupFlowOptions:            2,
+			FactoryResetStepsHint:               newFactoryResetStepsHint,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("QueryUpdatedModel", func(t *testing.T) {
-		out, err := QueryModel(vid, pid)
+		m, err := GetModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
-		require.Contains(t, string(out), fmt.Sprintf(`"productLabel":"%s"`, description))
-		require.Contains(t, string(out), `"schemaVersion":0`)
-		require.Contains(t, string(out), fmt.Sprintf(`"commissioningModeInitialStepsHint":%d`, newCommissioningModeInitialStepsHint))
-		require.Contains(t, string(out), fmt.Sprintf(`"commissioningModeSecondaryStepsHint":%d`, newCommissioningModeSecondaryStepsHint))
-		require.Contains(t, string(out), fmt.Sprintf(`"icdUserActiveModeTriggerHint":%d`, newIcdUserActiveModeTriggerHint))
-		require.Contains(t, string(out), fmt.Sprintf(`"factoryResetStepsHint":%d`, newFactoryResetStepsHint))
-		require.Contains(t, string(out), `"enhancedSetupFlowOptions":2`)
+		require.NotNil(t, m)
+		require.Equal(t, int32(vid), m.Vid)
+		require.Equal(t, int32(pid), m.Pid)
+		require.Equal(t, description, m.ProductLabel)
+		require.Equal(t, uint32(0), m.SchemaVersion)
+		require.Equal(t, uint32(newCommissioningModeInitialStepsHint), m.CommissioningModeInitialStepsHint)
+		require.Equal(t, uint32(newCommissioningModeSecondaryStepsHint), m.CommissioningModeSecondaryStepsHint)
+		require.Equal(t, uint32(newIcdUserActiveModeTriggerHint), m.IcdUserActiveModeTriggerHint)
+		require.Equal(t, uint32(newFactoryResetStepsHint), m.FactoryResetStepsHint)
+		require.Equal(t, int32(2), m.EnhancedSetupFlowOptions)
 	})
 
 	supportURL := "https://newsupporturl.test"
 
 	t.Run("UpdateModelSupportURL", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "update-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--from", vendorAccount,
-			"--supportURL", supportURL,
-			"--enhancedSetupFlowOptions", "0",
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid, PID: pid, From: vendorAccount,
+			SupportURL: supportURL,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryModel(vid, pid)
+		m, err := GetModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"supportUrl":"%s"`, supportURL))
+		require.NotNil(t, m)
+		require.Equal(t, supportURL, m.SupportUrl)
 	})
 
 	t.Run("DeleteModels", func(t *testing.T) {
 		txResult, err := DeleteModel(vid, pid, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = DeleteModel(vidWithPids, pid, vendorAccountWithPids)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("QueryAfterDeletion", func(t *testing.T) {
-		out, err := QueryModel(vid, pid)
+		m, err := GetModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, m)
 
-		out, err = QueryModel(vidWithPids, pid)
+		m, err = GetModel(vidWithPids, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, m)
 
-		out, err = QueryModelVersion(vid, pid, sv)
+		mv, err := GetModelVersion(vid, pid, sv)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, mv)
 
-		out, err = QueryModelVersion(vidWithPids, pid, sv)
+		mv, err = GetModelVersion(vidWithPids, pid, sv)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, mv)
+	})
+
+	t.Run("VendorAdminModelLifecycle", func(t *testing.T) {
+		// A VendorAdmin account can add/update/delete a model for any vendor
+		// (model-demo.sh:273-309).
+		vendorAdmin := cliputils.CreateAccount(t, "VendorAdmin")
+		vid3 := rand.Intn(65534) + 1
+		pid3 := rand.Intn(65534) + 1
+
+		txResult, err := AddModel(AddModelOpts{VID: vid3, PID: pid3, ProductLabel: "VendorAdmin Product", From: vendorAdmin})
+		cliputils.RequireTxOK(t, txResult, err)
+
+		m, err := GetModel(vid3, pid3)
+		require.NoError(t, err)
+		require.NotNil(t, m)
+		require.Equal(t, "VendorAdmin Product", m.ProductLabel)
+
+		txResult, err = UpdateModel(UpdateModelOpts{
+			VID: vid3, PID: pid3, From: vendorAdmin,
+			ProductLabel: "Updated by VendorAdmin",
+		})
+		cliputils.RequireTxOK(t, txResult, err)
+
+		m, err = GetModel(vid3, pid3)
+		require.NoError(t, err)
+		require.NotNil(t, m)
+		require.Equal(t, "Updated by VendorAdmin", m.ProductLabel)
+
+		txResult, err = DeleteModel(vid3, pid3, vendorAdmin)
+		cliputils.RequireTxOK(t, txResult, err)
+
+		m, err = GetModel(vid3, pid3)
+		require.NoError(t, err)
+		require.Nil(t, m)
 	})
 }

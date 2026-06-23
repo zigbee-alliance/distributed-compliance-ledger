@@ -21,10 +21,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+	vendorinfotypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/types"
 )
 
-// TestVendorInfoDemo translates vendorinfo-demo.sh.
 func TestVendorInfoDemo(t *testing.T) {
 	vid := rand.Intn(60000) + 1
 	vid2 := rand.Intn(60000) + 1
@@ -39,16 +38,22 @@ func TestVendorInfoDemo(t *testing.T) {
 	vendorAdminAccount := cliputils.CreateAccount(t, "VendorAdmin")
 
 	t.Run("QueryNonExistent", func(t *testing.T) {
-		out, err := QueryVendor(fmt.Sprintf("%d", vid))
+		v, err := GetVendor(vid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, v)
 	})
 
 	t.Run("QueryAllEmpty", func(t *testing.T) {
-		// This test's specific vendor must not exist yet (other tests may have added different VIDs).
-		out, err := QueryVendor(fmt.Sprintf("%d", vid))
+		// This test's specific vendor must not exist yet (other tests may have
+		// added different VIDs, so the global all-vendors list is not literally
+		// empty on the shared ledger — assert only that our VID is absent).
+		v, err := GetVendor(vid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, v)
+
+		all, err := GetAllVendors()
+		require.NoError(t, err)
+		require.False(t, containsVendorByID(all, int32(vid)))
 	})
 
 	const (
@@ -58,123 +63,121 @@ func TestVendorInfoDemo(t *testing.T) {
 	)
 
 	t.Run("AddVendorInfo", func(t *testing.T) {
-		txResult, err := AddVendor(vendorAccount,
-			"--vid", fmt.Sprintf("%d", vid),
-			"--companyLegalName", companyLegalName,
-			"--vendorName", vendorName,
-			"--schemaVersion", schemaVersion0,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err := AddVendor(vendorAccount, VendorOpts{
+			VID:              vid,
+			CompanyLegalName: companyLegalName,
+			VendorName:       vendorName,
+			SchemaVersion:    schemaVersion0,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("QueryVendorInfo", func(t *testing.T) {
-		out, err := QueryVendor(fmt.Sprintf("%d", vid))
+		v, err := GetVendor(vid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorID":%d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"companyLegalName":"%s"`, companyLegalName))
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorName":"%s"`, vendorName))
-		require.Contains(t, string(out), fmt.Sprintf(`"schemaVersion":%s`, schemaVersion0))
+		require.NotNil(t, v)
+		require.Equal(t, int32(vid), v.VendorID)
+		require.Equal(t, companyLegalName, v.CompanyLegalName)
+		require.Equal(t, vendorName, v.VendorName)
+		require.Equal(t, uint32(0), v.SchemaVersion)
 	})
 
 	t.Run("QueryAllVendors", func(t *testing.T) {
-		out, err := QueryAllVendors()
+		all, err := GetAllVendors()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorID":%d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"companyLegalName":"%s"`, companyLegalName))
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorName":"%s"`, vendorName))
+		require.True(t, containsVendorByID(all, int32(vid)))
+		var got *vendorinfotypes.VendorInfo
+		for i := range all {
+			if all[i].VendorID == int32(vid) {
+				got = &all[i]
+
+				break
+			}
+		}
+		require.NotNil(t, got)
+		require.Equal(t, companyLegalName, got.CompanyLegalName)
+		require.Equal(t, vendorName, got.VendorName)
 	})
 
 	t.Run("UpdateVendorInfoRequiredFieldsOnly", func(t *testing.T) {
-		txResult, err := UpdateVendor(vendorAccount,
-			"--vid", fmt.Sprintf("%d", vid),
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err := UpdateVendor(vendorAccount, VendorOpts{VID: vid})
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Omitted optional fields should keep their previous values
-		out, err := QueryVendor(fmt.Sprintf("%d", vid))
+		v, err := GetVendor(vid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorID":%d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"companyLegalName":"%s"`, companyLegalName))
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorName":"%s"`, vendorName))
+		require.NotNil(t, v)
+		require.Equal(t, int32(vid), v.VendorID)
+		require.Equal(t, companyLegalName, v.CompanyLegalName)
+		require.Equal(t, vendorName, v.VendorName)
 	})
 
 	updatedCompanyLegalName := "ABC Subsidiary Corporation"
 	vendorLandingPageURL := "https://www.w3.org/"
 
 	t.Run("UpdateVendorInfoAllFields", func(t *testing.T) {
-		txResult, err := UpdateVendor(vendorAccount,
-			"--vid", fmt.Sprintf("%d", vid),
-			"--companyLegalName", updatedCompanyLegalName,
-			"--vendorLandingPageURL", vendorLandingPageURL,
-			"--vendorName", vendorName,
-			"--schemaVersion", schemaVersion0,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err := UpdateVendor(vendorAccount, VendorOpts{
+			VID:                  vid,
+			CompanyLegalName:     updatedCompanyLegalName,
+			VendorLandingPageURL: vendorLandingPageURL,
+			VendorName:           vendorName,
+			SchemaVersion:        schemaVersion0,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryVendor(fmt.Sprintf("%d", vid))
+		v, err := GetVendor(vid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorID":%d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"companyLegalName":"%s"`, updatedCompanyLegalName))
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorName":"%s"`, vendorName))
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorLandingPageURL":"%s"`, vendorLandingPageURL))
+		require.NotNil(t, v)
+		require.Equal(t, int32(vid), v.VendorID)
+		require.Equal(t, updatedCompanyLegalName, v.CompanyLegalName)
+		require.Equal(t, vendorName, v.VendorName)
+		require.Equal(t, vendorLandingPageURL, v.VendorLandingPageURL)
+		require.Equal(t, uint32(0), v.SchemaVersion)
 	})
 
 	t.Run("AddVendorForWrongVID_Fails", func(t *testing.T) {
-		vid1 := rand.Intn(60000) + 61000
-		txResult, err := AddVendor(vendorAccount,
-			"--vid", fmt.Sprintf("%d", vid1),
-			"--companyLegalName", updatedCompanyLegalName,
-			"--vendorName", vendorName,
-		)
-		// Either execution error or non-zero tx code
-		if err == nil {
-			require.NotEqual(t, uint32(0), txResult.Code)
-		}
+		// vid1 must be a *valid* VID (<= 65535) that differs from the vendor
+		// account's VID, so the add reaches the vendor-association check rather
+		// than the VID upper-bound validation. vid/vid2 are both <= 60000, so
+		// [60001, 65535] is always distinct.
+		vid1 := rand.Intn(5535) + 60001
+		txResult, err := AddVendor(vendorAccount, VendorOpts{
+			VID:              vid1,
+			CompanyLegalName: updatedCompanyLegalName,
+			VendorName:       vendorName,
+		})
+		cliputils.RequireTxFailContains(t, txResult, err,
+			fmt.Sprintf("transaction should be signed by a vendor account associated with the vendorID %d", vid1))
 	})
 
 	t.Run("UpdateVendorForWrongAccount_Fails", func(t *testing.T) {
-		txResult, err := UpdateVendor(secondVendorAccount,
-			"--vid", fmt.Sprintf("%d", vid),
-			"--companyLegalName", updatedCompanyLegalName,
-			"--vendorName", vendorName,
-		)
-		if err == nil {
-			require.NotEqual(t, uint32(0), txResult.Code)
-		}
+		// secondVendorAccount (vid2) cannot update vid's record.
+		txResult, err := UpdateVendor(secondVendorAccount, VendorOpts{
+			VID:              vid,
+			CompanyLegalName: updatedCompanyLegalName,
+			VendorName:       vendorName,
+		})
+		cliputils.RequireTxFailContains(t, txResult, err,
+			fmt.Sprintf("transaction should be signed by a vendor account associated with the vendorID %d", vid))
 	})
 
 	t.Run("AddVendorByVendorAdmin", func(t *testing.T) {
 		adminVid := rand.Intn(60000) + 1
-		txResult, err := AddVendor(vendorAdminAccount,
-			"--vid", fmt.Sprintf("%d", adminVid),
-			"--companyLegalName", updatedCompanyLegalName,
-			"--vendorName", vendorName,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err := AddVendor(vendorAdminAccount, VendorOpts{
+			VID:              adminVid,
+			CompanyLegalName: updatedCompanyLegalName,
+			VendorName:       vendorName,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Update the same record by vendor admin
 		newCompanyName := "New Corp"
 		newVendorName := "New Vendor Name"
-		txResult, err = UpdateVendor(vendorAdminAccount,
-			"--vid", fmt.Sprintf("%d", adminVid),
-			"--companyLegalName", newCompanyName,
-			"--vendorName", newVendorName,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err = UpdateVendor(vendorAdminAccount, VendorOpts{
+			VID:              adminVid,
+			CompanyLegalName: newCompanyName,
+			VendorName:       newVendorName,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 }

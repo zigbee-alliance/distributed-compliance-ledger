@@ -1,7 +1,6 @@
 package pki
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -20,12 +19,18 @@ const (
 	approvalTestVid                  = 24582
 )
 
-// TestPKIApproval translates pki-approval.sh.
 // This test covers approval and revocation flows requiring a 2/3-quorum with 6 trustees.
 func TestPKIApproval(t *testing.T) {
 	jack := testconstants.JackAccount
 	alice := testconstants.AliceAccount
 	bob := testconstants.BobAccount
+
+	jackAddr, err := cliputils.GetAddress(jack)
+	require.NoError(t, err)
+	aliceAddr, err := cliputils.GetAddress(alice)
+	require.NoError(t, err)
+	bobAddr, err := cliputils.GetAddress(bob)
+	require.NoError(t, err)
 
 	userAccount := cliputils.CreateAccount(t, "CertificationCenter")
 
@@ -34,10 +39,10 @@ func TestPKIApproval(t *testing.T) {
 
 	// Create 4th trustee (N=3, threshold=2): Jack proposes + Alice approves.
 	fourthKey := utils.RandString()
-	require.NoError(t, dclauth.AddKey(fourthKey))
-	fourthAddr, err := dclauth.GetAddress(fourthKey)
+	require.NoError(t, cliputils.AddKey(fourthKey))
+	fourthAddr, err := cliputils.GetAddress(fourthKey)
 	require.NoError(t, err)
-	fourthPubkey, err := dclauth.GetPubkey(fourthKey)
+	fourthPubkey, err := cliputils.GetPubkey(fourthKey)
 	require.NoError(t, err)
 	txResult, err := dclauth.ProposeAccount(fourthAddr, fourthPubkey, "Trustee", jack)
 	require.NoError(t, err)
@@ -45,16 +50,16 @@ func TestPKIApproval(t *testing.T) {
 	txResult, err = dclauth.ApproveAccount(fourthAddr, alice)
 	require.NoError(t, err)
 	require.Equal(t, uint32(0), txResult.Code, "approve 4th trustee (alice): %s", txResult.RawLog)
-	out, err := utils.ExecuteCLI("query", "auth", "account", "--address", fourthAddr, "-o", "json")
+	fourthAcc, err := dclauth.GetAccount(fourthAddr)
 	require.NoError(t, err)
-	require.NotContains(t, string(out), "Not Found", "4th trustee should be active")
+	require.NotNil(t, fourthAcc, "4th trustee should be active")
 
 	// Create 5th trustee (N=4, threshold=3): Jack + Alice + Bob.
 	fifthKey := utils.RandString()
-	require.NoError(t, dclauth.AddKey(fifthKey))
-	fifthAddr, err := dclauth.GetAddress(fifthKey)
+	require.NoError(t, cliputils.AddKey(fifthKey))
+	fifthAddr, err := cliputils.GetAddress(fifthKey)
 	require.NoError(t, err)
-	fifthPubkey, err := dclauth.GetPubkey(fifthKey)
+	fifthPubkey, err := cliputils.GetPubkey(fifthKey)
 	require.NoError(t, err)
 	txResult, err = dclauth.ProposeAccount(fifthAddr, fifthPubkey, "Trustee", jack)
 	require.NoError(t, err)
@@ -64,16 +69,16 @@ func TestPKIApproval(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code, "approve 5th trustee (%s): %s", approver, txResult.RawLog)
 	}
-	out, err = utils.ExecuteCLI("query", "auth", "account", "--address", fifthAddr, "-o", "json")
+	fifthAcc, err := dclauth.GetAccount(fifthAddr)
 	require.NoError(t, err)
-	require.NotContains(t, string(out), "Not Found", "5th trustee should be active")
+	require.NotNil(t, fifthAcc, "5th trustee should be active")
 
 	// Create 6th trustee (N=5, threshold=4): Jack + Alice + Bob + fourth.
 	sixthKey := utils.RandString()
-	require.NoError(t, dclauth.AddKey(sixthKey))
-	sixthAddr, err := dclauth.GetAddress(sixthKey)
+	require.NoError(t, cliputils.AddKey(sixthKey))
+	sixthAddr, err := cliputils.GetAddress(sixthKey)
 	require.NoError(t, err)
-	sixthPubkey, err := dclauth.GetPubkey(sixthKey)
+	sixthPubkey, err := cliputils.GetPubkey(sixthKey)
 	require.NoError(t, err)
 	txResult, err = dclauth.ProposeAccount(sixthAddr, sixthPubkey, "Trustee", jack)
 	require.NoError(t, err)
@@ -83,9 +88,9 @@ func TestPKIApproval(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code, "approve 6th trustee (%s): %s", approver, txResult.RawLog)
 	}
-	out, err = utils.ExecuteCLI("query", "auth", "account", "--address", sixthAddr, "-o", "json")
+	sixthAcc, err := dclauth.GetAccount(sixthAddr)
 	require.NoError(t, err)
-	require.NotContains(t, string(out), "Not Found", "6th trustee should be active")
+	require.NotNil(t, sixthAcc, "6th trustee should be active")
 
 	// Cleanup: revoke extra trustees after the test so subsequent tests aren't affected by
 	// the raised quorum. Register in order 4th→5th→6th so LIFO runs 6th→5th→4th.
@@ -117,53 +122,75 @@ func TestPKIApproval(t *testing.T) {
 	})
 
 	t.Run("NonTrustee_CannotProposeRootCert", func(t *testing.T) {
-		txResult, err := ProposeAddX509RootCert(approvalTestRootCertPath, userAccount,
-			"--vid", fmt.Sprintf("%d", approvalTestVid),
-		)
-		require.NoError(t, err)
-		require.NotEqual(t, uint32(0), txResult.Code)
+		txResult, err := ProposeAddX509RootCert(approvalTestRootCertPath, userAccount, X509ProposeOpts{VID: approvalTestVid})
+		cliputils.RequireTxFails(t, txResult, err)
 	})
 
 	t.Run("ProposeAndApproveWithQuorum", func(t *testing.T) {
 		// 6 trustees, threshold=4.
 		// 4th proposes (=1), Jack approves (=2), Alice approves (=3), Bob approves (=4) → approved.
-		txResult, err := ProposeAddX509RootCert(approvalTestRootCertPath, fourthKey,
-			"--vid", fmt.Sprintf("%d", approvalTestVid),
-		)
+		txResult, err := ProposeAddX509RootCert(approvalTestRootCertPath, fourthKey, X509ProposeOpts{VID: approvalTestVid})
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
+
+		// After the proposal, the proposer's approval is recorded and the cert is
+		// not yet in the approved store.
+		proposed, err := GetProposedX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		require.NoError(t, err)
+		require.NotNil(t, proposed)
+		require.True(t, grantsContain(proposed.Approvals, fourthAddr))
+		cert, err := GetX509Cert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		require.NoError(t, err)
+		require.Nil(t, cert, "cert must not be approved after only the proposal")
 
 		txResult, err = ApproveAddX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID, jack)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 
-		// Still proposed after 2 approvals.
-		out, err := QueryProposedX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		// Still proposed (not approved) after 2 approvals; approvals accumulate.
+		proposed, err = GetProposedX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, approvalTestRootCertSubject))
+		require.NotNil(t, proposed)
+		require.Equal(t, approvalTestRootCertSubject, proposed.Subject)
+		require.True(t, grantsContain(proposed.Approvals, fourthAddr))
+		require.True(t, grantsContain(proposed.Approvals, jackAddr))
+		cert, err = GetX509Cert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		require.NoError(t, err)
+		require.Nil(t, cert, "cert must not be approved after 2/4 approvals")
 
 		txResult, err = ApproveAddX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID, alice)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 
-		// Still proposed after 3 approvals.
-		out, err = QueryProposedX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		// Still proposed (not approved) after 3 approvals.
+		proposed, err = GetProposedX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, approvalTestRootCertSubject))
+		require.NotNil(t, proposed)
+		require.True(t, grantsContain(proposed.Approvals, aliceAddr))
+		cert, err = GetX509Cert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		require.NoError(t, err)
+		require.Nil(t, cert, "cert must not be approved after 3/4 approvals")
 
 		txResult, err = ApproveAddX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID, bob)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 
-		// Now approved (4 approvals = quorum).
-		out, err = QueryX509Cert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		// Now approved (4 approvals = quorum); all four approver addresses are
+		// recorded on the approved certificate.
+		cert, err = GetX509Cert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, approvalTestRootCertSubject))
-		require.Contains(t, string(out), `"isRoot":true`)
+		require.NotNil(t, cert)
+		require.Equal(t, approvalTestRootCertSubject, cert.Subject)
+		require.NotEmpty(t, cert.Certs)
+		require.True(t, cert.Certs[0].IsRoot)
+		require.True(t, grantsContain(cert.Certs[0].Approvals, fourthAddr))
+		require.True(t, grantsContain(cert.Certs[0].Approvals, jackAddr))
+		require.True(t, grantsContain(cert.Certs[0].Approvals, aliceAddr))
+		require.True(t, grantsContain(cert.Certs[0].Approvals, bobAddr))
 
-		out, err = QueryProposedX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		proposed, err = GetProposedX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, proposed)
 	})
 
 	t.Run("RevokeRootCertWithQuorum", func(t *testing.T) {
@@ -173,39 +200,64 @@ func TestPKIApproval(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 
-		out, err := QueryProposedRevokedX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		sixthAddr, err := cliputils.GetAddress(sixthKey)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, approvalTestRootCertSubject))
+		fifthAddr, err := cliputils.GetAddress(fifthKey)
+		require.NoError(t, err)
+		fourthRevAddr, err := cliputils.GetAddress(fourthKey)
+		require.NoError(t, err)
+
+		proposedRev, err := GetProposedRevokedX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		require.NoError(t, err)
+		require.NotNil(t, proposedRev)
+		require.Equal(t, approvalTestRootCertSubject, proposedRev.Subject)
+		require.True(t, grantsContain(proposedRev.Approvals, sixthAddr))
+		// Cert is still approved (not yet revoked) with only the proposer's vote.
+		cert, err := GetX509Cert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
 
 		txResult, err = ApproveRevokeX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID, fifthKey)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 
-		// Still proposed (2 approvals).
-		out, err = QueryProposedRevokedX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		// Still proposed (2 approvals accumulate); cert still approved.
+		proposedRev, err = GetProposedRevokedX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, approvalTestRootCertSubject))
+		require.NotNil(t, proposedRev)
+		require.True(t, grantsContain(proposedRev.Approvals, sixthAddr))
+		require.True(t, grantsContain(proposedRev.Approvals, fifthAddr))
+		cert, err = GetX509Cert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
 
 		txResult, err = ApproveRevokeX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID, fourthKey)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 
 		// Still proposed (3 approvals).
-		out, err = QueryProposedRevokedX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		proposedRev, err = GetProposedRevokedX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, approvalTestRootCertSubject))
+		require.NotNil(t, proposedRev)
+		require.True(t, grantsContain(proposedRev.Approvals, fourthRevAddr))
 
 		txResult, err = ApproveRevokeX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID, bob)
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 
-		// Now revoked (4 approvals = quorum).
-		out, err = QueryRevokedX509Cert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		// Now revoked (4 approvals = quorum); the revoke voters are recorded.
+		revoked, err := GetRevokedX509Cert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, approvalTestRootCertSubject))
+		require.NotNil(t, revoked)
+		require.Equal(t, approvalTestRootCertSubject, revoked.Subject)
+		require.NotEmpty(t, revoked.Certs)
+		require.True(t, grantsContain(revoked.Certs[0].Approvals, sixthAddr))
+		require.True(t, grantsContain(revoked.Certs[0].Approvals, fifthAddr))
+		require.True(t, grantsContain(revoked.Certs[0].Approvals, fourthRevAddr))
+		require.True(t, grantsContain(revoked.Certs[0].Approvals, bobAddr))
 
-		out, err = QueryX509Cert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
+		cert, err = GetX509Cert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, cert)
 	})
 }

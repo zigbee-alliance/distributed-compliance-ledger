@@ -67,7 +67,7 @@ func NewMsgCreateModel(vid int32, pid int32, signer string) *modeltypes.MsgCreat
 		EnhancedSetupFlowTCRevision:                int32(testconstants.EnhancedSetupFlowTCRevision),
 		EnhancedSetupFlowTCDigest:                  testconstants.EnhancedSetupFlowTCDigest,
 		EnhancedSetupFlowTCFileSize:                uint32(testconstants.EnhancedSetupFlowTCFileSize),
-		EnhancedSetupFlowMaintenanceUrl:            testconstants.EnhancedSetupFlowMaintenanceURL,
+		MaintenanceUrl:                             testconstants.MaintenanceURL,
 		CommissioningFallbackUrl:                   testconstants.CommissioningFallbackURL,
 		DiscoveryCapabilitiesBitmask:               testconstants.DiscoveryCapabilitiesBitmask,
 	}
@@ -75,22 +75,22 @@ func NewMsgCreateModel(vid int32, pid int32, signer string) *modeltypes.MsgCreat
 
 func NewMsgUpdateModel(vid int32, pid int32, signer string) *modeltypes.MsgUpdateModel {
 	return &modeltypes.MsgUpdateModel{
-		Creator:                         signer,
-		Vid:                             vid,
-		Pid:                             pid,
-		ProductLabel:                    utils.RandString(),
-		CommissioningCustomFlowUrl:      testconstants.CommissioningCustomFlowURL + "/new",
-		UserManualUrl:                   testconstants.UserManualURL + "/new",
-		SupportUrl:                      testconstants.SupportURL + "/new",
-		ProductUrl:                      testconstants.ProductURL + "/new",
-		LsfUrl:                          testconstants.LsfURL + "/new",
-		LsfRevision:                     testconstants.LsfRevision + 1,
-		EnhancedSetupFlowOptions:        testconstants.EnhancedSetupFlowOptions + 2,
-		EnhancedSetupFlowTCUrl:          testconstants.EnhancedSetupFlowTCURL + "/updated",
-		EnhancedSetupFlowTCRevision:     int32(testconstants.EnhancedSetupFlowTCRevision + 1),
-		EnhancedSetupFlowTCDigest:       testconstants.EnhancedSetupFlowTCDigest,
-		EnhancedSetupFlowTCFileSize:     uint32(testconstants.EnhancedSetupFlowTCFileSize + 1),
-		EnhancedSetupFlowMaintenanceUrl: testconstants.EnhancedSetupFlowMaintenanceURL + "/updated",
+		Creator:                     signer,
+		Vid:                         vid,
+		Pid:                         pid,
+		ProductLabel:                utils.RandString(),
+		CommissioningCustomFlowUrl:  testconstants.CommissioningCustomFlowURL + "/new",
+		UserManualUrl:               testconstants.UserManualURL + "/new",
+		SupportUrl:                  testconstants.SupportURL + "/new",
+		ProductUrl:                  testconstants.ProductURL + "/new",
+		LsfUrl:                      testconstants.LsfURL + "/new",
+		LsfRevision:                 testconstants.LsfRevision + 1,
+		EnhancedSetupFlowOptions:    testconstants.EnhancedSetupFlowOptions + 2,
+		EnhancedSetupFlowTCUrl:      testconstants.EnhancedSetupFlowTCURL + "/updated",
+		EnhancedSetupFlowTCRevision: int32(testconstants.EnhancedSetupFlowTCRevision + 1),
+		EnhancedSetupFlowTCDigest:   testconstants.EnhancedSetupFlowTCDigest,
+		EnhancedSetupFlowTCFileSize: uint32(testconstants.EnhancedSetupFlowTCFileSize + 1),
+		MaintenanceUrl:              testconstants.MaintenanceURL + "/updated",
 	}
 }
 
@@ -161,6 +161,7 @@ func NewMsgCertifyModelVersion(
 	signer string,
 	softwareVersion uint32,
 	softwareVersionString string,
+	specificationVersion uint32,
 	vid int32,
 	pid int32,
 ) *types.MsgCertifyModel {
@@ -171,9 +172,11 @@ func NewMsgCertifyModelVersion(
 		CertificationDate:     testconstants.CertificationDate,
 		CDCertificateId:       testconstants.CDCertificateID,
 		CertificationType:     testconstants.CertificationType,
+		SpecificationVersion:  specificationVersion,
 		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		SoftwareVersion:       softwareVersion,
 		SoftwareVersionString: softwareVersionString,
+		SchemaVersion:         1,
 	}
 }
 
@@ -237,7 +240,7 @@ func GetModel(
 		res = resp.GetModel()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/dclauth service.
 		modelClient := modeltypes.NewQueryClient(grpcConn)
@@ -290,7 +293,7 @@ func GetModelVersion(
 		res = resp.GetModelVersion()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/dclauth service.
 		modelClient := modeltypes.NewQueryClient(grpcConn)
@@ -323,7 +326,7 @@ func GetModelVersions(
 		res = resp.GetModelVersions()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/dclauth service.
 		modelClient := modeltypes.NewQueryClient(grpcConn)
@@ -350,7 +353,7 @@ func GetModels(suite *utils.TestSuite) (res []modeltypes.Model, err error) {
 		res = resp.GetModel()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/dclauth service.
 		modelClient := modeltypes.NewQueryClient(grpcConn)
@@ -382,7 +385,7 @@ func GetVendorModels(
 		res = resp.GetVendorProducts()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/dclauth service.
 		modelClient := modeltypes.NewQueryClient(grpcConn)
@@ -640,7 +643,7 @@ func DeleteModelWithAssociatedModelVersionsCertified(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// certify model version
-	certifyModelVersionMsg := NewMsgCertifyModelVersion(ccAccount.Address, 1, "1", vid, pid)
+	certifyModelVersionMsg := NewMsgCertifyModelVersion(ccAccount.Address, 1, "1", 0x01040200, vid, pid)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{certifyModelVersionMsg}, ccName, ccAccount)
 	require.NoError(suite.T, err)
 
@@ -1055,10 +1058,12 @@ func DeleteModelVersionCertified(suite *utils.TestSuite) {
 		SoftwareVersionString: "1",
 		CertificationDate:     certDate,
 		CertificationType:     "zigbee",
+		SpecificationVersion:  testconstants.SpecificationVersion,
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
 		CDVersionNumber:       uint32(createModelVersionMsg.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
+		SchemaVersion:         1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenterName, certCenterAccount)
 	require.NoError(suite.T, err)

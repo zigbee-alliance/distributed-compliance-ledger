@@ -20,7 +20,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
 const (
@@ -30,9 +29,9 @@ const (
 
 	hexVidDecimal  = 2579
 	hexVid2Decimal = 2580
+	hexVid3Decimal = 2581
 )
 
-// TestVendorInfoDemoHex translates vendorinfo-demo-hex.sh.
 func TestVendorInfoDemoHex(t *testing.T) {
 	vendorAccount := fmt.Sprintf("vendor_account_%s", hexVid)
 	secondVendorAccount := fmt.Sprintf("vendor_account_%s", hexVid2)
@@ -46,68 +45,64 @@ func TestVendorInfoDemoHex(t *testing.T) {
 	)
 
 	t.Run("AddVendorInfoWithHexVID", func(t *testing.T) {
-		txResult, err := AddVendor(vendorAccount,
-			"--vid", hexVid,
-			"--companyLegalName", companyLegalName,
-			"--vendorName", vendorName,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err := AddVendor(vendorAccount, VendorOpts{
+			VIDHex:           hexVid,
+			CompanyLegalName: companyLegalName,
+			VendorName:       vendorName,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("QueryVendorInfoWithHexVID", func(t *testing.T) {
-		out, err := QueryVendor(hexVid)
+		v, err := GetVendorHex(hexVid)
 		require.NoError(t, err)
-		// The ledger stores the integer value, not the hex string
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorID":%d`, hexVidDecimal))
-		require.Contains(t, string(out), fmt.Sprintf(`"companyLegalName":"%s"`, companyLegalName))
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorName":"%s"`, vendorName))
+		require.NotNil(t, v)
+		// The ledger stores the integer value, not the hex string.
+		require.Equal(t, int32(hexVidDecimal), v.VendorID)
+		require.Equal(t, companyLegalName, v.CompanyLegalName)
+		require.Equal(t, vendorName, v.VendorName)
 	})
 
 	updatedCompanyName := "ABC Subsidiary Corporation"
 	vendorLandingPageURL := "https://www.w3.org/"
 
 	t.Run("UpdateVendorInfoWithHexVID", func(t *testing.T) {
-		txResult, err := UpdateVendor(vendorAccount,
-			"--vid", hexVid,
-			"--companyLegalName", updatedCompanyName,
-			"--vendorLandingPageURL", vendorLandingPageURL,
-			"--vendorName", vendorName,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err := UpdateVendor(vendorAccount, VendorOpts{
+			VIDHex:               hexVid,
+			CompanyLegalName:     updatedCompanyName,
+			VendorLandingPageURL: vendorLandingPageURL,
+			VendorName:           vendorName,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryVendor(hexVid)
+		v, err := GetVendorHex(hexVid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorID":%d`, hexVidDecimal))
-		require.Contains(t, string(out), fmt.Sprintf(`"companyLegalName":"%s"`, updatedCompanyName))
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorName":"%s"`, vendorName))
-		require.Contains(t, string(out), fmt.Sprintf(`"vendorLandingPageURL":"%s"`, vendorLandingPageURL))
+		require.NotNil(t, v)
+		require.Equal(t, int32(hexVidDecimal), v.VendorID)
+		require.Equal(t, updatedCompanyName, v.CompanyLegalName)
+		require.Equal(t, vendorName, v.VendorName)
+		require.Equal(t, vendorLandingPageURL, v.VendorLandingPageURL)
 	})
 
 	t.Run("AddVendorForWrongHexVID_Fails", func(t *testing.T) {
-		txResult, err := AddVendor(vendorAccount,
-			"--vid", hexVid3,
-			"--companyLegalName", updatedCompanyName,
-			"--vendorName", vendorName,
-		)
-		if err == nil {
-			require.NotEqual(t, uint32(0), txResult.Code)
-		}
+		// hexVid3 is not the vendor account's VID; the message names its decimal value.
+		txResult, err := AddVendor(vendorAccount, VendorOpts{
+			VIDHex:           hexVid3,
+			CompanyLegalName: updatedCompanyName,
+			VendorName:       vendorName,
+		})
+		cliputils.RequireTxFailContains(t, txResult, err,
+			fmt.Sprintf("transaction should be signed by a vendor account associated with the vendorID %d", hexVid3Decimal))
 	})
 
 	t.Run("UpdateVendorForWrongHexAccount_Fails", func(t *testing.T) {
-		txResult, err := UpdateVendor(secondVendorAccount,
-			"--vid", hexVid,
-			"--companyLegalName", updatedCompanyName,
-			"--vendorName", vendorName,
-		)
-		if err == nil {
-			require.NotEqual(t, uint32(0), txResult.Code)
-		}
+		// secondVendorAccount (hexVid2) cannot update hexVid's record.
+		txResult, err := UpdateVendor(secondVendorAccount, VendorOpts{
+			VIDHex:           hexVid,
+			CompanyLegalName: updatedCompanyName,
+			VendorName:       vendorName,
+		})
+		cliputils.RequireTxFailContains(t, txResult, err,
+			fmt.Sprintf("transaction should be signed by a vendor account associated with the vendorID %d", hexVidDecimal))
 	})
 }

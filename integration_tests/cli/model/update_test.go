@@ -7,10 +7,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
-// TestModelUpdate translates model-update.sh.
 func TestModelUpdate(t *testing.T) {
 	vid := rand.Intn(65534) + 1
 	pid := rand.Intn(65534) + 1
@@ -25,93 +23,129 @@ func TestModelUpdate(t *testing.T) {
 	productLabel := "Device #1"
 
 	t.Run("AddModel", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--deviceTypeID", "1",
-			"--productName", "TestProduct",
-			"--productLabel", productLabel,
-			"--partNumber", "1",
-			"--commissioningCustomFlow", "0",
-			"--enhancedSetupFlowOptions", "0",
-			"--schemaVersion", "0",
-			"--from", vendorAccount,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err := AddModel(AddModelOpts{
+			VID:           vid,
+			PID:           pid,
+			ProductLabel:  productLabel,
+			SchemaVersion: "0",
+			From:          vendorAccount,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("QueryDefaultValues", func(t *testing.T) {
-		out, err := QueryModel(vid, pid)
+		m, err := GetModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
-		require.Contains(t, string(out), fmt.Sprintf(`"productLabel":"%s"`, productLabel))
-		require.Contains(t, string(out), `"schemaVersion":0`)
-		require.Contains(t, string(out), `"commissioningModeInitialStepsHint":1`)
-		require.Contains(t, string(out), `"commissioningModeSecondaryStepsHint":4`)
-		require.Contains(t, string(out), `"icdUserActiveModeTriggerHint":1`)
-		require.Contains(t, string(out), `"factoryResetStepsHint":1`)
-		require.Contains(t, string(out), `"enhancedSetupFlowOptions":0`)
+		require.NotNil(t, m)
+		require.Equal(t, int32(vid), m.Vid)
+		require.Equal(t, int32(pid), m.Pid)
+		require.Equal(t, productLabel, m.ProductLabel)
+		require.Equal(t, uint32(0), m.SchemaVersion)
+		require.Equal(t, uint32(1), m.CommissioningModeInitialStepsHint)
+		require.Equal(t, uint32(4), m.CommissioningModeSecondaryStepsHint)
+		require.Equal(t, uint32(1), m.IcdUserActiveModeTriggerHint)
+		require.Equal(t, uint32(1), m.FactoryResetStepsHint)
+		require.Equal(t, int32(0), m.EnhancedSetupFlowOptions)
 	})
 
 	t.Run("UpdateModelFields", func(t *testing.T) {
 		newDesc := "New Device Description"
-		txResult, err := utils.ExecuteTx("tx", "model", "update-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--from", vendorAccount,
-			"--productLabel", newDesc,
-			"--schemaVersion", "0",
-			"--commissioningModeInitialStepsHint", "8",
-			"--commissioningModeSecondaryStepsHint", "9",
-			"--icdUserActiveModeTriggerHint", "7",
-			"--enhancedSetupFlowOptions", "2",
-			"--factoryResetStepsHint", "6",
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid, PID: pid, From: vendorAccount,
+			ProductLabel:                        newDesc,
+			SchemaVersion:                       "0",
+			CommissioningModeInitialStepsHint:   8,
+			CommissioningModeSecondaryStepsHint: 9,
+			IcdUserActiveModeTriggerHint:        7,
+			EnhancedSetupFlowOptions:            2,
+			FactoryResetStepsHint:               6,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryModel(vid, pid)
+		m, err := GetModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"productLabel":"%s"`, newDesc))
-		require.Contains(t, string(out), `"commissioningModeInitialStepsHint":8`)
-		require.Contains(t, string(out), `"commissioningModeSecondaryStepsHint":9`)
-		require.Contains(t, string(out), `"icdUserActiveModeTriggerHint":7`)
-		require.Contains(t, string(out), `"factoryResetStepsHint":6`)
-		require.Contains(t, string(out), `"enhancedSetupFlowOptions":2`)
+		require.NotNil(t, m)
+		require.Equal(t, newDesc, m.ProductLabel)
+		require.Equal(t, uint32(8), m.CommissioningModeInitialStepsHint)
+		require.Equal(t, uint32(9), m.CommissioningModeSecondaryStepsHint)
+		require.Equal(t, uint32(7), m.IcdUserActiveModeTriggerHint)
+		require.Equal(t, uint32(6), m.FactoryResetStepsHint)
+		require.Equal(t, int32(2), m.EnhancedSetupFlowOptions)
+	})
+
+	// The hints are now 8/9/7/6 (from UpdateModelFields). The next two subtests
+	// verify the update handler treats an omitted or zero hint as "leave it
+	// unchanged" (each hint updates only when msg.<Hint> != 0).
+
+	t.Run("UpdateDescriptionOnly_PreservesHints", func(t *testing.T) {
+		newDesc := "New Device Description 2"
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid, PID: pid, From: vendorAccount,
+			ProductLabel:             newDesc,
+			SchemaVersion:            "0",
+			EnhancedSetupFlowOptions: 2,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
+
+		// Omitted hints keep their previously-set values.
+		m, err := GetModel(vid, pid)
+		require.NoError(t, err)
+		require.NotNil(t, m)
+		require.Equal(t, newDesc, m.ProductLabel)
+		require.Equal(t, uint32(8), m.CommissioningModeInitialStepsHint)
+		require.Equal(t, uint32(9), m.CommissioningModeSecondaryStepsHint)
+		require.Equal(t, uint32(7), m.IcdUserActiveModeTriggerHint)
+		require.Equal(t, uint32(6), m.FactoryResetStepsHint)
+		require.Equal(t, int32(2), m.EnhancedSetupFlowOptions)
+	})
+
+	t.Run("UpdateHintsZero_PreservesHints", func(t *testing.T) {
+		newDesc := "New Device Description 3"
+		// Explicit zero hints are equivalent to omitting them: proto3 cannot
+		// distinguish an explicit zero from an unset field, so the update handler
+		// leaves each hint unchanged either way.
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid, PID: pid, From: vendorAccount,
+			ProductLabel:             newDesc,
+			SchemaVersion:            "0",
+			EnhancedSetupFlowOptions: 2,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
+
+		// Explicit zero hints are ignored — the previous values are retained.
+		m, err := GetModel(vid, pid)
+		require.NoError(t, err)
+		require.NotNil(t, m)
+		require.Equal(t, newDesc, m.ProductLabel)
+		require.Equal(t, uint32(8), m.CommissioningModeInitialStepsHint)
+		require.Equal(t, uint32(9), m.CommissioningModeSecondaryStepsHint)
+		require.Equal(t, uint32(7), m.IcdUserActiveModeTriggerHint)
+		require.Equal(t, uint32(6), m.FactoryResetStepsHint)
+		require.Equal(t, int32(2), m.EnhancedSetupFlowOptions)
 	})
 
 	t.Run("UpdateModelSupportURL", func(t *testing.T) {
 		supportURL := "https://newsupporturl.test"
-		txResult, err := utils.ExecuteTx("tx", "model", "update-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--from", vendorAccount,
-			"--supportURL", supportURL,
-			"--enhancedSetupFlowOptions", "0",
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid, PID: pid, From: vendorAccount,
+			SupportURL: supportURL,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryModel(vid, pid)
+		m, err := GetModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"supportUrl":"%s"`, supportURL))
+		require.NotNil(t, m)
+		require.Equal(t, supportURL, m.SupportUrl)
 	})
 
 	t.Run("UpdateImmutableFields_Fails", func(t *testing.T) {
 		// VID and PID are immutable — attempting to change vid via update should fail or be ignored
 		// The shell script creates a model and then tries to update with a different vid (impossible via flags).
 		// We verify that productName cannot be set to empty via update by checking the model is intact.
-		out, err := QueryModel(vid, pid)
+		m, err := GetModel(vid, pid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid))
+		require.NotNil(t, m)
+		require.Equal(t, int32(vid), m.Vid)
+		require.Equal(t, int32(pid), m.Pid)
 	})
 }

@@ -50,7 +50,7 @@ func (k Keeper) GetAllRevokedAccount(ctx sdk.Context) (list []types.RevokedAccou
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedAccountKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
-	defer iterator.Close()
+	defer func() { _ = iterator.Close() }()
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.RevokedAccount

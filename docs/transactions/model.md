@@ -15,9 +15,9 @@ Not all fields can be edited (see `EDIT_MODEL`).
   - pid: `uint16` -  model product ID (positive non-zero)
   - deviceTypeID: `uint16` -  DeviceTypeID is the device type identifier. For example, DeviceTypeID 10 (0x000a), is the device type identifier for a Door Lock.
   - productName: `string` -  model name
-  - productLabel: `optional(string)` -  model description (string or path to file containing data)
-  - partNumber: `optional(string)` -  stock keeping unit
-  - commissioningCustomFlow: `optional(uint8)` - A value of 1 indicates that user interaction with the device (pressing a button, for example) is required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end user with the necessary details for how to configure the product for initial commissioning
+  - productLabel: `string` -  model description (string or path to file containing data) — **required**
+  - partNumber: `string` -  stock keeping unit — **required**
+  - commissioningCustomFlow: `uint8` - A value of 1 indicates that user interaction with the device (pressing a button, for example) is required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end user with the necessary details for how to configure the product for initial commissioning
   - commissioningCustomFlowURL: `optional(string)` - commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the device model when the commissioningCustomFlow field is set to '2'
   - commissioningModeInitialStepsHint: `optional(uint32)` - commissioningModeInitialStepsHint SHALL identify a hint for the steps that can be used to put into commissioning mode a device that has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle (default 1).
   - commissioningModeInitialStepsInstruction: `optional(string)` - commissioningModeInitialStepsInstruction SHALL contain text which relates to specific values of CommissioningModeInitialStepsHint. Certain values of CommissioningModeInitialStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeInitialStepsInstruction SHALL be set
@@ -36,15 +36,16 @@ Not all fields can be edited (see `EDIT_MODEL`).
   - enhancedSetupFlowTCRevision: `optional(uint16)` - enhancedSetupFlowTCRevision is an increasing positive integer indicating the latest available version of the Enhanced Setup Flow Terms and Conditions file. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
   - enhancedSetupFlowTCDigest: `optional(string)` - enhancedSetupFlowTCDigest SHALL contain the digest of the entire contents of the associated file downloaded from the EnhancedSetupFlowTCUrl field, encoded in base64 string representation and SHALL be used to ensure the contents of the downloaded file are authentic. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
   - enhancedSetupFlowTCFileSize: `optional(uint32)` - enhancedSetupFlowTCFileSize SHALL indicate the total size of the Enhanced Setup Flow Terms and Conditions file in bytes, and SHALL be used to ensure the downloaded file size is within the bounds of EnhancedSetupFlowTCFileSize. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
-  - enhancedSetupFlowMaintenanceUrl: `optional(string)` - enhancedSetupFlowMaintenanceUrl SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
+  - maintenanceUrl: `optional(string)` - maintenanceUrl SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
   - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
-  - discoveryCapabilitiesBitmask: `optional(uint16)` - Identifies the device's available technologies for device discovery (default 0). This field SHALL be populated if CommissioningFallbackUrl is populated
+  - discoveryCapabilitiesBitmask: `optional(uint16)` - Identifies the device's available technologies for device discovery (default 0; valid range 0–30). This field SHALL be populated if CommissioningFallbackUrl is populated
   - commissioningFallbackURL: `optional(string)` - This field SHALL identify a vendor-specific commissioning-fallback URL for the device model, which can be used by a Commissioner in case commissioning fails to direct the user to a manufacturer-provided mechanism to provide resolution to commissioning issues.
 - In State:
   - `model/Model/value/<vid>/<pid>`
   - `model/VendorProducts/value/<vid>`
 - Who can send:
   - Vendor account who is associated with the given vid
+  - VendorAdmin account (can add a model for any vid/pid)
 - CLI command minimal:
 
 ```bash
@@ -75,7 +76,7 @@ a new model info with a new `vid` or `pid` can be created.
 
 All non-edited fields remain the same.
 
-If one of EnhancedSetupFlow or EnhancedSetupFlowMaintenanceUrl fields needs to be updated, ALL EnhancedSetupFlow fields MUST be specified, and EnhancedSetupFlowOptions field must have bit 0 set.
+If one of EnhancedSetupFlow or MaintenanceUrl fields needs to be updated, ALL EnhancedSetupFlow fields MUST be specified, and EnhancedSetupFlowOptions field must have bit 0 set.
 
 - Parameters:
   - vid: `uint16` -  model vendor ID (positive non-zero)
@@ -102,12 +103,13 @@ If one of EnhancedSetupFlow or EnhancedSetupFlowMaintenanceUrl fields needs to b
   - enhancedSetupFlowTCRevision: `optional(uint16)` - enhancedSetupFlowTCRevision is an increasing positive integer indicating the latest available version of the Enhanced Setup Flow Terms and Conditions file. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
   - enhancedSetupFlowTCDigest: `optional(string)` - enhancedSetupFlowTCDigest SHALL contain the digest of the entire contents of the associated file downloaded from the EnhancedSetupFlowTCUrl field, encoded in base64 string representation and SHALL be used to ensure the contents of the downloaded file are authentic. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
   - enhancedSetupFlowTCFileSize: `optional(uint32)` - enhancedSetupFlowTCFileSize SHALL indicate the total size of the Enhanced Setup Flow Terms and Conditions file in bytes, and SHALL be used to ensure the downloaded file size is within the bounds of EnhancedSetupFlowTCFileSize. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
-  - enhancedSetupFlowMaintenanceUrl: `optional(string)` - enhancedSetupFlowMaintenanceUrl SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
+  - maintenanceUrl: `optional(string)` - maintenanceUrl SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.
   - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
   - commissioningFallbackURL: `optional(string)` - This field SHALL identify a vendor-specific commissioning-fallback URL for the device model, which can be used by a Commissioner in case commissioning fails to direct the user to a manufacturer-provided mechanism to provide resolution to commissioning issues.
 - In State: `model/Model/value/<vid>/<pid>`
 - Who can send:
   - Vendor account associated with the same vid who has created the model
+  - VendorAdmin account (can edit any model)
 - CLI command:
   - `dcld tx model update-model --vid=<uint16> --pid=<uint16> ... --from=<account>`
 
@@ -126,6 +128,7 @@ If one of Model Versions associated with the Model is certified then Model can n
 - In State: `model/Model/value/<vid>/<pid>`
 - Who can send:
   - Vendor account associated with the same vid who has created the model
+  - VendorAdmin account (can delete any model)
 - CLI command:
   - `dcld tx model delete-model --vid=<uint16> --pid=<uint16> --from=<account>`
 
@@ -154,16 +157,17 @@ If one of `OTA_URl`, `OTA_checksum` or `OTA_checksum_type` fields is set, then t
   - softwareVersionValid `optional(bool)` - Flag to indicate whether the software version is valid or not (default true)
   - otaURL `optional(string)` - URL where to obtain the OTA image
   - otaFileSize `optional(string)`  - OtaFileSize is the total size of the OTA software image in bytes
-  - otaChecksum `optional(string)` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation. The digest SHALL have been computed using the algorithm specified in OtaChecksumType
-  - otaChecksumType `optional(string)` - Numeric identifier as defined in IANA Named Information Hash Algorithm Registry for the type of otaChecksum. For example, a value of 1 would match the sha-256 identifier, which maps to the SHA-256 digest algorithm
+  - otaChecksum `optional(string)` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation (max 88 characters). The digest SHALL have been computed using the algorithm specified in OtaChecksumType.
+  - otaChecksumType `optional(int32)` - Numeric identifier as defined in the [IANA Named Information Hash Algorithm Registry](https://www.iana.org/assignments/named-information/named-information.xhtml#hash-alg) for the type of otaChecksum. The chosen digest algorithm SHALL have a minimum length of 256 bits. To increase interoperability, this field SHALL be one of `1` (sha-256), `7` (sha-384), `8` (sha-512), `10` (sha3-256), `11` (sha3-384), `12` (sha3-512).
   - releaseNotesURL `optional(string)` - URL that contains product specific web page that contains release notes for the device model.
   - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
-  - specificationVersion `optional(uint32)` - SpecificationVersion SHALL identify the specification version applicable to the device model.
+  - specificationVersion `optional(uint32)` - **Deprecated.** Will be stated/stored in the `ComplianceInfo` record (set via `compliance certify-model` / `provision-model` / `update-compliance-info`). SpecificationVersion SHALL identify the specification version applicable to the device model.
 - In State:
   - `model/ModelVersion/value/<vid>/<pid>/<softwareVersion>`
   - `model/ModelVersions/value/<vid>/<pid>`
 - Who can send:
   - Vendor with same vid who created the Model
+  - VendorAdmin account (can add a model version for any vid/pid)
 - CLI command minimal:
 
 ```bash
@@ -176,7 +180,7 @@ dcld tx model add-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=
 ```bash
 dcld tx model add-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --cdVersionNumber=<uint32>
 --minApplicableSoftwareVersion=<uint32> --maxApplicableSoftwareVersion=<uint32>
---firmwareInformation=<string> --softwareVersionValid=<bool> --otaURL=<string> --otaFileSize=<string> --otaChecksum=<string> --otaChecksumType=<string> --releaseNotesURL=<string> 
+--firmwareInformation=<string> --softwareVersionValid=<bool> --otaURL=<string> --otaFileSize=<uint64> --otaChecksum=<string> --otaChecksumType=<int32> --releaseNotesURL=<string> 
 --from=<account>
 ```
 
@@ -191,7 +195,10 @@ Only the fields listed below (except `vid` `pid` and `softwareVersion`)  can be 
 
 All non-edited fields remain the same.
 
-`otaURL` can be edited only if  `otaFileSize`, `otaChecksum` and `otaChecksumType` are already set.
+**OTA update semantics**:
+
+- if the existing Model Version has no `otaURL` yet, providing `otaURL` in the update SHALL be accompanied by `otaFileSize`, `otaChecksum` and `otaChecksumType` (all three) — these can only be set once, together with the URL;
+- if the existing Model Version already has an `otaURL`, providing `otaURL` in the update replaces the URL only. The `otaFileSize`, `otaChecksum` and `otaChecksumType` fields MUST NOT be provided in this case — they are immutable after the OTA image is first published.
 
 - Parameters:
   - vid: `uint16` -  model vendor ID (positive non-zero)
@@ -199,17 +206,18 @@ All non-edited fields remain the same.
   - softwareVersion: `uint32` - model software version (positive non-zero)
   - softwareVersionValid `optional(bool)` - Flag to indicate whether the software version is valid or not (default true)
   - otaURL `optional(string)` - URL where to obtain the OTA image
+  - otaFileSize `optional(uint64)`  - OtaFileSize is the total size of the OTA software image in bytes. Only accepted alongside the first `otaURL` (see OTA update semantics above).
+  - otaChecksum `optional(string)` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation (max 88 characters). Only accepted alongside the first `otaURL` (see OTA update semantics above).
+  - otaChecksumType `optional(int32)` - Numeric identifier as defined in the [IANA Named Information Hash Algorithm Registry](https://www.iana.org/assignments/named-information/named-information.xhtml#hash-alg) for the type of otaChecksum. Must be one of `1` (sha-256), `7` (sha-384), `8` (sha-512), `10` (sha3-256), `11` (sha3-384), `12` (sha3-512). Only accepted alongside the first `otaURL` (see OTA update semantics above).
   - maxApplicableSoftwareVersion `optional(uint32)` - MaxApplicableSoftwareVersion should specify the highest SoftwareVersion for which this image can be applied
   - minApplicableSoftwareVersion `optional(uint32)` - MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied
   - releaseNotesURL `optional(string)` - URL that contains product specific web page that contains release notes for the device model.
-  - otaURL `optional(string)` - URL where to obtain the OTA image
-  - otaFileSize `optional(string)`  - OtaFileSize is the total size of the OTA software image in bytes
-  - otaChecksum `optional(string)` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation. The digest SHALL have been computed using the algorithm specified in OtaChecksumType
   - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 
 - In State: `model/ModelVersion/value/<vid>/<pid>/<softwareVersion>`
 - Who can send:
   - Vendor associated with the same vid who created the Model
+  - VendorAdmin account (can edit any model version)
 - CLI command:
   - `dcld tx model update-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> ... --from=<account>`
 
@@ -229,6 +237,7 @@ Model Version can be deleted only before it is certified.
 - In State: `model/ModelVersion/value/<vid>/<pid>/<softwareVersion>`
 - Who can send:
   - Vendor account associated with the same vid who has created the model version
+  - VendorAdmin account (can delete any model version)
 - CLI command:
   - `dcld tx model delete-model-version --vid=< uint16 > --pid=< uint16 > --softwareVersion=<uint32> --from=<account>`
 

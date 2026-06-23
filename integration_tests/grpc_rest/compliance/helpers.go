@@ -49,7 +49,7 @@ func GetAllComplianceInfo(suite *utils.TestSuite) (res []compliancetypes.Complia
 		res = resp.GetComplianceInfo()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		client := compliancetypes.NewQueryClient(grpcConn)
@@ -89,7 +89,7 @@ func GetComplianceInfo(
 		res = resp.GetComplianceInfo()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		client := compliancetypes.NewQueryClient(grpcConn)
@@ -147,7 +147,7 @@ func GetAllCertifiedModels(suite *utils.TestSuite) (res []compliancetypes.Certif
 		res = resp.GetCertifiedModel()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		client := compliancetypes.NewQueryClient(grpcConn)
@@ -187,7 +187,7 @@ func GetCertifiedModel(
 		res = resp.GetCertifiedModel()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		client := compliancetypes.NewQueryClient(grpcConn)
@@ -245,7 +245,7 @@ func GetAllRevokedModels(suite *utils.TestSuite) (res []compliancetypes.RevokedM
 		res = resp.GetRevokedModel()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		client := compliancetypes.NewQueryClient(grpcConn)
@@ -285,7 +285,7 @@ func GetRevokedModel(
 		res = resp.GetRevokedModel()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		client := compliancetypes.NewQueryClient(grpcConn)
@@ -343,7 +343,7 @@ func GetAllProvisionalModels(suite *utils.TestSuite) (res []compliancetypes.Prov
 		res = resp.GetProvisionalModel()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		client := compliancetypes.NewQueryClient(grpcConn)
@@ -383,7 +383,7 @@ func GetProvisionalModel(
 		res = resp.GetProvisionalModel()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		client := compliancetypes.NewQueryClient(grpcConn)
@@ -441,7 +441,7 @@ func GetAllDeviceSoftwareCompliance(suite *utils.TestSuite) (res []compliancetyp
 		res = resp.GetDeviceSoftwareCompliance()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		client := compliancetypes.NewQueryClient(grpcConn)
@@ -478,7 +478,7 @@ func GetDeviceSoftwareCompliance(
 		res = resp.GetDeviceSoftwareCompliance()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		client := compliancetypes.NewQueryClient(grpcConn)
@@ -582,10 +582,12 @@ func CDCertificateIDUpdateChangesOnlyOneComplianceInfo(suite *utils.TestSuite) {
 		SoftwareVersionString: svsFirst,
 		CertificationDate:     certDate,
 		CertificationType:     "zigbee",
+		SpecificationVersion:  testconstants.SpecificationVersion,
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
 		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
+		SchemaVersion:         1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelVersionMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -598,10 +600,12 @@ func CDCertificateIDUpdateChangesOnlyOneComplianceInfo(suite *utils.TestSuite) {
 		SoftwareVersionString: svsSecond,
 		CertificationDate:     certDate,
 		CertificationType:     "zigbee",
+		SpecificationVersion:  testconstants.SpecificationVersion,
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
 		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
+		SchemaVersion:         1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelVersionMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -616,6 +620,7 @@ func CDCertificateIDUpdateChangesOnlyOneComplianceInfo(suite *utils.TestSuite) {
 		CertificationType: compliancetypes.ZigbeeCertificationType,
 		CDCertificateId:   cdCertificateIDNew,
 		CDVersionNumber:   "312",
+		SchemaVersion:     1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&updateComplianceInfoMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -704,10 +709,12 @@ func DeleteComplianceInfoForAllCertStatuses(suite *utils.TestSuite) {
 		SoftwareVersionString: svs,
 		CertificationDate:     certDate,
 		CertificationType:     testconstants.CertificationType,
+		SpecificationVersion:  testconstants.SpecificationVersion,
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
 		CDVersionNumber:       uint32(firstModelVersion.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
+		SchemaVersion:         1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -742,10 +749,12 @@ func DeleteComplianceInfoForAllCertStatuses(suite *utils.TestSuite) {
 		SoftwareVersionString: svs,
 		ProvisionalDate:       provDate,
 		CertificationType:     testconstants.CertificationType,
+		SpecificationVersion:  testconstants.SpecificationVersion,
 		CDVersionNumber:       uint32(secondModelVersion.CdVersionNumber),
 		Reason:                provReason,
 		CDCertificateId:       testconstants.CDCertificateID,
 		Signer:                certCenterAccount.Address,
+		SchemaVersion:         1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&provModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -784,6 +793,7 @@ func DeleteComplianceInfoForAllCertStatuses(suite *utils.TestSuite) {
 		CDVersionNumber:       uint32(secondModelVersion.CdVersionNumber),
 		Reason:                revocReason,
 		Signer:                certCenterAccount.Address,
+		SchemaVersion:         1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&revocModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -901,10 +911,12 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 		SoftwareVersionString: svs,
 		CertificationDate:     certDate,
 		CertificationType:     "zigbee",
+		SpecificationVersion:  testconstants.SpecificationVersion,
 		Reason:                certReason,
 		CDCertificateId:       cdCertificateID,
 		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
+		SchemaVersion:         1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -971,10 +983,12 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 		SoftwareVersionString: svs,
 		CertificationDate:     certDate,
 		CertificationType:     "zigbee",
+		SpecificationVersion:  testconstants.SpecificationVersion,
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
 		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
+		SchemaVersion:         1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -1029,16 +1043,18 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	oldComplianceInfo, _ := GetComplianceInfo(suite, vid, pid, sv, compliancetypes.ZigbeeCertificationType)
 
 	updateComplianceInfoMsg := compliancetypes.MsgUpdateComplianceInfo{
-		Creator:           certCenterAccount.Address,
-		Vid:               vid,
-		Pid:               pid,
-		SoftwareVersion:   sv,
-		CDCertificateId:   testconstants.CDCertificateID,
-		CDVersionNumber:   "312",
-		CertificationType: compliancetypes.ZigbeeCertificationType,
-		ProgramType:       "new program type",
-		Reason:            "new reason",
-		ParentChild:       "child",
+		Creator:              certCenterAccount.Address,
+		Vid:                  vid,
+		Pid:                  pid,
+		SoftwareVersion:      sv,
+		CDCertificateId:      testconstants.CDCertificateID,
+		CDVersionNumber:      "312",
+		CertificationType:    compliancetypes.ZigbeeCertificationType,
+		SpecificationVersion: testconstants.SpecificationVersion,
+		ProgramType:          "endProduct",
+		Reason:               "new reason",
+		ParentChild:          "child",
+		SchemaVersion:        1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&updateComplianceInfoMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -1070,6 +1086,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 		Reason:                revocReason,
 		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
+		SchemaVersion:         1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&revocModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -1128,6 +1145,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 		SoftwareVersionString:              svs,
 		CertificationDate:                  certDate,
 		CertificationType:                  "zigbee",
+		SpecificationVersion:               testconstants.SpecificationVersion,
 		Reason:                             certReason,
 		CDCertificateId:                    testconstants.CDCertificateID,
 		ProgramTypeVersion:                 testconstants.ProgramTypeVersion,
@@ -1143,6 +1161,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 		CertificationIdOfSoftwareComponent: testconstants.CertificationIDOfSoftwareComponent,
 		CDVersionNumber:                    uint32(testconstants.CdVersionNumber),
 		Signer:                             certCenterAccount.Address,
+		SchemaVersion:                      1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -1158,6 +1177,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.CDCertificateID, complianceInfo.CDCertificateId)
 	require.Equal(suite.T, certReason, complianceInfo.Reason)
 	require.Equal(suite.T, certDate, complianceInfo.Date)
+	require.Equal(suite.T, testconstants.SpecificationVersion, complianceInfo.SpecificationVersion)
 	require.Equal(suite.T, testconstants.ProgramTypeVersion, complianceInfo.ProgramTypeVersion)
 	require.Equal(suite.T, testconstants.FamilyID, complianceInfo.FamilyId)
 	require.Equal(suite.T, testconstants.SupportedClusters, complianceInfo.SupportedClusters)
@@ -1188,6 +1208,7 @@ func DemoTrackCompliance(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.CDCertificateID, deviceSoftwareCompliance.ComplianceInfo[0].CDCertificateId)
 	require.Equal(suite.T, certReason, deviceSoftwareCompliance.ComplianceInfo[0].Reason)
 	require.Equal(suite.T, certDate, deviceSoftwareCompliance.ComplianceInfo[0].Date)
+	require.Equal(suite.T, testconstants.SpecificationVersion, deviceSoftwareCompliance.ComplianceInfo[0].SpecificationVersion)
 	require.Equal(suite.T, testconstants.ProgramTypeVersion, deviceSoftwareCompliance.ComplianceInfo[0].ProgramTypeVersion)
 	require.Equal(suite.T, testconstants.FamilyID, deviceSoftwareCompliance.ComplianceInfo[0].FamilyId)
 	require.Equal(suite.T, testconstants.SupportedClusters, deviceSoftwareCompliance.ComplianceInfo[0].SupportedClusters)
@@ -1297,6 +1318,7 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 		Reason:                revocReason,
 		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
+		SchemaVersion:         1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&revocModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -1344,10 +1366,12 @@ func DemoTrackRevocation(suite *utils.TestSuite) {
 		SoftwareVersionString: svs,
 		CertificationDate:     certDate,
 		CertificationType:     "zigbee",
+		SpecificationVersion:  testconstants.SpecificationVersion,
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
 		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
+		SchemaVersion:         1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -1476,10 +1500,12 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 		SoftwareVersionString: svs,
 		ProvisionalDate:       provDate,
 		CertificationType:     "matter",
+		SpecificationVersion:  testconstants.SpecificationVersion,
 		Reason:                provReason,
 		CDCertificateId:       testconstants.CDCertificateID,
 		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
+		SchemaVersion:         1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&provModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -1527,10 +1553,12 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 		SoftwareVersionString: svs,
 		CertificationDate:     certDate,
 		CertificationType:     "matter",
+		SpecificationVersion:  testconstants.SpecificationVersion,
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
 		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
+		SchemaVersion:         1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -1603,6 +1631,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 		SoftwareVersionString:              svs,
 		ProvisionalDate:                    provDate,
 		CertificationType:                  "matter",
+		SpecificationVersion:               testconstants.SpecificationVersion,
 		Reason:                             provReason,
 		CDCertificateId:                    testconstants.CDCertificateID,
 		ProgramTypeVersion:                 testconstants.ProgramTypeVersion,
@@ -1618,6 +1647,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 		CertificationIdOfSoftwareComponent: testconstants.CertificationIDOfSoftwareComponent,
 		CDVersionNumber:                    uint32(testconstants.CdVersionNumber),
 		Signer:                             certCenterAccount.Address,
+		SchemaVersion:                      1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&provModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -1633,6 +1663,7 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, provReason, complianceInfo.Reason)
 	require.Equal(suite.T, testconstants.CDCertificateID, complianceInfo.CDCertificateId)
 	require.Equal(suite.T, provDate, complianceInfo.Date)
+	require.Equal(suite.T, testconstants.SpecificationVersion, complianceInfo.SpecificationVersion)
 	require.Equal(suite.T, testconstants.ProgramTypeVersion, complianceInfo.ProgramTypeVersion)
 	require.Equal(suite.T, testconstants.FamilyID, complianceInfo.FamilyId)
 	require.Equal(suite.T, testconstants.SupportedClusters, complianceInfo.SupportedClusters)
@@ -1672,16 +1703,19 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 		SoftwareVersionString:              svs,
 		CertificationDate:                  certDate,
 		CertificationType:                  "matter",
+		SpecificationVersion:               testconstants.SpecificationVersion,
 		Reason:                             certReason,
 		CDCertificateId:                    testconstants.CDCertificateID,
-		ProgramTypeVersion:                 "pTypeVersion",
-		FamilyId:                           "familyID",
-		SupportedClusters:                  "sClusters",
+		ProgramType:                        testconstants.ProgramType,
+		ProgramTypeVersion:                 testconstants.ProgramTypeVersion,
+		FamilyId:                           testconstants.FamilyID,
+		SupportedClusters:                  testconstants.SupportedClusters,
 		CompliantPlatformUsed:              "WIFI",
 		CompliantPlatformVersion:           "V1",
 		CertificationIdOfSoftwareComponent: "x5732",
 		CDVersionNumber:                    uint32(testconstants.CdVersionNumber),
 		Signer:                             certCenterAccount.Address,
+		SchemaVersion:                      1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -1696,11 +1730,13 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, pid, complianceInfo.Pid)
 	require.Equal(suite.T, sv, complianceInfo.SoftwareVersion)
 	require.Equal(suite.T, testconstants.CDCertificateID, complianceInfo.CDCertificateId)
+	require.Equal(suite.T, testconstants.SpecificationVersion, complianceInfo.SpecificationVersion)
 	require.Equal(suite.T, certReason, complianceInfo.Reason)
 	require.Equal(suite.T, certDate, complianceInfo.Date)
-	require.Equal(suite.T, "pTypeVersion", complianceInfo.ProgramTypeVersion)
-	require.Equal(suite.T, "familyID", complianceInfo.FamilyId)
-	require.Equal(suite.T, "sClusters", complianceInfo.SupportedClusters)
+	require.Equal(suite.T, testconstants.ProgramType, complianceInfo.ProgramType)
+	require.Equal(suite.T, testconstants.ProgramTypeVersion, complianceInfo.ProgramTypeVersion)
+	require.Equal(suite.T, testconstants.FamilyID, complianceInfo.FamilyId)
+	require.Equal(suite.T, testconstants.SupportedClusters, complianceInfo.SupportedClusters)
 	require.Equal(suite.T, "WIFI", complianceInfo.CompliantPlatformUsed)
 	require.Equal(suite.T, "V1", complianceInfo.CompliantPlatformVersion)
 	require.Equal(suite.T, "x5732", complianceInfo.CertificationIdOfSoftwareComponent)
@@ -1726,14 +1762,15 @@ func DemoTrackProvision(suite *utils.TestSuite) {
 	require.Equal(suite.T, pid, deviceSoftwareCompliance.ComplianceInfo[3].Pid)
 	require.Equal(suite.T, sv, deviceSoftwareCompliance.ComplianceInfo[3].SoftwareVersion)
 	require.Equal(suite.T, testconstants.CDCertificateID, deviceSoftwareCompliance.ComplianceInfo[3].CDCertificateId)
+	require.Equal(suite.T, testconstants.SpecificationVersion, deviceSoftwareCompliance.ComplianceInfo[3].SpecificationVersion)
 	require.Equal(suite.T, certReason, deviceSoftwareCompliance.ComplianceInfo[3].Reason)
 	require.Equal(suite.T, certDate, deviceSoftwareCompliance.ComplianceInfo[3].Date)
-	require.Equal(suite.T, "pTypeVersion", deviceSoftwareCompliance.ComplianceInfo[3].ProgramTypeVersion)
-	require.Equal(suite.T, "familyID", deviceSoftwareCompliance.ComplianceInfo[3].FamilyId)
-	require.Equal(suite.T, "sClusters", deviceSoftwareCompliance.ComplianceInfo[3].SupportedClusters)
+	require.Equal(suite.T, testconstants.ProgramType, deviceSoftwareCompliance.ComplianceInfo[3].ProgramType)
+	require.Equal(suite.T, testconstants.ProgramTypeVersion, deviceSoftwareCompliance.ComplianceInfo[3].ProgramTypeVersion)
+	require.Equal(suite.T, testconstants.FamilyID, deviceSoftwareCompliance.ComplianceInfo[3].FamilyId)
+	require.Equal(suite.T, testconstants.SupportedClusters, deviceSoftwareCompliance.ComplianceInfo[3].SupportedClusters)
 	require.Equal(suite.T, "WIFI", deviceSoftwareCompliance.ComplianceInfo[3].CompliantPlatformUsed)
 	require.Equal(suite.T, "V1", deviceSoftwareCompliance.ComplianceInfo[3].CompliantPlatformVersion)
-	require.Equal(suite.T, "x5732", deviceSoftwareCompliance.ComplianceInfo[3].CertificationIdOfSoftwareComponent)
 	require.Equal(suite.T, testconstants.OSVersion, deviceSoftwareCompliance.ComplianceInfo[3].OSVersion)
 	require.Equal(suite.T, testconstants.CertificationRoute, deviceSoftwareCompliance.ComplianceInfo[3].CertificationRoute)
 	require.Equal(suite.T, testconstants.Transport, deviceSoftwareCompliance.ComplianceInfo[3].Transport)
@@ -1836,10 +1873,12 @@ func DemoTrackComplianceWithHexVidAndPid(suite *utils.TestSuite) {
 		SoftwareVersionString: svs,
 		CertificationDate:     certDate,
 		CertificationType:     "zigbee",
+		SpecificationVersion:  testconstants.SpecificationVersion,
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
 		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
+		SchemaVersion:         1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -1945,6 +1984,7 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 		Reason:                revocReason,
 		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
+		SchemaVersion:         1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&revocModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -1980,10 +2020,12 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 		SoftwareVersionString: svs,
 		CertificationDate:     certDate,
 		CertificationType:     "zigbee",
+		SpecificationVersion:  testconstants.SpecificationVersion,
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
 		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
+		SchemaVersion:         1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -2080,10 +2122,12 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 		SoftwareVersionString: svs,
 		ProvisionalDate:       provDate,
 		CertificationType:     "matter",
+		SpecificationVersion:  testconstants.SpecificationVersion,
 		Reason:                provReason,
 		CDCertificateId:       testconstants.CDCertificateID,
 		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
+		SchemaVersion:         1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&provModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)
@@ -2119,10 +2163,12 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 		SoftwareVersionString: svs,
 		CertificationDate:     certDate,
 		CertificationType:     "matter",
+		SpecificationVersion:  testconstants.SpecificationVersion,
 		Reason:                certReason,
 		CDCertificateId:       testconstants.CDCertificateID,
 		CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 		Signer:                certCenterAccount.Address,
+		SchemaVersion:         1,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&certifyModelMsg}, certCenter, certCenterAccount)
 	require.NoError(suite.T, err)

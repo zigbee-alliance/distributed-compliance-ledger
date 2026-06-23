@@ -420,6 +420,31 @@ func TestHandler_ApproveAddAccount_ByNotTrustee(t *testing.T) {
 	}
 }
 
+func TestHandler_ProposeAddAccount_AccountCountExceedsLimit(t *testing.T) {
+	setup := Setup(t)
+
+	// store 11 trustees
+	for i := 1; i < types.MaxTrusteeCount; i++ {
+		_ = storeTrustee(setup)
+	}
+	// make 12 trustees
+	trustee := storeTrustee(setup)
+
+	_, pubKey, address := testdata.KeyTestPubAddr()
+	proposeTrusteeAccount, err := types.NewMsgProposeAddAccount(
+		trustee,
+		address,
+		pubKey,
+		types.AccountRoles{types.Trustee},
+		0,
+		testconstants.ProductIDsEmpty,
+		testconstants.Info,
+	)
+	require.NoError(t, err)
+	_, err = setup.Handler(setup.Ctx, proposeTrusteeAccount)
+	require.ErrorIs(t, err, types.AccountTotalCountReachedLimit)
+}
+
 func TestHandler_ApproveAddAccount_ForExistingActiveAccount(t *testing.T) {
 	setup := Setup(t)
 

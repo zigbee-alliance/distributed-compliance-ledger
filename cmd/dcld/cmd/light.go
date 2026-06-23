@@ -259,7 +259,7 @@ func runProxy(cmd *cobra.Command, args []string) error {
 
 	go func() {
 		<-ctx.Done()
-		p.Listener.Close()
+		_ = p.Listener.Close()
 	}()
 
 	if tlsCertFile != "" && tlsKeyFile != "" {

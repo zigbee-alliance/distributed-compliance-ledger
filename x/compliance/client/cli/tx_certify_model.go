@@ -36,12 +36,13 @@ func CmdCertifyModel() *cobra.Command {
 		transport                          string
 		parentChild                        string
 		certificationIDOfSoftwareComponent string
+		specificationVersion               uint32
 		schemaVersion                      uint32
 	)
 
 	cmd := &cobra.Command{
 		Use:   "certify-model",
-		Short: "Certify an existing model",
+		Short: "Certify a model-version",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -71,6 +72,7 @@ func CmdCertifyModel() *cobra.Command {
 				transport,
 				parentChild,
 				certificationIDOfSoftwareComponent,
+				specificationVersion,
 				schemaVersion,
 			)
 
@@ -83,52 +85,41 @@ func CmdCertifyModel() *cobra.Command {
 			return err
 		},
 	}
-	cmd.Flags().Int32Var(&vid, FlagVID, 0,
-		"Model vendor ID (positive non-zero uint16)")
-	cmd.Flags().Int32Var(&pid, FlagPID, 0,
-		"Model product ID (positive non-zero uint16)")
-	cmd.Flags().Uint32VarP(&softwareVersion, FlagSoftwareVersion, FlagSoftwareVersionShortcut, 0,
-		"Software Version of model (uint32)")
-	cmd.Flags().StringVar(&softwareVersionString, FlagSoftwareVersionString, "",
-		"Software Version String of model")
-	cmd.Flags().Uint32Var(&cdVersionNumber, FlagCDVersionNumber, 0,
-		"CD Version Number of the certification")
+	cmd.Flags().Int32Var(&vid, FlagVID, 0, TextVID)
+	cmd.Flags().Int32Var(&pid, FlagPID, 0, TextPID)
+	cmd.Flags().Uint32VarP(&softwareVersion, FlagSoftwareVersion, FlagSoftwareVersionShortcut, 0, TextSoftwareVersion)
+	cmd.Flags().StringVar(&softwareVersionString, FlagSoftwareVersionString, "", TextSoftwareVersionString)
+	cmd.Flags().Uint32Var(&cdVersionNumber, FlagCDVersionNumber, 0, TextCDVersionNumber)
 	cmd.Flags().StringVarP(&certificationType, FlagCertificationType, FlagCertificationTypeShortcut, "", TextCertificationType)
-	cmd.Flags().StringVarP(&certificationDate, FlagCertificationDate, FlagDateShortcut, "",
-		"The date of model certification (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z")
-	cmd.Flags().StringVar(&reason, FlagReason, "",
-		"Optional comment describing the reason of certification")
-	cmd.Flags().StringVar(&programTypeVersion, FlagProgramTypeVersion, "",
-		"Program Type Version of the certification")
-	cmd.Flags().StringVar(&CDCertificateID, FlagCDCertificateID, "",
-		"CD Certification ID of the certification")
-	cmd.Flags().StringVar(&familyID, FlagFamilyID, "",
-		"Family ID of the certification")
-	cmd.Flags().StringVar(&supportedClusters, FlagSupportedClusters, "",
-		"Supported Clusters of the certification")
-	cmd.Flags().StringVar(&compliantPlatformUsed, FlagCompliantPlatformUsed, "",
-		"Compliant Platform Used of the certification")
-	cmd.Flags().StringVar(&compliantPlatformVersion, FlagCompliantPlatformVersion, "",
-		"Compliant Platform Version of the certification")
-	cmd.Flags().StringVar(&OSVersion, FlagOSVersion, "",
-		"OS Version of the certification")
-	cmd.Flags().StringVar(&certificationRoute, FlagCertificationRoute, "",
-		"Certification Route of the certification")
-	cmd.Flags().StringVar(&programType, FlagProgramType, "",
-		"Program Type of the certification")
-	cmd.Flags().StringVar(&transport, FlagTransport, "",
-		"Transport of the certification")
-	cmd.Flags().StringVar(&parentChild, FlagParentChild, "",
-		"Parent or Child  of the PFC certification route")
-	cmd.Flags().StringVar(&certificationIDOfSoftwareComponent, FlagCertificationIDOfSoftwareComponent, "",
-		"certification ID of software component")
-	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
+	cmd.Flags().Uint32Var(&specificationVersion, FlagSpecificationVersion, 0, TextSpecificationVersion)
+	cmd.Flags().StringVarP(&certificationDate, FlagCertificationDate, FlagDateShortcut, "", TextCertificationDate)
+	cmd.Flags().StringVar(&reason, FlagReason, "", TextCertificationReason)
+	cmd.Flags().StringVar(&CDCertificateID, FlagCDCertificateID, "", TextCDCertificateID)
+	cmd.Flags().StringVar(&familyID, FlagFamilyID, "", TextFamilyID)
+	cmd.Flags().StringVar(&supportedClusters, FlagSupportedClusters, "", TextSupportedClusters)
+	cmd.Flags().StringVar(&certificationRoute, FlagCertificationRoute, "", TextCertificationRoute)
+	cmd.Flags().StringVar(&transport, FlagTransport, "", TextTransport)
+	cmd.Flags().StringVar(&parentChild, FlagParentChild, "", TextParentChild)
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, types.ComplianceInfoSchemaVersion, TextSchemaVersion)
+	cmd.Flags().StringVar(&programType, FlagProgramType, "", TextProgramType)
+	cmd.Flags().StringVar(&programTypeVersion, FlagProgramTypeVersion, "", TextProgramTypeVersion)
+	// Deprecated fields
+	cmd.Flags().StringVar(&compliantPlatformUsed, FlagCompliantPlatformUsed, "", TextCompliantPlatformUsed)
+	_ = cmd.Flags().MarkDeprecated(FlagCompliantPlatformUsed, DeprecatedTextCompliantPlatformUsed)
+	cmd.Flags().StringVar(&compliantPlatformVersion, FlagCompliantPlatformVersion, "", TextCompliantPlatformVersion)
+	_ = cmd.Flags().MarkDeprecated(FlagCompliantPlatformVersion, DeprecatedTextCompliantPlatformVersion)
+	cmd.Flags().StringVar(&certificationIDOfSoftwareComponent, FlagCertificationIDOfSoftwareComponent, "", TextCertificationIDOfSoftwareComponent)
+	_ = cmd.Flags().MarkDeprecated(FlagCertificationIDOfSoftwareComponent, DeprecatedTextCertificationIDOfSoftwareComponent)
+	cmd.Flags().StringVar(&OSVersion, FlagOSVersion, "", TextOSVersion)
+	_ = cmd.Flags().MarkDeprecated(FlagOSVersion, DeprecatedTextOSVersion)
 
+	// Required fields
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
 	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
 	_ = cmd.MarkFlagRequired(FlagSoftwareVersionString)
 	_ = cmd.MarkFlagRequired(FlagCertificationType)
+	_ = cmd.MarkFlagRequired(FlagSpecificationVersion)
 	_ = cmd.MarkFlagRequired(FlagCertificationDate)
 	_ = cmd.MarkFlagRequired(FlagCDCertificateID)
 	_ = cmd.MarkFlagRequired(flags.FlagFrom)

@@ -221,7 +221,7 @@ func writeSignedGenTx(clientCtx client.Context, outputDocument string, tx sdk.Tx
 	if err != nil {
 		return err
 	}
-	defer outputFile.Close()
+	defer func() { _ = outputFile.Close() }()
 
 	json, err := clientCtx.TxConfig.TxJSONEncoder()(tx)
 	if err != nil {

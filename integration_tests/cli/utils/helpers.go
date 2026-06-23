@@ -32,19 +32,13 @@ func CreateAccount(t *testing.T, roles string) string {
 
 	name := utils.RandString()
 
-	// Delete existing key if present (keys accumulate across test runs against a shared keyring).
-	utils.ExecuteCLI("keys", "delete", name, "--keyring-backend", "test", "-y") //nolint:errcheck
+	require.NoError(t, AddKey(name))
 
-	_, err := utils.ExecuteCLI("keys", "add", name, "--keyring-backend", "test", "--no-backup")
+	addr, err := GetAddress(name)
 	require.NoError(t, err)
 
-	addrOut, err := utils.ExecuteCLI("keys", "show", name, "-a", "--keyring-backend", "test")
+	pubkey, err := GetPubkey(name)
 	require.NoError(t, err)
-	addr := stripNewline(addrOut)
-
-	pubkeyOut, err := utils.ExecuteCLI("keys", "show", name, "-p", "--keyring-backend", "test")
-	require.NoError(t, err)
-	pubkey := stripNewline(pubkeyOut)
 
 	txResult, err := utils.ExecuteTx("tx", "auth", "propose-add-account",
 		"--address", addr,
@@ -93,19 +87,13 @@ func CreateAccount(t *testing.T, roles string) string {
 func CreateVendorAccount(t *testing.T, name string, vid int, pidRanges ...string) string {
 	t.Helper()
 
-	// Delete existing key if present (keys accumulate across test runs against a shared keyring).
-	utils.ExecuteCLI("keys", "delete", name, "--keyring-backend", "test", "-y") //nolint:errcheck
+	require.NoError(t, AddKey(name))
 
-	_, err := utils.ExecuteCLI("keys", "add", name, "--keyring-backend", "test", "--no-backup")
+	addr, err := GetAddress(name)
 	require.NoError(t, err)
 
-	addrOut, err := utils.ExecuteCLI("keys", "show", name, "-a", "--keyring-backend", "test")
+	pubkey, err := GetPubkey(name)
 	require.NoError(t, err)
-	addr := stripNewline(addrOut)
-
-	pubkeyOut, err := utils.ExecuteCLI("keys", "show", name, "-p", "--keyring-backend", "test")
-	require.NoError(t, err)
-	pubkey := stripNewline(pubkeyOut)
 
 	args := []string{
 		"tx", "auth", "propose-add-account",
@@ -158,6 +146,10 @@ func CreateVendorAccount(t *testing.T, name string, vid int, pidRanges ...string
 
 // CreateModelAndVersion adds a model and a model version for the given vid/pid/sv/svs
 // using the provided userAddr (account name) as the signer.
+// NOTE: Kept as inline ExecuteTx calls (rather than the typed model.AddModel /
+// model.AddModelVersion helpers) to avoid an import cycle: tests in
+// integration_tests/cli/model import this cliputils package, so cliputils must
+// not import integration_tests/cli/model.
 func CreateModelAndVersion(t *testing.T, vid, pid, sv int, svs, userAddr string) {
 	t.Helper()
 
@@ -240,12 +232,144 @@ func WaitForHeight(t *testing.T, target int64, timeoutSec int) {
 	}
 }
 
-// stripNewline removes trailing newline/whitespace from CLI output bytes.
-func stripNewline(b []byte) string {
-	s := string(b)
-	for len(s) > 0 && (s[len(s)-1] == '\n' || s[len(s)-1] == '\r' || s[len(s)-1] == ' ') {
-		s = s[:len(s)-1]
+// FlagOrHex returns hex if non-empty, otherwise the decimal-formatted n. It is
+// the shared formatter for vid/pid-style flags that accept either a decimal or
+// a 0x-prefixed hex value.
+func FlagOrHex(n int, hex string) string {
+	if hex != "" {
+		return hex
 	}
 
-	return s
+	return strconv.Itoa(n)
+}
+
+// GetSingle runs a single-item dcld query and unmarshals into v. Returns
+// (false, nil) when the CLI emitted "Not Found".
+func GetSingle(v interface{}, args ...string) (found bool, err error) {
+	out, err := utils.ExecuteCLI(args...)
+	if err != nil {
+		return false, err
+	}
+	if utils.IsNotFound(out) {
+		return false, nil
+	}
+	out = utils.NormalizeProtoJSON(out)
+	if err := json.Unmarshal(out, v); err != nil {
+		return false, fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
+	}
+
+	return true, nil
+}
+
+// GetList runs an all-* dcld query and unmarshals the wrapper response.
+func GetList(v interface{}, args ...string) error {
+	out, err := utils.ExecuteCLI(args...)
+	if err != nil {
+		return err
+	}
+	out = utils.NormalizeProtoJSON(utils.StripPagination(out))
+	if err := json.Unmarshal(out, v); err != nil {
+		return fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
+	}
+
+	return nil
+}
+
+// RequireTxOK asserts a tx broadcast succeeded client-side, executed with
+// on-chain code 0, and confirms it on-chain.
+func RequireTxOK(t *testing.T, txResult *utils.TxResult, err error) {
+	t.Helper()
+	require.NoError(t, err)
+	require.Equal(t, uint32(0), txResult.Code, "tx raw_log: %s", txResult.RawLog)
+	_, awaitErr := utils.AwaitTxConfirmation(txResult.TxHash)
+	require.NoError(t, awaitErr)
+}
+
+// RequireTxFailContains asserts a tx failed (either at the CLI/broadcast level
+// via err, or on-chain via a non-zero code) and that the surfaced message
+// contains the expected substring.
+func RequireTxFailContains(t *testing.T, txResult *utils.TxResult, err error, want string) {
+	t.Helper()
+	var msg string
+	switch {
+	case err != nil:
+		msg = err.Error()
+	case txResult == nil:
+		t.Fatalf("expected failure containing %q, got nil tx and nil err", want)
+	default:
+		require.NotEqual(t, uint32(0), txResult.Code,
+			"expected non-zero code, raw_log: %s", txResult.RawLog)
+		msg = txResult.RawLog
+	}
+	require.True(t, strings.Contains(msg, want),
+		"expected error to contain %q, got: %s", want, msg)
+}
+
+// RequireTxFails asserts a tx broadcast succeeded client-side but failed
+// on-chain with some non-zero code, when the exact code is unimportant. Use
+// RequireTxFailCode to assert a specific code, or RequireTxFailContains to match
+// the error message. It does not await confirmation: a tx rejected at CheckTx
+// never enters a block, so callers that need to drain a delivered-but-failed tx
+// should follow with their own AwaitTxConfirmation.
+func RequireTxFails(t *testing.T, txResult *utils.TxResult, err error) {
+	t.Helper()
+	require.NoError(t, err)
+	require.NotEqual(t, uint32(0), txResult.Code, "tx raw_log: %s", txResult.RawLog)
+}
+
+// RequireTxFailCode asserts a tx broadcast succeeded client-side but failed
+// on-chain with exactly the given code, then drains it from the mempool. Use
+// RequireTxFailContains instead when asserting on the error message; pair this
+// with a follow-up require.Contains(t, txResult.RawLog, …) when both the code
+// and the message matter.
+func RequireTxFailCode(t *testing.T, txResult *utils.TxResult, err error, code uint32) {
+	t.Helper()
+	require.NoError(t, err)
+	require.Equal(t, code, txResult.Code, "tx raw_log: %s", txResult.RawLog)
+	_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
+}
+
+// TxFailureText collects a rejected tx's error text and/or RawLog so the exact
+// chain message can be asserted whether the failure surfaces client-side (err)
+// or in the broadcast/DeliverTx result.
+func TxFailureText(txResult *utils.TxResult, err error) string {
+	combined := ""
+	if err != nil {
+		combined += err.Error()
+	}
+	if txResult != nil {
+		combined += txResult.RawLog
+	}
+
+	return combined
+}
+
+// AddKey generates a new key in the test keyring with the given name. Any
+// pre-existing key with the same name is deleted first (keys accumulate across
+// runs against a shared keyring).
+func AddKey(name string) error {
+	utils.ExecuteCLI("keys", "delete", name, "--keyring-backend", "test", "-y") //nolint:errcheck
+	_, err := utils.ExecuteCLI("keys", "add", name, "--keyring-backend", "test", "--no-backup")
+
+	return err
+}
+
+// GetAddress returns the bech32 address for a keyring key name.
+func GetAddress(name string) (string, error) {
+	out, err := utils.ExecuteCLI("keys", "show", name, "-a", "--keyring-backend", "test")
+	if err != nil {
+		return "", err
+	}
+
+	return strings.TrimSpace(string(out)), nil
+}
+
+// GetPubkey returns the pubkey string for a keyring key name.
+func GetPubkey(name string) (string, error) {
+	out, err := utils.ExecuteCLI("keys", "show", name, "-p", "--keyring-backend", "test")
+	if err != nil {
+		return "", err
+	}
+
+	return strings.TrimSpace(string(out)), nil
 }

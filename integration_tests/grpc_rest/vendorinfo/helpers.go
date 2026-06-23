@@ -63,7 +63,7 @@ func GetVendorInfo(
 		res = resp.GetVendorInfo()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/dclauth service.
 		vendorinfoClient := vendorinfotypes.NewQueryClient(grpcConn)
@@ -108,7 +108,7 @@ func GetVendorInfos(suite *utils.TestSuite) (res []vendorinfotypes.VendorInfo, e
 		res = resp.GetVendorInfo()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/dclauth service.
 		vendorinfoClient := vendorinfotypes.NewQueryClient(grpcConn)

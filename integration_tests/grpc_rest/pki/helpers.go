@@ -46,7 +46,7 @@ func GetAllProposedDaX509RootCerts(suite *utils.TestSuite) (res []pkitypes.Propo
 		res = resp.GetProposedCertificate()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		pkiClient := pkitypes.NewQueryClient(grpcConn)
@@ -80,7 +80,7 @@ func GetProposedDaX509RootCert(suite *utils.TestSuite, subject string, subjectKe
 		res = resp.GetProposedCertificate()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		pkiClient := pkitypes.NewQueryClient(grpcConn)
@@ -118,7 +118,7 @@ func getAllDaX509Certs(suite *utils.TestSuite, subjectKeyID string) (res []pkity
 		res = resp.GetApprovedCertificates()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		pkiClient := pkitypes.NewQueryClient(grpcConn)
@@ -152,7 +152,7 @@ func GetDaX509Cert(suite *utils.TestSuite, subject string, subjectKeyID string) 
 		res = resp.GetApprovedCertificates()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		pkiClient := pkitypes.NewQueryClient(grpcConn)
@@ -182,7 +182,7 @@ func GetAllRevokedDaX509Certs(suite *utils.TestSuite) (res []pkitypes.RevokedCer
 		res = resp.GetRevokedCertificates()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		pkiClient := pkitypes.NewQueryClient(grpcConn)
@@ -216,7 +216,7 @@ func GetRevokedDaX509Cert(suite *utils.TestSuite, subject string, subjectKeyID s
 		res = resp.GetRevokedCertificates()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		pkiClient := pkitypes.NewQueryClient(grpcConn)
@@ -246,7 +246,7 @@ func GetAllProposedRevocationX509Certs(suite *utils.TestSuite) (res []pkitypes.P
 		res = resp.GetProposedCertificateRevocation()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		pkiClient := pkitypes.NewQueryClient(grpcConn)
@@ -288,7 +288,7 @@ func getProposedRevocationX509Cert(suite *utils.TestSuite, subject string, subje
 		res = resp.GetProposedCertificateRevocation()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		pkiClient := pkitypes.NewQueryClient(grpcConn)
@@ -319,7 +319,7 @@ func GetAllDaRootX509Certs(suite *utils.TestSuite) (res pkitypes.ApprovedRootCer
 		res = resp.GetApprovedRootCertificates()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		pkiClient := pkitypes.NewQueryClient(grpcConn)
@@ -346,7 +346,7 @@ func GetAllRevokedDaRootX509Certs(suite *utils.TestSuite) (res pkitypes.RevokedR
 		res = resp.GetRevokedRootCertificates()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		pkiClient := pkitypes.NewQueryClient(grpcConn)
@@ -380,7 +380,7 @@ func GetAllDaX509CertsBySubject(suite *utils.TestSuite, subject string) (*pkityp
 		res = resp.GetApprovedCertificatesBySubject()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		pkiClient := pkitypes.NewQueryClient(grpcConn)
@@ -416,7 +416,7 @@ func GetAllChildX509Certs(suite *utils.TestSuite, subject string, subjectKeyID s
 		res = resp.GetChildCertificates()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		pkiClient := pkitypes.NewQueryClient(grpcConn)
@@ -446,7 +446,7 @@ func GetAllRejectedDaX509RootCerts(suite *utils.TestSuite) (res []pkitypes.Rejec
 		res = resp.GetRejectedCertificate()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		pkiClient := pkitypes.NewQueryClient(grpcConn)
 		resp, err := pkiClient.RejectedCertificateAll(
@@ -479,7 +479,7 @@ func GetRejectedDaX509RootCert(suite *utils.TestSuite, subject string, subjectKe
 		res = resp.GetRejectedCertificate()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		pkiClient := pkitypes.NewQueryClient(grpcConn)
 		resp, err := pkiClient.RejectedCertificate(
@@ -508,7 +508,7 @@ func GetAllPkiRevocationDistributionPoints(suite *utils.TestSuite) (res []pkityp
 		res = resp.GetPkiRevocationDistributionPoint()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		pkiClient := pkitypes.NewQueryClient(grpcConn)
 		resp, err := pkiClient.PkiRevocationDistributionPointAll(
@@ -541,7 +541,7 @@ func GetPkiRevocationDistributionPointsBySubject(suite *utils.TestSuite, subject
 		res = resp.GetPkiRevocationDistributionPointsByIssuerSubjectKeyID()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		pkiClient := pkitypes.NewQueryClient(grpcConn)
@@ -577,7 +577,7 @@ func GetPkiRevocationDistributionPoint(suite *utils.TestSuite, vendorID int32, s
 		res = resp.GetPkiRevocationDistributionPoint()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		pkiClient := pkitypes.NewQueryClient(grpcConn)
 		resp, err := pkiClient.PkiRevocationDistributionPoint(
@@ -615,7 +615,7 @@ func getAllCerts(suite *utils.TestSuite, subjectKeyID string) (res []pkitypes.Al
 		res = resp.GetCertificates()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		pkiClient := pkitypes.NewQueryClient(grpcConn)
@@ -651,7 +651,7 @@ func GetCert(suite *utils.TestSuite, subject string, subjectKeyID string) (*pkit
 		res = resp.GetCertificates()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		pkiClient := pkitypes.NewQueryClient(grpcConn)
@@ -688,7 +688,7 @@ func GetAllCertsBySubject(suite *utils.TestSuite, subject string) (*pkitypes.All
 		res = resp.GetAllCertificatesBySubject()
 	} else {
 		grpcConn := suite.GetGRPCConn()
-		defer grpcConn.Close()
+		defer func() { _ = grpcConn.Close() }()
 
 		// This creates a gRPC client to query the x/pki service.
 		pkiClient := pkitypes.NewQueryClient(grpcConn)

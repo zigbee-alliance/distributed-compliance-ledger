@@ -3,43 +3,12 @@ package model
 import (
 	"fmt"
 	"math/rand"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
-// requireTxOK asserts a tx executed with on-chain code 0.
-func requireTxOK(t *testing.T, txResult *utils.TxResult, err error) {
-	t.Helper()
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), txResult.Code, "tx raw_log: %s", txResult.RawLog)
-	_, awaitErr := utils.AwaitTxConfirmation(txResult.TxHash)
-	require.NoError(t, awaitErr)
-}
-
-// requireTxFailContains asserts a tx failed (either at CLI level or on-chain)
-// and the error message contains the expected substring.
-func requireTxFailContains(t *testing.T, txResult *utils.TxResult, err error, want string) {
-	t.Helper()
-	var msg string
-	switch {
-	case err != nil:
-		msg = err.Error()
-	case txResult == nil:
-		t.Fatalf("expected failure containing %q, got nil tx and nil err", want)
-	default:
-		require.NotEqual(t, uint32(0), txResult.Code,
-			"expected non-zero code, raw_log: %s", txResult.RawLog)
-		msg = txResult.RawLog
-	}
-	require.True(t, strings.Contains(msg, want),
-		"expected error to contain %q, got: %s", want, msg)
-}
-
-// TestModelValidationCases translates model-validation-cases.sh.
 func TestModelValidationCases(t *testing.T) {
 	vid1 := rand.Intn(65534) + 1
 	vendorAccount1 := fmt.Sprintf("vendor_account_%d", vid1)
@@ -52,234 +21,230 @@ func TestModelValidationCases(t *testing.T) {
 	// --- AddModel ---
 
 	t.Run("AddModel_MinimumFields", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid1),
-			"--pid", fmt.Sprintf("%d", pid1),
-			"--deviceTypeID", "1",
-			"--productName", "TestProduct",
-			"--productLabel", "Test Product",
-			"--partNumber", "1",
-			"--enhancedSetupFlowOptions", "0",
-			"--commissioningCustomFlow", "0",
-			"--from", vendorAccount1,
-		)
-		requireTxOK(t, txResult, err)
+		txResult, err := AddModel(AddModelOpts{
+			VID:          vid1,
+			PID:          pid1,
+			ProductLabel: "Test Product",
+			From:         vendorAccount1,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryModel(vid1, pid1)
+		m, err := GetModel(vid1, pid1)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, vid1))
-		require.Contains(t, string(out), fmt.Sprintf(`"pid":%d`, pid1))
-		require.Contains(t, string(out), `"productName":"TestProduct"`)
-		require.Contains(t, string(out), `"partNumber":"1"`)
-		require.Contains(t, string(out), `"commissioningCustomFlow":0`)
+		require.NotNil(t, m)
+		require.Equal(t, int32(vid1), m.Vid)
+		require.Equal(t, int32(pid1), m.Pid)
+		require.Equal(t, "TestProduct", m.ProductName)
+		require.Equal(t, "1", m.PartNumber)
+		require.Equal(t, int32(0), m.CommissioningCustomFlow)
 	})
 
 	t.Run("AddModel_AllFields", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid1),
-			"--pid", fmt.Sprintf("%d", pid2),
-			"--deviceTypeID", "2",
-			"--productName", "Test Product with All Fields",
-			"--productLabel", "Test Product with All fields",
-			"--partNumber", "23.456",
-			"--commissioningCustomFlow", "1",
-			"--commissioningCustomFlowURL", "https://customflow.url.info",
-			"--commissioningModeInitialStepsHint", "1",
-			"--commissioningModeInitialStepsInstruction", "Initial Instructions",
-			"--commissioningModeSecondaryStepsHint", "2",
-			"--commissioningModeSecondaryStepsInstruction", "Secondary Steps Instruction",
-			"--icdUserActiveModeTriggerHint", "4",
-			"--icdUserActiveModeTriggerInstruction", "ICD User Active Mode Trigger Instruction",
-			"--factoryResetStepsHint", "3",
-			"--factoryResetStepsInstruction", "Factory Reset Steps Instruction",
-			"--userManualURL", "https://usermanual.url",
-			"--productURL", "https://product.url.info",
-			"--lsfURL", "https://lsf.url.info",
-			"--supportURL", "https://support.url.info",
-			"--enhancedSetupFlowOptions", "0",
-			"--from", vendorAccount1,
-		)
-		requireTxOK(t, txResult, err)
+		txResult, err := AddModel(AddModelOpts{
+			VID:                     vid1,
+			PID:                     pid2,
+			DeviceTypeID:            2,
+			ProductName:             "Test Product with All Fields",
+			ProductLabel:            "Test Product with All fields",
+			PartNumber:              "23.456",
+			CommissioningCustomFlow: 1,
+			From:                    vendorAccount1,
 
-		out, err := QueryModel(vid1, pid2)
+			CommissioningCustomFlowURL:                 "https://customflow.url.info",
+			CommissioningModeInitialStepsHint:          1,
+			CommissioningModeInitialStepsInstruction:   "Initial Instructions",
+			CommissioningModeSecondaryStepsHint:        2,
+			CommissioningModeSecondaryStepsInstruction: "Secondary Steps Instruction",
+			IcdUserActiveModeTriggerHint:               4,
+			IcdUserActiveModeTriggerInstruction:        "ICD User Active Mode Trigger Instruction",
+			FactoryResetStepsHint:                      3,
+			FactoryResetStepsInstruction:               "Factory Reset Steps Instruction",
+			UserManualURL:                              "https://usermanual.url",
+			ProductURL:                                 "https://product.url.info",
+			LsfURL:                                     "https://lsf.url.info",
+			SupportURL:                                 "https://support.url.info",
+		})
+		cliputils.RequireTxOK(t, txResult, err)
+
+		m, err := GetModel(vid1, pid2)
 		require.NoError(t, err)
-		s := string(out)
-		require.Contains(t, s, fmt.Sprintf(`"vid":%d`, vid1))
-		require.Contains(t, s, fmt.Sprintf(`"pid":%d`, pid2))
-		require.Contains(t, s, `"deviceTypeId":2`)
-		require.Contains(t, s, `"productName":"Test Product with All Fields"`)
-		require.Contains(t, s, `"productLabel":"Test Product with All fields"`)
-		require.Contains(t, s, `"partNumber":"23.456"`)
-		require.Contains(t, s, `"commissioningCustomFlow":1`)
-		require.Contains(t, s, `"commissioningCustomFlowUrl":"https://customflow.url.info"`)
-		require.Contains(t, s, `"commissioningModeInitialStepsHint":1`)
-		require.Contains(t, s, `"commissioningModeInitialStepsInstruction":"Initial Instructions"`)
-		require.Contains(t, s, `"commissioningModeSecondaryStepsHint":2`)
-		require.Contains(t, s, `"commissioningModeSecondaryStepsInstruction":"Secondary Steps Instruction"`)
-		require.Contains(t, s, `"icdUserActiveModeTriggerHint":4`)
-		require.Contains(t, s, `"icdUserActiveModeTriggerInstruction":"ICD User Active Mode Trigger Instruction"`)
-		require.Contains(t, s, `"factoryResetStepsHint":3`)
-		require.Contains(t, s, `"factoryResetStepsInstruction":"Factory Reset Steps Instruction"`)
-		require.Contains(t, s, `"userManualUrl":"https://usermanual.url"`)
-		require.Contains(t, s, `"supportUrl":"https://support.url.info"`)
-		require.Contains(t, s, `"productUrl":"https://product.url.info"`)
-		require.Contains(t, s, `"lsfUrl":"https://lsf.url.info"`)
-		require.Contains(t, s, `"lsfRevision":1`)
+		require.NotNil(t, m)
+		require.Equal(t, int32(vid1), m.Vid)
+		require.Equal(t, int32(pid2), m.Pid)
+		require.Equal(t, int32(2), m.DeviceTypeId)
+		require.Equal(t, "Test Product with All Fields", m.ProductName)
+		require.Equal(t, "Test Product with All fields", m.ProductLabel)
+		require.Equal(t, "23.456", m.PartNumber)
+		require.Equal(t, int32(1), m.CommissioningCustomFlow)
+		require.Equal(t, "https://customflow.url.info", m.CommissioningCustomFlowUrl)
+		require.Equal(t, uint32(1), m.CommissioningModeInitialStepsHint)
+		require.Equal(t, "Initial Instructions", m.CommissioningModeInitialStepsInstruction)
+		require.Equal(t, uint32(2), m.CommissioningModeSecondaryStepsHint)
+		require.Equal(t, "Secondary Steps Instruction", m.CommissioningModeSecondaryStepsInstruction)
+		require.Equal(t, uint32(4), m.IcdUserActiveModeTriggerHint)
+		require.Equal(t, "ICD User Active Mode Trigger Instruction", m.IcdUserActiveModeTriggerInstruction)
+		require.Equal(t, uint32(3), m.FactoryResetStepsHint)
+		require.Equal(t, "Factory Reset Steps Instruction", m.FactoryResetStepsInstruction)
+		require.Equal(t, "https://usermanual.url", m.UserManualUrl)
+		require.Equal(t, "https://support.url.info", m.SupportUrl)
+		require.Equal(t, "https://product.url.info", m.ProductUrl)
+		require.Equal(t, "https://lsf.url.info", m.LsfUrl)
+		require.Equal(t, int32(1), m.LsfRevision)
 	})
 
 	t.Run("AddModel_MandatoryAndSomeOptional_Pid3", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid1),
-			"--pid", fmt.Sprintf("%d", pid3),
-			"--deviceTypeID", "2",
-			"--productName", "Test Product with All Fields",
-			"--productLabel", "Test Product with All fields",
-			"--partNumber", "23.456",
-			"--commissioningCustomFlow", "1",
-			"--commissioningCustomFlowURL", "https://customflow.url.info",
-			"--commissioningModeInitialStepsHint", "1",
-			"--commissioningModeInitialStepsInstruction", "Initial Instructions",
-			"--commissioningModeSecondaryStepsHint", "2",
-			"--commissioningModeSecondaryStepsInstruction", "Secondary Steps Instruction",
-			"--icdUserActiveModeTriggerHint", "4",
-			"--icdUserActiveModeTriggerInstruction", "ICD User Active Mode Trigger Instruction",
-			"--factoryResetStepsHint", "3",
-			"--factoryResetStepsInstruction", "Factory Reset Steps Instruction",
-			"--enhancedSetupFlowOptions", "0",
-			"--from", vendorAccount1,
-		)
-		requireTxOK(t, txResult, err)
+		txResult, err := AddModel(AddModelOpts{
+			VID:                     vid1,
+			PID:                     pid3,
+			DeviceTypeID:            2,
+			ProductName:             "Test Product with All Fields",
+			ProductLabel:            "Test Product with All fields",
+			PartNumber:              "23.456",
+			CommissioningCustomFlow: 1,
+			From:                    vendorAccount1,
 
-		out, err := QueryModel(vid1, pid3)
+			CommissioningCustomFlowURL:                 "https://customflow.url.info",
+			CommissioningModeInitialStepsHint:          1,
+			CommissioningModeInitialStepsInstruction:   "Initial Instructions",
+			CommissioningModeSecondaryStepsHint:        2,
+			CommissioningModeSecondaryStepsInstruction: "Secondary Steps Instruction",
+			IcdUserActiveModeTriggerHint:               4,
+			IcdUserActiveModeTriggerInstruction:        "ICD User Active Mode Trigger Instruction",
+			FactoryResetStepsHint:                      3,
+			FactoryResetStepsInstruction:               "Factory Reset Steps Instruction",
+		})
+		cliputils.RequireTxOK(t, txResult, err)
+
+		m, err := GetModel(vid1, pid3)
 		require.NoError(t, err)
-		s := string(out)
-		require.Contains(t, s, fmt.Sprintf(`"vid":%d`, vid1))
-		require.Contains(t, s, fmt.Sprintf(`"pid":%d`, pid3))
-		require.Contains(t, s, `"factoryResetStepsInstruction":"Factory Reset Steps Instruction"`)
+		require.NotNil(t, m)
+		require.Equal(t, int32(vid1), m.Vid)
+		require.Equal(t, int32(pid3), m.Pid)
+		require.Equal(t, "Factory Reset Steps Instruction", m.FactoryResetStepsInstruction)
 	})
 
 	// --- UpdateModel ---
 
 	t.Run("UpdateModel_MultipleFields_Pid1", func(t *testing.T) {
-		txResult, err := UpdateModel(vid1, pid1, vendorAccount1,
-			"--productName", "Updated Product Name",
-			"--productLabel", "Updated Test Product",
-			"--partNumber", "2",
-			"--lsfURL", "https://lsf.url.info?v=1",
-			"--lsfRevision", "1",
-			"--enhancedSetupFlowOptions", "0",
-		)
-		requireTxOK(t, txResult, err)
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid1, PID: pid1, From: vendorAccount1,
+			ProductName:  "Updated Product Name",
+			ProductLabel: "Updated Test Product",
+			PartNumber:   "2",
+			LsfURL:       "https://lsf.url.info?v=1",
+			LsfRevision:  1,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryModel(vid1, pid1)
+		m, err := GetModel(vid1, pid1)
 		require.NoError(t, err)
-		s := string(out)
-		require.Contains(t, s, `"productName":"Updated Product Name"`)
-		require.Contains(t, s, `"partNumber":"2"`)
-		require.Contains(t, s, `"productLabel":"Updated Test Product"`)
-		require.Contains(t, s, `"commissioningCustomFlow":0`)
-		require.Contains(t, s, `"lsfUrl":"https://lsf.url.info?v=1"`)
-		require.Contains(t, s, `"lsfRevision":1`)
+		require.NotNil(t, m)
+		require.Equal(t, "Updated Product Name", m.ProductName)
+		require.Equal(t, "2", m.PartNumber)
+		require.Equal(t, "Updated Test Product", m.ProductLabel)
+		require.Equal(t, int32(0), m.CommissioningCustomFlow)
+		require.Equal(t, "https://lsf.url.info?v=1", m.LsfUrl)
+		require.Equal(t, int32(1), m.LsfRevision)
 	})
 
 	t.Run("UpdateModel_SingleField_Pid1", func(t *testing.T) {
-		txResult, err := UpdateModel(vid1, pid1, vendorAccount1,
-			"--productLabel", "Updated Test Product V2",
-			"--enhancedSetupFlowOptions", "0",
-		)
-		requireTxOK(t, txResult, err)
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid1, PID: pid1, From: vendorAccount1,
+			ProductLabel: "Updated Test Product V2",
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryModel(vid1, pid1)
+		m, err := GetModel(vid1, pid1)
 		require.NoError(t, err)
-		s := string(out)
-		require.Contains(t, s, `"productName":"Updated Product Name"`) // unchanged
-		require.Contains(t, s, `"partNumber":"2"`)                     // unchanged
-		require.Contains(t, s, `"productLabel":"Updated Test Product V2"`)
+		require.NotNil(t, m)
+		require.Equal(t, "Updated Product Name", m.ProductName) // unchanged
+		require.Equal(t, "2", m.PartNumber)                     // unchanged
+		require.Equal(t, "Updated Test Product V2", m.ProductLabel)
 	})
 
 	t.Run("UpdateModel_AllFields_Pid1", func(t *testing.T) {
-		txResult, err := UpdateModel(vid1, pid1, vendorAccount1,
-			"--productName", "Updated Product Name V3",
-			"--partNumber", "V3",
-			"--commissioningCustomFlowURL", "https://updated.url.info",
-			"--productLabel", "Updated Test Product V3",
-			"--commissioningModeInitialStepsInstruction", "Instructions updated v3",
-			"--commissioningModeSecondaryStepsInstruction", "Secondary Instructions v3",
-			"--icdUserActiveModeTriggerInstruction", "ICD User Active Mode Trigger Instructions v3",
-			"--factoryResetStepsInstruction", "Factory Reset Instructions v3",
-			"--userManualURL", "https://userManual.info/v3",
-			"--supportURL", "https://support.url.info/v3",
-			"--productURL", "https://product.landingpage.url",
-			"--lsfURL", "https://lsf.url.info?v=2",
-			"--lsfRevision", "2",
-			"--enhancedSetupFlowOptions", "0",
-		)
-		requireTxOK(t, txResult, err)
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid1, PID: pid1, From: vendorAccount1,
+			ProductName:                                "Updated Product Name V3",
+			PartNumber:                                 "V3",
+			CommissioningCustomFlowURL:                 "https://updated.url.info",
+			ProductLabel:                               "Updated Test Product V3",
+			CommissioningModeInitialStepsInstruction:   "Instructions updated v3",
+			CommissioningModeSecondaryStepsInstruction: "Secondary Instructions v3",
+			IcdUserActiveModeTriggerInstruction:        "ICD User Active Mode Trigger Instructions v3",
+			FactoryResetStepsInstruction:               "Factory Reset Instructions v3",
+			UserManualURL:                              "https://userManual.info/v3",
+			SupportURL:                                 "https://support.url.info/v3",
+			ProductURL:                                 "https://product.landingpage.url",
+			LsfURL:                                     "https://lsf.url.info?v=2",
+			LsfRevision:                                2,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryModel(vid1, pid1)
+		m, err := GetModel(vid1, pid1)
 		require.NoError(t, err)
-		s := string(out)
-		require.Contains(t, s, `"productName":"Updated Product Name V3"`)
-		require.Contains(t, s, `"partNumber":"V3"`)
-		require.Contains(t, s, `"productLabel":"Updated Test Product V3"`)
-		require.Contains(t, s, `"commissioningCustomFlowUrl":"https://updated.url.info"`)
-		require.Contains(t, s, `"commissioningModeInitialStepsInstruction":"Instructions updated v3"`)
-		require.Contains(t, s, `"commissioningModeSecondaryStepsInstruction":"Secondary Instructions v3"`)
-		require.Contains(t, s, `"icdUserActiveModeTriggerInstruction":"ICD User Active Mode Trigger Instructions v3"`)
-		require.Contains(t, s, `"factoryResetStepsInstruction":"Factory Reset Instructions v3"`)
-		require.Contains(t, s, `"userManualUrl":"https://userManual.info/v3"`)
-		require.Contains(t, s, `"supportUrl":"https://support.url.info/v3"`)
-		require.Contains(t, s, `"productUrl":"https://product.landingpage.url"`)
-		require.Contains(t, s, `"lsfUrl":"https://lsf.url.info?v=2"`)
-		require.Contains(t, s, `"lsfRevision":2`)
+		require.NotNil(t, m)
+		require.Equal(t, "Updated Product Name V3", m.ProductName)
+		require.Equal(t, "V3", m.PartNumber)
+		require.Equal(t, "Updated Test Product V3", m.ProductLabel)
+		require.Equal(t, "https://updated.url.info", m.CommissioningCustomFlowUrl)
+		require.Equal(t, "Instructions updated v3", m.CommissioningModeInitialStepsInstruction)
+		require.Equal(t, "Secondary Instructions v3", m.CommissioningModeSecondaryStepsInstruction)
+		require.Equal(t, "ICD User Active Mode Trigger Instructions v3", m.IcdUserActiveModeTriggerInstruction)
+		require.Equal(t, "Factory Reset Instructions v3", m.FactoryResetStepsInstruction)
+		require.Equal(t, "https://userManual.info/v3", m.UserManualUrl)
+		require.Equal(t, "https://support.url.info/v3", m.SupportUrl)
+		require.Equal(t, "https://product.landingpage.url", m.ProductUrl)
+		require.Equal(t, "https://lsf.url.info?v=2", m.LsfUrl)
+		require.Equal(t, int32(2), m.LsfRevision)
 	})
 
 	t.Run("UpdateModel_OneFieldPreservesOthers_Pid1", func(t *testing.T) {
-		txResult, err := UpdateModel(vid1, pid1, vendorAccount1,
-			"--productLabel", "Updated Test Product V4",
-			"--enhancedSetupFlowOptions", "0",
-		)
-		requireTxOK(t, txResult, err)
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid1, PID: pid1, From: vendorAccount1,
+			ProductLabel: "Updated Test Product V4",
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryModel(vid1, pid1)
+		m, err := GetModel(vid1, pid1)
 		require.NoError(t, err)
-		s := string(out)
-		require.Contains(t, s, `"productLabel":"Updated Test Product V4"`)
-		require.Contains(t, s, `"productName":"Updated Product Name V3"`) // unchanged
-		require.Contains(t, s, `"lsfRevision":2`)                         // unchanged
+		require.NotNil(t, m)
+		require.Equal(t, "Updated Test Product V4", m.ProductLabel)
+		require.Equal(t, "Updated Product Name V3", m.ProductName) // unchanged
+		require.Equal(t, int32(2), m.LsfRevision)                  // unchanged
 	})
 
 	t.Run("UpdateModel_NoFields_Pid1", func(t *testing.T) {
-		txResult, err := UpdateModel(vid1, pid1, vendorAccount1,
-			"--enhancedSetupFlowOptions", "0",
-		)
-		requireTxOK(t, txResult, err)
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid1, PID: pid1, From: vendorAccount1,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryModel(vid1, pid1)
+		m, err := GetModel(vid1, pid1)
 		require.NoError(t, err)
-		s := string(out)
+		require.NotNil(t, m)
 		// All previously-set fields should remain.
-		require.Contains(t, s, `"productLabel":"Updated Test Product V4"`)
-		require.Contains(t, s, `"productName":"Updated Product Name V3"`)
-		require.Contains(t, s, `"lsfRevision":2`)
+		require.Equal(t, "Updated Test Product V4", m.ProductLabel)
+		require.Equal(t, "Updated Product Name V3", m.ProductName)
+		require.Equal(t, int32(2), m.LsfRevision)
 	})
 
 	t.Run("UpdateModel_LsfRevisionEqual_Fails_Pid1", func(t *testing.T) {
-		txResult, err := UpdateModel(vid1, pid1, vendorAccount1,
-			"--lsfURL", "https://lsf.url.info?v=3",
-			"--lsfRevision", "2",
-			"--enhancedSetupFlowOptions", "0",
-		)
-		requireTxFailContains(t, txResult, err, "LsfRevision should monotonically increase by 1")
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid1, PID: pid1, From: vendorAccount1,
+			LsfURL:      "https://lsf.url.info?v=3",
+			LsfRevision: 2,
+		})
+		cliputils.RequireTxFailContains(t, txResult, err, "LsfRevision should monotonically increase by 1")
 	})
 
 	t.Run("UpdateModel_LsfRevisionLess_Fails_Pid1", func(t *testing.T) {
-		txResult, err := UpdateModel(vid1, pid1, vendorAccount1,
-			"--lsfURL", "https://lsf.url.info?v=3",
-			"--lsfRevision", "1",
-			"--enhancedSetupFlowOptions", "0",
-		)
-		requireTxFailContains(t, txResult, err, "LsfRevision should monotonically increase by 1")
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VID: vid1, PID: pid1, From: vendorAccount1,
+			LsfURL:      "https://lsf.url.info?v=3",
+			LsfRevision: 1,
+		})
+		cliputils.RequireTxFailContains(t, txResult, err, "LsfRevision should monotonically increase by 1")
 	})
 
 	// --- Model Version: minimum fields, then increment-style updates ---
@@ -287,65 +252,67 @@ func TestModelValidationCases(t *testing.T) {
 	svBasic := rand.Intn(65534) + 1
 
 	t.Run("AddModelVersion_MinimumFields", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model-version",
-			"--vid", fmt.Sprintf("%d", vid1),
-			"--pid", fmt.Sprintf("%d", pid1),
-			"--softwareVersion", fmt.Sprintf("%d", svBasic),
-			"--softwareVersionString", "1",
-			"--cdVersionNumber", "1",
-			"--maxApplicableSoftwareVersion", "20",
-			"--minApplicableSoftwareVersion", "10",
-			"--from", vendorAccount1,
-		)
-		requireTxOK(t, txResult, err)
+		txResult, err := AddModelVersion(AddModelVersionOpts{
+			VID:                          vid1,
+			PID:                          pid1,
+			SoftwareVersion:              svBasic,
+			SoftwareVersionString:        "1",
+			MinApplicableSoftwareVersion: 10,
+			MaxApplicableSoftwareVersion: 20,
+			From:                         vendorAccount1,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryModelVersion(vid1, pid1, svBasic)
+		mv, err := GetModelVersion(vid1, pid1, svBasic)
 		require.NoError(t, err)
-		s := string(out)
-		require.Contains(t, s, fmt.Sprintf(`"vid":%d`, vid1))
-		require.Contains(t, s, fmt.Sprintf(`"pid":%d`, pid1))
-		require.Contains(t, s, fmt.Sprintf(`"softwareVersion":%d`, svBasic))
-		require.Contains(t, s, `"softwareVersionString":"1"`)
-		require.Contains(t, s, `"cdVersionNumber":1`)
-		require.Contains(t, s, `"softwareVersionValid":true`)
-		require.Contains(t, s, `"minApplicableSoftwareVersion":10`)
-		require.Contains(t, s, `"maxApplicableSoftwareVersion":20`)
+		require.NotNil(t, mv)
+		require.Equal(t, int32(vid1), mv.Vid)
+		require.Equal(t, int32(pid1), mv.Pid)
+		require.Equal(t, uint32(svBasic), mv.SoftwareVersion)
+		require.Equal(t, "1", mv.SoftwareVersionString)
+		require.Equal(t, int32(1), mv.CdVersionNumber)
+		require.True(t, mv.SoftwareVersionValid)
+		require.Equal(t, uint32(10), mv.MinApplicableSoftwareVersion)
+		require.Equal(t, uint32(20), mv.MaxApplicableSoftwareVersion)
 	})
 
 	t.Run("UpdateModelVersion_OnlyValidity_Basic", func(t *testing.T) {
-		txResult, err := UpdateModelVersion(vid1, pid1, svBasic, vendorAccount1,
-			"--softwareVersionValid=false",
-		)
-		requireTxOK(t, txResult, err)
+		txResult, err := UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid1, PID: pid1, SoftwareVersion: svBasic, From: vendorAccount1,
+			SoftwareVersionValid: boolPtr(false),
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryModelVersion(vid1, pid1, svBasic)
+		mv, err := GetModelVersion(vid1, pid1, svBasic)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"softwareVersionValid":false`)
+		require.NotNil(t, mv)
+		require.False(t, mv.SoftwareVersionValid)
 	})
 
 	t.Run("UpdateModelVersion_FewFields_Basic", func(t *testing.T) {
-		txResult, err := UpdateModelVersion(vid1, pid1, svBasic, vendorAccount1,
-			"--softwareVersionValid=true",
-			"--releaseNotesURL", "https://release.url.info",
-			"--otaURL", "https://ota.url.com",
-			"--otaFileSize", "123",
-			"--otaChecksum", "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk1Mzg4MjA3ZmFhNmM2NTg2YTBmNDU0MDk3YTU0ZWIzMw==",
-			"--otaChecksumType", "1",
-			"--minApplicableSoftwareVersion", "2",
-			"--maxApplicableSoftwareVersion", "20",
-		)
-		requireTxOK(t, txResult, err)
+		txResult, err := UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid1, PID: pid1, SoftwareVersion: svBasic, From: vendorAccount1,
+			SoftwareVersionValid:         boolPtr(true),
+			ReleaseNotesURL:              "https://release.url.info",
+			OtaURL:                       "https://ota.url.com",
+			OtaFileSize:                  123,
+			OtaChecksum:                  "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk1Mzg4MjA3ZmFhNmM2NTg2YTBmNDU0MDk3YTU0ZWIzMw==",
+			OtaChecksumType:              1,
+			MinApplicableSoftwareVersion: 2,
+			MaxApplicableSoftwareVersion: 20,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryModelVersion(vid1, pid1, svBasic)
+		mv, err := GetModelVersion(vid1, pid1, svBasic)
 		require.NoError(t, err)
-		s := string(out)
-		require.Contains(t, s, `"softwareVersionValid":true`)
-		require.Contains(t, s, `"otaUrl":"https://ota.url.com"`)
-		require.Contains(t, s, `"otaFileSize":"123"`)
-		require.Contains(t, s, `"otaChecksumType":1`)
-		require.Contains(t, s, `"minApplicableSoftwareVersion":2`)
-		require.Contains(t, s, `"maxApplicableSoftwareVersion":20`)
-		require.Contains(t, s, `"releaseNotesUrl":"https://release.url.info"`)
+		require.NotNil(t, mv)
+		require.True(t, mv.SoftwareVersionValid)
+		require.Equal(t, "https://ota.url.com", mv.OtaUrl)
+		require.Equal(t, uint64(123), mv.OtaFileSize)
+		require.Equal(t, int32(1), mv.OtaChecksumType)
+		require.Equal(t, uint32(2), mv.MinApplicableSoftwareVersion)
+		require.Equal(t, uint32(20), mv.MaxApplicableSoftwareVersion)
+		require.Equal(t, "https://release.url.info", mv.ReleaseNotesUrl)
 	})
 
 	// --- Model Version: full create + update lifecycle ---
@@ -353,94 +320,98 @@ func TestModelValidationCases(t *testing.T) {
 	svFull := rand.Intn(65534) + 1
 
 	t.Run("AddModelVersion_AllFields_Full", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model-version",
-			"--vid", fmt.Sprintf("%d", vid1),
-			"--pid", fmt.Sprintf("%d", pid1),
-			"--softwareVersion", fmt.Sprintf("%d", svFull),
-			"--softwareVersionString", "1.0",
-			"--cdVersionNumber", "21334",
-			"--firmwareInformation", "123456789012345678901234567890123456789012345678901234567890123",
-			"--softwareVersionValid=true",
-			"--otaURL", "https://ota.url.info",
-			"--otaFileSize", "123456789",
-			"--specificationVersion", "4",
-			"--otaChecksum", "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=",
-			"--releaseNotesURL", "https://release.notes.url.info",
-			"--otaChecksumType", "1",
-			"--maxApplicableSoftwareVersion", "32",
-			"--minApplicableSoftwareVersion", "5",
-			"--from", vendorAccount1,
-		)
-		requireTxOK(t, txResult, err)
+		txResult, err := AddModelVersion(AddModelVersionOpts{
+			VID:                          vid1,
+			PID:                          pid1,
+			SoftwareVersion:              svFull,
+			SoftwareVersionString:        "1.0",
+			CDVersionNumber:              21334,
+			MinApplicableSoftwareVersion: 5,
+			MaxApplicableSoftwareVersion: 32,
+			OtaURL:                       "https://ota.url.info",
+			OtaFileSize:                  123456789,
+			OtaChecksum:                  "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=",
+			From:                         vendorAccount1,
+			FirmwareInformation:          "123456789012345678901234567890123456789012345678901234567890123",
+			SpecificationVersion:         4,
+			ReleaseNotesURL:              "https://release.notes.url.info",
+			OtaChecksumType:              1,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryModelVersion(vid1, pid1, svFull)
+		mv, err := GetModelVersion(vid1, pid1, svFull)
 		require.NoError(t, err)
-		s := string(out)
-		require.Contains(t, s, `"softwareVersionString":"1.0"`)
-		require.Contains(t, s, `"cdVersionNumber":21334`)
-		require.Contains(t, s, `"firmwareInformation":"123456789012345678901234567890123456789012345678901234567890123"`)
-		require.Contains(t, s, `"otaUrl":"https://ota.url.info"`)
-		require.Contains(t, s, `"otaFileSize":"123456789"`)
-		require.Contains(t, s, `"otaChecksum":"MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk="`)
-		require.Contains(t, s, `"otaChecksumType":1`)
-		require.Contains(t, s, `"releaseNotesUrl":"https://release.notes.url.info"`)
-		require.Contains(t, s, `"maxApplicableSoftwareVersion":32`)
-		require.Contains(t, s, `"minApplicableSoftwareVersion":5`)
-		require.Contains(t, s, `"specificationVersion":4`)
+		require.NotNil(t, mv)
+		require.Equal(t, "1.0", mv.SoftwareVersionString)
+		require.Equal(t, int32(21334), mv.CdVersionNumber)
+		require.Equal(t, "123456789012345678901234567890123456789012345678901234567890123", mv.FirmwareInformation)
+		require.Equal(t, "https://ota.url.info", mv.OtaUrl)
+		require.Equal(t, uint64(123456789), mv.OtaFileSize)
+		require.Equal(t, "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=", mv.OtaChecksum)
+		require.Equal(t, int32(1), mv.OtaChecksumType)
+		require.Equal(t, "https://release.notes.url.info", mv.ReleaseNotesUrl)
+		require.Equal(t, uint32(32), mv.MaxApplicableSoftwareVersion)
+		require.Equal(t, uint32(5), mv.MinApplicableSoftwareVersion)
+		require.Equal(t, uint32(4), mv.SpecificationVersion) //nolint:staticcheck // intentionally testing the deprecated field is still served
 	})
 
 	t.Run("UpdateModelVersion_NoChange_Full", func(t *testing.T) {
 		// Update with only the required identifiers — nothing should change.
-		txResult, err := UpdateModelVersion(vid1, pid1, svFull, vendorAccount1)
-		requireTxOK(t, txResult, err)
+		txResult, err := UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid1, PID: pid1, SoftwareVersion: svFull, From: vendorAccount1,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryModelVersion(vid1, pid1, svFull)
+		mv, err := GetModelVersion(vid1, pid1, svFull)
 		require.NoError(t, err)
-		s := string(out)
-		require.Contains(t, s, `"cdVersionNumber":21334`)
-		require.Contains(t, s, `"otaUrl":"https://ota.url.info"`)
-		require.Contains(t, s, `"maxApplicableSoftwareVersion":32`)
+		require.NotNil(t, mv)
+		require.Equal(t, int32(21334), mv.CdVersionNumber)
+		require.Equal(t, "https://ota.url.info", mv.OtaUrl)
+		require.Equal(t, uint32(32), mv.MaxApplicableSoftwareVersion)
 	})
 
 	t.Run("UpdateModelVersion_OnlyValidity_Full", func(t *testing.T) {
-		txResult, err := UpdateModelVersion(vid1, pid1, svFull, vendorAccount1,
-			"--softwareVersionValid=false",
-		)
-		requireTxOK(t, txResult, err)
+		txResult, err := UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid1, PID: pid1, SoftwareVersion: svFull, From: vendorAccount1,
+			SoftwareVersionValid: boolPtr(false),
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryModelVersion(vid1, pid1, svFull)
+		mv, err := GetModelVersion(vid1, pid1, svFull)
 		require.NoError(t, err)
-		s := string(out)
-		require.Contains(t, s, `"softwareVersionValid":false`)
-		require.Contains(t, s, `"otaUrl":"https://ota.url.info"`) // unchanged
+		require.NotNil(t, mv)
+		require.False(t, mv.SoftwareVersionValid)
+		require.Equal(t, "https://ota.url.info", mv.OtaUrl) // unchanged
 	})
 
 	t.Run("UpdateModelVersion_AllMutable_Full", func(t *testing.T) {
-		txResult, err := UpdateModelVersion(vid1, pid1, svFull, vendorAccount1,
-			"--softwareVersionValid=true",
-			"--otaURL", "https://updated.ota.url.info",
-			"--releaseNotesURL", "https://updated.release.notes.url.info",
-			"--maxApplicableSoftwareVersion", "25",
-			"--minApplicableSoftwareVersion", "15",
-		)
-		requireTxOK(t, txResult, err)
+		txResult, err := UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid1, PID: pid1, SoftwareVersion: svFull, From: vendorAccount1,
+			SoftwareVersionValid:         boolPtr(true),
+			OtaURL:                       "https://updated.ota.url.info",
+			ReleaseNotesURL:              "https://updated.release.notes.url.info",
+			MaxApplicableSoftwareVersion: 25,
+			MinApplicableSoftwareVersion: 15,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryModelVersion(vid1, pid1, svFull)
+		mv, err := GetModelVersion(vid1, pid1, svFull)
 		require.NoError(t, err)
-		s := string(out)
-		require.Contains(t, s, `"softwareVersionValid":true`)
-		require.Contains(t, s, `"otaUrl":"https://updated.ota.url.info"`)
-		require.Contains(t, s, `"releaseNotesUrl":"https://updated.release.notes.url.info"`)
-		require.Contains(t, s, `"maxApplicableSoftwareVersion":25`)
-		require.Contains(t, s, `"minApplicableSoftwareVersion":15`)
+		require.NotNil(t, mv)
+		require.True(t, mv.SoftwareVersionValid)
+		require.Equal(t, "https://updated.ota.url.info", mv.OtaUrl)
+		require.Equal(t, "https://updated.release.notes.url.info", mv.ReleaseNotesUrl)
+		require.Equal(t, uint32(25), mv.MaxApplicableSoftwareVersion)
+		require.Equal(t, uint32(15), mv.MinApplicableSoftwareVersion)
 	})
 
 	t.Run("UpdateModelVersion_OtaFieldsWithoutUrl_Fails", func(t *testing.T) {
 		// OTA already set during create — try to change otaFileSize on its own.
-		txResult, err := UpdateModelVersion(vid1, pid1, svFull, vendorAccount1,
-			"--otaFileSize", "12345",
-		)
-		requireTxFailContains(t, txResult, err,
+		txResult, err := UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid1, PID: pid1, SoftwareVersion: svFull, From: vendorAccount1,
+			OtaFileSize: 12345,
+		})
+		cliputils.RequireTxFailContains(t, txResult, err,
 			"OtaUrl is not provided. OtaFileSize, OtaChecksum, and OtaChecksumType fields must not be provided")
 	})
 
@@ -449,45 +420,47 @@ func TestModelValidationCases(t *testing.T) {
 	svBounds := rand.Intn(65534) + 1
 
 	t.Run("AddModelVersion_WithSpecVer6", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model-version",
-			"--vid", fmt.Sprintf("%d", vid1),
-			"--pid", fmt.Sprintf("%d", pid1),
-			"--softwareVersion", fmt.Sprintf("%d", svBounds),
-			"--softwareVersionString", "1.0",
-			"--cdVersionNumber", "21334",
-			"--firmwareInformation", "123456789012345678901234567890123456789012345678901234567890123",
-			"--softwareVersionValid=true",
-			"--otaURL", "https://ota.url.info",
-			"--otaFileSize", "123456789",
-			"--specificationVersion", "6",
-			"--otaChecksum", "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=",
-			"--otaChecksumType", "1",
-			"--maxApplicableSoftwareVersion", "32",
-			"--minApplicableSoftwareVersion", "5",
-			"--from", vendorAccount1,
-		)
-		requireTxOK(t, txResult, err)
+		txResult, err := AddModelVersion(AddModelVersionOpts{
+			VID:                          vid1,
+			PID:                          pid1,
+			SoftwareVersion:              svBounds,
+			SoftwareVersionString:        "1.0",
+			CDVersionNumber:              21334,
+			MinApplicableSoftwareVersion: 5,
+			MaxApplicableSoftwareVersion: 32,
+			OtaURL:                       "https://ota.url.info",
+			OtaFileSize:                  123456789,
+			OtaChecksum:                  "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=",
+			From:                         vendorAccount1,
+			FirmwareInformation:          "123456789012345678901234567890123456789012345678901234567890123",
+			SpecificationVersion:         6,
+			OtaChecksumType:              1,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryModelVersion(vid1, pid1, svBounds)
+		mv, err := GetModelVersion(vid1, pid1, svBounds)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"specificationVersion":6`)
+		require.NotNil(t, mv)
+		require.Equal(t, uint32(6), mv.SpecificationVersion) //nolint:staticcheck // intentionally testing the deprecated field is still served
 	})
 
 	t.Run("UpdateModelVersion_MaxLessThanMin_Fails", func(t *testing.T) {
-		txResult, err := UpdateModelVersion(vid1, pid1, svBounds, vendorAccount1,
-			"--maxApplicableSoftwareVersion", "3",
-			"--minApplicableSoftwareVersion", "5",
-		)
-		requireTxFailContains(t, txResult, err,
+		txResult, err := UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid1, PID: pid1, SoftwareVersion: svBounds, From: vendorAccount1,
+			MaxApplicableSoftwareVersion: 3,
+			MinApplicableSoftwareVersion: 5,
+		})
+		cliputils.RequireTxFailContains(t, txResult, err,
 			"MaxApplicableSoftwareVersion must not be less than MinApplicableSoftwareVersion")
 	})
 
 	t.Run("UpdateModelVersion_MinGreaterThanMax_Fails", func(t *testing.T) {
-		txResult, err := UpdateModelVersion(vid1, pid1, svBounds, vendorAccount1,
-			"--maxApplicableSoftwareVersion", "32",
-			"--minApplicableSoftwareVersion", "33",
-		)
-		requireTxFailContains(t, txResult, err,
+		txResult, err := UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid1, PID: pid1, SoftwareVersion: svBounds, From: vendorAccount1,
+			MaxApplicableSoftwareVersion: 32,
+			MinApplicableSoftwareVersion: 33,
+		})
+		cliputils.RequireTxFailContains(t, txResult, err,
 			"MaxApplicableSoftwareVersion must not be less than MinApplicableSoftwareVersion")
 	})
 
@@ -496,22 +469,22 @@ func TestModelValidationCases(t *testing.T) {
 	svNoOta := rand.Intn(65534) + 1
 
 	t.Run("AddModelVersion_NoOta_ThenUpdateOtaUrlOnly_Fails", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model-version",
-			"--vid", fmt.Sprintf("%d", vid1),
-			"--pid", fmt.Sprintf("%d", pid1),
-			"--softwareVersion", fmt.Sprintf("%d", svNoOta),
-			"--softwareVersionString", "1",
-			"--cdVersionNumber", "1",
-			"--maxApplicableSoftwareVersion", "20",
-			"--minApplicableSoftwareVersion", "10",
-			"--from", vendorAccount1,
-		)
-		requireTxOK(t, txResult, err)
+		txResult, err := AddModelVersion(AddModelVersionOpts{
+			VID:                          vid1,
+			PID:                          pid1,
+			SoftwareVersion:              svNoOta,
+			SoftwareVersionString:        "1",
+			MinApplicableSoftwareVersion: 10,
+			MaxApplicableSoftwareVersion: 20,
+			From:                         vendorAccount1,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		txResult, err = UpdateModelVersion(vid1, pid1, svNoOta, vendorAccount1,
-			"--otaURL", "https://ota.url.com",
-		)
-		requireTxFailContains(t, txResult, err,
+		txResult, err = UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid1, PID: pid1, SoftwareVersion: svNoOta, From: vendorAccount1,
+			OtaURL: "https://ota.url.com",
+		})
+		cliputils.RequireTxFailContains(t, txResult, err,
 			"OtaFileSize, OtaChecksum and OtaChecksumType are required if OtaUrl is provided")
 	})
 
@@ -520,28 +493,28 @@ func TestModelValidationCases(t *testing.T) {
 	svNoSpecVer := rand.Intn(65534) + 1
 
 	t.Run("AddModelVersion_NoSpecVer_DefaultsZero", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model-version",
-			"--vid", fmt.Sprintf("%d", vid1),
-			"--pid", fmt.Sprintf("%d", pid1),
-			"--softwareVersion", fmt.Sprintf("%d", svNoSpecVer),
-			"--softwareVersionString", "1.0",
-			"--cdVersionNumber", "21334",
-			"--firmwareInformation", "123456789012345678901234567890123456789012345678901234567890123",
-			"--softwareVersionValid=true",
-			"--otaURL", "https://ota.url.info",
-			"--otaFileSize", "123456789",
-			"--otaChecksum", "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=",
-			"--releaseNotesURL", "https://release.notes.url.info",
-			"--otaChecksumType", "1",
-			"--maxApplicableSoftwareVersion", "32",
-			"--minApplicableSoftwareVersion", "5",
-			"--from", vendorAccount1,
-		)
-		requireTxOK(t, txResult, err)
+		txResult, err := AddModelVersion(AddModelVersionOpts{
+			VID:                          vid1,
+			PID:                          pid1,
+			SoftwareVersion:              svNoSpecVer,
+			SoftwareVersionString:        "1.0",
+			CDVersionNumber:              21334,
+			MinApplicableSoftwareVersion: 5,
+			MaxApplicableSoftwareVersion: 32,
+			OtaURL:                       "https://ota.url.info",
+			OtaFileSize:                  123456789,
+			OtaChecksum:                  "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=",
+			From:                         vendorAccount1,
+			FirmwareInformation:          "123456789012345678901234567890123456789012345678901234567890123",
+			ReleaseNotesURL:              "https://release.notes.url.info",
+			OtaChecksumType:              1,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryModelVersion(vid1, pid1, svNoSpecVer)
+		mv, err := GetModelVersion(vid1, pid1, svNoSpecVer)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"specificationVersion":0`)
+		require.NotNil(t, mv)
+		require.Equal(t, uint32(0), mv.SpecificationVersion) //nolint:staticcheck // intentionally testing the deprecated field is still served
 	})
 
 	// --- update-model-version must NOT accept --specificationVersion ---
@@ -549,63 +522,60 @@ func TestModelValidationCases(t *testing.T) {
 	svSpecVerImmutable := rand.Intn(65534) + 1
 
 	t.Run("AddModelVersion_AllFields_v33", func(t *testing.T) {
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model-version",
-			"--vid", fmt.Sprintf("%d", vid1),
-			"--pid", fmt.Sprintf("%d", pid1),
-			"--softwareVersion", fmt.Sprintf("%d", svSpecVerImmutable),
-			"--softwareVersionString", "1.0",
-			"--cdVersionNumber", "21334",
-			"--firmwareInformation", "123456789012345678901234567890123456789012345678901234567890123",
-			"--softwareVersionValid=true",
-			"--otaURL", "https://ota.url.info",
-			"--otaFileSize", "123456789",
-			"--specificationVersion", "33",
-			"--otaChecksum", "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=",
-			"--releaseNotesURL", "https://release.notes.url.info",
-			"--otaChecksumType", "1",
-			"--maxApplicableSoftwareVersion", "32",
-			"--minApplicableSoftwareVersion", "5",
-			"--from", vendorAccount1,
-		)
-		requireTxOK(t, txResult, err)
+		txResult, err := AddModelVersion(AddModelVersionOpts{
+			VID:                          vid1,
+			PID:                          pid1,
+			SoftwareVersion:              svSpecVerImmutable,
+			SoftwareVersionString:        "1.0",
+			CDVersionNumber:              21334,
+			MinApplicableSoftwareVersion: 5,
+			MaxApplicableSoftwareVersion: 32,
+			OtaURL:                       "https://ota.url.info",
+			OtaFileSize:                  123456789,
+			OtaChecksum:                  "MjFiZmYxN2YyMTRlMGJiMGMwNzhlNzIzOGIxZWE1ODk=",
+			From:                         vendorAccount1,
+			FirmwareInformation:          "123456789012345678901234567890123456789012345678901234567890123",
+			SpecificationVersion:         33,
+			ReleaseNotesURL:              "https://release.notes.url.info",
+			OtaChecksumType:              1,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("UpdateModelVersion_SpecVerFlag_Rejected", func(t *testing.T) {
 		// update-model-version must reject --specificationVersion at the CLI flag
 		// parsing stage (the flag is not defined on the update subcommand).
-		_, err := UpdateModelVersion(vid1, pid1, svSpecVerImmutable, vendorAccount1,
-			"--specificationVersion", "11",
-		)
+		_, err := UpdateModelVersion(UpdateModelVersionOpts{
+			VID: vid1, PID: pid1, SoftwareVersion: svSpecVerImmutable, From: vendorAccount1,
+			SpecificationVersion: 11,
+		})
 		require.Error(t, err)
 		require.Contains(t, err.Error(), "unknown flag: --specificationVersion")
 	})
 
 	t.Run("QueryModelVersion_SpecVerImmutable_Preserved", func(t *testing.T) {
 		// After the rejected update above, specificationVersion must remain 33.
-		out, err := QueryModelVersion(vid1, pid1, svSpecVerImmutable)
+		mv, err := GetModelVersion(vid1, pid1, svSpecVerImmutable)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"specificationVersion":33`)
+		require.NotNil(t, mv)
+		require.Equal(t, uint32(33), mv.SpecificationVersion) //nolint:staticcheck // intentionally testing the deprecated field is still served
 	})
 
 	// Keep the AddModel_WithSchemaVersion path for ts-client compatibility coverage.
 	t.Run("AddModel_WithSchemaVersion", func(t *testing.T) {
 		extraPid := rand.Intn(65534) + 1
-		txResult, err := utils.ExecuteTx("tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid1),
-			"--pid", fmt.Sprintf("%d", extraPid),
-			"--deviceTypeID", "1",
-			"--productName", "TestProduct",
-			"--productLabel", "Test Product",
-			"--partNumber", "1",
-			"--enhancedSetupFlowOptions", "0",
-			"--commissioningCustomFlow", "0",
-			"--schemaVersion", "0",
-			"--from", vendorAccount1,
-		)
-		requireTxOK(t, txResult, err)
+		txResult, err := AddModel(AddModelOpts{
+			VID:           vid1,
+			PID:           extraPid,
+			ProductLabel:  "Test Product",
+			SchemaVersion: "0",
+			From:          vendorAccount1,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryModel(vid1, extraPid)
+		m, err := GetModel(vid1, extraPid)
 		require.NoError(t, err)
-		require.Contains(t, string(out), `"schemaVersion":0`)
+		require.NotNil(t, m)
+		require.Equal(t, uint32(0), m.SchemaVersion)
 	})
 }

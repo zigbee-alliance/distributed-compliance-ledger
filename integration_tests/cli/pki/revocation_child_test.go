@@ -20,7 +20,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
 const (
@@ -36,17 +35,16 @@ const (
 	revChildLeafCertPath         = "../../constants/leaf_with_same_subject_and_skid"
 	revChildLeafCertSerialNumber = "5"
 
-	revChildRootCertSubject      = "MIGCMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbQ=="
-	revChildRootCertSubjectKeyID = "33:5E:0C:07:44:F8:B5:9C:CD:55:01:9B:6D:71:23:83:6F:D0:D4:BE"
+	revChildRootCertSubject      = "MIGCMQswCQYDVQQGEwJVUzERMA8GA1UECBMITmV3IFlvcmsxETAPBgNVBAcTCE5ldyBZb3JrMRgwFgYDVQQKEw9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsTEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMTD3d3dy5leGFtcGxlLmNvbQ=="
+	revChildRootCertSubjectKeyID = "C1:48:66:ED:6F:23:D8:28:1A:D9:37:7C:58:AC:3F:DA:04:C1:41:E8"
 
-	revChildIntermCertSubject      = "MEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQ="
-	revChildIntermCertSubjectKeyID = "2E:13:3B:44:52:2C:30:E9:EC:FB:45:FA:5D:E5:04:0A:C1:C6:E6:B9"
+	revChildIntermCertSubject      = "MEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIEwpTb21lLVN0YXRlMSEwHwYDVQQKExhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQ="
+	revChildIntermCertSubjectKeyID = "A1:E0:92:89:FA:18:82:12:14:9D:B8:AE:19:43:BE:44:31:6B:F1:F5"
 
-	revChildLeafCertSubject      = "MEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQ="
-	revChildLeafCertSubjectKeyID = "12:16:55:8E:5E:2A:DF:04:D7:E6:FE:D1:53:69:61:98:EF:17:2F:03"
+	revChildLeafCertSubject      = "MEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIEwpTb21lLVN0YXRlMSEwHwYDVQQKExhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQ="
+	revChildLeafCertSubjectKeyID = "90:81:84:C7:EC:B8:81:14:66:61:2F:82:BB:E9:51:67:F2:4D:99:A3"
 )
 
-// TestPKIRevocationWithRevokingChild translates pki-revocation-with-revoking-child.sh.
 // Root certs (root_with_same_subject_and_skid_1/2) are already on chain from TestPKICombineCerts,
 // so SetupCerts only adds intermediate and leaf certs.
 // Root revocation tests run in TestPKIRevocationWithSerialNumber to avoid state conflicts.
@@ -57,107 +55,72 @@ func TestPKIRevocationWithRevokingChild(t *testing.T) {
 	t.Run("SetupCerts", func(t *testing.T) {
 		// Root certs 1 and 2 are already approved on-chain from TestPKICombineCerts.
 		// Verify they exist before proceeding.
-		out, err := QueryX509Cert(revChildRootCertSubject, revChildRootCertSubjectKeyID)
+		rootCert, err := GetX509Cert(revChildRootCertSubject, revChildRootCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revChildRootCertSubject))
+		require.NotNil(t, rootCert)
+		require.Equal(t, revChildRootCertSubject, rootCert.Subject)
 
 		// Add intermediate cert 1
 		txResult, err := AddX509Cert(revChildIntermCert1Path, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Add intermediate cert 2
 		txResult, err = AddX509Cert(revChildIntermCert2Path, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Add leaf cert
 		txResult, err = AddX509Cert(revChildLeafCertPath, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Verify all certs exist
-		out, err = QueryAllX509Certs()
+		all, err := GetAllX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revChildRootCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revChildIntermCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, revChildRootCertSubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, revChildIntermCertSubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, revChildLeafCertSubjectKeyID))
+		require.True(t, containsApprovedCertSerial(all, revChildRootCert1SerialNumber))
+		require.True(t, containsApprovedCertSerial(all, revChildIntermCert1SerialNumber))
+		require.True(t, containsApprovedCertSerial(all, revChildIntermCert2SerialNumber))
+		require.True(t, containsApprovedCertSerial(all, revChildLeafCertSerialNumber))
 	})
 
 	t.Run("RevokeIntermediateCertWithChildFlag", func(t *testing.T) {
 		// Revoke intermediate certs and their child certificates
-		txResult, err := RevokeX509Cert(revChildIntermCertSubject, revChildIntermCertSubjectKeyID, vendorAccount,
-			"--revoke-child=true",
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err := RevokeX509Cert(revChildIntermCertSubject, revChildIntermCertSubjectKeyID, vendorAccount, RevokeNocCertOpts{RevokeChild: true})
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Revoked certs should contain both intermediate and leaf
-		out, err := QueryAllRevokedX509Certs()
+		revoked, err := GetAllRevokedX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revChildIntermCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, revChildIntermCertSubjectKeyID))
-		require.Contains(t, string(out), revChildLeafCertSubjectKeyID)
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revChildIntermCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revChildIntermCert2SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revChildLeafCertSerialNumber))
+		require.True(t, containsRevokedCertSerial(revoked, revChildIntermCert1SerialNumber))
+		require.True(t, containsRevokedCertSerial(revoked, revChildIntermCert2SerialNumber))
+		require.True(t, containsRevokedCertSerial(revoked, revChildLeafCertSerialNumber))
 
-		// Approved certs should contain only two root certs
-		out, err = QueryAllX509Certs()
+		// Approved certs should contain only two root certs (no intermediate/leaf).
+		all, err := GetAllX509Certs()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revChildRootCertSubject))
-		require.Contains(t, string(out), fmt.Sprintf(`"subjectKeyId":"%s"`, revChildRootCertSubjectKeyID))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revChildRootCert1SerialNumber))
-		require.Contains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revChildRootCert2SerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"subject":"%s"`, revChildIntermCertSubject))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revChildIntermCert1SerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revChildIntermCert2SerialNumber))
-		require.NotContains(t, string(out), fmt.Sprintf(`"serialNumber":"%s"`, revChildLeafCertSerialNumber))
+		require.True(t, containsApprovedCertSerial(all, revChildRootCert1SerialNumber))
+		require.True(t, containsApprovedCertSerial(all, revChildRootCert2SerialNumber))
+		require.False(t, containsApprovedCertSerial(all, revChildIntermCert1SerialNumber))
+		require.False(t, containsApprovedCertSerial(all, revChildIntermCert2SerialNumber))
+		require.False(t, containsApprovedCertSerial(all, revChildLeafCertSerialNumber))
 	})
 
 	t.Run("ReAddCertsAfterRevocation", func(t *testing.T) {
 		// Remove revoked certs from revoked list
 		txResult, err := RemoveX509Cert(revChildIntermCertSubject, revChildIntermCertSubjectKeyID, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = RemoveX509Cert(revChildLeafCertSubject, revChildLeafCertSubjectKeyID, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Re-add intermediate cert 1
 		txResult, err = AddX509Cert(revChildIntermCert1Path, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Re-add intermediate cert 2
 		txResult, err = AddX509Cert(revChildIntermCert2Path, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Re-add leaf cert
 		txResult, err = AddX509Cert(revChildLeafCertPath, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 }

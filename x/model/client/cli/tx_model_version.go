@@ -117,6 +117,8 @@ release notes for the device model.`)
 	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
 	cmd.Flags().Uint32Var(&specificationVersion, FlagSpecificationVersion, 0,
 		"SpecificationVersion SHALL identify the specification version applicable to the device model.")
+	_ = cmd.Flags().MarkDeprecated(FlagSpecificationVersion,
+		"specificationVersion is now stated/stored in the ComplianceInfo record and will be removed in a future release.")
 
 	cli.AddTxFlagsToCmd(cmd)
 

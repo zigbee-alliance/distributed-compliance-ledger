@@ -23,7 +23,7 @@ ARG UBUNTU_VERSION=24.04
 FROM ubuntu:${UBUNTU_VERSION} AS builder
 
 ARG GO_VERSION
-ENV GO_VERSION=1.20
+ENV GO_VERSION=1.26.4
 
 RUN apt-get update --fix-missing
 RUN apt-get install -y wget git gcc

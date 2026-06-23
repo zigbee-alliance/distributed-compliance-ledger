@@ -3,8 +3,6 @@ package types
 // DONTCOVER
 
 import (
-	"fmt"
-
 	"cosmossdk.io/errors"
 )
 
@@ -18,36 +16,37 @@ var (
 	PendingAccountRevocationDoesNotExist  = errors.Register(ModuleName, 106, "pending account revocation not found")
 	MissingVendorIDForVendorAccount       = errors.Register(ModuleName, 107, "no Vendor ID provided")
 	MissingRoles                          = errors.Register(ModuleName, 108, "no roles provided")
+	AccountTotalCountReachedLimit         = errors.Register(ModuleName, 109, "total number of active accounts reached the limit")
 )
 
 func ErrAccountAlreadyExists(address interface{}) error {
 	return errors.Wrapf(AccountAlreadyExists,
-		fmt.Sprintf("Account associated with the address=%v already exists on the ledger", address))
+		"Account associated with the address=%v already exists on the ledger", address)
 }
 
 func ErrAccountDoesNotExist(address interface{}) error {
 	return errors.Wrapf(AccountDoesNotExist,
-		fmt.Sprintf("No account associated with the address=%v on the ledger", address))
+		"No account associated with the address=%v on the ledger", address)
 }
 
 func ErrPendingAccountAlreadyExists(address interface{}) error {
 	return errors.Wrapf(PendingAccountAlreadyExists,
-		fmt.Sprintf("Pending account associated with the address=%v already exists on the ledger", address))
+		"Pending account associated with the address=%v already exists on the ledger", address)
 }
 
 func ErrPendingAccountDoesNotExist(address interface{}) error {
 	return errors.Wrapf(PendingAccountDoesNotExist,
-		fmt.Sprintf("No pending account associated with the address=%v on the ledger", address))
+		"No pending account associated with the address=%v on the ledger", address)
 }
 
 func ErrPendingAccountRevocationAlreadyExists(address interface{}) error {
 	return errors.Wrapf(PendingAccountRevocationAlreadyExists,
-		fmt.Sprintf("Pending account revocation associated with the address=%v already exists on the ledger", address))
+		"Pending account revocation associated with the address=%v already exists on the ledger", address)
 }
 
 func ErrPendingAccountRevocationDoesNotExist(address interface{}) error {
 	return errors.Wrapf(PendingAccountRevocationDoesNotExist,
-		fmt.Sprintf("No pending account revocation associated with the address=%v on the ledger", address))
+		"No pending account revocation associated with the address=%v on the ledger", address)
 }
 
 func ErrMissingVendorIDForVendorAccount() error {
@@ -58,4 +57,8 @@ func ErrMissingVendorIDForVendorAccount() error {
 func ErrMissingRoles() error {
 	return errors.Wrapf(MissingRoles,
 		"No roles provided")
+}
+
+func ErrAccountTotalCountReachedLimit(role AccountRole, maxCount int) error {
+	return errors.Wrapf(AccountTotalCountReachedLimit, "Total count for account with %v role is reached the %d limit", role, maxCount)
 }

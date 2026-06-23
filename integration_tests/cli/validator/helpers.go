@@ -15,7 +15,9 @@
 package validator
 
 import (
+	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+	validatortypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
 // AddNode adds a validator node.
@@ -65,57 +67,145 @@ func RejectDisableNode(address, from string) (*utils.TxResult, error) {
 	)
 }
 
-// QueryNode queries a validator node by owner address.
-func QueryNode(address string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "validator", "node",
+// GetNode queries a validator node by owner address. Returns nil when the
+// validator does not exist.
+func GetNode(address string) (*validatortypes.Validator, error) {
+	var res validatortypes.Validator
+	found, err := cliputils.GetSingle(&res,
+		"query", "validator", "node",
 		"--address", address,
 		"-o", "json",
 	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
-// QueryAllNodes queries all validator nodes.
-func QueryAllNodes() ([]byte, error) {
-	return utils.ExecuteCLI("query", "validator", "all-nodes", "-o", "json")
+// GetAllNodes queries all validator nodes.
+func GetAllNodes() ([]validatortypes.Validator, error) {
+	var res validatortypes.QueryAllValidatorResponse
+	if err := cliputils.GetList(&res, "query", "validator", "all-nodes", "-o", "json"); err != nil {
+		return nil, err
+	}
+
+	return res.Validator, nil
 }
 
-// QueryLastPower queries the last power of a validator by owner address.
-func QueryLastPower(address string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "validator", "last-power",
+// GetLastPower queries the last power record of a validator by owner address.
+// Returns nil when no record exists for the address.
+func GetLastPower(address string) (*validatortypes.LastValidatorPower, error) {
+	var res validatortypes.LastValidatorPower
+	found, err := cliputils.GetSingle(&res,
+		"query", "validator", "last-power",
 		"--address", address,
 		"-o", "json",
 	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
-// QueryDisabledNode queries a disabled validator node by address.
-func QueryDisabledNode(address string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "validator", "disabled-node",
+// GetDisabledNode queries a disabled validator node by address. Returns nil
+// when no disabled record exists.
+func GetDisabledNode(address string) (*validatortypes.DisabledValidator, error) {
+	var res validatortypes.DisabledValidator
+	found, err := cliputils.GetSingle(&res,
+		"query", "validator", "disabled-node",
 		"--address", address,
 		"-o", "json",
 	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
-// QueryProposedDisableNode queries a proposed-to-disable validator node.
-func QueryProposedDisableNode(address string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "validator", "proposed-disable-node",
+// GetProposedDisableNode queries a proposed-to-disable validator node by
+// address. Returns nil when no proposal exists.
+func GetProposedDisableNode(address string) (*validatortypes.ProposedDisableValidator, error) {
+	var res validatortypes.ProposedDisableValidator
+	found, err := cliputils.GetSingle(&res,
+		"query", "validator", "proposed-disable-node",
 		"--address", address,
 		"-o", "json",
 	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
-// QueryAllProposedDisableNodes queries all proposed-to-disable validator nodes.
-func QueryAllProposedDisableNodes() ([]byte, error) {
-	return utils.ExecuteCLI("query", "validator", "all-proposed-disable-nodes", "-o", "json")
+// GetAllProposedDisableNodes queries all proposed-to-disable validator nodes.
+func GetAllProposedDisableNodes() ([]validatortypes.ProposedDisableValidator, error) {
+	var res validatortypes.QueryAllProposedDisableValidatorResponse
+	if err := cliputils.GetList(&res, "query", "validator", "all-proposed-disable-nodes", "-o", "json"); err != nil {
+		return nil, err
+	}
+
+	return res.ProposedDisableValidator, nil
 }
 
-// QueryRejectedDisableNode queries a rejected disable-node proposal by address.
-func QueryRejectedDisableNode(address string) ([]byte, error) {
-	return utils.ExecuteCLI("query", "validator", "rejected-disable-node",
+// GetRejectedDisableNode queries a rejected disable-node proposal by address.
+// Returns nil when no rejection record exists.
+func GetRejectedDisableNode(address string) (*validatortypes.RejectedDisableValidator, error) {
+	var res validatortypes.RejectedDisableValidator
+	found, err := cliputils.GetSingle(&res,
+		"query", "validator", "rejected-disable-node",
 		"--address", address,
 		"-o", "json",
 	)
+	if err != nil || !found {
+		return nil, err
+	}
+
+	return &res, nil
 }
 
-// QueryAllRejectedDisableNodes queries all rejected disable-node proposals.
-func QueryAllRejectedDisableNodes() ([]byte, error) {
-	return utils.ExecuteCLI("query", "validator", "all-rejected-disable-nodes", "-o", "json")
+// GetAllRejectedDisableNodes queries all rejected disable-node proposals.
+func GetAllRejectedDisableNodes() ([]validatortypes.RejectedDisableValidator, error) {
+	var res validatortypes.QueryAllRejectedDisableValidatorResponse
+	if err := cliputils.GetList(&res, "query", "validator", "all-rejected-disable-nodes", "-o", "json"); err != nil {
+		return nil, err
+	}
+
+	return res.RejectedValidator, nil
+}
+
+// containsValidatorByOwner reports whether list has a Validator with the given owner address.
+func containsValidatorByOwner(list []validatortypes.Validator, owner string) bool {
+	for i := range list {
+		if list[i].Owner == owner {
+			return true
+		}
+	}
+
+	return false
+}
+
+// containsProposedByAddress reports whether list has a proposed-disable entry for address.
+func containsProposedByAddress(list []validatortypes.ProposedDisableValidator, address string) bool {
+	for i := range list {
+		if list[i].Address == address {
+			return true
+		}
+	}
+
+	return false
+}
+
+// containsRejectedByAddress reports whether list has a rejected-disable entry for address.
+func containsRejectedByAddress(list []validatortypes.RejectedDisableValidator, address string) bool {
+	for i := range list {
+		if list[i].Address == address {
+			return true
+		}
+	}
+
+	return false
 }

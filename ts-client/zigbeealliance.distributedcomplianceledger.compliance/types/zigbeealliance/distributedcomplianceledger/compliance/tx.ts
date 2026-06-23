@@ -17,15 +17,20 @@ export interface MsgCertifyModel {
   cDCertificateId: string;
   familyId: string;
   supportedClusters: string;
+  /** @deprecated */
   compliantPlatformUsed: string;
+  /** @deprecated */
   compliantPlatformVersion: string;
+  /** @deprecated */
   OSVersion: string;
   certificationRoute: string;
   programType: string;
   transport: string;
   parentChild: string;
+  /** @deprecated */
   certificationIdOfSoftwareComponent: string;
   schemaVersion: number;
+  specificationVersion: number;
 }
 
 export interface MsgCertifyModelResponse {
@@ -61,15 +66,20 @@ export interface MsgProvisionModel {
   cDCertificateId: string;
   familyId: string;
   supportedClusters: string;
+  /** @deprecated */
   compliantPlatformUsed: string;
+  /** @deprecated */
   compliantPlatformVersion: string;
+  /** @deprecated */
   OSVersion: string;
   certificationRoute: string;
   programType: string;
   transport: string;
   parentChild: string;
+  /** @deprecated */
   certificationIdOfSoftwareComponent: string;
   schemaVersion: number;
+  specificationVersion: number;
 }
 
 export interface MsgProvisionModelResponse {
@@ -89,15 +99,20 @@ export interface MsgUpdateComplianceInfo {
   certificationRoute: string;
   programType: string;
   programTypeVersion: string;
+  /** @deprecated */
   compliantPlatformUsed: string;
+  /** @deprecated */
   compliantPlatformVersion: string;
   transport: string;
   familyId: string;
   supportedClusters: string;
+  /** @deprecated */
   OSVersion: string;
   parentChild: string;
+  /** @deprecated */
   certificationIdOfSoftwareComponent: string;
   schemaVersion: number;
+  specificationVersion: number;
 }
 
 export interface MsgUpdateComplianceInfoResponse {
@@ -138,6 +153,7 @@ function createBaseMsgCertifyModel(): MsgCertifyModel {
     parentChild: "",
     certificationIdOfSoftwareComponent: "",
     schemaVersion: 0,
+    specificationVersion: 0,
   };
 }
 
@@ -208,6 +224,9 @@ export const MsgCertifyModel = {
     }
     if (message.schemaVersion !== 0) {
       writer.uint32(176).uint32(message.schemaVersion);
+    }
+    if (message.specificationVersion !== 0) {
+      writer.uint32(184).uint32(message.specificationVersion);
     }
     return writer;
   },
@@ -285,6 +304,9 @@ export const MsgCertifyModel = {
         case 22:
           message.schemaVersion = reader.uint32();
           break;
+        case 23:
+          message.specificationVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -319,6 +341,7 @@ export const MsgCertifyModel = {
         ? String(object.certificationIdOfSoftwareComponent)
         : "",
       schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
+      specificationVersion: isSet(object.specificationVersion) ? Number(object.specificationVersion) : 0,
     };
   },
 
@@ -347,6 +370,7 @@ export const MsgCertifyModel = {
     message.certificationIdOfSoftwareComponent !== undefined
       && (obj.certificationIdOfSoftwareComponent = message.certificationIdOfSoftwareComponent);
     message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
+    message.specificationVersion !== undefined && (obj.specificationVersion = Math.round(message.specificationVersion));
     return obj;
   },
 
@@ -374,6 +398,7 @@ export const MsgCertifyModel = {
     message.parentChild = object.parentChild ?? "";
     message.certificationIdOfSoftwareComponent = object.certificationIdOfSoftwareComponent ?? "";
     message.schemaVersion = object.schemaVersion ?? 0;
+    message.specificationVersion = object.specificationVersion ?? 0;
     return message;
   },
 };
@@ -621,6 +646,7 @@ function createBaseMsgProvisionModel(): MsgProvisionModel {
     parentChild: "",
     certificationIdOfSoftwareComponent: "",
     schemaVersion: 0,
+    specificationVersion: 0,
   };
 }
 
@@ -691,6 +717,9 @@ export const MsgProvisionModel = {
     }
     if (message.schemaVersion !== 0) {
       writer.uint32(176).uint32(message.schemaVersion);
+    }
+    if (message.specificationVersion !== 0) {
+      writer.uint32(184).uint32(message.specificationVersion);
     }
     return writer;
   },
@@ -768,6 +797,9 @@ export const MsgProvisionModel = {
         case 22:
           message.schemaVersion = reader.uint32();
           break;
+        case 23:
+          message.specificationVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -802,6 +834,7 @@ export const MsgProvisionModel = {
         ? String(object.certificationIdOfSoftwareComponent)
         : "",
       schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
+      specificationVersion: isSet(object.specificationVersion) ? Number(object.specificationVersion) : 0,
     };
   },
 
@@ -830,6 +863,7 @@ export const MsgProvisionModel = {
     message.certificationIdOfSoftwareComponent !== undefined
       && (obj.certificationIdOfSoftwareComponent = message.certificationIdOfSoftwareComponent);
     message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
+    message.specificationVersion !== undefined && (obj.specificationVersion = Math.round(message.specificationVersion));
     return obj;
   },
 
@@ -857,6 +891,7 @@ export const MsgProvisionModel = {
     message.parentChild = object.parentChild ?? "";
     message.certificationIdOfSoftwareComponent = object.certificationIdOfSoftwareComponent ?? "";
     message.schemaVersion = object.schemaVersion ?? 0;
+    message.specificationVersion = object.specificationVersion ?? 0;
     return message;
   },
 };
@@ -924,6 +959,7 @@ function createBaseMsgUpdateComplianceInfo(): MsgUpdateComplianceInfo {
     parentChild: "",
     certificationIdOfSoftwareComponent: "",
     schemaVersion: 0,
+    specificationVersion: 0,
   };
 }
 
@@ -994,6 +1030,9 @@ export const MsgUpdateComplianceInfo = {
     }
     if (message.schemaVersion !== 0) {
       writer.uint32(176).uint32(message.schemaVersion);
+    }
+    if (message.specificationVersion !== 0) {
+      writer.uint32(184).uint32(message.specificationVersion);
     }
     return writer;
   },
@@ -1071,6 +1110,9 @@ export const MsgUpdateComplianceInfo = {
         case 22:
           message.schemaVersion = reader.uint32();
           break;
+        case 23:
+          message.specificationVersion = reader.uint32();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -1105,6 +1147,7 @@ export const MsgUpdateComplianceInfo = {
         ? String(object.certificationIdOfSoftwareComponent)
         : "",
       schemaVersion: isSet(object.schemaVersion) ? Number(object.schemaVersion) : 0,
+      specificationVersion: isSet(object.specificationVersion) ? Number(object.specificationVersion) : 0,
     };
   },
 
@@ -1133,6 +1176,7 @@ export const MsgUpdateComplianceInfo = {
     message.certificationIdOfSoftwareComponent !== undefined
       && (obj.certificationIdOfSoftwareComponent = message.certificationIdOfSoftwareComponent);
     message.schemaVersion !== undefined && (obj.schemaVersion = Math.round(message.schemaVersion));
+    message.specificationVersion !== undefined && (obj.specificationVersion = Math.round(message.specificationVersion));
     return obj;
   },
 
@@ -1160,6 +1204,7 @@ export const MsgUpdateComplianceInfo = {
     message.parentChild = object.parentChild ?? "";
     message.certificationIdOfSoftwareComponent = object.certificationIdOfSoftwareComponent ?? "";
     message.schemaVersion = object.schemaVersion ?? 0;
+    message.specificationVersion = object.specificationVersion ?? 0;
     return message;
   },
 };

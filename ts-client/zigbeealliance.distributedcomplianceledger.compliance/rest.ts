@@ -168,17 +168,28 @@ export interface DistributedcomplianceledgercomplianceComplianceInfo {
   certificationRoute?: string;
   programType?: string;
   programTypeVersion?: string;
+
+  /** Deprecated */
   compliantPlatformUsed?: string;
+
+  /** Deprecated */
   compliantPlatformVersion?: string;
   transport?: string;
   familyId?: string;
   supportedClusters?: string;
+
+  /** Deprecated */
   OSVersion?: string;
   parentChild?: string;
+
+  /** Deprecated */
   certificationIdOfSoftwareComponent?: string;
 
   /** @format int64 */
   schemaVersion?: number;
+
+  /** @format int64 */
+  specificationVersion?: number;
 }
 
 export interface DistributedcomplianceledgercomplianceDeviceSoftwareCompliance {

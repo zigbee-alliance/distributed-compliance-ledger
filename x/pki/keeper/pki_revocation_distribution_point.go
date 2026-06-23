@@ -63,7 +63,7 @@ func (k Keeper) GetAllPkiRevocationDistributionPoint(ctx sdk.Context) (list []ty
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.PkiRevocationDistributionPointKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
-	defer iterator.Close()
+	defer func() { _ = iterator.Close() }()
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.PkiRevocationDistributionPoint

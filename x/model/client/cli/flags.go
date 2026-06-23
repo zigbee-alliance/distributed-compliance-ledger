@@ -31,7 +31,7 @@ const (
 	FlagEnhancedSetupFlowTCRevision                = "enhancedSetupFlowTCRevision"
 	FlagEnhancedSetupFlowTCDigest                  = "enhancedSetupFlowTCDigest"
 	FlagEnhancedSetupFlowTCFileSize                = "enhancedSetupFlowTCFileSize"
-	FlagEnhancedSetupFlowMaintenanceURL            = "enhancedSetupFlowMaintenanceUrl"
+	FlagMaintenanceURL                             = "maintenanceUrl"
 	FlagCommissioningFallbackURL                   = "commissioningFallbackUrl"
 	// Flags for ModelVersion.
 	FlagSoftwareVersion              = "softwareVersion"
@@ -47,5 +47,7 @@ const (
 	FlagMinApplicableSoftwareVersion = "minApplicableSoftwareVersion"
 	FlagMaxApplicableSoftwareVersion = "maxApplicableSoftwareVersion"
 	FlagReleaseNotesURL              = "releaseNotesURL"
-	FlagSpecificationVersion         = "specificationVersion"
+	// Deprecated: SpecificationVersion is now stated/stored in the ComplianceInfo record;
+	// the flag is kept for backward compatibility and will be removed in a future release.
+	FlagSpecificationVersion = "specificationVersion"
 )

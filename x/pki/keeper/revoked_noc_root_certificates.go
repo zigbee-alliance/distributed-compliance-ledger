@@ -87,7 +87,7 @@ func (k Keeper) GetAllRevokedNocRootCertificates(ctx sdk.Context) (list []types.
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), pkitypes.KeyPrefix(types.RevokedNocRootCertificatesKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
-	defer iterator.Close()
+	defer func() { _ = iterator.Close() }()
 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.RevokedNocRootCertificates

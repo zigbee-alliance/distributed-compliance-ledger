@@ -5,7 +5,8 @@
 !utils
 !internal
 !x
-!types
+!internal
+  !types
 !go.mod
 !go.sum
 !Makefile

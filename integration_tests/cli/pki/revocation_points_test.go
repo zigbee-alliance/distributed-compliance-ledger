@@ -7,7 +7,6 @@ import (
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
 const (
@@ -26,19 +25,17 @@ const (
 
 	delegatorCertWithVid65521Path     = "../../constants/intermediate_cert_with_vid_1"
 	delegatorCertWithVid65521CopyPath = "../../constants/intermediate_cert_with_vid_1_copy"
-	delegatorCertSubjectKeyID         = "0E8CE8C8B8AA50BC258556B9B19CC2C7D9C52F17"
+	delegatorCertSubjectKeyID         = "B07B3FF14501918FC1FAEECB9A0106C7479B5DEC"
 
 	crlSignerDelegatedByPAI1Path = "../../constants/leaf_cert_with_vid_65521"
 
-	// Use google_root_cert_r1 instead of root_cert to avoid conflict: TestPKIDemo revokes root_cert
-	// and the unique-cert store retains the entry, permanently blocking re-addition.
-	revPointsTestRootCertPath         = "../../constants/google_root_cert_r1"
-	revPointsTestRootCertSubject      = "MEcxCzAJBgNVBAYTAlVTMSIwIAYDVQQKExlHb29nbGUgVHJ1c3QgU2VydmljZXMgTExDMRQwEgYDVQQDEwtHVFMgUm9vdCBSMQ=="
-	revPointsTestRootCertSubjectKeyID = "E4:AF:2B:26:71:1A:2B:48:27:85:2F:52:66:2C:EF:F0:89:13:71:3E"
-
 	rootCertWithVidRevPath         = "../../constants/root_cert_with_vid"
-	rootCertWithVidRevSubject      = "MIGYMQswCQYDVQQGEwJVUzERMA8GA1UECAwITmV3IFlvcmsxETAPBgNVBAcMCE5ldyBZb3JrMRgwFgYDVQQKDA9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsMEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMMD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgEMBEZGRjE="
-	rootCertWithVidRevSubjectKeyID = "CE:A8:92:66:EA:E0:80:BD:2B:B5:68:E4:0B:07:C4:FA:2C:34:6D:31"
+	rootCertWithVidRevSubject      = "MIGYMQswCQYDVQQGEwJVUzERMA8GA1UECBMITmV3IFlvcmsxETAPBgNVBAcTCE5ldyBZb3JrMRgwFgYDVQQKEw9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsTEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMTD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgETBEZGRjE="
+	rootCertWithVidRevSubjectKeyID = "6B:8C:77:1E:AD:CB:A8:3C:33:9C:2F:10:27:5F:42:03:1D:0A:F4:8E"
+
+	// intermediate_cert_with_vid_2 is VID-scoped to FFF2 (65522) but chains to
+	// root_cert_with_vid (FFF1=65521) — used for the add-x509-cert 440 case.
+	intermediateCertWithVid2Path = "../../constants/intermediate_cert_with_vid_2"
 
 	revPointVid          = 65521
 	revPointVid65522     = 65522
@@ -53,13 +50,12 @@ const (
 
 	revPointDataURL          = "https://url.data.dclmodel"
 	revPointDataURLNonScoped = "https://url.data.dclmodel2"
-	revPointIssuerSKID       = "5A880E6C3653D07FB08971A3F473790930E62BDB"
+	revPointIssuerSKID       = "DF4EAFB08C9C37781AE75312CAE4786B481EAFB0"
 	// SKID of google_root_cert_gsr4 (no colons) — used for non-VID-scoped PAI revocation point.
 	// intermediate_cert_gsr4 (no VID) chains to this root, which is on the ledger after TestPKIAddVendorX509Certificates.
 	revPointGsr4IssuerSKID = "54B07BAD45B8E2407FFB0A6EFBBE33C93CA384D5"
 )
 
-// TestPKIRevocationPoints translates pki-revocation-points.sh.
 func TestPKIRevocationPoints(t *testing.T) {
 	jack := testconstants.JackAccount
 	alice := testconstants.AliceAccount
@@ -77,243 +73,195 @@ func TestPKIRevocationPoints(t *testing.T) {
 	cliputils.CreateVendorAccount(t, vendorAccountNonScoped, revPointVidNonScoped)
 
 	t.Run("QueryAllEmpty", func(t *testing.T) {
-		out, err := QueryAllPkiRevocationDistributionPoints()
+		all, err := GetAllPkiRevocationDistributionPoints()
 		require.NoError(t, err)
-		require.Contains(t, string(out), "[]")
+		require.Empty(t, all)
 	})
 
 	t.Run("QueryRevocationPointNotFound", func(t *testing.T) {
-		out, err := QueryPkiRevocationDistributionPoint(revPointVid, revPointLabel, "AB")
+		point, err := GetPkiRevocationDistributionPoint(revPointVid, revPointLabel, "AB")
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, point)
 
-		out, err = QueryPkiRevocationDistributionPointsByIssuer("AB")
+		byIssuer, err := GetPkiRevocationDistributionPointsByIssuer("AB")
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, byIssuer)
 	})
 
 	t.Run("AddRevocationPointFailures", func(t *testing.T) {
 		// Not by vendor
-		txResult, err := AddRevocationPoint(jack,
-			"--vid", fmt.Sprintf("%d", revPointVid),
-			"--is-paa=true",
-			"--certificate", paaCertWithNumericVidPath,
-			"--label", revPointLabel,
-			"--data-url", revPointDataURL,
-			"--issuer-subject-key-id", revPointIssuerSKID,
-			"--revocation-type", "1",
-		)
-		require.NoError(t, err)
-		require.NotEqual(t, uint32(0), txResult.Code)
+		txResult, err := AddRevocationPoint(jack, RevocationPointOpts{
+			VID:                revPointVid,
+			IsPAA:              true,
+			Certificate:        paaCertWithNumericVidPath,
+			Label:              revPointLabel,
+			DataURL:            revPointDataURL,
+			IssuerSubjectKeyID: revPointIssuerSKID,
+			RevocationType:     "1",
+		})
+		cliputils.RequireTxFails(t, txResult, err)
 
 		// Sender VID not equal to field VID
-		txResult, err = AddRevocationPoint(vendorAccount65522,
-			"--vid", fmt.Sprintf("%d", revPointVid),
-			"--is-paa=true",
-			"--certificate", paaCertWithNumericVidPath,
-			"--label", revPointLabel,
-			"--data-url", revPointDataURL,
-			"--issuer-subject-key-id", revPointIssuerSKID,
-			"--revocation-type", "1",
-		)
-		require.NoError(t, err)
-		require.NotEqual(t, uint32(0), txResult.Code)
+		txResult, err = AddRevocationPoint(vendorAccount65522, RevocationPointOpts{
+			VID:                revPointVid,
+			IsPAA:              true,
+			Certificate:        paaCertWithNumericVidPath,
+			Label:              revPointLabel,
+			DataURL:            revPointDataURL,
+			IssuerSubjectKeyID: revPointIssuerSKID,
+			RevocationType:     "1",
+		})
+		cliputils.RequireTxFails(t, txResult, err)
 
 		// Certificate does not exist on ledger
-		txResult, err = AddRevocationPoint(vendorAccount,
-			"--vid", fmt.Sprintf("%d", revPointVid),
-			"--is-paa=true",
-			"--certificate", paaCertWithNumericVidPath,
-			"--label", revPointLabel,
-			"--data-url", revPointDataURL,
-			"--issuer-subject-key-id", revPointIssuerSKID,
-			"--revocation-type", "1",
-		)
-		require.NoError(t, err)
-		require.NotEqual(t, uint32(0), txResult.Code)
+		txResult, err = AddRevocationPoint(vendorAccount, RevocationPointOpts{
+			VID:                revPointVid,
+			IsPAA:              true,
+			Certificate:        paaCertWithNumericVidPath,
+			Label:              revPointLabel,
+			DataURL:            revPointDataURL,
+			IssuerSubjectKeyID: revPointIssuerSKID,
+			RevocationType:     "1",
+		})
+		cliputils.RequireTxFails(t, txResult, err)
 	})
 
 	t.Run("AddCertsToLedger", func(t *testing.T) {
 		// Trustees add PAA cert with numeric VID
-		txResult, err := ProposeAddX509RootCert(paaCertWithNumericVidPath, jack,
-			"--vid", fmt.Sprintf("%d", revPointVid),
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err := ProposeAddX509RootCert(paaCertWithNumericVidPath, jack, X509ProposeOpts{VID: revPointVid})
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ApproveAddX509RootCert(paaCertWithNumericVidSubject, paaCertWithNumericVidSubjectKeyID, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Trustees add PAA no VID
-		txResult, err = ProposeAddX509RootCert(paaCertNoVidPath, jack,
-			"--vid", fmt.Sprintf("%d", revPointVidNonScoped),
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err = ProposeAddX509RootCert(paaCertNoVidPath, jack, X509ProposeOpts{VID: revPointVidNonScoped})
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ApproveAddX509RootCert(paaCertNoVidSubject, paaCertNoVidSubjectKeyID, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
-
-		// Add root cert
-		txResult, err = ProposeAddX509RootCert(revPointsTestRootCertPath, jack,
-			"--vid", fmt.Sprintf("%d", revPointVid),
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
-
-		txResult, err = ApproveAddX509RootCert(revPointsTestRootCertSubject, revPointsTestRootCertSubjectKeyID, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Add VID-scoped root cert
-		txResult, err = ProposeAddX509RootCert(rootCertWithVidRevPath, jack,
-			"--vid", fmt.Sprintf("%d", revPointVid),
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err = ProposeAddX509RootCert(rootCertWithVidRevPath, jack, X509ProposeOpts{VID: revPointVid})
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ApproveAddX509RootCert(rootCertWithVidRevSubject, rootCertWithVidRevSubjectKeyID, alice)
+		cliputils.RequireTxOK(t, txResult, err)
+	})
+
+	t.Run("AddChildVidNotEqualRootVid_Fails", func(t *testing.T) {
+		// Port of pki-add-vendor-x509-certificates.sh:79-82 (code 440): adding an
+		// intermediate whose VID (65522) differs from its VID-scoped root's VID
+		// (root_cert_with_vid, 65521) is rejected. This lives here because this
+		// test owns root_cert_with_vid on the ledger; the add fails, so no ledger
+		// state changes. The childVid≠rootVid check precedes the account-VID check,
+		// so 440 fires regardless of the signer's VID.
+		txResult, err := AddX509Cert(intermediateCertWithVid2Path, vendorAccount65522)
 		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		require.Equal(t, uint32(440), txResult.Code, "expected cert-vid-not-equal-root-vid (440), raw: %s", txResult.RawLog)
 	})
 
 	t.Run("AddRevocationPointForVidScopedPAA", func(t *testing.T) {
 		// CRL signer cert PEM value not equal to stored — should fail
-		txResult, err := AddRevocationPoint(vendorAccount65522,
-			"--vid", fmt.Sprintf("%d", revPointVid65522),
-			"--is-paa=true",
-			"--certificate", paaCertWithNumericVid1Path,
-			"--label", revPointLabel,
-			"--data-url", revPointDataURL,
-			"--issuer-subject-key-id", revPointIssuerSKID,
-			"--revocation-type", "1",
-		)
-		require.NoError(t, err)
-		require.NotEqual(t, uint32(0), txResult.Code)
+		txResult, err := AddRevocationPoint(vendorAccount65522, RevocationPointOpts{
+			VID:                revPointVid65522,
+			IsPAA:              true,
+			Certificate:        paaCertWithNumericVid1Path,
+			Label:              revPointLabel,
+			DataURL:            revPointDataURL,
+			IssuerSubjectKeyID: revPointIssuerSKID,
+			RevocationType:     "1",
+		})
+		cliputils.RequireTxFails(t, txResult, err)
 
 		// Add for VID-scoped PAA
-		txResult, err = AddRevocationPoint(vendorAccount,
-			"--vid", fmt.Sprintf("%d", revPointVid),
-			"--is-paa=true",
-			"--certificate", paaCertWithNumericVidPath,
-			"--label", revPointLabel,
-			"--data-url", revPointDataURL,
-			"--issuer-subject-key-id", revPointIssuerSKID,
-			"--revocation-type", "1",
-			"--schemaVersion", "0",
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err = AddRevocationPoint(vendorAccount, RevocationPointOpts{
+			VID:                revPointVid,
+			IsPAA:              true,
+			Certificate:        paaCertWithNumericVidPath,
+			Label:              revPointLabel,
+			DataURL:            revPointDataURL,
+			IssuerSubjectKeyID: revPointIssuerSKID,
+			RevocationType:     "1",
+			SchemaVersion:      "0",
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryAllPkiRevocationDistributionPoints()
+		all, err := GetAllPkiRevocationDistributionPoints()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, revPointVid))
-		require.Contains(t, string(out), fmt.Sprintf(`"label":"%s"`, revPointLabel))
+		require.True(t, containsRevocationPointByLabel(all, int32(revPointVid), revPointLabel))
 
 		// Cannot add same point twice (same vid, issuer, label)
-		txResult, err = AddRevocationPoint(vendorAccount,
-			"--vid", fmt.Sprintf("%d", revPointVid),
-			"--is-paa=true",
-			"--certificate", paaCertWithNumericVidPath,
-			"--label", revPointLabel,
-			"--data-url", revPointDataURL+"-new",
-			"--issuer-subject-key-id", revPointIssuerSKID,
-			"--revocation-type", "1",
-		)
-		require.NoError(t, err)
-		require.NotEqual(t, uint32(0), txResult.Code)
+		txResult, err = AddRevocationPoint(vendorAccount, RevocationPointOpts{
+			VID:                revPointVid,
+			IsPAA:              true,
+			Certificate:        paaCertWithNumericVidPath,
+			Label:              revPointLabel,
+			DataURL:            revPointDataURL + "-new",
+			IssuerSubjectKeyID: revPointIssuerSKID,
+			RevocationType:     "1",
+		})
+		cliputils.RequireTxFails(t, txResult, err)
 	})
 
 	t.Run("AddRevocationPointForNonVidScopedPAA", func(t *testing.T) {
-		txResult, err := AddRevocationPoint(vendorAccountNonScoped,
-			"--vid", fmt.Sprintf("%d", revPointVidNonScoped),
-			"--is-paa=true",
-			"--certificate", paaCertNoVidPath,
-			"--label", revPointLabelNonScoped,
-			"--data-url", revPointDataURLNonScoped,
-			"--issuer-subject-key-id", revPointIssuerSKID,
-			"--revocation-type", "1",
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err := AddRevocationPoint(vendorAccountNonScoped, RevocationPointOpts{
+			VID:                revPointVidNonScoped,
+			IsPAA:              true,
+			Certificate:        paaCertNoVidPath,
+			Label:              revPointLabelNonScoped,
+			DataURL:            revPointDataURLNonScoped,
+			IssuerSubjectKeyID: revPointIssuerSKID,
+			RevocationType:     "1",
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryAllPkiRevocationDistributionPoints()
+		all, err := GetAllPkiRevocationDistributionPoints()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, revPointVid))
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, revPointVidNonScoped))
+		require.True(t, containsRevocationPointByLabel(all, int32(revPointVid), revPointLabel))
+		require.True(t, containsRevocationPointByLabel(all, int32(revPointVidNonScoped), revPointLabelNonScoped))
 	})
 
 	t.Run("AddRevocationPointForPAI", func(t *testing.T) {
-		txResult, err := AddRevocationPoint(vendorAccount65522,
-			"--vid", fmt.Sprintf("%d", revPointVid65522),
-			"--is-paa=false",
-			"--certificate", paiCertWithNumericVidPath,
-			"--label", revPointLabelPAI,
-			"--data-url", revPointDataURL,
-			"--issuer-subject-key-id", revPointIssuerSKID,
-			"--revocation-type", "1",
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err := AddRevocationPoint(vendorAccount65522, RevocationPointOpts{
+			VID:                revPointVid65522,
+			Certificate:        paiCertWithNumericVidPath,
+			Label:              revPointLabelPAI,
+			DataURL:            revPointDataURL,
+			IssuerSubjectKeyID: revPointIssuerSKID,
+			RevocationType:     "1",
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryPkiRevocationDistributionPoint(revPointVid65522, revPointLabelPAI, revPointIssuerSKID)
+		point, err := GetPkiRevocationDistributionPoint(revPointVid65522, revPointLabelPAI, revPointIssuerSKID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, revPointVid65522))
-		require.Contains(t, string(out), fmt.Sprintf(`"label":"%s"`, revPointLabelPAI))
+		require.NotNil(t, point)
+		require.Equal(t, int32(revPointVid65522), point.Vid)
+		require.Equal(t, revPointLabelPAI, point.Label)
 	})
 
 	t.Run("AddRevocationPointWithDelegator", func(t *testing.T) {
 		// Add PAI cert to ledger
 		txResult, err := AddX509Cert(delegatorCertWithVid65521Path, vendorAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Add revocation point with delegator
-		txResult, err = AddRevocationPoint(vendorAccount,
-			"--vid", fmt.Sprintf("%d", revPointVid),
-			"--is-paa=false",
-			"--certificate", crlSignerDelegatedByPAI1Path,
-			"--label", revPointLabelLeafDel,
-			"--data-url", revPointDataURL,
-			"--issuer-subject-key-id", delegatorCertSubjectKeyID,
-			"--revocation-type", "1",
-			"--certificate-delegator", delegatorCertWithVid65521Path,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err = AddRevocationPoint(vendorAccount, RevocationPointOpts{
+			VID:                  revPointVid,
+			Certificate:          crlSignerDelegatedByPAI1Path,
+			Label:                revPointLabelLeafDel,
+			DataURL:              revPointDataURL,
+			IssuerSubjectKeyID:   delegatorCertSubjectKeyID,
+			RevocationType:       "1",
+			CertificateDelegator: delegatorCertWithVid65521Path,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryPkiRevocationDistributionPoint(revPointVid, revPointLabelLeafDel, delegatorCertSubjectKeyID)
+		point, err := GetPkiRevocationDistributionPoint(revPointVid, revPointLabelLeafDel, delegatorCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"vid":%d`, revPointVid))
-		require.Contains(t, string(out), fmt.Sprintf(`"label":"%s"`, revPointLabelLeafDel))
+		require.NotNil(t, point)
+		require.Equal(t, int32(revPointVid), point.Vid)
+		require.Equal(t, revPointLabelLeafDel, point.Label)
 	})
 
 	t.Run("AddRevocationPointForNonVidScopedPAI", func(t *testing.T) {
@@ -321,110 +269,95 @@ func TestPKIRevocationPoints(t *testing.T) {
 		// intermediate_cert) is revoked by TestPKIDemo, so its chain cannot be verified.
 		// google_root_cert_gsr4 (issuer of intermediate_cert_gsr4) is already on the ledger
 		// from TestPKIAddVendorX509Certificates.
-		txResult, err := AddRevocationPoint(vendorAccount,
-			"--vid", fmt.Sprintf("%d", revPointVid),
-			"--is-paa=false",
-			"--certificate", addVendorIntermCertPath,
-			"--label", revPointLabelIntermediate,
-			"--data-url", revPointDataURLNonScoped,
-			"--issuer-subject-key-id", revPointGsr4IssuerSKID,
-			"--revocation-type", "1",
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err := AddRevocationPoint(vendorAccount, RevocationPointOpts{
+			VID:                revPointVid,
+			Certificate:        addVendorIntermCertPath,
+			Label:              revPointLabelIntermediate,
+			DataURL:            revPointDataURLNonScoped,
+			IssuerSubjectKeyID: revPointGsr4IssuerSKID,
+			RevocationType:     "1",
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 	})
 
 	t.Run("UpdateRevocationPoints", func(t *testing.T) {
 		dataURLNew := revPointDataURL + "_new"
 
 		// Update with delegator
-		txResult, err := UpdateRevocationPoint(vendorAccount,
-			"--vid", fmt.Sprintf("%d", revPointVid),
-			"--certificate", crlSignerDelegatedByPAI1Path,
-			"--label", revPointLabelLeafDel,
-			"--data-url", dataURLNew,
-			"--issuer-subject-key-id", delegatorCertSubjectKeyID,
-			"--certificate-delegator", delegatorCertWithVid65521CopyPath,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err := UpdateRevocationPoint(vendorAccount, RevocationPointOpts{
+			VID:                  revPointVid,
+			Certificate:          crlSignerDelegatedByPAI1Path,
+			Label:                revPointLabelLeafDel,
+			DataURL:              dataURLNew,
+			IssuerSubjectKeyID:   delegatorCertSubjectKeyID,
+			CertificateDelegator: delegatorCertWithVid65521CopyPath,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryPkiRevocationDistributionPoint(revPointVid, revPointLabelLeafDel, delegatorCertSubjectKeyID)
+		point, err := GetPkiRevocationDistributionPoint(revPointVid, revPointLabelLeafDel, delegatorCertSubjectKeyID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"dataURL":"%s"`, dataURLNew))
+		require.NotNil(t, point)
+		require.Equal(t, dataURLNew, point.DataURL)
 
 		// Update non-VID-scoped PAI (uses addVendorIntermCertPath / revPointGsr4IssuerSKID)
 		dataURLNonScopedNew := revPointDataURLNonScoped + "_new"
-		txResult, err = UpdateRevocationPoint(vendorAccount,
-			"--vid", fmt.Sprintf("%d", revPointVid),
-			"--label", revPointLabelIntermediate,
-			"--certificate", addVendorIntermCertPath,
-			"--data-url", dataURLNonScopedNew,
-			"--issuer-subject-key-id", revPointGsr4IssuerSKID,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err = UpdateRevocationPoint(vendorAccount, RevocationPointOpts{
+			VID:                revPointVid,
+			Label:              revPointLabelIntermediate,
+			Certificate:        addVendorIntermCertPath,
+			DataURL:            dataURLNonScopedNew,
+			IssuerSubjectKeyID: revPointGsr4IssuerSKID,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err = QueryPkiRevocationDistributionPoint(revPointVid, revPointLabelIntermediate, revPointGsr4IssuerSKID)
+		point, err = GetPkiRevocationDistributionPoint(revPointVid, revPointLabelIntermediate, revPointGsr4IssuerSKID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"dataURL":"%s"`, dataURLNonScopedNew))
+		require.NotNil(t, point)
+		require.Equal(t, dataURLNonScopedNew, point.DataURL)
 
-		// Update VID-scoped PAA (use revPointsTestRootCertPath which is on-ledger and not revoked)
-		txResult, err = UpdateRevocationPoint(vendorAccount,
-			"--vid", fmt.Sprintf("%d", revPointVid),
-			"--certificate", revPointsTestRootCertPath,
-			"--label", revPointLabel,
-			"--data-url", revPointDataURL,
-			"--issuer-subject-key-id", revPointIssuerSKID,
-			"--schemaVersion", "0",
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		// Update VID-scoped PAA (use rootCertWithVidRevPath which is on-ledger, ECDSA P-256,
+		// and shares the FFF1 VID-scope so the handler's revocationPoint.Vid check passes)
+		txResult, err = UpdateRevocationPoint(vendorAccount, RevocationPointOpts{
+			VID:                revPointVid,
+			Certificate:        rootCertWithVidRevPath,
+			Label:              revPointLabel,
+			DataURL:            revPointDataURL,
+			IssuerSubjectKeyID: revPointIssuerSKID,
+			SchemaVersion:      "0",
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Update failure: point not found
-		txResult, err = UpdateRevocationPoint(vendorAccount65522,
-			"--vid", fmt.Sprintf("%d", revPointVid65522),
-			"--certificate", paiCertWithNumericVidPidPath,
-			"--label", revPointLabel,
-			"--data-url", revPointDataURL,
-			"--issuer-subject-key-id", revPointIssuerSKID,
-		)
-		require.NoError(t, err)
-		require.NotEqual(t, uint32(0), txResult.Code)
+		txResult, err = UpdateRevocationPoint(vendorAccount65522, RevocationPointOpts{
+			VID:                revPointVid65522,
+			Certificate:        paiCertWithNumericVidPidPath,
+			Label:              revPointLabel,
+			DataURL:            revPointDataURL,
+			IssuerSubjectKeyID: revPointIssuerSKID,
+		})
+		cliputils.RequireTxFails(t, txResult, err)
 
 		// Update failure: sender not vendor
-		txResult, err = UpdateRevocationPoint(jack,
-			"--vid", fmt.Sprintf("%d", revPointVid),
-			"--certificate", paaCertWithNumericVidPath,
-			"--label", revPointLabel,
-			"--data-url", revPointDataURL,
-			"--issuer-subject-key-id", revPointIssuerSKID,
-		)
-		require.NoError(t, err)
-		require.NotEqual(t, uint32(0), txResult.Code)
+		txResult, err = UpdateRevocationPoint(jack, RevocationPointOpts{
+			VID:                revPointVid,
+			Certificate:        paaCertWithNumericVidPath,
+			Label:              revPointLabel,
+			DataURL:            revPointDataURL,
+			IssuerSubjectKeyID: revPointIssuerSKID,
+		})
+		cliputils.RequireTxFails(t, txResult, err)
 	})
 
 	t.Run("DeleteRevocationPoint", func(t *testing.T) {
-		txResult, err := DeleteRevocationPoint(vendorAccount,
-			"--vid", fmt.Sprintf("%d", revPointVid),
-			"--label", revPointLabel,
-			"--issuer-subject-key-id", revPointIssuerSKID,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err := DeleteRevocationPoint(vendorAccount, RevocationPointOpts{
+			VID:                revPointVid,
+			Label:              revPointLabel,
+			IssuerSubjectKeyID: revPointIssuerSKID,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
 
-		out, err := QueryPkiRevocationDistributionPoint(revPointVid, revPointLabel, revPointIssuerSKID)
+		point, err := GetPkiRevocationDistributionPoint(revPointVid, revPointLabel, revPointIssuerSKID)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, point)
 	})
 }

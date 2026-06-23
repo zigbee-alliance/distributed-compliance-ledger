@@ -27,21 +27,19 @@ import (
 const (
 	upgradeInfoV120 = `{"binaries":{"linux/amd64":"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.2.0/dcld?checksum=sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958"}}`
 	upgradeInfoV121 = `{"binaries":{"linux/amd64":"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.2.1/dcld?checksum=sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958"}}`
-	upgradeInfoV122 = `{"binaries":{"linux/amd64":"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.2.2/dcld?checksum=sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958"}}`
-	upgradeInfoV140 = `{"binaries":{"linux/amd64":"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.4.0/dcld?checksum=sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958"}}`
 	upgradeInfoV141 = `{"binaries":{"linux/amd64":"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.4.1/dcld?checksum=sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958"}}`
+
+	upgradeInfoV122 = `{"binaries":{"linux/amd64":"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.2.2/dcld?checksum=sha256:e4031c6a77aa8e58add391be671a334613271bcf6e7f11d23b04a0881ece6958"}}`
 
 	upgradeNameV120 = "v1.2.0"
 	upgradeNameV121 = "v1.2.1"
 	upgradeNameV122 = "v1.2.2"
-	upgradeNameV140 = "v1.4.0"
 	upgradeNameV141 = "v1.4.1"
 
 	// A very large height so the upgrade is never actually executed during tests
 	farFutureHeight = "10000000"
 )
 
-// TestUpgradeDemo translates upgrade-demo.sh.
 func TestUpgradeDemo(t *testing.T) {
 	alice := testconstants.AliceAccount
 	bob := testconstants.BobAccount
@@ -52,303 +50,176 @@ func TestUpgradeDemo(t *testing.T) {
 
 	t.Run("ProposeApproveUpgrade_v1_2_0", func(t *testing.T) {
 		// trusteeAccount proposes
-		txResult, err := ProposeUpgrade(upgradeNameV120, farFutureHeight, trusteeAccount,
-			"--upgrade-info", upgradeInfoV120,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err := ProposeUpgrade(upgradeNameV120, farFutureHeight, trusteeAccount, ProposeUpgradeOpts{UpgradeInfo: upgradeInfoV120})
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Verify proposed upgrade
-		out, err := QueryProposedUpgrade(upgradeNameV120)
+		proposed, err := GetProposedUpgrade(upgradeNameV120)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV120))
-		require.Contains(t, string(out), fmt.Sprintf(`"height":"%s"`, farFutureHeight))
+		require.NotNil(t, proposed)
+		require.Equal(t, upgradeNameV120, proposed.Plan.Name)
+		require.Equal(t, farFutureHeight, fmt.Sprintf("%d", proposed.Plan.Height))
+		require.Equal(t, upgradeInfoV120, proposed.Plan.Info)
 
 		// alice approves
 		txResult, err = ApproveUpgrade(upgradeNameV120, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// alice rejects (revotes)
 		txResult, err = RejectUpgrade(upgradeNameV120, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// alice approves again
 		txResult, err = ApproveUpgrade(upgradeNameV120, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Approved upgrade should NOT yet be in approved store (threshold not reached)
-		out, err = QueryApprovedUpgrade(upgradeNameV120)
+		approved, err := GetApprovedUpgrade(upgradeNameV120)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, approved)
 
 		// Still in proposed
-		out, err = QueryProposedUpgrade(upgradeNameV120)
+		proposed, err = GetProposedUpgrade(upgradeNameV120)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV120))
+		require.NotNil(t, proposed)
+		require.Equal(t, upgradeNameV120, proposed.Plan.Name)
+
+		// No upgrade is scheduled yet — threshold not reached. The cosmos
+		// `upgrade plan` query returns "no upgrade scheduled" (a CLI error) when
+		// none exists; tolerate any unrelated pre-existing plan but require ours
+		// is not the scheduled one.
+		scheduled, planErr := GetUpgradePlan()
+		if planErr == nil && scheduled != nil {
+			require.NotEqual(t, upgradeNameV120, scheduled.Name)
+		}
 
 		// bob approves — threshold now reached
 		txResult, err = ApproveUpgrade(upgradeNameV120, bob)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Upgrade plan should now be scheduled
-		out, err = QueryUpgradePlan()
+		plan, err := GetUpgradePlan()
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV120))
-		require.Contains(t, string(out), fmt.Sprintf(`"height":"%s"`, farFutureHeight))
+		require.NotNil(t, plan)
+		require.Equal(t, upgradeNameV120, plan.Name)
+		require.Equal(t, farFutureHeight, fmt.Sprintf("%d", plan.Height))
+		require.Equal(t, upgradeInfoV120, plan.Info)
 
 		// Should be in approved store
-		out, err = QueryApprovedUpgrade(upgradeNameV120)
+		approved, err = GetApprovedUpgrade(upgradeNameV120)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV120))
+		require.NotNil(t, approved)
+		require.Equal(t, upgradeNameV120, approved.Plan.Name)
+		require.Equal(t, upgradeInfoV120, approved.Plan.Info)
 
 		// Should no longer be in proposed store
-		out, err = QueryProposedUpgrade(upgradeNameV120)
+		proposed, err = GetProposedUpgrade(upgradeNameV120)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, proposed)
 	})
 
 	t.Run("ProposerCannotApproveOwnUpgrade", func(t *testing.T) {
 		upgradeName := fmt.Sprintf("upgrade_%s", utils.RandString())
 
 		txResult, err := ProposeUpgrade(upgradeName, farFutureHeight, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ApproveUpgrade(upgradeName, alice)
-		require.NoError(t, err)
-		require.NotEqual(t, uint32(0), txResult.Code) // unauthorized
+		cliputils.RequireTxFailContains(t, txResult, err, "unauthorized")
 	})
 
 	t.Run("CannotApproveTwice", func(t *testing.T) {
 		upgradeName := fmt.Sprintf("upgrade_%s", utils.RandString())
 
 		txResult, err := ProposeUpgrade(upgradeName, farFutureHeight, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ApproveUpgrade(upgradeName, bob)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ApproveUpgrade(upgradeName, bob)
-		require.NoError(t, err)
-		require.NotEqual(t, uint32(0), txResult.Code) // unauthorized / already approved
+		cliputils.RequireTxFailContains(t, txResult, err, "unauthorized")
 	})
 
 	t.Run("CannotProposeTwice", func(t *testing.T) {
 		upgradeName := fmt.Sprintf("upgrade_%s", utils.RandString())
 
 		txResult, err := ProposeUpgrade(upgradeName, farFutureHeight, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		txResult, err = ProposeUpgrade(upgradeName, farFutureHeight, alice)
-		require.NoError(t, err)
-		require.NotEqual(t, uint32(0), txResult.Code) // proposed upgrade already exists
+		cliputils.RequireTxFailContains(t, txResult, err, "proposed upgrade already exists")
 	})
 
 	t.Run("UpgradeHeightInPast_Fails", func(t *testing.T) {
 		upgradeName := fmt.Sprintf("upgrade_%s", utils.RandString())
 
 		txResult, err := ProposeUpgrade(upgradeName, "1", alice)
-		require.NoError(t, err)
-		require.NotEqual(t, uint32(0), txResult.Code) // upgrade cannot be scheduled in the past
+		cliputils.RequireTxFailContains(t, txResult, err, "upgrade cannot be scheduled in the past")
 	})
 
 	t.Run("ProposeAndRejectUpgrade_v1_2_1", func(t *testing.T) {
 		// Use a fresh far-future height
-		txResult, err := ProposeUpgrade(upgradeNameV121, farFutureHeight, trusteeAccount,
-			"--upgrade-info", upgradeInfoV121,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err := ProposeUpgrade(upgradeNameV121, farFutureHeight, trusteeAccount, ProposeUpgradeOpts{UpgradeInfo: upgradeInfoV121})
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// alice approves
 		txResult, err = ApproveUpgrade(upgradeNameV121, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Still in proposed
-		out, err := QueryProposedUpgrade(upgradeNameV121)
+		proposed, err := GetProposedUpgrade(upgradeNameV121)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV121))
+		require.NotNil(t, proposed)
+		require.Equal(t, upgradeNameV121, proposed.Plan.Name)
 
 		// trusteeAccount rejects (revotes)
 		txResult, err = RejectUpgrade(upgradeNameV121, trusteeAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// trusteeAccount approves again
 		txResult, err = ApproveUpgrade(upgradeNameV121, trusteeAccount)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// alice rejects
 		txResult, err = RejectUpgrade(upgradeNameV121, alice)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Still in proposed (not enough rejections)
-		out, err = QueryProposedUpgrade(upgradeNameV121)
+		proposed, err = GetProposedUpgrade(upgradeNameV121)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV121))
+		require.NotNil(t, proposed)
+		require.Equal(t, upgradeNameV121, proposed.Plan.Name)
 
 		// Not yet rejected or approved
-		out, err = QueryRejectedUpgrade(upgradeNameV121)
+		rejected, err := GetRejectedUpgrade(upgradeNameV121)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, rejected)
 
-		out, err = QueryApprovedUpgrade(upgradeNameV121)
+		approved, err := GetApprovedUpgrade(upgradeNameV121)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, approved)
 
 		// bob rejects — threshold reached
 		txResult, err = RejectUpgrade(upgradeNameV121, bob)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Now in rejected store
-		out, err = QueryRejectedUpgrade(upgradeNameV121)
+		rejected, err = GetRejectedUpgrade(upgradeNameV121)
 		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV121))
+		require.NotNil(t, rejected)
+		require.Equal(t, upgradeNameV121, rejected.Plan.Name)
+		require.Equal(t, upgradeInfoV121, rejected.Plan.Info)
 
 		// No longer in proposed
-		out, err = QueryProposedUpgrade(upgradeNameV121)
+		proposed, err = GetProposedUpgrade(upgradeNameV121)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, proposed)
 
 		// Not approved
-		out, err = QueryApprovedUpgrade(upgradeNameV121)
+		approved, err = GetApprovedUpgrade(upgradeNameV121)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
-
-		// After reject quorum, no upgrade plan must be scheduled.
-		// dcld returns a non-zero exit with "no upgrade scheduled" on stderr in this case.
-		out, err = QueryUpgradePlan()
-		combined := string(out)
-		if err != nil {
-			combined += err.Error()
-		}
-		require.Contains(t, combined, "no upgrade scheduled")
-	})
-
-	// Bash counterpart: model-validation-cases.sh lines 232-275.
-	// Propose at current+30, wait until plan_height+5, then approve must fail
-	// with "upgrade cannot be scheduled in the past". Re-propose with a fresh
-	// plan height succeeds.
-	t.Run("ApproveAfterPlanHeightPasses_ReProposeWithFreshHeightSucceeds_v1_2_2", func(t *testing.T) {
-		currentHeight, err := cliputils.GetHeight()
-		require.NoError(t, err)
-		planHeight := currentHeight + 30
-
-		txResult, err := ProposeUpgrade(upgradeNameV122, fmt.Sprintf("%d", planHeight), jack,
-			"--upgrade-info", upgradeInfoV122,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
-
-		out, err := QueryProposedUpgrade(upgradeNameV122)
-		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV122))
-		require.Contains(t, string(out), fmt.Sprintf(`"height":"%d"`, planHeight))
-
-		// Wait for the chain to pass plan_height
-		cliputils.WaitForHeight(t, planHeight+5, 300)
-
-		// Approving now must fail: the upgrade's height is in the past.
-		txResult, err = ApproveUpgrade(upgradeNameV122, alice)
-		require.NoError(t, err)
-		require.NotEqual(t, uint32(0), txResult.Code) // upgrade cannot be scheduled in the past
-
-		// Re-propose with a fresh plan height — must succeed.
-		currentHeight, err = cliputils.GetHeight()
-		require.NoError(t, err)
-		newPlanHeight := currentHeight + 30
-
-		txResult, err = ProposeUpgrade(upgradeNameV122, fmt.Sprintf("%d", newPlanHeight), jack,
-			"--upgrade-info", upgradeInfoV122,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
-
-		out, err = QueryProposedUpgrade(upgradeNameV122)
-		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV122))
-		require.Contains(t, string(out), fmt.Sprintf(`"height":"%d"`, newPlanHeight))
-	})
-
-	// Bash counterpart: model-validation-cases.sh lines 280-313.
-	// Same setup as above, but re-propose uses the STALE plan_height (now in
-	// the past). Must fail with "upgrade cannot be scheduled in the past".
-	t.Run("ApproveAfterPlanHeightPasses_ReProposeWithStaleHeightFails_v1_4_0", func(t *testing.T) {
-		currentHeight, err := cliputils.GetHeight()
-		require.NoError(t, err)
-		planHeight := currentHeight + 30
-
-		txResult, err := ProposeUpgrade(upgradeNameV140, fmt.Sprintf("%d", planHeight), jack,
-			"--upgrade-info", upgradeInfoV140,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
-
-		out, err := QueryProposedUpgrade(upgradeNameV140)
-		require.NoError(t, err)
-		require.Contains(t, string(out), fmt.Sprintf(`"name":"%s"`, upgradeNameV140))
-		require.Contains(t, string(out), fmt.Sprintf(`"height":"%d"`, planHeight))
-
-		cliputils.WaitForHeight(t, planHeight+5, 300)
-
-		// Approve must fail — plan height now in the past.
-		txResult, err = ApproveUpgrade(upgradeNameV140, alice)
-		require.NoError(t, err)
-		require.NotEqual(t, uint32(0), txResult.Code)
-
-		// Re-propose with the stale (now-past) plan height — must also fail.
-		txResult, err = ProposeUpgrade(upgradeNameV140, fmt.Sprintf("%d", planHeight), jack,
-			"--upgrade-info", upgradeInfoV140,
-		)
-		require.NoError(t, err)
-		require.NotEqual(t, uint32(0), txResult.Code) // upgrade cannot be scheduled in the past
+		require.Nil(t, approved)
 	})
 
 	t.Run("ProposeAndRejectByProposer_v1_4_1", func(t *testing.T) {
@@ -357,34 +228,65 @@ func TestUpgradeDemo(t *testing.T) {
 		planHeight := fmt.Sprintf("%d", h+10000000)
 
 		// jack proposes
-		txResult, err := ProposeUpgrade(upgradeNameV141, planHeight, jack,
-			"--upgrade-info", upgradeInfoV141,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		txResult, err := ProposeUpgrade(upgradeNameV141, planHeight, jack, ProposeUpgradeOpts{UpgradeInfo: upgradeInfoV141})
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// jack rejects own proposal
 		txResult, err = RejectUpgrade(upgradeNameV141, jack)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), txResult.Code)
-		_, err = utils.AwaitTxConfirmation(txResult.TxHash)
-		require.NoError(t, err)
+		cliputils.RequireTxOK(t, txResult, err)
 
 		// Should not be in proposed
-		out, err := QueryProposedUpgrade(upgradeNameV141)
+		proposed, err := GetProposedUpgrade(upgradeNameV141)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, proposed)
 
 		// Should not be in rejected
-		out, err = QueryRejectedUpgrade(upgradeNameV141)
+		rejected, err := GetRejectedUpgrade(upgradeNameV141)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, rejected)
 
 		// Should not be in approved
-		out, err = QueryApprovedUpgrade(upgradeNameV141)
+		approved, err := GetApprovedUpgrade(upgradeNameV141)
 		require.NoError(t, err)
-		require.Contains(t, string(out), "Not Found")
+		require.Nil(t, approved)
+	})
+
+	t.Run("ApproveStaleHeightUpgrade_Fails", func(t *testing.T) {
+		// Propose at a near-future height, let the chain advance past it, then
+		// show approving the now-stale plan is rejected (upgrade-demo.sh:234-313).
+		// Only the proposer's approval is ever recorded, so the threshold is never
+		// reached and nothing is actually scheduled — the chain does not halt.
+		h, err := cliputils.GetHeight()
+		require.NoError(t, err)
+		planHeight := h + 10
+
+		txResult, err := ProposeUpgrade(upgradeNameV122, fmt.Sprintf("%d", planHeight), jack, ProposeUpgradeOpts{UpgradeInfo: upgradeInfoV122})
+		cliputils.RequireTxOK(t, txResult, err)
+
+		proposed, err := GetProposedUpgrade(upgradeNameV122)
+		require.NoError(t, err)
+		require.NotNil(t, proposed)
+		require.Equal(t, planHeight, proposed.Plan.Height)
+		require.Equal(t, upgradeInfoV122, proposed.Plan.Info)
+
+		// Wait until the chain advances past the plan height.
+		cliputils.WaitForHeight(t, planHeight+3, 120)
+
+		// Approving now fails: the plan height is in the past.
+		txResult, err = ApproveUpgrade(upgradeNameV122, alice)
+		cliputils.RequireTxFailContains(t, txResult, err, "upgrade cannot be scheduled in the past")
+
+		// Re-proposing at the (still) stale height also fails the schedule check.
+		txResult, err = ProposeUpgrade(upgradeNameV122, fmt.Sprintf("%d", planHeight), jack, ProposeUpgradeOpts{UpgradeInfo: upgradeInfoV122})
+		cliputils.RequireTxFailContains(t, txResult, err, "upgrade cannot be scheduled in the past")
+
+		// Re-proposing at a fresh far-future height replaces the stale proposal.
+		txResult, err = ProposeUpgrade(upgradeNameV122, farFutureHeight, jack, ProposeUpgradeOpts{UpgradeInfo: upgradeInfoV122})
+		cliputils.RequireTxOK(t, txResult, err)
+
+		proposed, err = GetProposedUpgrade(upgradeNameV122)
+		require.NoError(t, err)
+		require.NotNil(t, proposed)
+		require.Equal(t, farFutureHeight, fmt.Sprintf("%d", proposed.Plan.Height))
 	})
 }

@@ -23,7 +23,7 @@ func createNComplianceInfo(keeper *keeper.Keeper, ctx sdk.Context, n int) []dclc
 		items[i].SoftwareVersion = uint32(i)
 		items[i].CertificationType = strconv.Itoa(i)
 
-		keeper.SetComplianceInfo(ctx, items[i])
+		keeper.SetComplianceInfo(ctx, &items[i])
 	}
 
 	return items
