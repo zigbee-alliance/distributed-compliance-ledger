@@ -98,7 +98,7 @@ func TestVendorInfoDemoHex(t *testing.T) {
 			CompanyLegalName: updatedCompanyName,
 			VendorName:       vendorName,
 		})
-		require.Contains(t, txFailureText(txResult, err),
+		require.Contains(t, cliputils.TxFailureText(txResult, err),
 			fmt.Sprintf("transaction should be signed by a vendor account associated with the vendorID %d", hexVid3Decimal))
 	})
 
@@ -109,7 +109,7 @@ func TestVendorInfoDemoHex(t *testing.T) {
 			CompanyLegalName: updatedCompanyName,
 			VendorName:       vendorName,
 		})
-		require.Contains(t, txFailureText(txResult, err),
+		require.Contains(t, cliputils.TxFailureText(txResult, err),
 			fmt.Sprintf("transaction should be signed by a vendor account associated with the vendorID %d", hexVidDecimal))
 	})
 }

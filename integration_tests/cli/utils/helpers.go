@@ -32,19 +32,13 @@ func CreateAccount(t *testing.T, roles string) string {
 
 	name := utils.RandString()
 
-	// Delete existing key if present (keys accumulate across test runs against a shared keyring).
-	utils.ExecuteCLI("keys", "delete", name, "--keyring-backend", "test", "-y") //nolint:errcheck
+	require.NoError(t, AddKey(name))
 
-	_, err := utils.ExecuteCLI("keys", "add", name, "--keyring-backend", "test", "--no-backup")
+	addr, err := GetAddress(name)
 	require.NoError(t, err)
 
-	addrOut, err := utils.ExecuteCLI("keys", "show", name, "-a", "--keyring-backend", "test")
+	pubkey, err := GetPubkey(name)
 	require.NoError(t, err)
-	addr := stripNewline(addrOut)
-
-	pubkeyOut, err := utils.ExecuteCLI("keys", "show", name, "-p", "--keyring-backend", "test")
-	require.NoError(t, err)
-	pubkey := stripNewline(pubkeyOut)
 
 	txResult, err := utils.ExecuteTx("tx", "auth", "propose-add-account",
 		"--address", addr,
@@ -93,19 +87,13 @@ func CreateAccount(t *testing.T, roles string) string {
 func CreateVendorAccount(t *testing.T, name string, vid int, pidRanges ...string) string {
 	t.Helper()
 
-	// Delete existing key if present (keys accumulate across test runs against a shared keyring).
-	utils.ExecuteCLI("keys", "delete", name, "--keyring-backend", "test", "-y") //nolint:errcheck
+	require.NoError(t, AddKey(name))
 
-	_, err := utils.ExecuteCLI("keys", "add", name, "--keyring-backend", "test", "--no-backup")
+	addr, err := GetAddress(name)
 	require.NoError(t, err)
 
-	addrOut, err := utils.ExecuteCLI("keys", "show", name, "-a", "--keyring-backend", "test")
+	pubkey, err := GetPubkey(name)
 	require.NoError(t, err)
-	addr := stripNewline(addrOut)
-
-	pubkeyOut, err := utils.ExecuteCLI("keys", "show", name, "-p", "--keyring-backend", "test")
-	require.NoError(t, err)
-	pubkey := stripNewline(pubkeyOut)
 
 	args := []string{
 		"tx", "auth", "propose-add-account",
@@ -244,7 +232,90 @@ func WaitForHeight(t *testing.T, target int64, timeoutSec int) {
 	}
 }
 
-// stripNewline removes trailing whitespace from CLI output bytes.
-func stripNewline(b []byte) string {
-	return strings.TrimSpace(string(b))
+// FlagOrHex returns hex if non-empty, otherwise the decimal-formatted n. It is
+// the shared formatter for vid/pid-style flags that accept either a decimal or
+// a 0x-prefixed hex value.
+func FlagOrHex(n int, hex string) string {
+	if hex != "" {
+		return hex
+	}
+
+	return strconv.Itoa(n)
+}
+
+// GetSingle runs a single-item dcld query and unmarshals into v. Returns
+// (false, nil) when the CLI emitted "Not Found".
+func GetSingle(v interface{}, args ...string) (found bool, err error) {
+	out, err := utils.ExecuteCLI(args...)
+	if err != nil {
+		return false, err
+	}
+	if utils.IsNotFound(out) {
+		return false, nil
+	}
+	out = utils.NormalizeProtoJSON(out)
+	if err := json.Unmarshal(out, v); err != nil {
+		return false, fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
+	}
+
+	return true, nil
+}
+
+// GetList runs an all-* dcld query and unmarshals the wrapper response.
+func GetList(v interface{}, args ...string) error {
+	out, err := utils.ExecuteCLI(args...)
+	if err != nil {
+		return err
+	}
+	out = utils.NormalizeProtoJSON(utils.StripPagination(out))
+	if err := json.Unmarshal(out, v); err != nil {
+		return fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
+	}
+
+	return nil
+}
+
+// TxFailureText collects a rejected tx's error text and/or RawLog so the exact
+// chain message can be asserted whether the failure surfaces client-side (err)
+// or in the broadcast/DeliverTx result.
+func TxFailureText(txResult *utils.TxResult, err error) string {
+	combined := ""
+	if err != nil {
+		combined += err.Error()
+	}
+	if txResult != nil {
+		combined += txResult.RawLog
+	}
+
+	return combined
+}
+
+// AddKey generates a new key in the test keyring with the given name. Any
+// pre-existing key with the same name is deleted first (keys accumulate across
+// runs against a shared keyring).
+func AddKey(name string) error {
+	utils.ExecuteCLI("keys", "delete", name, "--keyring-backend", "test", "-y") //nolint:errcheck
+	_, err := utils.ExecuteCLI("keys", "add", name, "--keyring-backend", "test", "--no-backup")
+
+	return err
+}
+
+// GetAddress returns the bech32 address for a keyring key name.
+func GetAddress(name string) (string, error) {
+	out, err := utils.ExecuteCLI("keys", "show", name, "-a", "--keyring-backend", "test")
+	if err != nil {
+		return "", err
+	}
+
+	return strings.TrimSpace(string(out)), nil
+}
+
+// GetPubkey returns the pubkey string for a keyring key name.
+func GetPubkey(name string) (string, error) {
+	out, err := utils.ExecuteCLI("keys", "show", name, "-p", "--keyring-backend", "test")
+	if err != nil {
+		return "", err
+	}
+
+	return strings.TrimSpace(string(out)), nil
 }

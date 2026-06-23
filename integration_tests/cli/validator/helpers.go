@@ -15,9 +15,7 @@
 package validator
 
 import (
-	"encoding/json"
-	"fmt"
-
+	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 	validatortypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
@@ -69,43 +67,11 @@ func RejectDisableNode(address, from string) (*utils.TxResult, error) {
 	)
 }
 
-// getSingle runs a single-item dcld query and unmarshals into v. Returns
-// (false, nil) when the CLI emitted "Not Found".
-func getSingle(v interface{}, args ...string) (found bool, err error) {
-	out, err := utils.ExecuteCLI(args...)
-	if err != nil {
-		return false, err
-	}
-	if utils.IsNotFound(out) {
-		return false, nil
-	}
-	out = utils.NormalizeProtoJSON(out)
-	if err := json.Unmarshal(out, v); err != nil {
-		return false, fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
-	}
-
-	return true, nil
-}
-
-// getList runs an all-* dcld query and unmarshals the wrapper response.
-func getList(v interface{}, args ...string) error {
-	out, err := utils.ExecuteCLI(args...)
-	if err != nil {
-		return err
-	}
-	out = utils.NormalizeProtoJSON(utils.StripPagination(out))
-	if err := json.Unmarshal(out, v); err != nil {
-		return fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
-	}
-
-	return nil
-}
-
 // GetNode queries a validator node by owner address. Returns nil when the
 // validator does not exist.
 func GetNode(address string) (*validatortypes.Validator, error) {
 	var res validatortypes.Validator
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "validator", "node",
 		"--address", address,
 		"-o", "json",
@@ -120,7 +86,7 @@ func GetNode(address string) (*validatortypes.Validator, error) {
 // GetAllNodes queries all validator nodes.
 func GetAllNodes() ([]validatortypes.Validator, error) {
 	var res validatortypes.QueryAllValidatorResponse
-	if err := getList(&res, "query", "validator", "all-nodes", "-o", "json"); err != nil {
+	if err := cliputils.GetList(&res, "query", "validator", "all-nodes", "-o", "json"); err != nil {
 		return nil, err
 	}
 
@@ -131,7 +97,7 @@ func GetAllNodes() ([]validatortypes.Validator, error) {
 // Returns nil when no record exists for the address.
 func GetLastPower(address string) (*validatortypes.LastValidatorPower, error) {
 	var res validatortypes.LastValidatorPower
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "validator", "last-power",
 		"--address", address,
 		"-o", "json",
@@ -147,7 +113,7 @@ func GetLastPower(address string) (*validatortypes.LastValidatorPower, error) {
 // when no disabled record exists.
 func GetDisabledNode(address string) (*validatortypes.DisabledValidator, error) {
 	var res validatortypes.DisabledValidator
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "validator", "disabled-node",
 		"--address", address,
 		"-o", "json",
@@ -163,7 +129,7 @@ func GetDisabledNode(address string) (*validatortypes.DisabledValidator, error) 
 // address. Returns nil when no proposal exists.
 func GetProposedDisableNode(address string) (*validatortypes.ProposedDisableValidator, error) {
 	var res validatortypes.ProposedDisableValidator
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "validator", "proposed-disable-node",
 		"--address", address,
 		"-o", "json",
@@ -178,7 +144,7 @@ func GetProposedDisableNode(address string) (*validatortypes.ProposedDisableVali
 // GetAllProposedDisableNodes queries all proposed-to-disable validator nodes.
 func GetAllProposedDisableNodes() ([]validatortypes.ProposedDisableValidator, error) {
 	var res validatortypes.QueryAllProposedDisableValidatorResponse
-	if err := getList(&res, "query", "validator", "all-proposed-disable-nodes", "-o", "json"); err != nil {
+	if err := cliputils.GetList(&res, "query", "validator", "all-proposed-disable-nodes", "-o", "json"); err != nil {
 		return nil, err
 	}
 
@@ -189,7 +155,7 @@ func GetAllProposedDisableNodes() ([]validatortypes.ProposedDisableValidator, er
 // Returns nil when no rejection record exists.
 func GetRejectedDisableNode(address string) (*validatortypes.RejectedDisableValidator, error) {
 	var res validatortypes.RejectedDisableValidator
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "validator", "rejected-disable-node",
 		"--address", address,
 		"-o", "json",
@@ -204,7 +170,7 @@ func GetRejectedDisableNode(address string) (*validatortypes.RejectedDisableVali
 // GetAllRejectedDisableNodes queries all rejected disable-node proposals.
 func GetAllRejectedDisableNodes() ([]validatortypes.RejectedDisableValidator, error) {
 	var res validatortypes.QueryAllRejectedDisableValidatorResponse
-	if err := getList(&res, "query", "validator", "all-rejected-disable-nodes", "-o", "json"); err != nil {
+	if err := cliputils.GetList(&res, "query", "validator", "all-rejected-disable-nodes", "-o", "json"); err != nil {
 		return nil, err
 	}
 

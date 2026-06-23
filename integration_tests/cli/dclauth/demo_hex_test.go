@@ -7,6 +7,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/model"
+	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
@@ -24,15 +25,15 @@ func TestAuthDemoHex(t *testing.T) {
 
 	// Generate and add key
 	name := "hexvendor" + utils.RandString()
-	err := AddKey(name)
+	err := cliputils.AddKey(name)
 	require.NoError(t, err)
 
-	userAddr, err := GetAddress(name)
+	userAddr, err := cliputils.GetAddress(name)
 	require.NoError(t, err)
-	userPubkey, err := GetPubkey(name)
+	userPubkey, err := cliputils.GetPubkey(name)
 	require.NoError(t, err)
 
-	jackAddr, err := GetAddress(jack)
+	jackAddr, err := cliputils.GetAddress(jack)
 	require.NoError(t, err)
 
 	t.Run("ProposeVendorAccountWithHexVID", func(t *testing.T) {

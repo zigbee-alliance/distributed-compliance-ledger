@@ -40,21 +40,6 @@ const (
 	farFutureHeight = "10000000"
 )
 
-// txFailure collects a rejected tx's error text and/or RawLog so the exact
-// chain message can be asserted whether it surfaces client-side (err) or in the
-// broadcast/DeliverTx result.
-func txFailure(txResult *utils.TxResult, err error) string {
-	combined := ""
-	if err != nil {
-		combined += err.Error()
-	}
-	if txResult != nil {
-		combined += txResult.RawLog
-	}
-
-	return combined
-}
-
 func TestUpgradeDemo(t *testing.T) {
 	alice := testconstants.AliceAccount
 	bob := testconstants.BobAccount
@@ -158,7 +143,7 @@ func TestUpgradeDemo(t *testing.T) {
 		require.NoError(t, err)
 
 		txResult, err = ApproveUpgrade(upgradeName, alice)
-		require.Contains(t, txFailure(txResult, err), "unauthorized")
+		require.Contains(t, cliputils.TxFailureText(txResult, err), "unauthorized")
 	})
 
 	t.Run("CannotApproveTwice", func(t *testing.T) {
@@ -177,7 +162,7 @@ func TestUpgradeDemo(t *testing.T) {
 		require.NoError(t, err)
 
 		txResult, err = ApproveUpgrade(upgradeName, bob)
-		require.Contains(t, txFailure(txResult, err), "unauthorized")
+		require.Contains(t, cliputils.TxFailureText(txResult, err), "unauthorized")
 	})
 
 	t.Run("CannotProposeTwice", func(t *testing.T) {
@@ -190,14 +175,14 @@ func TestUpgradeDemo(t *testing.T) {
 		require.NoError(t, err)
 
 		txResult, err = ProposeUpgrade(upgradeName, farFutureHeight, alice)
-		require.Contains(t, txFailure(txResult, err), "proposed upgrade already exists")
+		require.Contains(t, cliputils.TxFailureText(txResult, err), "proposed upgrade already exists")
 	})
 
 	t.Run("UpgradeHeightInPast_Fails", func(t *testing.T) {
 		upgradeName := fmt.Sprintf("upgrade_%s", utils.RandString())
 
 		txResult, err := ProposeUpgrade(upgradeName, "1", alice)
-		require.Contains(t, txFailure(txResult, err), "upgrade cannot be scheduled in the past")
+		require.Contains(t, cliputils.TxFailureText(txResult, err), "upgrade cannot be scheduled in the past")
 	})
 
 	t.Run("ProposeAndRejectUpgrade_v1_2_1", func(t *testing.T) {
@@ -343,11 +328,11 @@ func TestUpgradeDemo(t *testing.T) {
 
 		// Approving now fails: the plan height is in the past.
 		txResult, err = ApproveUpgrade(upgradeNameV122, alice)
-		require.Contains(t, txFailure(txResult, err), "upgrade cannot be scheduled in the past")
+		require.Contains(t, cliputils.TxFailureText(txResult, err), "upgrade cannot be scheduled in the past")
 
 		// Re-proposing at the (still) stale height also fails the schedule check.
 		txResult, err = ProposeUpgrade(upgradeNameV122, fmt.Sprintf("%d", planHeight), jack, ProposeUpgradeOpts{UpgradeInfo: upgradeInfoV122})
-		require.Contains(t, txFailure(txResult, err), "upgrade cannot be scheduled in the past")
+		require.Contains(t, cliputils.TxFailureText(txResult, err), "upgrade cannot be scheduled in the past")
 
 		// Re-proposing at a fresh far-future height replaces the stale proposal.
 		txResult, err = ProposeUpgrade(upgradeNameV122, farFutureHeight, jack, ProposeUpgradeOpts{UpgradeInfo: upgradeInfoV122})

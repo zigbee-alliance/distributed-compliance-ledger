@@ -1,9 +1,9 @@
 package compliance
 
 import (
-	"encoding/json"
-	"fmt"
+	"strconv"
 
+	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 	compliancetypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
@@ -83,15 +83,15 @@ func CertifyModel(opts CertifyModelOpts) (*utils.TxResult, error) {
 
 	args := []string{
 		"tx", "compliance", "certify-model",
-		"--vid", flagOrHex(opts.VID, opts.VIDHex),
-		"--pid", flagOrHex(opts.PID, opts.PIDHex),
-		"--softwareVersion", itoa(opts.SoftwareVersion),
+		"--vid", cliputils.FlagOrHex(opts.VID, opts.VIDHex),
+		"--pid", cliputils.FlagOrHex(opts.PID, opts.PIDHex),
+		"--softwareVersion", strconv.Itoa(opts.SoftwareVersion),
 		"--softwareVersionString", opts.SoftwareVersionString,
 		"--certificationType", opts.CertificationType,
-		"--specificationVersion", itoa(specVersion),
+		"--specificationVersion", strconv.Itoa(specVersion),
 		"--certificationDate", opts.CertificationDate,
 		"--cdCertificateId", opts.CDCertificateID,
-		"--cdVersionNumber", itoa(cdVersion),
+		"--cdVersionNumber", strconv.Itoa(cdVersion),
 		"--from", opts.From,
 	}
 	if opts.Reason != "" {
@@ -100,15 +100,6 @@ func CertifyModel(opts CertifyModelOpts) (*utils.TxResult, error) {
 	args = append(args, opts.Optional.args()...)
 
 	return utils.ExecuteTx(args...)
-}
-
-// flagOrHex returns hex if non-empty, otherwise the decimal-formatted n.
-func flagOrHex(n int, hex string) string {
-	if hex != "" {
-		return hex
-	}
-
-	return itoa(n)
 }
 
 // RevokeModelOpts holds parameters for the revoke-model transaction.
@@ -136,13 +127,13 @@ func RevokeModel(opts RevokeModelOpts) (*utils.TxResult, error) {
 
 	args := []string{
 		"tx", "compliance", "revoke-model",
-		"--vid", flagOrHex(opts.VID, opts.VIDHex),
-		"--pid", flagOrHex(opts.PID, opts.PIDHex),
-		"--softwareVersion", itoa(opts.SoftwareVersion),
+		"--vid", cliputils.FlagOrHex(opts.VID, opts.VIDHex),
+		"--pid", cliputils.FlagOrHex(opts.PID, opts.PIDHex),
+		"--softwareVersion", strconv.Itoa(opts.SoftwareVersion),
 		"--softwareVersionString", opts.SoftwareVersionString,
 		"--certificationType", opts.CertificationType,
 		"--revocationDate", opts.RevocationDate,
-		"--cdVersionNumber", itoa(cdVersion),
+		"--cdVersionNumber", strconv.Itoa(cdVersion),
 		"--from", opts.From,
 	}
 	if opts.Reason != "" {
@@ -184,15 +175,15 @@ func ProvisionModel(opts ProvisionModelOpts) (*utils.TxResult, error) {
 
 	args := []string{
 		"tx", "compliance", "provision-model",
-		"--vid", flagOrHex(opts.VID, opts.VIDHex),
-		"--pid", flagOrHex(opts.PID, opts.PIDHex),
-		"--softwareVersion", itoa(opts.SoftwareVersion),
+		"--vid", cliputils.FlagOrHex(opts.VID, opts.VIDHex),
+		"--pid", cliputils.FlagOrHex(opts.PID, opts.PIDHex),
+		"--softwareVersion", strconv.Itoa(opts.SoftwareVersion),
 		"--softwareVersionString", opts.SoftwareVersionString,
 		"--certificationType", opts.CertificationType,
-		"--specificationVersion", itoa(specVersion),
+		"--specificationVersion", strconv.Itoa(specVersion),
 		"--provisionalDate", opts.ProvisionalDate,
 		"--cdCertificateId", opts.CDCertificateID,
-		"--cdVersionNumber", itoa(cdVersion),
+		"--cdVersionNumber", strconv.Itoa(cdVersion),
 		"--from", opts.From,
 	}
 	if opts.Reason != "" {
@@ -223,9 +214,9 @@ type UpdateComplianceInfoOpts struct {
 func UpdateComplianceInfo(opts UpdateComplianceInfoOpts) (*utils.TxResult, error) {
 	args := []string{
 		"tx", "compliance", "update-compliance-info",
-		"--vid", itoa(opts.VID),
-		"--pid", itoa(opts.PID),
-		"--softwareVersion", itoa(opts.SoftwareVersion),
+		"--vid", strconv.Itoa(opts.VID),
+		"--pid", strconv.Itoa(opts.PID),
+		"--softwareVersion", strconv.Itoa(opts.SoftwareVersion),
 		"--certificationType", opts.CertificationType,
 		"--from", opts.From,
 	}
@@ -233,7 +224,7 @@ func UpdateComplianceInfo(opts UpdateComplianceInfoOpts) (*utils.TxResult, error
 		args = append(args, "--cdCertificateId", opts.CDCertificateID)
 	}
 	if opts.CDVersionNumber != 0 {
-		args = append(args, "--cdVersionNumber", itoa(opts.CDVersionNumber))
+		args = append(args, "--cdVersionNumber", strconv.Itoa(opts.CDVersionNumber))
 	}
 	if opts.CertificationDate != "" {
 		args = append(args, "--certificationDate", opts.CertificationDate)
@@ -249,9 +240,9 @@ func UpdateComplianceInfo(opts UpdateComplianceInfoOpts) (*utils.TxResult, error
 // DeleteComplianceInfo executes the delete-compliance-info transaction.
 func DeleteComplianceInfo(vid, pid, sv int, certType, from string) (*utils.TxResult, error) {
 	return utils.ExecuteTx("tx", "compliance", "delete-compliance-info",
-		"--vid", itoa(vid),
-		"--pid", itoa(pid),
-		"--softwareVersion", itoa(sv),
+		"--vid", strconv.Itoa(vid),
+		"--pid", strconv.Itoa(pid),
+		"--softwareVersion", strconv.Itoa(sv),
 		"--certificationType", certType,
 		"--from", from,
 	)
@@ -272,54 +263,19 @@ type ComplianceQueryOpts struct {
 
 func (o ComplianceQueryOpts) args() []string {
 	return []string{
-		"--vid", flagOrHex(o.VID, o.VIDHex),
-		"--pid", flagOrHex(o.PID, o.PIDHex),
-		"--softwareVersion", itoa(o.SoftwareVersion),
+		"--vid", cliputils.FlagOrHex(o.VID, o.VIDHex),
+		"--pid", cliputils.FlagOrHex(o.PID, o.PIDHex),
+		"--softwareVersion", strconv.Itoa(o.SoftwareVersion),
 		"--certificationType", o.CertificationType,
 		"-o", "json",
 	}
-}
-
-// getSingle runs a single-item dcld query and unmarshals the JSON output into v.
-// Returns (false, nil) when the CLI returned "Not Found" so callers can branch
-// on a nil result; otherwise returns (true, nil) and v is populated.
-func getSingle(v interface{}, args ...string) (found bool, err error) {
-	out, err := utils.ExecuteCLI(args...)
-	if err != nil {
-		return false, err
-	}
-	if utils.IsNotFound(out) {
-		return false, nil
-	}
-	out = utils.NormalizeProtoJSON(out)
-	if err := json.Unmarshal(out, v); err != nil {
-		return false, fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
-	}
-
-	return true, nil
-}
-
-// getList runs an all-* dcld query and unmarshals the wrapper response into v.
-// All-queries always return a (possibly empty) response wrapper, so there is no
-// "Not Found" branch here.
-func getList(v interface{}, args ...string) error {
-	out, err := utils.ExecuteCLI(args...)
-	if err != nil {
-		return err
-	}
-	out = utils.NormalizeProtoJSON(utils.StripPagination(out))
-	if err := json.Unmarshal(out, v); err != nil {
-		return fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
-	}
-
-	return nil
 }
 
 // GetComplianceInfo queries compliance-info for a given vid/pid/sv/certType.
 // Returns nil when the record does not exist.
 func GetComplianceInfo(opts ComplianceQueryOpts) (*compliancetypes.ComplianceInfo, error) {
 	var res compliancetypes.ComplianceInfo
-	found, err := getSingle(&res, append([]string{"query", "compliance", "compliance-info"}, opts.args()...)...)
+	found, err := cliputils.GetSingle(&res, append([]string{"query", "compliance", "compliance-info"}, opts.args()...)...)
 	if err != nil || !found {
 		return nil, err
 	}
@@ -331,7 +287,7 @@ func GetComplianceInfo(opts ComplianceQueryOpts) (*compliancetypes.ComplianceInf
 // record does not exist.
 func GetCertifiedModel(opts ComplianceQueryOpts) (*compliancetypes.CertifiedModel, error) {
 	var res compliancetypes.CertifiedModel
-	found, err := getSingle(&res, append([]string{"query", "compliance", "certified-model"}, opts.args()...)...)
+	found, err := cliputils.GetSingle(&res, append([]string{"query", "compliance", "certified-model"}, opts.args()...)...)
 	if err != nil || !found {
 		return nil, err
 	}
@@ -343,7 +299,7 @@ func GetCertifiedModel(opts ComplianceQueryOpts) (*compliancetypes.CertifiedMode
 // record does not exist.
 func GetRevokedModel(opts ComplianceQueryOpts) (*compliancetypes.RevokedModel, error) {
 	var res compliancetypes.RevokedModel
-	found, err := getSingle(&res, append([]string{"query", "compliance", "revoked-model"}, opts.args()...)...)
+	found, err := cliputils.GetSingle(&res, append([]string{"query", "compliance", "revoked-model"}, opts.args()...)...)
 	if err != nil || !found {
 		return nil, err
 	}
@@ -355,7 +311,7 @@ func GetRevokedModel(opts ComplianceQueryOpts) (*compliancetypes.RevokedModel, e
 // the record does not exist.
 func GetProvisionalModel(opts ComplianceQueryOpts) (*compliancetypes.ProvisionalModel, error) {
 	var res compliancetypes.ProvisionalModel
-	found, err := getSingle(&res, append([]string{"query", "compliance", "provisional-model"}, opts.args()...)...)
+	found, err := cliputils.GetSingle(&res, append([]string{"query", "compliance", "provisional-model"}, opts.args()...)...)
 	if err != nil || !found {
 		return nil, err
 	}
@@ -367,7 +323,7 @@ func GetProvisionalModel(opts ComplianceQueryOpts) (*compliancetypes.Provisional
 // CDCertificateID. Returns nil when the record does not exist.
 func GetDeviceSoftwareCompliance(cdCertificateID string) (*compliancetypes.DeviceSoftwareCompliance, error) {
 	var res compliancetypes.DeviceSoftwareCompliance
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "compliance", "device-software-compliance",
 		"--cdCertificateId", cdCertificateID,
 		"-o", "json",
@@ -382,7 +338,7 @@ func GetDeviceSoftwareCompliance(cdCertificateID string) (*compliancetypes.Devic
 // GetAllComplianceInfo queries all compliance info records.
 func GetAllComplianceInfo() ([]compliancetypes.ComplianceInfo, error) {
 	var res compliancetypes.QueryAllComplianceInfoResponse
-	if err := getList(&res, "query", "compliance", "all-compliance-info", "-o", "json"); err != nil {
+	if err := cliputils.GetList(&res, "query", "compliance", "all-compliance-info", "-o", "json"); err != nil {
 		return nil, err
 	}
 
@@ -392,7 +348,7 @@ func GetAllComplianceInfo() ([]compliancetypes.ComplianceInfo, error) {
 // GetAllCertifiedModels queries all certified models.
 func GetAllCertifiedModels() ([]compliancetypes.CertifiedModel, error) {
 	var res compliancetypes.QueryAllCertifiedModelResponse
-	if err := getList(&res, "query", "compliance", "all-certified-models", "-o", "json"); err != nil {
+	if err := cliputils.GetList(&res, "query", "compliance", "all-certified-models", "-o", "json"); err != nil {
 		return nil, err
 	}
 
@@ -402,7 +358,7 @@ func GetAllCertifiedModels() ([]compliancetypes.CertifiedModel, error) {
 // GetAllRevokedModels queries all revoked models.
 func GetAllRevokedModels() ([]compliancetypes.RevokedModel, error) {
 	var res compliancetypes.QueryAllRevokedModelResponse
-	if err := getList(&res, "query", "compliance", "all-revoked-models", "-o", "json"); err != nil {
+	if err := cliputils.GetList(&res, "query", "compliance", "all-revoked-models", "-o", "json"); err != nil {
 		return nil, err
 	}
 
@@ -412,7 +368,7 @@ func GetAllRevokedModels() ([]compliancetypes.RevokedModel, error) {
 // GetAllProvisionalModels queries all provisional models.
 func GetAllProvisionalModels() ([]compliancetypes.ProvisionalModel, error) {
 	var res compliancetypes.QueryAllProvisionalModelResponse
-	if err := getList(&res, "query", "compliance", "all-provisional-models", "-o", "json"); err != nil {
+	if err := cliputils.GetList(&res, "query", "compliance", "all-provisional-models", "-o", "json"); err != nil {
 		return nil, err
 	}
 
@@ -422,7 +378,7 @@ func GetAllProvisionalModels() ([]compliancetypes.ProvisionalModel, error) {
 // GetAllDeviceSoftwareCompliance queries all device software compliance records.
 func GetAllDeviceSoftwareCompliance() ([]compliancetypes.DeviceSoftwareCompliance, error) {
 	var res compliancetypes.QueryAllDeviceSoftwareComplianceResponse
-	if err := getList(&res, "query", "compliance", "all-device-software-compliance", "-o", "json"); err != nil {
+	if err := cliputils.GetList(&res, "query", "compliance", "all-device-software-compliance", "-o", "json"); err != nil {
 		return nil, err
 	}
 
@@ -573,28 +529,4 @@ func hasComplianceInfoStatus(list []compliancetypes.ComplianceInfo, vid, pid int
 	}
 
 	return false
-}
-
-func itoa(n int) string {
-	if n == 0 {
-		return "0"
-	}
-	neg := false
-	if n < 0 {
-		neg = true
-		n = -n
-	}
-	var buf [20]byte
-	pos := len(buf)
-	for n > 0 {
-		pos--
-		buf[pos] = byte('0' + n%10)
-		n /= 10
-	}
-	if neg {
-		pos--
-		buf[pos] = '-'
-	}
-
-	return string(buf[pos:])
 }

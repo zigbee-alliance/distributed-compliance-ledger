@@ -25,11 +25,11 @@ func TestPKIApproval(t *testing.T) {
 	alice := testconstants.AliceAccount
 	bob := testconstants.BobAccount
 
-	jackAddr, err := dclauth.GetAddress(jack)
+	jackAddr, err := cliputils.GetAddress(jack)
 	require.NoError(t, err)
-	aliceAddr, err := dclauth.GetAddress(alice)
+	aliceAddr, err := cliputils.GetAddress(alice)
 	require.NoError(t, err)
-	bobAddr, err := dclauth.GetAddress(bob)
+	bobAddr, err := cliputils.GetAddress(bob)
 	require.NoError(t, err)
 
 	userAccount := cliputils.CreateAccount(t, "CertificationCenter")
@@ -39,10 +39,10 @@ func TestPKIApproval(t *testing.T) {
 
 	// Create 4th trustee (N=3, threshold=2): Jack proposes + Alice approves.
 	fourthKey := utils.RandString()
-	require.NoError(t, dclauth.AddKey(fourthKey))
-	fourthAddr, err := dclauth.GetAddress(fourthKey)
+	require.NoError(t, cliputils.AddKey(fourthKey))
+	fourthAddr, err := cliputils.GetAddress(fourthKey)
 	require.NoError(t, err)
-	fourthPubkey, err := dclauth.GetPubkey(fourthKey)
+	fourthPubkey, err := cliputils.GetPubkey(fourthKey)
 	require.NoError(t, err)
 	txResult, err := dclauth.ProposeAccount(fourthAddr, fourthPubkey, "Trustee", jack)
 	require.NoError(t, err)
@@ -56,10 +56,10 @@ func TestPKIApproval(t *testing.T) {
 
 	// Create 5th trustee (N=4, threshold=3): Jack + Alice + Bob.
 	fifthKey := utils.RandString()
-	require.NoError(t, dclauth.AddKey(fifthKey))
-	fifthAddr, err := dclauth.GetAddress(fifthKey)
+	require.NoError(t, cliputils.AddKey(fifthKey))
+	fifthAddr, err := cliputils.GetAddress(fifthKey)
 	require.NoError(t, err)
-	fifthPubkey, err := dclauth.GetPubkey(fifthKey)
+	fifthPubkey, err := cliputils.GetPubkey(fifthKey)
 	require.NoError(t, err)
 	txResult, err = dclauth.ProposeAccount(fifthAddr, fifthPubkey, "Trustee", jack)
 	require.NoError(t, err)
@@ -75,10 +75,10 @@ func TestPKIApproval(t *testing.T) {
 
 	// Create 6th trustee (N=5, threshold=4): Jack + Alice + Bob + fourth.
 	sixthKey := utils.RandString()
-	require.NoError(t, dclauth.AddKey(sixthKey))
-	sixthAddr, err := dclauth.GetAddress(sixthKey)
+	require.NoError(t, cliputils.AddKey(sixthKey))
+	sixthAddr, err := cliputils.GetAddress(sixthKey)
 	require.NoError(t, err)
-	sixthPubkey, err := dclauth.GetPubkey(sixthKey)
+	sixthPubkey, err := cliputils.GetPubkey(sixthKey)
 	require.NoError(t, err)
 	txResult, err = dclauth.ProposeAccount(sixthAddr, sixthPubkey, "Trustee", jack)
 	require.NoError(t, err)
@@ -201,11 +201,11 @@ func TestPKIApproval(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, uint32(0), txResult.Code)
 
-		sixthAddr, err := dclauth.GetAddress(sixthKey)
+		sixthAddr, err := cliputils.GetAddress(sixthKey)
 		require.NoError(t, err)
-		fifthAddr, err := dclauth.GetAddress(fifthKey)
+		fifthAddr, err := cliputils.GetAddress(fifthKey)
 		require.NoError(t, err)
-		fourthRevAddr, err := dclauth.GetAddress(fourthKey)
+		fourthRevAddr, err := cliputils.GetAddress(fourthKey)
 		require.NoError(t, err)
 
 		proposedRev, err := GetProposedRevokedX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)

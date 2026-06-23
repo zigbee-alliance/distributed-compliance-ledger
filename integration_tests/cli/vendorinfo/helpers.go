@@ -15,9 +15,9 @@
 package vendorinfo
 
 import (
-	"encoding/json"
-	"fmt"
+	"strconv"
 
+	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 	vendorinfotypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/types"
 )
@@ -38,7 +38,7 @@ type VendorOpts struct {
 func (o VendorOpts) args() []string {
 	var args []string
 	if o.VID != 0 || o.VIDHex != "" {
-		args = append(args, "--vid", flagOrHex(o.VID, o.VIDHex))
+		args = append(args, "--vid", cliputils.FlagOrHex(o.VID, o.VIDHex))
 	}
 	if o.VendorName != "" {
 		args = append(args, "--vendorName", o.VendorName)
@@ -59,21 +59,6 @@ func (o VendorOpts) args() []string {
 	return args
 }
 
-// txFailureText returns a rejected tx's error text and/or RawLog so the exact
-// chain message can be asserted whether the failure surfaces client-side (err)
-// or in the broadcast/DeliverTx result.
-func txFailureText(txResult *utils.TxResult, err error) string {
-	combined := ""
-	if err != nil {
-		combined += err.Error()
-	}
-	if txResult != nil {
-		combined += txResult.RawLog
-	}
-
-	return combined
-}
-
 // AddVendor adds a vendor info record.
 func AddVendor(from string, opts VendorOpts) (*utils.TxResult, error) {
 	args := []string{"tx", "vendorinfo", "add-vendor", "--from", from}
@@ -90,81 +75,16 @@ func UpdateVendor(from string, opts VendorOpts) (*utils.TxResult, error) {
 	return utils.ExecuteTx(args...)
 }
 
-// flagOrHex returns hex if non-empty, otherwise the decimal-formatted n.
-func flagOrHex(n int, hex string) string {
-	if hex != "" {
-		return hex
-	}
-
-	return itoa(n)
-}
-
-func itoa(n int) string {
-	if n == 0 {
-		return "0"
-	}
-	neg := false
-	if n < 0 {
-		neg = true
-		n = -n
-	}
-	var buf [20]byte
-	pos := len(buf)
-	for n > 0 {
-		pos--
-		buf[pos] = byte('0' + n%10)
-		n /= 10
-	}
-	if neg {
-		pos--
-		buf[pos] = '-'
-	}
-
-	return string(buf[pos:])
-}
-
-// getSingle runs a single-item dcld query and unmarshals into v. Returns
-// (false, nil) when the CLI emitted "Not Found".
-func getSingle(v interface{}, args ...string) (found bool, err error) {
-	out, err := utils.ExecuteCLI(args...)
-	if err != nil {
-		return false, err
-	}
-	if utils.IsNotFound(out) {
-		return false, nil
-	}
-	out = utils.NormalizeProtoJSON(out)
-	if err := json.Unmarshal(out, v); err != nil {
-		return false, fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
-	}
-
-	return true, nil
-}
-
-// getList runs an all-* dcld query and unmarshals the wrapper response.
-func getList(v interface{}, args ...string) error {
-	out, err := utils.ExecuteCLI(args...)
-	if err != nil {
-		return err
-	}
-	out = utils.NormalizeProtoJSON(utils.StripPagination(out))
-	if err := json.Unmarshal(out, v); err != nil {
-		return fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
-	}
-
-	return nil
-}
-
 // GetVendor queries a vendor info record by VID. Returns nil when no record
 // exists.
 func GetVendor(vid int) (*vendorinfotypes.VendorInfo, error) {
-	return GetVendorHex(itoa(vid))
+	return GetVendorHex(strconv.Itoa(vid))
 }
 
 // GetVendorHex queries a vendor info record using a hex VID string.
 func GetVendorHex(vid string) (*vendorinfotypes.VendorInfo, error) {
 	var res vendorinfotypes.VendorInfo
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "vendorinfo", "vendor",
 		"--vid", vid,
 		"-o", "json",
@@ -179,7 +99,7 @@ func GetVendorHex(vid string) (*vendorinfotypes.VendorInfo, error) {
 // GetAllVendors queries all vendor info records.
 func GetAllVendors() ([]vendorinfotypes.VendorInfo, error) {
 	var res vendorinfotypes.QueryAllVendorInfoResponse
-	if err := getList(&res, "query", "vendorinfo", "all-vendors", "-o", "json"); err != nil {
+	if err := cliputils.GetList(&res, "query", "vendorinfo", "all-vendors", "-o", "json"); err != nil {
 		return nil, err
 	}
 

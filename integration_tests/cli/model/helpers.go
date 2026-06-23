@@ -1,9 +1,9 @@
 package model
 
 import (
-	"encoding/json"
-	"fmt"
+	"strconv"
 
+	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
@@ -80,14 +80,14 @@ func AddModel(opts AddModelOpts) (*utils.TxResult, error) {
 
 	args := []string{
 		"tx", "model", "add-model",
-		"--vid", flagOrHex(opts.VID, opts.VIDHex),
-		"--pid", flagOrHex(opts.PID, opts.PIDHex),
-		"--deviceTypeID", itoa(deviceType),
+		"--vid", cliputils.FlagOrHex(opts.VID, opts.VIDHex),
+		"--pid", cliputils.FlagOrHex(opts.PID, opts.PIDHex),
+		"--deviceTypeID", strconv.Itoa(deviceType),
 		"--productName", productName,
 		"--productLabel", productLabel,
 		"--partNumber", partNumber,
-		"--commissioningCustomFlow", itoa(opts.CommissioningCustomFlow),
-		"--enhancedSetupFlowOptions", itoa(opts.EnhancedSetupFlowOptions),
+		"--commissioningCustomFlow", strconv.Itoa(opts.CommissioningCustomFlow),
+		"--enhancedSetupFlowOptions", strconv.Itoa(opts.EnhancedSetupFlowOptions),
 		"--from", opts.From,
 	}
 
@@ -95,13 +95,13 @@ func AddModel(opts AddModelOpts) (*utils.TxResult, error) {
 		args = append(args, "--enhancedSetupFlowTCUrl", opts.EnhancedSetupFlowTCUrl)
 	}
 	if opts.EnhancedSetupFlowTCRevision != 0 {
-		args = append(args, "--enhancedSetupFlowTCRevision", itoa(opts.EnhancedSetupFlowTCRevision))
+		args = append(args, "--enhancedSetupFlowTCRevision", strconv.Itoa(opts.EnhancedSetupFlowTCRevision))
 	}
 	if opts.EnhancedSetupFlowTCDigest != "" {
 		args = append(args, "--enhancedSetupFlowTCDigest", opts.EnhancedSetupFlowTCDigest)
 	}
 	if opts.EnhancedSetupFlowTCFileSize != 0 {
-		args = append(args, "--enhancedSetupFlowTCFileSize", itoa(opts.EnhancedSetupFlowTCFileSize))
+		args = append(args, "--enhancedSetupFlowTCFileSize", strconv.Itoa(opts.EnhancedSetupFlowTCFileSize))
 	}
 	if opts.MaintenanceURL != "" {
 		args = append(args, "--maintenanceUrl", opts.MaintenanceURL)
@@ -110,31 +110,31 @@ func AddModel(opts AddModelOpts) (*utils.TxResult, error) {
 		args = append(args, "--commissioningFallbackUrl", opts.CommissioningFallbackURL)
 	}
 	if opts.DiscoveryCapabilitiesBitmask != 0 {
-		args = append(args, "--discoveryCapabilitiesBitmask", itoa(opts.DiscoveryCapabilitiesBitmask))
+		args = append(args, "--discoveryCapabilitiesBitmask", strconv.Itoa(opts.DiscoveryCapabilitiesBitmask))
 	}
 	if opts.CommissioningCustomFlowURL != "" {
 		args = append(args, "--commissioningCustomFlowURL", opts.CommissioningCustomFlowURL)
 	}
 	if opts.CommissioningModeInitialStepsHint != 0 {
-		args = append(args, "--commissioningModeInitialStepsHint", itoa(opts.CommissioningModeInitialStepsHint))
+		args = append(args, "--commissioningModeInitialStepsHint", strconv.Itoa(opts.CommissioningModeInitialStepsHint))
 	}
 	if opts.CommissioningModeInitialStepsInstruction != "" {
 		args = append(args, "--commissioningModeInitialStepsInstruction", opts.CommissioningModeInitialStepsInstruction)
 	}
 	if opts.CommissioningModeSecondaryStepsHint != 0 {
-		args = append(args, "--commissioningModeSecondaryStepsHint", itoa(opts.CommissioningModeSecondaryStepsHint))
+		args = append(args, "--commissioningModeSecondaryStepsHint", strconv.Itoa(opts.CommissioningModeSecondaryStepsHint))
 	}
 	if opts.CommissioningModeSecondaryStepsInstruction != "" {
 		args = append(args, "--commissioningModeSecondaryStepsInstruction", opts.CommissioningModeSecondaryStepsInstruction)
 	}
 	if opts.IcdUserActiveModeTriggerHint != 0 {
-		args = append(args, "--icdUserActiveModeTriggerHint", itoa(opts.IcdUserActiveModeTriggerHint))
+		args = append(args, "--icdUserActiveModeTriggerHint", strconv.Itoa(opts.IcdUserActiveModeTriggerHint))
 	}
 	if opts.IcdUserActiveModeTriggerInstruction != "" {
 		args = append(args, "--icdUserActiveModeTriggerInstruction", opts.IcdUserActiveModeTriggerInstruction)
 	}
 	if opts.FactoryResetStepsHint != 0 {
-		args = append(args, "--factoryResetStepsHint", itoa(opts.FactoryResetStepsHint))
+		args = append(args, "--factoryResetStepsHint", strconv.Itoa(opts.FactoryResetStepsHint))
 	}
 	if opts.FactoryResetStepsInstruction != "" {
 		args = append(args, "--factoryResetStepsInstruction", opts.FactoryResetStepsInstruction)
@@ -156,15 +156,6 @@ func AddModel(opts AddModelOpts) (*utils.TxResult, error) {
 	}
 
 	return utils.ExecuteTx(args...)
-}
-
-// flagOrHex returns hex if non-empty, otherwise the decimal-formatted n.
-func flagOrHex(n int, hex string) string {
-	if hex != "" {
-		return hex
-	}
-
-	return itoa(n)
 }
 
 // UpdateModelOpts holds parameters for update-model. VID/PID (or their hex
@@ -215,8 +206,8 @@ type UpdateModelOpts struct {
 func UpdateModel(opts UpdateModelOpts) (*utils.TxResult, error) {
 	args := []string{
 		"tx", "model", "update-model",
-		"--vid", flagOrHex(opts.VID, opts.VIDHex),
-		"--pid", flagOrHex(opts.PID, opts.PIDHex),
+		"--vid", cliputils.FlagOrHex(opts.VID, opts.VIDHex),
+		"--pid", cliputils.FlagOrHex(opts.PID, opts.PIDHex),
 		"--from", opts.From,
 	}
 	if opts.ProductName != "" {
@@ -235,25 +226,25 @@ func UpdateModel(opts UpdateModelOpts) (*utils.TxResult, error) {
 		args = append(args, "--commissioningFallbackUrl", opts.CommissioningFallbackURL)
 	}
 	if opts.CommissioningModeInitialStepsHint != 0 {
-		args = append(args, "--commissioningModeInitialStepsHint", itoa(opts.CommissioningModeInitialStepsHint))
+		args = append(args, "--commissioningModeInitialStepsHint", strconv.Itoa(opts.CommissioningModeInitialStepsHint))
 	}
 	if opts.CommissioningModeInitialStepsInstruction != "" {
 		args = append(args, "--commissioningModeInitialStepsInstruction", opts.CommissioningModeInitialStepsInstruction)
 	}
 	if opts.CommissioningModeSecondaryStepsHint != 0 {
-		args = append(args, "--commissioningModeSecondaryStepsHint", itoa(opts.CommissioningModeSecondaryStepsHint))
+		args = append(args, "--commissioningModeSecondaryStepsHint", strconv.Itoa(opts.CommissioningModeSecondaryStepsHint))
 	}
 	if opts.CommissioningModeSecondaryStepsInstruction != "" {
 		args = append(args, "--commissioningModeSecondaryStepsInstruction", opts.CommissioningModeSecondaryStepsInstruction)
 	}
 	if opts.IcdUserActiveModeTriggerHint != 0 {
-		args = append(args, "--icdUserActiveModeTriggerHint", itoa(opts.IcdUserActiveModeTriggerHint))
+		args = append(args, "--icdUserActiveModeTriggerHint", strconv.Itoa(opts.IcdUserActiveModeTriggerHint))
 	}
 	if opts.IcdUserActiveModeTriggerInstruction != "" {
 		args = append(args, "--icdUserActiveModeTriggerInstruction", opts.IcdUserActiveModeTriggerInstruction)
 	}
 	if opts.FactoryResetStepsHint != 0 {
-		args = append(args, "--factoryResetStepsHint", itoa(opts.FactoryResetStepsHint))
+		args = append(args, "--factoryResetStepsHint", strconv.Itoa(opts.FactoryResetStepsHint))
 	}
 	if opts.FactoryResetStepsInstruction != "" {
 		args = append(args, "--factoryResetStepsInstruction", opts.FactoryResetStepsInstruction)
@@ -268,7 +259,7 @@ func UpdateModel(opts UpdateModelOpts) (*utils.TxResult, error) {
 		args = append(args, "--lsfURL", opts.LsfURL)
 	}
 	if opts.LsfRevision != 0 {
-		args = append(args, "--lsfRevision", itoa(opts.LsfRevision))
+		args = append(args, "--lsfRevision", strconv.Itoa(opts.LsfRevision))
 	}
 	if opts.SupportURL != "" {
 		args = append(args, "--supportURL", opts.SupportURL)
@@ -277,19 +268,19 @@ func UpdateModel(opts UpdateModelOpts) (*utils.TxResult, error) {
 		args = append(args, "--maintenanceUrl", opts.MaintenanceURL)
 	}
 	if opts.EnhancedSetupFlowOptions != 0 {
-		args = append(args, "--enhancedSetupFlowOptions", itoa(opts.EnhancedSetupFlowOptions))
+		args = append(args, "--enhancedSetupFlowOptions", strconv.Itoa(opts.EnhancedSetupFlowOptions))
 	}
 	if opts.EnhancedSetupFlowTCUrl != "" {
 		args = append(args, "--enhancedSetupFlowTCUrl", opts.EnhancedSetupFlowTCUrl)
 	}
 	if opts.EnhancedSetupFlowTCRevision != 0 {
-		args = append(args, "--enhancedSetupFlowTCRevision", itoa(opts.EnhancedSetupFlowTCRevision))
+		args = append(args, "--enhancedSetupFlowTCRevision", strconv.Itoa(opts.EnhancedSetupFlowTCRevision))
 	}
 	if opts.EnhancedSetupFlowTCDigest != "" {
 		args = append(args, "--enhancedSetupFlowTCDigest", opts.EnhancedSetupFlowTCDigest)
 	}
 	if opts.EnhancedSetupFlowTCFileSize != 0 {
-		args = append(args, "--enhancedSetupFlowTCFileSize", itoa(opts.EnhancedSetupFlowTCFileSize))
+		args = append(args, "--enhancedSetupFlowTCFileSize", strconv.Itoa(opts.EnhancedSetupFlowTCFileSize))
 	}
 	if opts.SchemaVersion != "" {
 		args = append(args, "--schemaVersion", opts.SchemaVersion)
@@ -300,7 +291,7 @@ func UpdateModel(opts UpdateModelOpts) (*utils.TxResult, error) {
 
 // DeleteModel executes the delete-model transaction.
 func DeleteModel(vid, pid int, from string) (*utils.TxResult, error) {
-	return DeleteModelHex(itoa(vid), itoa(pid), from)
+	return DeleteModelHex(strconv.Itoa(vid), strconv.Itoa(pid), from)
 }
 
 // DeleteModelHex executes delete-model using hex vid/pid strings.
@@ -357,13 +348,13 @@ func AddModelVersion(opts AddModelVersionOpts) (*utils.TxResult, error) {
 
 	args := []string{
 		"tx", "model", "add-model-version",
-		"--vid", flagOrHex(opts.VID, opts.VIDHex),
-		"--pid", flagOrHex(opts.PID, opts.PIDHex),
-		"--softwareVersion", itoa(opts.SoftwareVersion),
+		"--vid", cliputils.FlagOrHex(opts.VID, opts.VIDHex),
+		"--pid", cliputils.FlagOrHex(opts.PID, opts.PIDHex),
+		"--softwareVersion", strconv.Itoa(opts.SoftwareVersion),
 		"--softwareVersionString", opts.SoftwareVersionString,
-		"--cdVersionNumber", itoa(cdVersion),
-		"--maxApplicableSoftwareVersion", itoa(maxSV),
-		"--minApplicableSoftwareVersion", itoa(minSV),
+		"--cdVersionNumber", strconv.Itoa(cdVersion),
+		"--maxApplicableSoftwareVersion", strconv.Itoa(maxSV),
+		"--minApplicableSoftwareVersion", strconv.Itoa(minSV),
 		"--from", opts.From,
 	}
 
@@ -371,19 +362,19 @@ func AddModelVersion(opts AddModelVersionOpts) (*utils.TxResult, error) {
 		args = append(args, "--otaURL", opts.OtaURL)
 	}
 	if opts.OtaFileSize != 0 {
-		args = append(args, "--otaFileSize", itoa(opts.OtaFileSize))
+		args = append(args, "--otaFileSize", strconv.Itoa(opts.OtaFileSize))
 	}
 	if opts.OtaChecksum != "" {
 		args = append(args, "--otaChecksum", opts.OtaChecksum)
 	}
 	if opts.OtaChecksumType != 0 {
-		args = append(args, "--otaChecksumType", itoa(opts.OtaChecksumType))
+		args = append(args, "--otaChecksumType", strconv.Itoa(opts.OtaChecksumType))
 	}
 	if opts.FirmwareInformation != "" {
 		args = append(args, "--firmwareInformation", opts.FirmwareInformation)
 	}
 	if opts.SpecificationVersion != 0 {
-		args = append(args, "--specificationVersion", itoa(opts.SpecificationVersion))
+		args = append(args, "--specificationVersion", strconv.Itoa(opts.SpecificationVersion))
 	}
 	if opts.ReleaseNotesURL != "" {
 		args = append(args, "--releaseNotesURL", opts.ReleaseNotesURL)
@@ -425,16 +416,16 @@ func boolPtr(b bool) *bool { return &b }
 func UpdateModelVersion(opts UpdateModelVersionOpts) (*utils.TxResult, error) {
 	args := []string{
 		"tx", "model", "update-model-version",
-		"--vid", itoa(opts.VID),
-		"--pid", itoa(opts.PID),
-		"--softwareVersion", itoa(opts.SoftwareVersion),
+		"--vid", strconv.Itoa(opts.VID),
+		"--pid", strconv.Itoa(opts.PID),
+		"--softwareVersion", strconv.Itoa(opts.SoftwareVersion),
 		"--from", opts.From,
 	}
 	if opts.MinApplicableSoftwareVersion != 0 {
-		args = append(args, "--minApplicableSoftwareVersion", itoa(opts.MinApplicableSoftwareVersion))
+		args = append(args, "--minApplicableSoftwareVersion", strconv.Itoa(opts.MinApplicableSoftwareVersion))
 	}
 	if opts.MaxApplicableSoftwareVersion != 0 {
-		args = append(args, "--maxApplicableSoftwareVersion", itoa(opts.MaxApplicableSoftwareVersion))
+		args = append(args, "--maxApplicableSoftwareVersion", strconv.Itoa(opts.MaxApplicableSoftwareVersion))
 	}
 	if opts.SoftwareVersionValid != nil {
 		if *opts.SoftwareVersionValid {
@@ -447,19 +438,19 @@ func UpdateModelVersion(opts UpdateModelVersionOpts) (*utils.TxResult, error) {
 		args = append(args, "--otaURL", opts.OtaURL)
 	}
 	if opts.OtaFileSize != 0 {
-		args = append(args, "--otaFileSize", itoa(opts.OtaFileSize))
+		args = append(args, "--otaFileSize", strconv.Itoa(opts.OtaFileSize))
 	}
 	if opts.OtaChecksum != "" {
 		args = append(args, "--otaChecksum", opts.OtaChecksum)
 	}
 	if opts.OtaChecksumType != 0 {
-		args = append(args, "--otaChecksumType", itoa(opts.OtaChecksumType))
+		args = append(args, "--otaChecksumType", strconv.Itoa(opts.OtaChecksumType))
 	}
 	if opts.ReleaseNotesURL != "" {
 		args = append(args, "--releaseNotesURL", opts.ReleaseNotesURL)
 	}
 	if opts.SpecificationVersion != 0 {
-		args = append(args, "--specificationVersion", itoa(opts.SpecificationVersion))
+		args = append(args, "--specificationVersion", strconv.Itoa(opts.SpecificationVersion))
 	}
 	if opts.SchemaVersion != "" {
 		args = append(args, "--schemaVersion", opts.SchemaVersion)
@@ -471,55 +462,23 @@ func UpdateModelVersion(opts UpdateModelVersionOpts) (*utils.TxResult, error) {
 // DeleteModelVersion executes the delete-model-version transaction.
 func DeleteModelVersion(vid, pid, sv int, from string) (*utils.TxResult, error) {
 	return utils.ExecuteTx("tx", "model", "delete-model-version",
-		"--vid", itoa(vid),
-		"--pid", itoa(pid),
-		"--softwareVersion", itoa(sv),
+		"--vid", strconv.Itoa(vid),
+		"--pid", strconv.Itoa(pid),
+		"--softwareVersion", strconv.Itoa(sv),
 		"--from", from,
 	)
-}
-
-// getSingle runs a single-item dcld query and unmarshals into v. Returns
-// (false, nil) when the CLI emitted "Not Found".
-func getSingle(v interface{}, args ...string) (found bool, err error) {
-	out, err := utils.ExecuteCLI(args...)
-	if err != nil {
-		return false, err
-	}
-	if utils.IsNotFound(out) {
-		return false, nil
-	}
-	out = utils.NormalizeProtoJSON(out)
-	if err := json.Unmarshal(out, v); err != nil {
-		return false, fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
-	}
-
-	return true, nil
-}
-
-// getList runs an all-* dcld query and unmarshals the wrapper response.
-func getList(v interface{}, args ...string) error {
-	out, err := utils.ExecuteCLI(args...)
-	if err != nil {
-		return err
-	}
-	out = utils.NormalizeProtoJSON(utils.StripPagination(out))
-	if err := json.Unmarshal(out, v); err != nil {
-		return fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
-	}
-
-	return nil
 }
 
 // GetModel queries a specific model by vid/pid. Returns nil when the model
 // does not exist.
 func GetModel(vid, pid int) (*modeltypes.Model, error) {
-	return GetModelHex(itoa(vid), itoa(pid))
+	return GetModelHex(strconv.Itoa(vid), strconv.Itoa(pid))
 }
 
 // GetModelHex queries a model using hex-format vid/pid strings.
 func GetModelHex(vid, pid string) (*modeltypes.Model, error) {
 	var res modeltypes.Model
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "model", "get-model",
 		"--vid", vid,
 		"--pid", pid,
@@ -535,7 +494,7 @@ func GetModelHex(vid, pid string) (*modeltypes.Model, error) {
 // GetAllModels queries all models.
 func GetAllModels() ([]modeltypes.Model, error) {
 	var res modeltypes.QueryAllModelResponse
-	if err := getList(&res, "query", "model", "all-models", "-o", "json"); err != nil {
+	if err := cliputils.GetList(&res, "query", "model", "all-models", "-o", "json"); err != nil {
 		return nil, err
 	}
 
@@ -545,13 +504,13 @@ func GetAllModels() ([]modeltypes.Model, error) {
 // GetVendorModels queries all models for a given vendor. Returns nil when the
 // vendor has no products on chain.
 func GetVendorModels(vid int) (*modeltypes.VendorProducts, error) {
-	return GetVendorModelsHex(itoa(vid))
+	return GetVendorModelsHex(strconv.Itoa(vid))
 }
 
 // GetVendorModelsHex queries vendor models using a hex vid string.
 func GetVendorModelsHex(vid string) (*modeltypes.VendorProducts, error) {
 	var res modeltypes.VendorProducts
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "model", "vendor-models",
 		"--vid", vid,
 		"-o", "json",
@@ -566,17 +525,17 @@ func GetVendorModelsHex(vid string) (*modeltypes.VendorProducts, error) {
 // GetModelVersion queries a specific model version. Returns nil when the
 // record does not exist.
 func GetModelVersion(vid, pid, sv int) (*modeltypes.ModelVersion, error) {
-	return GetModelVersionHex(itoa(vid), itoa(pid), sv)
+	return GetModelVersionHex(strconv.Itoa(vid), strconv.Itoa(pid), sv)
 }
 
 // GetModelVersionHex queries a model version using hex vid/pid.
 func GetModelVersionHex(vid, pid string, sv int) (*modeltypes.ModelVersion, error) {
 	var res modeltypes.ModelVersion
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "model", "model-version",
 		"--vid", vid,
 		"--pid", pid,
-		"--softwareVersion", itoa(sv),
+		"--softwareVersion", strconv.Itoa(sv),
 		"-o", "json",
 	)
 	if err != nil || !found {
@@ -589,13 +548,13 @@ func GetModelVersionHex(vid, pid string, sv int) (*modeltypes.ModelVersion, erro
 // GetAllModelVersions queries all model versions for a given vid/pid. Returns
 // nil when the model has no versions on chain.
 func GetAllModelVersions(vid, pid int) (*modeltypes.ModelVersions, error) {
-	return GetAllModelVersionsHex(itoa(vid), itoa(pid))
+	return GetAllModelVersionsHex(strconv.Itoa(vid), strconv.Itoa(pid))
 }
 
 // GetAllModelVersionsHex queries all model versions using hex vid/pid.
 func GetAllModelVersionsHex(vid, pid string) (*modeltypes.ModelVersions, error) {
 	var res modeltypes.ModelVersions
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "model", "all-model-versions",
 		"--vid", vid,
 		"--pid", pid,
@@ -628,28 +587,4 @@ func containsProductByPid(products []*modeltypes.Product, pid int32) bool {
 	}
 
 	return false
-}
-
-func itoa(n int) string {
-	if n == 0 {
-		return "0"
-	}
-	neg := false
-	if n < 0 {
-		neg = true
-		n = -n
-	}
-	var buf [20]byte
-	pos := len(buf)
-	for n > 0 {
-		pos--
-		buf[pos] = byte('0' + n%10)
-		n /= 10
-	}
-	if neg {
-		pos--
-		buf[pos] = '-'
-	}
-
-	return string(buf[pos:])
 }

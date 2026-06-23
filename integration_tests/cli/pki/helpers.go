@@ -1,9 +1,9 @@
 package pki
 
 import (
-	"encoding/json"
-	"fmt"
+	"strconv"
 
+	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
@@ -22,7 +22,7 @@ type X509ProposeOpts struct {
 func (o X509ProposeOpts) args() []string {
 	var args []string
 	if o.VID != 0 || o.VIDHex != "" {
-		args = append(args, "--vid", flagOrHex(o.VID, o.VIDHex))
+		args = append(args, "--vid", cliputils.FlagOrHex(o.VID, o.VIDHex))
 	}
 	if o.SchemaVersion != "" {
 		args = append(args, "--schemaVersion", o.SchemaVersion)
@@ -334,10 +334,10 @@ type RevocationPointOpts struct {
 func (o RevocationPointOpts) args() []string {
 	var args []string
 	if o.VID != 0 || o.VIDHex != "" {
-		args = append(args, "--vid", flagOrHex(o.VID, o.VIDHex))
+		args = append(args, "--vid", cliputils.FlagOrHex(o.VID, o.VIDHex))
 	}
 	if o.PID != 0 || o.PIDHex != "" {
-		args = append(args, "--pid", flagOrHex(o.PID, o.PIDHex))
+		args = append(args, "--pid", cliputils.FlagOrHex(o.PID, o.PIDHex))
 	}
 	if o.Certificate != "" {
 		args = append(args, "--certificate", o.Certificate)
@@ -402,49 +402,16 @@ func AssignVid(subject, subjectKeyID string, vid int, from string) (*utils.TxRes
 	return utils.ExecuteTx("tx", "pki", "assign-vid",
 		"--subject", subject,
 		"--subject-key-id", subjectKeyID,
-		"--vid", itoa(vid),
+		"--vid", strconv.Itoa(vid),
 		"--from", from,
 	)
-}
-
-// getSingle runs a single-item dcld query and unmarshals the JSON output into
-// v. Returns (false, nil) when the CLI returned "Not Found" so callers can
-// branch on a nil result; otherwise (true, nil) and v is populated.
-func getSingle(v interface{}, args ...string) (found bool, err error) {
-	out, err := utils.ExecuteCLI(args...)
-	if err != nil {
-		return false, err
-	}
-	if utils.IsNotFound(out) {
-		return false, nil
-	}
-	out = utils.NormalizeProtoJSON(out)
-	if err := json.Unmarshal(out, v); err != nil {
-		return false, fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
-	}
-
-	return true, nil
-}
-
-// getList runs an all-* dcld query and unmarshals the wrapper response into v.
-func getList(v interface{}, args ...string) error {
-	out, err := utils.ExecuteCLI(args...)
-	if err != nil {
-		return err
-	}
-	out = utils.NormalizeProtoJSON(utils.StripPagination(out))
-	if err := json.Unmarshal(out, v); err != nil {
-		return fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
-	}
-
-	return nil
 }
 
 // GetX509Cert queries an approved x509 certificate by (subject, SKID). Returns
 // nil when no record matches.
 func GetX509Cert(subject, subjectKeyID string) (*pkitypes.ApprovedCertificates, error) {
 	var res pkitypes.ApprovedCertificates
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "pki", "x509-cert",
 		"--subject", subject,
 		"--subject-key-id", subjectKeyID,
@@ -461,7 +428,7 @@ func GetX509Cert(subject, subjectKeyID string) (*pkitypes.ApprovedCertificates, 
 // no record matches.
 func GetX509CertBySKID(skid string) (*pkitypes.ApprovedCertificatesBySubjectKeyId, error) {
 	var res pkitypes.ApprovedCertificatesBySubjectKeyId
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "pki", "x509-cert",
 		"--subject-key-id", skid,
 		"-o", "json",
@@ -476,7 +443,7 @@ func GetX509CertBySKID(skid string) (*pkitypes.ApprovedCertificatesBySubjectKeyI
 // GetCert queries any certificate (DA or NOC) by (subject, SKID).
 func GetCert(subject, subjectKeyID string) (*pkitypes.AllCertificates, error) {
 	var res pkitypes.AllCertificates
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "pki", "cert",
 		"--subject", subject,
 		"--subject-key-id", subjectKeyID,
@@ -494,7 +461,7 @@ func GetAllX509Certs(extra ...string) ([]pkitypes.ApprovedCertificates, error) {
 	var res pkitypes.QueryAllApprovedCertificatesResponse
 	args := []string{"query", "pki", "all-x509-certs", "-o", "json"}
 	args = append(args, extra...)
-	if err := getList(&res, args...); err != nil {
+	if err := cliputils.GetList(&res, args...); err != nil {
 		return nil, err
 	}
 
@@ -504,7 +471,7 @@ func GetAllX509Certs(extra ...string) ([]pkitypes.ApprovedCertificates, error) {
 // GetAllX509RootCerts queries all approved root certificates.
 func GetAllX509RootCerts() (*pkitypes.ApprovedRootCertificates, error) {
 	var res pkitypes.ApprovedRootCertificates
-	found, err := getSingle(&res, "query", "pki", "all-x509-root-certs", "-o", "json")
+	found, err := cliputils.GetSingle(&res, "query", "pki", "all-x509-root-certs", "-o", "json")
 	if err != nil || !found {
 		return nil, err
 	}
@@ -516,7 +483,7 @@ func GetAllX509RootCerts() (*pkitypes.ApprovedRootCertificates, error) {
 // when no record matches.
 func GetX509CertsBySubject(subject string) (*pkitypes.ApprovedCertificatesBySubject, error) {
 	var res pkitypes.ApprovedCertificatesBySubject
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "pki", "all-subject-x509-certs",
 		"--subject", subject,
 		"-o", "json",
@@ -532,7 +499,7 @@ func GetX509CertsBySubject(subject string) (*pkitypes.ApprovedCertificatesBySubj
 // when no record matches.
 func GetProposedX509RootCert(subject, subjectKeyID string) (*pkitypes.ProposedCertificate, error) {
 	var res pkitypes.ProposedCertificate
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "pki", "proposed-x509-root-cert",
 		"--subject", subject,
 		"--subject-key-id", subjectKeyID,
@@ -548,7 +515,7 @@ func GetProposedX509RootCert(subject, subjectKeyID string) (*pkitypes.ProposedCe
 // GetAllProposedX509RootCerts queries all proposed root certificates.
 func GetAllProposedX509RootCerts() ([]pkitypes.ProposedCertificate, error) {
 	var res pkitypes.QueryAllProposedCertificateResponse
-	if err := getList(&res, "query", "pki", "all-proposed-x509-root-certs", "-o", "json"); err != nil {
+	if err := cliputils.GetList(&res, "query", "pki", "all-proposed-x509-root-certs", "-o", "json"); err != nil {
 		return nil, err
 	}
 
@@ -559,7 +526,7 @@ func GetAllProposedX509RootCerts() ([]pkitypes.ProposedCertificate, error) {
 // record matches.
 func GetRevokedX509Cert(subject, subjectKeyID string) (*pkitypes.RevokedCertificates, error) {
 	var res pkitypes.RevokedCertificates
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "pki", "revoked-x509-cert",
 		"--subject", subject,
 		"--subject-key-id", subjectKeyID,
@@ -575,7 +542,7 @@ func GetRevokedX509Cert(subject, subjectKeyID string) (*pkitypes.RevokedCertific
 // GetAllRevokedX509Certs queries all revoked x509 certificates.
 func GetAllRevokedX509Certs() ([]pkitypes.RevokedCertificates, error) {
 	var res pkitypes.QueryAllRevokedCertificatesResponse
-	if err := getList(&res, "query", "pki", "all-revoked-x509-certs", "-o", "json"); err != nil {
+	if err := cliputils.GetList(&res, "query", "pki", "all-revoked-x509-certs", "-o", "json"); err != nil {
 		return nil, err
 	}
 
@@ -585,7 +552,7 @@ func GetAllRevokedX509Certs() ([]pkitypes.RevokedCertificates, error) {
 // GetAllRevokedX509RootCerts queries all revoked root certificates.
 func GetAllRevokedX509RootCerts() (*pkitypes.RevokedRootCertificates, error) {
 	var res pkitypes.RevokedRootCertificates
-	found, err := getSingle(&res, "query", "pki", "all-revoked-x509-root-certs", "-o", "json")
+	found, err := cliputils.GetSingle(&res, "query", "pki", "all-revoked-x509-root-certs", "-o", "json")
 	if err != nil || !found {
 		return nil, err
 	}
@@ -597,7 +564,7 @@ func GetAllRevokedX509RootCerts() (*pkitypes.RevokedRootCertificates, error) {
 // cert. Returns nil when no record matches.
 func GetProposedRevokedX509RootCert(subject, subjectKeyID string) (*pkitypes.ProposedCertificateRevocation, error) {
 	var res pkitypes.ProposedCertificateRevocation
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "pki", "proposed-x509-root-cert-to-revoke",
 		"--subject", subject,
 		"--subject-key-id", subjectKeyID,
@@ -613,7 +580,7 @@ func GetProposedRevokedX509RootCert(subject, subjectKeyID string) (*pkitypes.Pro
 // GetAllProposedRevokedX509RootCerts queries all proposed revocations.
 func GetAllProposedRevokedX509RootCerts() ([]pkitypes.ProposedCertificateRevocation, error) {
 	var res pkitypes.QueryAllProposedCertificateRevocationResponse
-	if err := getList(&res, "query", "pki", "all-proposed-x509-root-certs-to-revoke", "-o", "json"); err != nil {
+	if err := cliputils.GetList(&res, "query", "pki", "all-proposed-x509-root-certs-to-revoke", "-o", "json"); err != nil {
 		return nil, err
 	}
 
@@ -624,7 +591,7 @@ func GetAllProposedRevokedX509RootCerts() ([]pkitypes.ProposedCertificateRevocat
 // when no record matches.
 func GetRejectedX509RootCert(subject, subjectKeyID string) (*pkitypes.RejectedCertificate, error) {
 	var res pkitypes.RejectedCertificate
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "pki", "rejected-x509-root-cert",
 		"--subject", subject,
 		"--subject-key-id", subjectKeyID,
@@ -640,7 +607,7 @@ func GetRejectedX509RootCert(subject, subjectKeyID string) (*pkitypes.RejectedCe
 // GetAllRejectedX509RootCerts queries all rejected root certificates.
 func GetAllRejectedX509RootCerts() ([]pkitypes.RejectedCertificate, error) {
 	var res pkitypes.QueryAllRejectedCertificatesResponse
-	if err := getList(&res, "query", "pki", "all-rejected-x509-root-certs", "-o", "json"); err != nil {
+	if err := cliputils.GetList(&res, "query", "pki", "all-rejected-x509-root-certs", "-o", "json"); err != nil {
 		return nil, err
 	}
 
@@ -651,7 +618,7 @@ func GetAllRejectedX509RootCerts() ([]pkitypes.RejectedCertificate, error) {
 // nil when no record matches.
 func GetChildX509Certs(subject, subjectKeyID string) (*pkitypes.ChildCertificates, error) {
 	var res pkitypes.ChildCertificates
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "pki", "all-child-x509-certs",
 		"--subject", subject,
 		"--subject-key-id", subjectKeyID,
@@ -668,9 +635,9 @@ func GetChildX509Certs(subject, subjectKeyID string) (*pkitypes.ChildCertificate
 // no record matches.
 func GetNocRootCerts(vid int) (*pkitypes.NocRootCertificates, error) {
 	var res pkitypes.NocRootCertificates
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "pki", "noc-x509-root-certs",
-		"--vid", itoa(vid),
+		"--vid", strconv.Itoa(vid),
 		"-o", "json",
 	)
 	if err != nil || !found {
@@ -683,7 +650,7 @@ func GetNocRootCerts(vid int) (*pkitypes.NocRootCertificates, error) {
 // GetAllNocRootCerts queries all NOC root certificates.
 func GetAllNocRootCerts() ([]pkitypes.NocRootCertificates, error) {
 	var res pkitypes.QueryAllNocRootCertificatesResponse
-	if err := getList(&res, "query", "pki", "all-noc-x509-root-certs", "-o", "json"); err != nil {
+	if err := cliputils.GetList(&res, "query", "pki", "all-noc-x509-root-certs", "-o", "json"); err != nil {
 		return nil, err
 	}
 
@@ -694,9 +661,9 @@ func GetAllNocRootCerts() ([]pkitypes.NocRootCertificates, error) {
 // no record matches.
 func GetNocX509IcaCerts(vid int) (*pkitypes.NocIcaCertificates, error) {
 	var res pkitypes.NocIcaCertificates
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "pki", "noc-x509-ica-certs",
-		"--vid", itoa(vid),
+		"--vid", strconv.Itoa(vid),
 		"-o", "json",
 	)
 	if err != nil || !found {
@@ -709,7 +676,7 @@ func GetNocX509IcaCerts(vid int) (*pkitypes.NocIcaCertificates, error) {
 // GetAllNocX509IcaCerts queries all NOC ICA certificates.
 func GetAllNocX509IcaCerts() ([]pkitypes.NocIcaCertificates, error) {
 	var res pkitypes.QueryAllNocIcaCertificatesResponse
-	if err := getList(&res, "query", "pki", "all-noc-x509-ica-certs", "-o", "json"); err != nil {
+	if err := cliputils.GetList(&res, "query", "pki", "all-noc-x509-ica-certs", "-o", "json"); err != nil {
 		return nil, err
 	}
 
@@ -722,7 +689,7 @@ func GetAllNocX509IcaCerts() ([]pkitypes.NocIcaCertificates, error) {
 // AllCertificates wrapper so callers can iterate over one Certs list.
 func GetAllNocX509Certs() (*pkitypes.AllCertificates, error) {
 	var res pkitypes.QueryNocCertificatesResponse
-	if err := getList(&res, "query", "pki", "all-noc-x509-certs", "-o", "json"); err != nil {
+	if err := cliputils.GetList(&res, "query", "pki", "all-noc-x509-certs", "-o", "json"); err != nil {
 		return nil, err
 	}
 	all := &pkitypes.AllCertificates{}
@@ -742,7 +709,7 @@ func GetNocCert(extra ...string) (*pkitypes.NocCertificates, error) {
 	var res pkitypes.NocCertificates
 	args := []string{"query", "pki", "noc-x509-cert", "-o", "json"}
 	args = append(args, extra...)
-	found, err := getSingle(&res, args...)
+	found, err := cliputils.GetSingle(&res, args...)
 	if err != nil || !found {
 		return nil, err
 	}
@@ -754,7 +721,7 @@ func GetNocCert(extra ...string) (*pkitypes.NocCertificates, error) {
 // no record matches.
 func GetNocSubjectCerts(subject string) (*pkitypes.NocCertificatesBySubject, error) {
 	var res pkitypes.NocCertificatesBySubject
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "pki", "all-noc-subject-x509-certs",
 		"--subject", subject,
 		"-o", "json",
@@ -769,7 +736,7 @@ func GetNocSubjectCerts(subject string) (*pkitypes.NocCertificatesBySubject, err
 // GetAllRevokedNocRootCerts queries all revoked NOC root certificates.
 func GetAllRevokedNocRootCerts() ([]pkitypes.RevokedNocRootCertificates, error) {
 	var res pkitypes.QueryAllRevokedNocRootCertificatesResponse
-	if err := getList(&res, "query", "pki", "all-revoked-noc-x509-root-certs", "-o", "json"); err != nil {
+	if err := cliputils.GetList(&res, "query", "pki", "all-revoked-noc-x509-root-certs", "-o", "json"); err != nil {
 		return nil, err
 	}
 
@@ -780,7 +747,7 @@ func GetAllRevokedNocRootCerts() ([]pkitypes.RevokedNocRootCertificates, error) 
 // when no record matches.
 func GetRevokedNocRootCert(subject, subjectKeyID string) (*pkitypes.RevokedNocRootCertificates, error) {
 	var res pkitypes.RevokedNocRootCertificates
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "pki", "revoked-noc-x509-root-cert",
 		"--subject", subject,
 		"--subject-key-id", subjectKeyID,
@@ -796,7 +763,7 @@ func GetRevokedNocRootCert(subject, subjectKeyID string) (*pkitypes.RevokedNocRo
 // GetAllRevokedNocX509IcaCerts queries all revoked NOC ICA certificates.
 func GetAllRevokedNocX509IcaCerts() ([]pkitypes.RevokedNocIcaCertificates, error) {
 	var res pkitypes.QueryAllRevokedNocIcaCertificatesResponse
-	if err := getList(&res, "query", "pki", "all-revoked-noc-x509-ica-certs", "-o", "json"); err != nil {
+	if err := cliputils.GetList(&res, "query", "pki", "all-revoked-noc-x509-ica-certs", "-o", "json"); err != nil {
 		return nil, err
 	}
 
@@ -807,9 +774,9 @@ func GetAllRevokedNocX509IcaCerts() ([]pkitypes.RevokedNocIcaCertificates, error
 // Returns nil when no record matches.
 func GetPkiRevocationDistributionPoint(vid int, label, issuerSubjectKeyID string) (*pkitypes.PkiRevocationDistributionPoint, error) {
 	var res pkitypes.PkiRevocationDistributionPoint
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "pki", "revocation-point",
-		"--vid", itoa(vid),
+		"--vid", strconv.Itoa(vid),
 		"--label", label,
 		"--issuer-subject-key-id", issuerSubjectKeyID,
 		"-o", "json",
@@ -824,7 +791,7 @@ func GetPkiRevocationDistributionPoint(vid int, label, issuerSubjectKeyID string
 // GetAllPkiRevocationDistributionPoints queries all revocation distribution points.
 func GetAllPkiRevocationDistributionPoints() ([]pkitypes.PkiRevocationDistributionPoint, error) {
 	var res pkitypes.QueryAllPkiRevocationDistributionPointResponse
-	if err := getList(&res, "query", "pki", "all-revocation-points", "-o", "json"); err != nil {
+	if err := cliputils.GetList(&res, "query", "pki", "all-revocation-points", "-o", "json"); err != nil {
 		return nil, err
 	}
 
@@ -835,7 +802,7 @@ func GetAllPkiRevocationDistributionPoints() ([]pkitypes.PkiRevocationDistributi
 // points by issuer SKID. Returns nil when no record matches.
 func GetPkiRevocationDistributionPointsByIssuer(issuerSubjectKeyID string) (*pkitypes.PkiRevocationDistributionPointsByIssuerSubjectKeyID, error) {
 	var res pkitypes.PkiRevocationDistributionPointsByIssuerSubjectKeyID
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "pki", "revocation-points",
 		"--issuer-subject-key-id", issuerSubjectKeyID,
 		"-o", "json",
@@ -1002,37 +969,4 @@ func containsRevocationPointByLabel(list []pkitypes.PkiRevocationDistributionPoi
 	}
 
 	return false
-}
-
-// flagOrHex returns hex if non-empty, otherwise the decimal-formatted n.
-func flagOrHex(n int, hex string) string {
-	if hex != "" {
-		return hex
-	}
-
-	return itoa(n)
-}
-
-func itoa(n int) string {
-	if n == 0 {
-		return "0"
-	}
-	neg := false
-	if n < 0 {
-		neg = true
-		n = -n
-	}
-	var buf [20]byte
-	pos := len(buf)
-	for n > 0 {
-		pos--
-		buf[pos] = byte('0' + n%10)
-		n /= 10
-	}
-	if neg {
-		pos--
-		buf[pos] = '-'
-	}
-
-	return string(buf[pos:])
 }

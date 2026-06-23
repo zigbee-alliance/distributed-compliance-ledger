@@ -26,6 +26,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 	validatortypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
@@ -85,9 +86,9 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 	bob := testconstants.BobAccount
 	jack := testconstants.JackAccount
 
-	aliceAddr, err := getAddress(alice)
+	aliceAddr, err := cliputils.GetAddress(alice)
 	require.NoError(t, err)
-	bobAddr, err := getAddress(bob)
+	bobAddr, err := cliputils.GetAddress(bob)
 	require.NoError(t, err)
 
 	// Pick the first known validator to run the test against.
@@ -400,14 +401,4 @@ func resolveFirstValidator(t *testing.T) (ownerAccountName, validatorAddress str
 	require.Fail(t, "could not find a known validator node admin account in the localnet")
 
 	return "", ""
-}
-
-// getAddress returns the bech32 address for the given key name.
-func getAddress(name string) (string, error) {
-	out, err := utils.ExecuteCLI("keys", "show", name, "-a", "--keyring-backend", "test")
-	if err != nil {
-		return "", err
-	}
-
-	return strings.TrimSpace(string(out)), nil
 }

@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
@@ -19,19 +20,19 @@ func TestAuthDemoNodeAdmin(t *testing.T) {
 
 	// Generate new user key
 	name := fmt.Sprintf("user%d", rand.Intn(99999))
-	err := AddKey(name)
+	err := cliputils.AddKey(name)
 	require.NoError(t, err)
 
-	userAddr, err := GetAddress(name)
+	userAddr, err := cliputils.GetAddress(name)
 	require.NoError(t, err)
-	userPubkey, err := GetPubkey(name)
+	userPubkey, err := cliputils.GetPubkey(name)
 	require.NoError(t, err)
 
-	jackAddr, err := GetAddress(jack)
+	jackAddr, err := cliputils.GetAddress(jack)
 	require.NoError(t, err)
-	aliceAddr, err := GetAddress(alice)
+	aliceAddr, err := cliputils.GetAddress(alice)
 	require.NoError(t, err)
-	bobAddr, err := GetAddress(bob)
+	bobAddr, err := cliputils.GetAddress(bob)
 	require.NoError(t, err)
 
 	t.Run("InitialState_NotFound", func(t *testing.T) {
@@ -372,12 +373,12 @@ func TestAuthDemoJackRejectOwnProposal(t *testing.T) {
 	jack := testconstants.JackAccount
 
 	name := fmt.Sprintf("user%d", rand.Intn(99999))
-	err := AddKey(name)
+	err := cliputils.AddKey(name)
 	require.NoError(t, err)
 
-	userAddr, err := GetAddress(name)
+	userAddr, err := cliputils.GetAddress(name)
 	require.NoError(t, err)
-	userPubkey, err := GetPubkey(name)
+	userPubkey, err := cliputils.GetPubkey(name)
 	require.NoError(t, err)
 
 	t.Run("ProposeAndSelfReject", func(t *testing.T) {
@@ -472,27 +473,27 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 	// ── Provision the trustee keys up front so cleanup can reference them ──
 
 	newTrustee1Name := fmt.Sprintf("trustee5a%d", rand.Intn(99999))
-	err := AddKey(newTrustee1Name)
+	err := cliputils.AddKey(newTrustee1Name)
 	require.NoError(t, err)
-	newTrustee1Addr, err := GetAddress(newTrustee1Name)
+	newTrustee1Addr, err := cliputils.GetAddress(newTrustee1Name)
 	require.NoError(t, err)
-	newTrustee1Pubkey, err := GetPubkey(newTrustee1Name)
+	newTrustee1Pubkey, err := cliputils.GetPubkey(newTrustee1Name)
 	require.NoError(t, err)
 
 	newTrustee2Name := fmt.Sprintf("trustee5b%d", rand.Intn(99999))
-	err = AddKey(newTrustee2Name)
+	err = cliputils.AddKey(newTrustee2Name)
 	require.NoError(t, err)
-	newTrustee2Addr, err := GetAddress(newTrustee2Name)
+	newTrustee2Addr, err := cliputils.GetAddress(newTrustee2Name)
 	require.NoError(t, err)
-	newTrustee2Pubkey, err := GetPubkey(newTrustee2Name)
+	newTrustee2Pubkey, err := cliputils.GetPubkey(newTrustee2Name)
 	require.NoError(t, err)
 
 	newTrustee3Name := fmt.Sprintf("trustee4c%d", rand.Intn(99999))
-	err = AddKey(newTrustee3Name)
+	err = cliputils.AddKey(newTrustee3Name)
 	require.NoError(t, err)
-	newTrustee3Addr, err := GetAddress(newTrustee3Name)
+	newTrustee3Addr, err := cliputils.GetAddress(newTrustee3Name)
 	require.NoError(t, err)
-	newTrustee3Pubkey, err := GetPubkey(newTrustee3Name)
+	newTrustee3Pubkey, err := cliputils.GetPubkey(newTrustee3Name)
 	require.NoError(t, err)
 
 	// Restore the genesis 3-trustee set no matter where the test stops. Any of
@@ -575,11 +576,11 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 	// ── With 5 trustees: Vendor needs 2 approvals (ceil(5/3)=2) ───────────
 
 	vendorName := fmt.Sprintf("vendor5t%d", rand.Intn(99999))
-	err = AddKey(vendorName)
+	err = cliputils.AddKey(vendorName)
 	require.NoError(t, err)
-	vendorAddr, err := GetAddress(vendorName)
+	vendorAddr, err := cliputils.GetAddress(vendorName)
 	require.NoError(t, err)
-	vendorPubkey, err := GetPubkey(vendorName)
+	vendorPubkey, err := cliputils.GetPubkey(vendorName)
 	require.NoError(t, err)
 
 	t.Run("VendorWith5TrusteesNeeds2Approvals", func(t *testing.T) {
@@ -939,17 +940,17 @@ func TestAuthDemoVendorAccount(t *testing.T) {
 
 	t.Run("VendorApprovedByOneApproval", func(t *testing.T) {
 		name := fmt.Sprintf("vendor%d", rand.Intn(99999))
-		err := AddKey(name)
+		err := cliputils.AddKey(name)
 		require.NoError(t, err)
 
-		userAddr, err := GetAddress(name)
+		userAddr, err := cliputils.GetAddress(name)
 		require.NoError(t, err)
-		userPubkey, err := GetPubkey(name)
+		userPubkey, err := cliputils.GetPubkey(name)
 		require.NoError(t, err)
 
-		jackAddr, err := GetAddress(jack)
+		jackAddr, err := cliputils.GetAddress(jack)
 		require.NoError(t, err)
-		aliceAddr, err := GetAddress(alice)
+		aliceAddr, err := cliputils.GetAddress(alice)
 		require.NoError(t, err)
 
 		// Jack proposes Vendor — only needs 1/3 trustee approvals, so jack's proposal is enough
@@ -989,15 +990,15 @@ func TestAuthDemoVendorAccount(t *testing.T) {
 		vidWithPids := vid + 1
 
 		name := fmt.Sprintf("vendor%d", rand.Intn(99999))
-		err := AddKey(name)
+		err := cliputils.AddKey(name)
 		require.NoError(t, err)
 
-		userAddr, err := GetAddress(name)
+		userAddr, err := cliputils.GetAddress(name)
 		require.NoError(t, err)
-		userPubkey, err := GetPubkey(name)
+		userPubkey, err := cliputils.GetPubkey(name)
 		require.NoError(t, err)
 
-		jackAddr, err := GetAddress(jack)
+		jackAddr, err := cliputils.GetAddress(jack)
 		require.NoError(t, err)
 
 		txResult, err := ProposeAccount(userAddr, userPubkey, "Vendor", jack, ProposeAccountOpts{Info: "Jack is proposing this account", VID: vidWithPids, PidRanges: pidRanges})
@@ -1030,12 +1031,12 @@ func TestAuthDemoVendorAccount(t *testing.T) {
 		invalidPidRanges := "100-101,1-200"
 
 		name := fmt.Sprintf("vendor%d", rand.Intn(99999))
-		err := AddKey(name)
+		err := cliputils.AddKey(name)
 		require.NoError(t, err)
 
-		userAddr, err := GetAddress(name)
+		userAddr, err := cliputils.GetAddress(name)
 		require.NoError(t, err)
-		userPubkey, err := GetPubkey(name)
+		userPubkey, err := cliputils.GetPubkey(name)
 		require.NoError(t, err)
 
 		out, err := utils.ExecuteCLI("tx", "auth", "propose-add-account",
@@ -1067,17 +1068,17 @@ func TestAuthDemoVendorAccount(t *testing.T) {
 
 	t.Run("NodeAdminWithVendorRole_NeedsMoreApprovals", func(t *testing.T) {
 		name := fmt.Sprintf("user%d", rand.Intn(99999))
-		err := AddKey(name)
+		err := cliputils.AddKey(name)
 		require.NoError(t, err)
 
-		userAddr, err := GetAddress(name)
+		userAddr, err := cliputils.GetAddress(name)
 		require.NoError(t, err)
-		userPubkey, err := GetPubkey(name)
+		userPubkey, err := cliputils.GetPubkey(name)
 		require.NoError(t, err)
 
-		jackAddr, err := GetAddress(jack)
+		jackAddr, err := cliputils.GetAddress(jack)
 		require.NoError(t, err)
-		aliceAddr, err := GetAddress(alice)
+		aliceAddr, err := cliputils.GetAddress(alice)
 		require.NoError(t, err)
 
 		txResult, err := ProposeAccount(userAddr, userPubkey, "Vendor,NodeAdmin", jack, ProposeAccountOpts{Info: "Jack is proposing this account", VID: vid})

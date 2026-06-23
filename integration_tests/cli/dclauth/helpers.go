@@ -3,12 +3,13 @@ package dclauth
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
+	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/go-bip39"
+	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
@@ -32,7 +33,7 @@ func (o ProposeAccountOpts) args() []string {
 	if o.VIDHex != "" {
 		args = append(args, "--vid", o.VIDHex)
 	} else if o.VID != 0 {
-		args = append(args, "--vid", itoa(o.VID))
+		args = append(args, "--vid", strconv.Itoa(o.VID))
 	}
 	if o.PidRanges != "" {
 		args = append(args, "--pid_ranges", o.PidRanges)
@@ -87,67 +88,11 @@ func ApproveAccount(address, from string, opts ...AccountActionOpts) (*utils.TxR
 	return utils.ExecuteTx(args...)
 }
 
-func itoa(n int) string {
-	if n == 0 {
-		return "0"
-	}
-	neg := false
-	if n < 0 {
-		neg = true
-		n = -n
-	}
-	var buf [20]byte
-	pos := len(buf)
-	for n > 0 {
-		pos--
-		buf[pos] = byte('0' + n%10)
-		n /= 10
-	}
-	if neg {
-		pos--
-		buf[pos] = '-'
-	}
-
-	return string(buf[pos:])
-}
-
-// getSingle runs a single-item dcld query and unmarshals into v. Returns
-// (false, nil) when the CLI emitted "Not Found".
-func getSingle(v interface{}, args ...string) (found bool, err error) {
-	out, err := utils.ExecuteCLI(args...)
-	if err != nil {
-		return false, err
-	}
-	if utils.IsNotFound(out) {
-		return false, nil
-	}
-	out = utils.NormalizeProtoJSON(out)
-	if err := json.Unmarshal(out, v); err != nil {
-		return false, fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
-	}
-
-	return true, nil
-}
-
-// getList runs an all-* dcld query and unmarshals the wrapper into v.
-func getList(v interface{}, args ...string) error {
-	out, err := utils.ExecuteCLI(args...)
-	if err != nil {
-		return err
-	}
-	out = utils.NormalizeProtoJSON(utils.StripPagination(out))
-	if err := json.Unmarshal(out, v); err != nil {
-		return fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
-	}
-
-	return nil
-}
-
 // GetAllAccounts retrieves all accounts through the CLI. The high pagination
 // limit avoids the default 100-entry cap.
 func GetAllAccounts() ([]dclauthtypes.Account, error) {
 	var res dclauthtypes.QueryAllAccountResponse
-	if err := getList(&res, "query", "auth", "all-accounts", "-o", "json", "--limit", "10000"); err != nil {
+	if err := cliputils.GetList(&res, "query", "auth", "all-accounts", "-o", "json", "--limit", "10000"); err != nil {
 		return nil, err
 	}
 
@@ -270,7 +215,7 @@ func RejectRevokeAccount(address, from string, opts ...AccountActionOpts) (*util
 // nil when the record does not exist.
 func GetProposedAccount(address string) (*dclauthtypes.PendingAccount, error) {
 	var res dclauthtypes.PendingAccount
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "auth", "proposed-account",
 		"--address", address,
 		"-o", "json",
@@ -286,7 +231,7 @@ func GetProposedAccount(address string) (*dclauthtypes.PendingAccount, error) {
 // Returns nil when the record does not exist.
 func GetProposedAccountToRevoke(address string) (*dclauthtypes.PendingAccountRevocation, error) {
 	var res dclauthtypes.PendingAccountRevocation
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "auth", "proposed-account-to-revoke",
 		"--address", address,
 		"-o", "json",
@@ -302,7 +247,7 @@ func GetProposedAccountToRevoke(address string) (*dclauthtypes.PendingAccountRev
 // record does not exist.
 func GetRevokedAccount(address string) (*dclauthtypes.RevokedAccount, error) {
 	var res dclauthtypes.RevokedAccount
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "auth", "revoked-account",
 		"--address", address,
 		"-o", "json",
@@ -318,7 +263,7 @@ func GetRevokedAccount(address string) (*dclauthtypes.RevokedAccount, error) {
 // the record does not exist.
 func GetRejectedAccount(address string) (*dclauthtypes.RejectedAccount, error) {
 	var res dclauthtypes.RejectedAccount
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "auth", "rejected-account",
 		"--address", address,
 		"-o", "json",
@@ -333,7 +278,7 @@ func GetRejectedAccount(address string) (*dclauthtypes.RejectedAccount, error) {
 // GetAllProposedAccounts queries all proposed (pending) accounts.
 func GetAllProposedAccounts() ([]dclauthtypes.PendingAccount, error) {
 	var res dclauthtypes.QueryAllPendingAccountResponse
-	if err := getList(&res, "query", "auth", "all-proposed-accounts", "-o", "json"); err != nil {
+	if err := cliputils.GetList(&res, "query", "auth", "all-proposed-accounts", "-o", "json"); err != nil {
 		return nil, err
 	}
 
@@ -343,7 +288,7 @@ func GetAllProposedAccounts() ([]dclauthtypes.PendingAccount, error) {
 // GetAllProposedAccountsToRevoke queries all accounts proposed to be revoked.
 func GetAllProposedAccountsToRevoke() ([]dclauthtypes.PendingAccountRevocation, error) {
 	var res dclauthtypes.QueryAllPendingAccountRevocationResponse
-	if err := getList(&res, "query", "auth", "all-proposed-accounts-to-revoke", "-o", "json"); err != nil {
+	if err := cliputils.GetList(&res, "query", "auth", "all-proposed-accounts-to-revoke", "-o", "json"); err != nil {
 		return nil, err
 	}
 
@@ -353,7 +298,7 @@ func GetAllProposedAccountsToRevoke() ([]dclauthtypes.PendingAccountRevocation, 
 // GetAllRevokedAccounts queries all revoked accounts.
 func GetAllRevokedAccounts() ([]dclauthtypes.RevokedAccount, error) {
 	var res dclauthtypes.QueryAllRevokedAccountResponse
-	if err := getList(&res, "query", "auth", "all-revoked-accounts", "-o", "json"); err != nil {
+	if err := cliputils.GetList(&res, "query", "auth", "all-revoked-accounts", "-o", "json"); err != nil {
 		return nil, err
 	}
 
@@ -363,7 +308,7 @@ func GetAllRevokedAccounts() ([]dclauthtypes.RevokedAccount, error) {
 // GetAllRejectedAccounts queries all rejected accounts.
 func GetAllRejectedAccounts() ([]dclauthtypes.RejectedAccount, error) {
 	var res dclauthtypes.QueryAllRejectedAccountResponse
-	if err := getList(&res, "query", "auth", "all-rejected-accounts", "-o", "json"); err != nil {
+	if err := cliputils.GetList(&res, "query", "auth", "all-rejected-accounts", "-o", "json"); err != nil {
 		return nil, err
 	}
 
@@ -430,33 +375,4 @@ func containsRejectedAccountAddress(list []dclauthtypes.RejectedAccount, address
 	}
 
 	return false
-}
-
-// GetAddress returns the address string for a keyring key name.
-func GetAddress(name string) (string, error) {
-	out, err := utils.ExecuteCLI("keys", "show", name, "-a", "--keyring-backend", "test")
-	if err != nil {
-		return "", err
-	}
-
-	return strings.TrimSpace(string(out)), nil
-}
-
-// GetPubkey returns the pubkey string for a keyring key name.
-func GetPubkey(name string) (string, error) {
-	out, err := utils.ExecuteCLI("keys", "show", name, "-p", "--keyring-backend", "test")
-	if err != nil {
-		return "", err
-	}
-
-	return strings.TrimSpace(string(out)), nil
-}
-
-// AddKey generates a new key in the test keyring with the given name.
-// Any pre-existing key with the same name is deleted first.
-func AddKey(name string) error {
-	_, _ = utils.ExecuteCLI("keys", "delete", name, "--keyring-backend", "test", "-y")
-	_, err := utils.ExecuteCLI("keys", "add", name, "--keyring-backend", "test", "--no-backup")
-
-	return err
 }

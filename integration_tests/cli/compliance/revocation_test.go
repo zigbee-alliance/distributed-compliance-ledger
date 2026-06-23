@@ -3,6 +3,7 @@ package compliance
 import (
 	"fmt"
 	"math/rand"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -367,8 +368,8 @@ func TestComplianceRevocation(t *testing.T) {
 		// certify-model with schemaVersion=0 must be 1 (#730).
 		rejectTx("SchemaVersion must be equal 1",
 			"tx", "compliance", "certify-model",
-			"--vid", itoa(vidV1), "--pid", itoa(pidV1),
-			"--softwareVersion", itoa(svV1), "--softwareVersionString", svsV1,
+			"--vid", strconv.Itoa(vidV1), "--pid", strconv.Itoa(pidV1),
+			"--softwareVersion", strconv.Itoa(svV1), "--softwareVersionString", svsV1,
 			"--certificationType", certType, "--specificationVersion", "1",
 			"--certificationDate", certificationDate, "--cdCertificateId", cdCertID,
 			"--cdVersionNumber", "1", "--schemaVersion", "0", "--from", zbAccount)
@@ -376,8 +377,8 @@ func TestComplianceRevocation(t *testing.T) {
 		// certify-model with cdCertificateId shorter than 19 chars.
 		rejectTx("minimum length for CDCertificateId allowed is 19",
 			"tx", "compliance", "certify-model",
-			"--vid", itoa(vidV1), "--pid", itoa(pidV1),
-			"--softwareVersion", itoa(svV1), "--softwareVersionString", svsV1,
+			"--vid", strconv.Itoa(vidV1), "--pid", strconv.Itoa(pidV1),
+			"--softwareVersion", strconv.Itoa(svV1), "--softwareVersionString", svsV1,
 			"--certificationType", certType, "--specificationVersion", "1",
 			"--certificationDate", certificationDate, "--cdCertificateId", shortCdID,
 			"--cdVersionNumber", "1", "--schemaVersion", "1", "--from", zbAccount)
@@ -385,8 +386,8 @@ func TestComplianceRevocation(t *testing.T) {
 		// certify-model with cdCertificateId longer than 19 chars.
 		rejectTx("maximum length for CDCertificateId allowed is 19",
 			"tx", "compliance", "certify-model",
-			"--vid", itoa(vidV1), "--pid", itoa(pidV1),
-			"--softwareVersion", itoa(svV1), "--softwareVersionString", svsV1,
+			"--vid", strconv.Itoa(vidV1), "--pid", strconv.Itoa(pidV1),
+			"--softwareVersion", strconv.Itoa(svV1), "--softwareVersionString", svsV1,
 			"--certificationType", certType, "--specificationVersion", "1",
 			"--certificationDate", certificationDate, "--cdCertificateId", longCdID,
 			"--cdVersionNumber", "1", "--schemaVersion", "1", "--from", zbAccount)
@@ -394,8 +395,8 @@ func TestComplianceRevocation(t *testing.T) {
 		// provision-model with schemaVersion=0.
 		rejectTx("SchemaVersion must be equal 1",
 			"tx", "compliance", "provision-model",
-			"--vid", itoa(vidV1), "--pid", itoa(pidV1),
-			"--softwareVersion", itoa(svV1), "--softwareVersionString", svsV1,
+			"--vid", strconv.Itoa(vidV1), "--pid", strconv.Itoa(pidV1),
+			"--softwareVersion", strconv.Itoa(svV1), "--softwareVersionString", svsV1,
 			"--certificationType", certType, "--specificationVersion", "1",
 			"--provisionalDate", revocationDate, "--cdCertificateId", cdCertID,
 			"--cdVersionNumber", "1", "--schemaVersion", "0", "--from", zbAccount)
@@ -403,16 +404,16 @@ func TestComplianceRevocation(t *testing.T) {
 		// revoke-model with schemaVersion=0.
 		rejectTx("SchemaVersion must be equal 1",
 			"tx", "compliance", "revoke-model",
-			"--vid", itoa(vidV1), "--pid", itoa(pidV1),
-			"--softwareVersion", itoa(svV1), "--softwareVersionString", svsV1,
+			"--vid", strconv.Itoa(vidV1), "--pid", strconv.Itoa(pidV1),
+			"--softwareVersion", strconv.Itoa(svV1), "--softwareVersionString", svsV1,
 			"--certificationType", certType, "--revocationDate", revocationDate,
 			"--cdVersionNumber", "1", "--schemaVersion", "0", "--from", zbAccount)
 
 		// certify-model with certificationType longer than 20 chars.
 		rejectTx("maximum length for CertificationType allowed is 20",
 			"tx", "compliance", "certify-model",
-			"--vid", itoa(vidV1), "--pid", itoa(pidV1),
-			"--softwareVersion", itoa(svV1), "--softwareVersionString", svsV1,
+			"--vid", strconv.Itoa(vidV1), "--pid", strconv.Itoa(pidV1),
+			"--softwareVersion", strconv.Itoa(svV1), "--softwareVersionString", svsV1,
 			"--certificationType", longCertType, "--specificationVersion", "1",
 			"--certificationDate", certificationDate, "--cdCertificateId", cdCertID,
 			"--cdVersionNumber", "1", "--schemaVersion", "1", "--from", zbAccount)
@@ -420,8 +421,8 @@ func TestComplianceRevocation(t *testing.T) {
 		// certify-model with specificationVersion=0 (required since #730).
 		rejectTx("SpecificationVersion is a required field",
 			"tx", "compliance", "certify-model",
-			"--vid", itoa(vidV1), "--pid", itoa(pidV1),
-			"--softwareVersion", itoa(svV1), "--softwareVersionString", svsV1,
+			"--vid", strconv.Itoa(vidV1), "--pid", strconv.Itoa(pidV1),
+			"--softwareVersion", strconv.Itoa(svV1), "--softwareVersionString", svsV1,
 			"--certificationType", certType, "--specificationVersion", "0",
 			"--certificationDate", certificationDate, "--cdCertificateId", cdCertID,
 			"--cdVersionNumber", "1", "--schemaVersion", "1", "--from", zbAccount)

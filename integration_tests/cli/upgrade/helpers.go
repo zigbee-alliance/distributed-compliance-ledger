@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 	upgradetypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types"
 )
@@ -98,29 +99,11 @@ func RejectUpgrade(name, from string, opts ...UpgradeActionOpts) (*utils.TxResul
 	return utils.ExecuteTx(args...)
 }
 
-// getSingle runs a single-item dcld query and unmarshals into v. Returns
-// (false, nil) when the CLI emitted "Not Found".
-func getSingle(v interface{}, args ...string) (found bool, err error) {
-	out, err := utils.ExecuteCLI(args...)
-	if err != nil {
-		return false, err
-	}
-	if utils.IsNotFound(out) {
-		return false, nil
-	}
-	out = utils.NormalizeProtoJSON(out)
-	if err := json.Unmarshal(out, v); err != nil {
-		return false, fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
-	}
-
-	return true, nil
-}
-
 // GetProposedUpgrade queries a proposed upgrade plan by name. Returns nil when
 // no proposal exists.
 func GetProposedUpgrade(name string) (*upgradetypes.ProposedUpgrade, error) {
 	var res upgradetypes.ProposedUpgrade
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "dclupgrade", "proposed-upgrade",
 		"--name", name,
 		"-o", "json",
@@ -136,7 +119,7 @@ func GetProposedUpgrade(name string) (*upgradetypes.ProposedUpgrade, error) {
 // when no approved record exists.
 func GetApprovedUpgrade(name string) (*upgradetypes.ApprovedUpgrade, error) {
 	var res upgradetypes.ApprovedUpgrade
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "dclupgrade", "approved-upgrade",
 		"--name", name,
 		"-o", "json",
@@ -152,7 +135,7 @@ func GetApprovedUpgrade(name string) (*upgradetypes.ApprovedUpgrade, error) {
 // no rejected record exists.
 func GetRejectedUpgrade(name string) (*upgradetypes.RejectedUpgrade, error) {
 	var res upgradetypes.RejectedUpgrade
-	found, err := getSingle(&res,
+	found, err := cliputils.GetSingle(&res,
 		"query", "dclupgrade", "rejected-upgrade",
 		"--name", name,
 		"-o", "json",
