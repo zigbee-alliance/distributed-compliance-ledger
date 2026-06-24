@@ -45,7 +45,7 @@ func BuildMasterImage() error {
 // built. All steps are best-effort — failures are ignored because the build
 // itself will surface a clearer error if anything is actually broken.
 //
-// The binary for the last entry in HistoricalVersions (currently 1.6.0-0.dev.2)
+// The binary for the last entry in HistoricalVersions (currently 1.6.0)
 // is preserved because phase 10 still calls `propose-upgrade` through it.
 func freeDiskBeforeMasterBuild() {
 	if len(HistoricalVersions) > 1 {

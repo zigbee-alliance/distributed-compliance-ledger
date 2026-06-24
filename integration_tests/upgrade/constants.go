@@ -69,5 +69,5 @@ const BinariesDir = "/tmp/dcld_bins"
 // Kept in sync with prepare-dcld-versions.sh's download loop.
 var HistoricalVersions = []string{
 	"0.12.0", "0.12.1", "1.2.2", "1.4.3", "1.4.4", "1.5.1", "1.5.2",
-	"1.6.0-0.dev.2",
+	"1.6.0",
 }

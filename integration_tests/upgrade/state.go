@@ -574,7 +574,6 @@ const (
 	PlanNameV1_6_0 = "v1.6.0"
 
 	// BinaryVersionV1_6_0 is the release tag used by the upgrade plan info.
-	// TODO: switch to "1.6.0" once the GA release ships.
 	BinaryVersionV1_5_2 = "1.5.2"
-	BinaryVersionV1_6_0 = "1.6.0-0.dev.2"
+	BinaryVersionV1_6_0 = "1.6.0"
 )
