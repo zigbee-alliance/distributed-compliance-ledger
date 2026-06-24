@@ -357,7 +357,12 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 	MustRun(t, "ComplianceFor_Master", func(t *testing.T) {
 		t.Helper()
 		// certify pid_1.
-		tx, err := CertifyModel(DcldMasterBinaryPath, CertifyModelArgs{VID: VIDForMaster, PID: PID1ForMaster, SoftwareVersion: SoftwareVersionForMaster, SoftwareVersionString: SoftwareVersionStringForMaster, CertificationType: CertificationTypeForMaster, CertificationDate: CertificationDateForMaster, CDCertificateID: CDCertificateIDForMaster, CDVersionNumber: CDVersionNumberForMaster, From: CertificationCenterAccountFor1_2})
+		tx, err := CertifyModel(DcldMasterBinaryPath, CertifyModelArgs{
+			VID: VIDForMaster, PID: PID1ForMaster, SoftwareVersion: SoftwareVersionForMaster,
+			SoftwareVersionString: SoftwareVersionStringForMaster, CertificationType: CertificationTypeForMaster,
+			CertificationDate: CertificationDateForMaster, CDCertificateID: CDCertificateIDForMaster,
+			CDVersionNumber: CDVersionNumberForMaster, SpecificationVersion: SpecificationVersionForMaster, From: CertificationCenterAccountFor1_2,
+		})
 		requireTxSuccess(t, tx, err)
 
 		// provision pid_2, certify pid_2, revoke pid_2. revoke-model does not
@@ -366,7 +371,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 			VID: VIDForMaster, PID: PID2ForMaster, SoftwareVersion: SoftwareVersionForMaster,
 			SoftwareVersionString: SoftwareVersionStringForMaster, CertificationType: CertificationTypeForMaster,
 			ProvisionalDate: ProvisionalDateForMaster, CDCertificateID: CDCertificateIDForMaster,
-			CDVersionNumber: CDVersionNumberForMaster, From: CertificationCenterAccountFor1_2,
+			CDVersionNumber: CDVersionNumberForMaster, SpecificationVersion: SpecificationVersionForMaster, From: CertificationCenterAccountFor1_2,
 		})
 		requireTxSuccess(t, tx, err)
 
@@ -374,7 +379,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 			VID: VIDForMaster, PID: PID2ForMaster, SoftwareVersion: SoftwareVersionForMaster,
 			SoftwareVersionString: SoftwareVersionStringForMaster, CertificationType: CertificationTypeForMaster,
 			CertificationDate: CertificationDateForMaster, CDCertificateID: CDCertificateIDForMaster,
-			CDVersionNumber: CDVersionNumberForMaster, From: CertificationCenterAccountFor1_2,
+			CDVersionNumber: CDVersionNumberForMaster, SpecificationVersion: SpecificationVersionForMaster, From: CertificationCenterAccountFor1_2,
 		})
 		requireTxSuccess(t, tx, err)
 

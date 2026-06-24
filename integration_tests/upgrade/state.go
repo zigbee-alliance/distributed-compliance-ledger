@@ -527,6 +527,7 @@ const (
 	CommissioningCustomFlow               = 0
 	SoftwareVersionForMaster              = 4
 	SoftwareVersionStringForMaster        = "5.3"
+	SpecificationVersionForMaster         = 1
 	CDVersionNumberForMaster              = 743
 	MinApplicableSoftwareVersionForMaster = 4
 	MaxApplicableSoftwareVersionForMaster = 4000
