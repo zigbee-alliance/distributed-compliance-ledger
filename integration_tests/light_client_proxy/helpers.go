@@ -170,6 +170,59 @@ func createKey(name string) (address, pubkey string, err error) {
 	return trimWS(addrOut), trimWS(pubOut), nil
 }
 
+// userKey bundles a randomly-named keyring entry with its bech32 address and
+// pubkey JSON. Same shape as upgrade.userKey — every test in the package
+// creates one or two such keys for its propose/approve flow.
+type userKey struct {
+	name    string
+	address string
+	pubkey  string
+}
+
+// requireUserKey generates a key under `<prefix><RandString>` and captures the
+// address + pubkey. Fails the test on any CLI error.
+func requireUserKey(t *testing.T, prefix string) userKey {
+	t.Helper()
+	name := prefix + utils.RandString()
+	addr, pub, err := createKey(name)
+	require.NoError(t, err, "create key %s", name)
+	require.NotEmpty(t, addr)
+	require.NotEmpty(t, pub)
+
+	return userKey{name: name, address: addr, pubkey: pub}
+}
+
+// requireTxOK asserts a tx broadcast cleanly and executed with on-chain code 0.
+// utils.ExecuteTx already polls for inclusion (sync mode) so no extra
+// confirmation poll is needed. Mirrors upgrade.requireTxSuccess.
+func requireTxOK(t *testing.T, tx *utils.TxResult, err error, label string) {
+	t.Helper()
+	require.NoError(t, err, label)
+	require.Equal(t, uint32(0), tx.Code, "%s: %s", label, tx.RawLog)
+}
+
+// assertWriteRejected runs a tx through the light client proxy and asserts the
+// proxy returned writeRejection. txArgs is the full `tx ...` command minus the
+// standard trailing flags (--yes, -o json, --keyring-backend test, --node) —
+// the helper appends those.
+func assertWriteRejected(t *testing.T, label string, txArgs ...string) {
+	t.Helper()
+	args := append([]string{}, txArgs...)
+	args = append(args, "--yes", "-o", "json", "--keyring-backend", "test")
+	out, err := executeCLIWithNode(LightClientProxyAddr, args...)
+	assertRejectionContains(t, out, err, writeRejection, label)
+}
+
+// assertNotFoundOnProxy queries the proxy and asserts the response contains
+// "Not Found". Covers the single-record-query pattern that every Test* block
+// uses for both the pre-add and post-add (other-key) assertions.
+func assertNotFoundOnProxy(t *testing.T, label string, args ...string) {
+	t.Helper()
+	out, err := queryWithRetry(LightClientProxyAddr, args...)
+	require.NoError(t, err, label)
+	assertContains(t, out, "Not Found", label)
+}
+
 func trimWS(b []byte) string {
 	return strings.TrimRight(string(b), "\n\r \t")
 }
@@ -186,100 +239,66 @@ func randomUint16() int {
 	return int(binary.BigEndian.Uint16(b[:]) >> 1)
 }
 
-// proposeVendorAccount creates a fresh key under `name` and proposes it
-// as a Vendor with `vid` against the full node. No explicit approval is
-// needed — Vendor uses the 1/3 quorum so jack's proposer vote already
-// meets threshold on a 3-trustee genesis chain.
+// proposeVendorAccount creates a fresh key under `<name>` (no random suffix —
+// callers already pass a unique label) and proposes it as a Vendor with `vid`
+// against the full node. No explicit approval is needed — Vendor uses the 1/3
+// quorum so jack's proposer vote already meets threshold on a 3-trustee
+// genesis chain.
 func proposeVendorAccount(t *testing.T, name string, vid int) (address string) {
 	t.Helper()
 
 	addr, pub, err := createKey(name)
 	require.NoError(t, err, "create key %s", name)
 
-	tx, err := utils.ExecuteTx(
-		"tx", "auth", "propose-add-account",
-		"--address", addr,
-		"--pubkey", pub,
-		"--roles", "Vendor",
-		"--vid", fmt.Sprintf("%d", vid),
-		"--from", "jack",
-		"--node", FullNodeAddr,
-	)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, "propose vendor %s: %s", name, tx.RawLog)
+	tx, err := ProposeAddAccountArgs{
+		Address: addr, Pubkey: pub, Roles: "Vendor", VID: vid,
+	}.Send("jack")
+	requireTxOK(t, tx, err, "propose vendor "+name)
 
 	return addr
 }
 
-// proposeAndApproveAccount creates a fresh key under `name`, proposes it
-// with `roles` from jack, then has alice approve. Used for the
-// CertificationCenter account in the compliance test. Two approvals
-// satisfy the 2/3 quorum on the 3-trustee genesis chain.
+// proposeAndApproveAccount creates a fresh key under `<name>` (already-unique),
+// proposes it with `roles` from jack, then has alice approve. Used for the
+// CertificationCenter account in the compliance test. Two approvals satisfy
+// the 2/3 quorum on the 3-trustee genesis chain.
 func proposeAndApproveAccount(t *testing.T, name, roles string) (address string) {
 	t.Helper()
 
 	addr, pub, err := createKey(name)
 	require.NoError(t, err, "create key %s", name)
 
-	tx, err := utils.ExecuteTx(
-		"tx", "auth", "propose-add-account",
-		"--address", addr,
-		"--pubkey", pub,
-		"--roles", roles,
-		"--from", "jack",
-		"--node", FullNodeAddr,
-	)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, "propose %s: %s", name, tx.RawLog)
+	tx, err := ProposeAddAccountArgs{
+		Address: addr, Pubkey: pub, Roles: roles,
+	}.Send("jack")
+	requireTxOK(t, tx, err, "propose "+name)
 
-	tx, err = utils.ExecuteTx(
-		"tx", "auth", "approve-add-account",
-		"--address", addr,
-		"--from", "alice",
-		"--node", FullNodeAddr,
-	)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, "approve %s: %s", name, tx.RawLog)
+	tx, err = ApproveAddAccountArgs{Address: addr}.Send("alice")
+	requireTxOK(t, tx, err, "approve "+name)
 
 	return addr
 }
 
-// addModelAndVersion adds a model + its first model-version against the
-// full node.
+// addModelAndVersion adds a model + its first model-version against the full
+// node.
 func addModelAndVersion(t *testing.T, vid, pid, softwareVersion int, softwareVersionString, vendorAccount string) {
 	t.Helper()
 
-	tx, err := utils.ExecuteTx(
-		"tx", "model", "add-model",
-		"--vid", fmt.Sprintf("%d", vid),
-		"--pid", fmt.Sprintf("%d", pid),
-		"--deviceTypeID", "1",
-		"--productName", "TestProduct",
-		"--productLabel", "TestingProductLabel",
-		"--partNumber", "1",
-		"--commissioningCustomFlow", "0",
-		"--enhancedSetupFlowOptions", "0",
-		"--from", vendorAccount,
-		"--node", FullNodeAddr,
-	)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, "add-model %d/%d: %s", vid, pid, tx.RawLog)
+	tx, err := AddModelArgs{
+		VID:          vid,
+		PID:          pid,
+		ProductLabel: "TestingProductLabel",
+	}.Send(vendorAccount)
+	requireTxOK(t, tx, err, fmt.Sprintf("add-model %d/%d", vid, pid))
 
-	tx, err = utils.ExecuteTx(
-		"tx", "model", "add-model-version",
-		"--cdVersionNumber", "1",
-		"--maxApplicableSoftwareVersion", "10",
-		"--minApplicableSoftwareVersion", "1",
-		"--vid", fmt.Sprintf("%d", vid),
-		"--pid", fmt.Sprintf("%d", pid),
-		"--softwareVersion", fmt.Sprintf("%d", softwareVersion),
-		"--softwareVersionString", softwareVersionString,
-		"--from", vendorAccount,
-		"--node", FullNodeAddr,
-	)
-	require.NoError(t, err)
-	require.Equal(t, uint32(0), tx.Code, "add-model-version %d/%d/%d: %s",
-		vid, pid, softwareVersion, tx.RawLog)
+	tx, err = AddModelVersionArgs{
+		VID:                   vid,
+		PID:                   pid,
+		SoftwareVersion:       softwareVersion,
+		SoftwareVersionString: softwareVersionString,
+	}.Send(vendorAccount)
+	requireTxOK(t, tx, err,
+		fmt.Sprintf("add-model-version %d/%d/%d", vid, pid, softwareVersion))
 }
 
 // assertContains is a t.Helper wrapper around strings.Contains with a useful

@@ -19,7 +19,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
 // TestLightClientProxyAuth exercises the dcld auth module against the
@@ -40,37 +39,22 @@ import (
 //
 // Steps run sequentially; each step's preconditions come from the previous
 // one (e.g. step 5 needs the propose/approve from step 4).
-//
-//nolint:funlen
 func TestLightClientProxyAuth(t *testing.T) {
 	skipIfDisabled(t)
 
-	user1Name := utils.RandString()
-	user1Addr, user1Pub, err := createKey(user1Name)
-	require.NoError(t, err, "create key %s", user1Name)
-	require.NotEmpty(t, user1Addr)
-	require.NotEmpty(t, user1Pub)
+	user1 := requireUserKey(t, "")
+	user2 := requireUserKey(t, "")
 
-	user2Name := utils.RandString()
-	user2Addr, _, err := createKey(user2Name)
-	require.NoError(t, err, "create key %s", user2Name)
-	require.NotEmpty(t, user2Addr)
+	authSingleRecordCmds := []string{
+		"account", "proposed-account", "proposed-account-to-revoke",
+	}
 
 	// 1. Non-existent records via the proxy: every single-record query
 	//    returns "Not Found".
 	mustRun(t, "NotFound_BeforeAdd", func(t *testing.T) {
 		t.Helper()
-		for _, q := range []string{
-			"account", "proposed-account", "proposed-account-to-revoke",
-		} {
-			out, qerr := queryWithRetry(LightClientProxyAddr,
-				"query", "auth", q, "--address", user1Addr,
-			)
-			require.NoError(t, qerr, "query %s", q)
-			require.True(t,
-				strings.Contains(string(out), "Not Found"),
-				"expected Not Found for %s, got: %s", q, string(out),
-			)
+		for _, cmd := range authSingleRecordCmds {
+			assertNotFoundOnProxy(t, cmd, AuthByAddress(cmd, user1.address)...)
 		}
 	})
 
@@ -89,25 +73,13 @@ func TestLightClientProxyAuth(t *testing.T) {
 	//    flips it as part of its own flow.
 	mustRun(t, "ProposeAndApprove_User1", func(t *testing.T) {
 		t.Helper()
-		tx, terr := utils.ExecuteTx(
-			"tx", "auth", "propose-add-account",
-			"--address", user1Addr,
-			"--pubkey", user1Pub,
-			"--roles", "NodeAdmin",
-			"--from", "jack",
-			"--node", FullNodeAddr,
-		)
-		require.NoError(t, terr)
-		require.Equal(t, uint32(0), tx.Code, "propose-add-account: %s", tx.RawLog)
+		tx, err := ProposeAddAccountArgs{
+			Address: user1.address, Pubkey: user1.pubkey, Roles: "NodeAdmin",
+		}.Send("jack")
+		requireTxOK(t, tx, err, "propose-add-account")
 
-		tx, terr = utils.ExecuteTx(
-			"tx", "auth", "approve-add-account",
-			"--address", user1Addr,
-			"--from", "alice",
-			"--node", FullNodeAddr,
-		)
-		require.NoError(t, terr)
-		require.Equal(t, uint32(0), tx.Code, "approve-add-account: %s", tx.RawLog)
+		tx, err = ApproveAddAccountArgs{Address: user1.address}.Send("alice")
+		requireTxOK(t, tx, err, "approve-add-account")
 	})
 
 	// 4. user1 is now visible through the proxy.
@@ -116,13 +88,13 @@ func TestLightClientProxyAuth(t *testing.T) {
 	//    to catch up to the new block (we poll up to 30s).
 	mustRun(t, "Found_User1_AfterAdd", func(t *testing.T) {
 		t.Helper()
-		out, qerr := queryUntilContains(LightClientProxyAddr, user1Addr,
-			"query", "auth", "account", "--address", user1Addr,
+		out, qerr := queryUntilContains(LightClientProxyAddr, user1.address,
+			AuthByAddress("account", user1.address)...,
 		)
 		require.NoError(t, qerr)
 		require.True(t,
-			strings.Contains(string(out), user1Addr),
-			"expected proxy to surface %s, got: %s", user1Addr, string(out),
+			strings.Contains(string(out), user1.address),
+			"expected proxy to surface %s, got: %s", user1.address, string(out),
 		)
 	})
 
@@ -130,17 +102,8 @@ func TestLightClientProxyAuth(t *testing.T) {
 	//    single-record query.
 	mustRun(t, "NotFound_User2_AfterAdd", func(t *testing.T) {
 		t.Helper()
-		for _, q := range []string{
-			"account", "proposed-account", "proposed-account-to-revoke",
-		} {
-			out, qerr := queryWithRetry(LightClientProxyAddr,
-				"query", "auth", q, "--address", user2Addr,
-			)
-			require.NoError(t, qerr, "query %s", q)
-			require.True(t,
-				strings.Contains(string(out), "Not Found"),
-				"expected Not Found for %s, got: %s", q, string(out),
-			)
+		for _, cmd := range authSingleRecordCmds {
+			assertNotFoundOnProxy(t, cmd, AuthByAddress(cmd, user2.address)...)
 		}
 	})
 
@@ -149,21 +112,10 @@ func TestLightClientProxyAuth(t *testing.T) {
 	//    proxy itself, not from cosmos-sdk message validation.
 	mustRun(t, "Write_Rejected", func(t *testing.T) {
 		t.Helper()
-		out, _ := executeCLIWithNode(LightClientProxyAddr,
-			"tx", "auth", "propose-add-account",
-			"--address", user1Addr,
-			"--pubkey", user1Pub,
-			"--roles", "NodeAdmin",
-			"--from", "jack",
-			"--yes",
-			"-o", "json",
-			"--keyring-backend", "test",
-		)
-		// Exit code can be non-zero; ignore err. The rejection payload lands
-		// in stdout/stderr either way.
-		require.True(t,
-			strings.Contains(string(out), writeRejection),
-			"expected %q, got: %s", writeRejection, string(out),
-		)
+		args := ProposeAddAccountArgs{
+			Address: user1.address, Pubkey: user1.pubkey, Roles: "NodeAdmin",
+		}.Build()
+		args = append(args, "--from", "jack")
+		assertWriteRejected(t, "propose-add-account", args...)
 	})
 }

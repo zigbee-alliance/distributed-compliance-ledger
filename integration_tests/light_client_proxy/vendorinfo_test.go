@@ -15,7 +15,7 @@
 package lightclientproxy
 
 import (
-	"fmt"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -30,12 +30,7 @@ func TestLightClientProxyVendorInfo(t *testing.T) {
 	// 1. Random VID — no vendorinfo record exists yet. Proxy returns Not Found.
 	mustRun(t, "NotFound_BeforeAdd", func(t *testing.T) {
 		t.Helper()
-		vid := randomUint16()
-		out, qerr := queryWithRetry(LightClientProxyAddr,
-			"query", "vendorinfo", "vendor", "--vid", fmt.Sprintf("%d", vid),
-		)
-		require.NoError(t, qerr)
-		assertContains(t, out, "Not Found", "vendor query")
+		assertNotFoundOnProxy(t, "vendor query", Vendor(randomUint16())...)
 	})
 
 	// 2. Listing all vendors via the proxy is rejected.
@@ -55,62 +50,42 @@ func TestLightClientProxyVendorInfo(t *testing.T) {
 	//    shared keyring (see run-all.sh).
 	vid := randomUint16()
 	vendorAccount := "vinfo_vendor_" + utils.RandString()
-	const (
-		companyLegalName = "XYZ IOT Devices Inc"
-		vendorName       = "XYZ Devices"
-	)
+	addVendor := AddVendorArgs{
+		VID:              vid,
+		CompanyLegalName: "XYZ IOT Devices Inc",
+		VendorName:       "XYZ Devices",
+	}
 
 	mustRun(t, "AddVendorInfo", func(t *testing.T) {
 		t.Helper()
 		_ = proposeVendorAccount(t, vendorAccount, vid)
 
-		tx, err := utils.ExecuteTx(
-			"tx", "vendorinfo", "add-vendor",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--companyLegalName", companyLegalName,
-			"--vendorName", vendorName,
-			"--from", vendorAccount,
-			"--node", FullNodeAddr,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, "add-vendor: %s", tx.RawLog)
+		tx, err := addVendor.Send(vendorAccount)
+		requireTxOK(t, tx, err, "add-vendor")
 	})
 
 	// 4. Now the proxy serves the new record. Poll through the proxy's
 	//    post-write sync window (up to 30s).
 	mustRun(t, "Found_AfterAdd", func(t *testing.T) {
 		t.Helper()
-		out, qerr := queryUntilContains(LightClientProxyAddr, companyLegalName,
-			"query", "vendorinfo", "vendor", "--vid", fmt.Sprintf("%d", vid),
-		)
+		out, qerr := queryUntilContains(LightClientProxyAddr, addVendor.CompanyLegalName,
+			Vendor(vid)...)
 		require.NoError(t, qerr)
-		assertContains(t, out, fmt.Sprintf("%d", vid), "vendorID")
-		assertContains(t, out, companyLegalName, "companyLegalName")
-		assertContains(t, out, vendorName, "vendorName")
+		assertContains(t, out, strconv.Itoa(vid), "vendorID")
+		assertContains(t, out, addVendor.CompanyLegalName, "companyLegalName")
+		assertContains(t, out, addVendor.VendorName, "vendorName")
 	})
 
 	// 5. An unrelated VID still returns Not Found through the proxy.
 	mustRun(t, "NotFound_OtherVID", func(t *testing.T) {
 		t.Helper()
-		otherVID := randomUint16()
-		out, qerr := queryWithRetry(LightClientProxyAddr,
-			"query", "vendorinfo", "vendor", "--vid", fmt.Sprintf("%d", otherVID),
-		)
-		require.NoError(t, qerr)
-		assertContains(t, out, "Not Found", "vendor query")
+		assertNotFoundOnProxy(t, "vendor query", Vendor(randomUint16())...)
 	})
 
 	// 6. Write attempt through the proxy is rejected.
 	mustRun(t, "Write_Rejected", func(t *testing.T) {
 		t.Helper()
-		out, err := executeCLIWithNode(LightClientProxyAddr,
-			"tx", "vendorinfo", "add-vendor",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--companyLegalName", companyLegalName,
-			"--vendorName", vendorName,
-			"--from", vendorAccount,
-			"--yes", "-o", "json", "--keyring-backend", "test",
-		)
-		assertRejectionContains(t, out, err, writeRejection, "add-vendor")
+		args := append(addVendor.Build(), "--from", vendorAccount)
+		assertWriteRejected(t, "add-vendor", args...)
 	})
 }

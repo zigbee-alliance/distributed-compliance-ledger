@@ -15,7 +15,7 @@
 package lightclientproxy
 
 import (
-	"fmt"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -24,8 +24,6 @@ import (
 
 // TestLightClientProxyModel exercises the dcld model module against the
 // light client proxy.
-//
-//nolint:funlen
 func TestLightClientProxyModel(t *testing.T) {
 	skipIfDisabled(t)
 
@@ -34,38 +32,10 @@ func TestLightClientProxyModel(t *testing.T) {
 	mustRun(t, "NotFound_BeforeAdd", func(t *testing.T) {
 		t.Helper()
 		vid, pid, sv := randomUint16(), randomUint16(), randomUint16()
-
-		out, qerr := queryWithRetry(LightClientProxyAddr,
-			"query", "model", "get-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-		)
-		require.NoError(t, qerr)
-		assertContains(t, out, "Not Found", "get-model")
-
-		out, qerr = queryWithRetry(LightClientProxyAddr,
-			"query", "model", "vendor-models",
-			"--vid", fmt.Sprintf("%d", vid),
-		)
-		require.NoError(t, qerr)
-		assertContains(t, out, "Not Found", "vendor-models")
-
-		out, qerr = queryWithRetry(LightClientProxyAddr,
-			"query", "model", "model-version",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--softwareVersion", fmt.Sprintf("%d", sv),
-		)
-		require.NoError(t, qerr)
-		assertContains(t, out, "Not Found", "model-version")
-
-		out, qerr = queryWithRetry(LightClientProxyAddr,
-			"query", "model", "all-model-versions",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-		)
-		require.NoError(t, qerr)
-		assertContains(t, out, "Not Found", "all-model-versions")
+		assertNotFoundOnProxy(t, "get-model", GetModel(vid, pid)...)
+		assertNotFoundOnProxy(t, "vendor-models", VendorModels(vid)...)
+		assertNotFoundOnProxy(t, "model-version", ModelVersion(vid, pid, sv)...)
+		assertNotFoundOnProxy(t, "all-model-versions", AllModelVersions(vid, pid)...)
 	})
 
 	// 2. The all-models list is rejected by the proxy.
@@ -83,40 +53,20 @@ func TestLightClientProxyModel(t *testing.T) {
 	vendorAccount := "model_vendor_" + utils.RandString()
 	const productLabel = "Device #1"
 
+	addModelArgs := AddModelArgs{VID: vid, PID: pid, ProductLabel: productLabel}
+	addModelVersionArgs := AddModelVersionArgs{
+		VID: vid, PID: pid, SoftwareVersion: sv, SoftwareVersionString: "1",
+	}
+
 	mustRun(t, "Seed_VendorAndModel", func(t *testing.T) {
 		t.Helper()
 		_ = proposeVendorAccount(t, vendorAccount, vid)
 
-		tx, err := utils.ExecuteTx(
-			"tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--deviceTypeID", "1",
-			"--productName", "TestProduct",
-			"--productLabel", productLabel,
-			"--partNumber", "1",
-			"--commissioningCustomFlow", "0",
-			"--enhancedSetupFlowOptions", "0",
-			"--from", vendorAccount,
-			"--node", FullNodeAddr,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, "add-model: %s", tx.RawLog)
+		tx, err := addModelArgs.Send(vendorAccount)
+		requireTxOK(t, tx, err, "add-model")
 
-		tx, err = utils.ExecuteTx(
-			"tx", "model", "add-model-version",
-			"--cdVersionNumber", "1",
-			"--maxApplicableSoftwareVersion", "10",
-			"--minApplicableSoftwareVersion", "1",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--softwareVersion", fmt.Sprintf("%d", sv),
-			"--softwareVersionString", "1",
-			"--from", vendorAccount,
-			"--node", FullNodeAddr,
-		)
-		require.NoError(t, err)
-		require.Equal(t, uint32(0), tx.Code, "add-model-version: %s", tx.RawLog)
+		tx, err = addModelVersionArgs.Send(vendorAccount)
+		requireTxOK(t, tx, err, "add-model-version")
 	})
 
 	// 4. Proxy now serves the new records.
@@ -127,16 +77,12 @@ func TestLightClientProxyModel(t *testing.T) {
 	//    add-model-version which lands in a later block. Poll up to 30s.
 	mustRun(t, "Found_AfterAdd", func(t *testing.T) {
 		t.Helper()
-		out, qerr := queryUntilContains(LightClientProxyAddr, fmt.Sprintf("%d", sv),
-			"query", "model", "model-version",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--softwareVersion", fmt.Sprintf("%d", sv),
-		)
+		out, qerr := queryUntilContains(LightClientProxyAddr, strconv.Itoa(sv),
+			ModelVersion(vid, pid, sv)...)
 		require.NoError(t, qerr)
-		assertContains(t, out, fmt.Sprintf("%d", vid), "model-version.vid")
-		assertContains(t, out, fmt.Sprintf("%d", pid), "model-version.pid")
-		assertContains(t, out, fmt.Sprintf("%d", sv), "model-version.softwareVersion")
+		assertContains(t, out, strconv.Itoa(vid), "model-version.vid")
+		assertContains(t, out, strconv.Itoa(pid), "model-version.pid")
+		assertContains(t, out, strconv.Itoa(sv), "model-version.softwareVersion")
 		// Accept both legacy spaced and master-binary compact JSON forms.
 		// containsAnyLocal handles the same legacy-vs-compact split we see
 		// across the upgrade suite's mixed-binary queries.
@@ -147,101 +93,40 @@ func TestLightClientProxyModel(t *testing.T) {
 			containsAnyLocal(out, `"softwareVersionValid": true`, `"softwareVersionValid":true`),
 			"expected softwareVersionValid=true, got: %s", string(out))
 
-		out, qerr = queryWithRetry(LightClientProxyAddr,
-			"query", "model", "get-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-		)
+		out, qerr = queryWithRetry(LightClientProxyAddr, GetModel(vid, pid)...)
 		require.NoError(t, qerr)
-		assertContains(t, out, fmt.Sprintf("%d", vid), "get-model.vid")
-		assertContains(t, out, fmt.Sprintf("%d", pid), "get-model.pid")
+		assertContains(t, out, strconv.Itoa(vid), "get-model.vid")
+		assertContains(t, out, strconv.Itoa(pid), "get-model.pid")
 		assertContains(t, out, productLabel, "get-model.productLabel")
 
-		out, qerr = queryWithRetry(LightClientProxyAddr,
-			"query", "model", "vendor-models",
-			"--vid", fmt.Sprintf("%d", vid),
-		)
+		out, qerr = queryWithRetry(LightClientProxyAddr, VendorModels(vid)...)
 		require.NoError(t, qerr)
-		assertContains(t, out, fmt.Sprintf("%d", pid), "vendor-models.pid")
+		assertContains(t, out, strconv.Itoa(pid), "vendor-models.pid")
 
-		out, qerr = queryWithRetry(LightClientProxyAddr,
-			"query", "model", "all-model-versions",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-		)
+		out, qerr = queryWithRetry(LightClientProxyAddr, AllModelVersions(vid, pid)...)
 		require.NoError(t, qerr)
-		assertContains(t, out, fmt.Sprintf("%d", vid), "all-model-versions.vid")
-		assertContains(t, out, fmt.Sprintf("%d", sv), "all-model-versions.softwareVersion")
+		assertContains(t, out, strconv.Itoa(vid), "all-model-versions.vid")
+		assertContains(t, out, strconv.Itoa(sv), "all-model-versions.softwareVersion")
 	})
 
 	// 5. Unrelated vid/pid/sv still returns Not Found through the proxy.
 	mustRun(t, "NotFound_OtherKeys", func(t *testing.T) {
 		t.Helper()
 		otherV, otherP, otherSv := randomUint16(), randomUint16(), randomUint16()
-		out, qerr := queryWithRetry(LightClientProxyAddr,
-			"query", "model", "get-model",
-			"--vid", fmt.Sprintf("%d", otherV),
-			"--pid", fmt.Sprintf("%d", otherP),
-		)
-		require.NoError(t, qerr)
-		assertContains(t, out, "Not Found", "get-model (other)")
-
-		out, qerr = queryWithRetry(LightClientProxyAddr,
-			"query", "model", "model-version",
-			"--vid", fmt.Sprintf("%d", otherV),
-			"--pid", fmt.Sprintf("%d", otherP),
-			"--softwareVersion", fmt.Sprintf("%d", otherSv),
-		)
-		require.NoError(t, qerr)
-		assertContains(t, out, "Not Found", "model-version (other)")
-
-		out, qerr = queryWithRetry(LightClientProxyAddr,
-			"query", "model", "vendor-models",
-			"--vid", fmt.Sprintf("%d", otherV),
-		)
-		require.NoError(t, qerr)
-		assertContains(t, out, "Not Found", "vendor-models (other)")
-
-		out, qerr = queryWithRetry(LightClientProxyAddr,
-			"query", "model", "all-model-versions",
-			"--vid", fmt.Sprintf("%d", otherV),
-			"--pid", fmt.Sprintf("%d", otherP),
-		)
-		require.NoError(t, qerr)
-		assertContains(t, out, "Not Found", "all-model-versions (other)")
+		assertNotFoundOnProxy(t, "get-model (other)", GetModel(otherV, otherP)...)
+		assertNotFoundOnProxy(t, "model-version (other)", ModelVersion(otherV, otherP, otherSv)...)
+		assertNotFoundOnProxy(t, "vendor-models (other)", VendorModels(otherV)...)
+		assertNotFoundOnProxy(t, "all-model-versions (other)", AllModelVersions(otherV, otherP)...)
 	})
 
 	// 6. Write attempts through the proxy are rejected. Both add-model and
 	//    add-model-version.
 	mustRun(t, "Write_Rejected", func(t *testing.T) {
 		t.Helper()
-		out, err := executeCLIWithNode(LightClientProxyAddr,
-			"tx", "model", "add-model",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--deviceTypeID", "1",
-			"--productName", "TestProduct",
-			"--productLabel", productLabel,
-			"--partNumber", "1",
-			"--commissioningCustomFlow", "0",
-			"--enhancedSetupFlowOptions", "0",
-			"--from", vendorAccount,
-			"--yes", "-o", "json", "--keyring-backend", "test",
-		)
-		assertRejectionContains(t, out, err, writeRejection, "add-model")
+		args := append(addModelArgs.Build(), "--from", vendorAccount)
+		assertWriteRejected(t, "add-model", args...)
 
-		out, err = executeCLIWithNode(LightClientProxyAddr,
-			"tx", "model", "add-model-version",
-			"--cdVersionNumber", "1",
-			"--maxApplicableSoftwareVersion", "10",
-			"--minApplicableSoftwareVersion", "1",
-			"--vid", fmt.Sprintf("%d", vid),
-			"--pid", fmt.Sprintf("%d", pid),
-			"--softwareVersion", fmt.Sprintf("%d", sv),
-			"--softwareVersionString", "1",
-			"--from", vendorAccount,
-			"--yes", "-o", "json", "--keyring-backend", "test",
-		)
-		assertRejectionContains(t, out, err, writeRejection, "add-model-version")
+		args = append(addModelVersionArgs.Build(), "--from", vendorAccount)
+		assertWriteRejected(t, "add-model-version", args...)
 	})
 }
