@@ -28,9 +28,10 @@ func TestLightClientProxyCompliance(t *testing.T) {
 	skipIfDisabled(t)
 
 	const (
-		certType          = "zigbee"
-		certificationDate = "2020-01-01T00:00:01Z"
-		cdCertificateID   = "12345678910abcdefgh"
+		certType             = "zigbee"
+		certificationDate    = "2020-01-01T00:00:01Z"
+		cdCertificateID      = "12345678910abcdefgh"
+		specificationVersion = 1
 	)
 
 	complianceSingleRecordCmds := []string{
@@ -80,6 +81,7 @@ func TestLightClientProxyCompliance(t *testing.T) {
 		PID:                   pid,
 		SoftwareVersion:       sv,
 		SoftwareVersionString: svs,
+		SpecificationVersion:  specificationVersion,
 		CertificationType:     certType,
 		CertificationDate:     certificationDate,
 		CDCertificateID:       cdCertificateID,
