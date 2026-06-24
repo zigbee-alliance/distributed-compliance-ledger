@@ -131,12 +131,12 @@ func AddValidatorNode(t *testing.T, state *UpgradeTestState, dcldHost string) {
 	// Confirms the pool has no record of this address pre-add.
 	out, _ := ExecuteCLIWithBin(dcldHost,
 		"query", "validator", "node", "--address", address)
-	require.True(t, strings.Contains(string(out), "Not Found"),
+	require.Contains(t, string(out), "Not Found",
 		"validator node should not exist pre-add, got: %s", string(out))
 
 	out, _ = ExecuteCLIWithBin(dcldHost,
 		"query", "validator", "last-power", "--address", address)
-	require.True(t, strings.Contains(string(out), "Not Found"),
+	require.Contains(t, string(out), "Not Found",
 		"validator last-power should not exist pre-add, got: %s", string(out))
 
 	// 10. Get the tendermint validator pubkey from inside the container.

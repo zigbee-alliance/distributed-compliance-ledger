@@ -67,6 +67,7 @@ func TestLightClientProxyCompliance(t *testing.T) {
 
 	// 2. List queries rejected by the proxy.
 	mustRun(t, "ListQueries_Rejected", func(t *testing.T) {
+		t.Helper()
 		assertListQueriesRejected(t, "compliance",
 			"all-compliance-info", "all-certified-models",
 			"all-revoked-models", "all-provisional-models")

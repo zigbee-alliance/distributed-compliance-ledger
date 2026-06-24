@@ -565,7 +565,7 @@ const (
 // Upgrade plan checksums.
 const (
 	UpgradeChecksumV1_5_2 = "sha256:746e4d24969f45f55b7d4a2f143ffe9609cf4f7a60c1472e38ecfe781b2327dc"
-	UpgradeChecksumV1_6_0 = "sha256:2344bd20bd825075192b0d6347363a1fd5e011179adac551771bc8d466e24a51"
+	UpgradeChecksumV1_6_0 = "sha256:63a27d50985947dc79f03421a2f7c6475adb84932b431d26d0b6d0a2e2d539ad"
 )
 
 // Plan names and binary version identifiers.

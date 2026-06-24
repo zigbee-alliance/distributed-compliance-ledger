@@ -76,6 +76,7 @@ func TestLightClientProxyAuth(t *testing.T) {
 
 	// 2. List queries are rejected by the proxy with the expected payload.
 	mustRun(t, "ListQueries_Rejected", func(t *testing.T) {
+		t.Helper()
 		assertListQueriesRejected(t, "auth",
 			"all-accounts", "all-proposed-accounts", "all-proposed-accounts-to-revoke")
 	})

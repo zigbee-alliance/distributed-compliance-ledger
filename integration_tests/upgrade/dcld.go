@@ -16,6 +16,7 @@ package upgrade
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"os/exec"
@@ -29,7 +30,7 @@ import (
 // so we can drive a historical release. Empty newlines are piped on stdin
 // so commands that prompt for a passphrase don't block on EOF.
 func ExecuteCLIWithBin(binPath string, args ...string) ([]byte, error) {
-	cmd := exec.Command(binPath, args...)
+	cmd := exec.CommandContext(context.Background(), binPath, args...)
 	cmd.Stdin = bytes.NewBufferString("\n\n")
 
 	out, err := cmd.CombinedOutput()

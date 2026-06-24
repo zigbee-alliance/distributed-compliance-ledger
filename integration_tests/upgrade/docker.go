@@ -16,6 +16,7 @@ package upgrade
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"os/exec"
 	"strings"
@@ -24,7 +25,7 @@ import (
 // dockerCmd shells out to `docker` with the given args and returns combined
 // stdout/stderr. Errors include the full output to make CI logs actionable.
 func dockerCmd(args ...string) ([]byte, error) {
-	cmd := exec.Command("docker", args...)
+	cmd := exec.CommandContext(context.Background(), "docker", args...)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		return out, fmt.Errorf("docker %s: %w, output: %s",
@@ -77,7 +78,7 @@ func DockerInspect(container string) ([]byte, error) {
 // DockerCleanup stops and removes a container if it exists. Errors are
 // silently swallowed — best-effort cleanup.
 func DockerCleanup(container string) {
-	inspectOut, err := exec.Command("docker", "container", "inspect", container).CombinedOutput()
+	inspectOut, err := exec.CommandContext(context.Background(), "docker", "container", "inspect", container).CombinedOutput()
 	if err != nil {
 		// Container does not exist.
 		return

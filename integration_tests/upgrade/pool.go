@@ -15,6 +15,7 @@
 package upgrade
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -44,7 +45,7 @@ func runPoolHelper(call string) error {
 		call,
 	)
 
-	cmd := exec.Command("bash", "-c", script)
+	cmd := exec.CommandContext(context.Background(), "bash", "-c", script)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Env = append(os.Environ(),

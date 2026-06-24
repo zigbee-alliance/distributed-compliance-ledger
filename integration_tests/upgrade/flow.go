@@ -92,7 +92,7 @@ func (s SoftwareUpgradeStep) Run(t *testing.T) {
 
 	t.Logf("Verify no upgrade is scheduled anymore")
 	out, _ := QueryUpgradePlan(s.DcldNewBin)
-	require.True(t, strings.Contains(string(out), "no upgrade scheduled"),
+	require.Contains(t, string(out), "no upgrade scheduled",
 		"expected 'no upgrade scheduled', got: %s", string(out))
 
 	// `query upgrade applied` is diagnostic only — log the result (or any
@@ -119,7 +119,7 @@ func requireTxSuccess(t *testing.T, tx *utils.TxResult, err error) {
 // checkResponseContains asserts a query response contains substr.
 func checkResponseContains(t *testing.T, out []byte, substr string) {
 	t.Helper()
-	require.True(t, strings.Contains(string(out), substr),
+	require.Contains(t, string(out), substr,
 		"response missing %q, got: %s", substr, string(out))
 }
 

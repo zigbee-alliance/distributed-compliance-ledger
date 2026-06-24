@@ -57,7 +57,7 @@ func EnsureBinary(version string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("download %s: %w", url, err)
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("download %s: HTTP %d", url, resp.StatusCode)
@@ -69,7 +69,7 @@ func EnsureBinary(version string) (string, error) {
 	}
 
 	if _, err := io.Copy(f, resp.Body); err != nil {
-		f.Close()
+		_ = f.Close()
 
 		return "", fmt.Errorf("write %s: %w", path, err)
 	}

@@ -87,6 +87,7 @@ func TestLightClientProxyPKI(t *testing.T) {
 
 	// 2. The proxy rejects bulk list queries.
 	mustRun(t, "ListQueries_Rejected", func(t *testing.T) {
+		t.Helper()
 		assertListQueriesRejected(t, "pki",
 			"all-x509-certs", "all-revoked-x509-certs",
 			"all-proposed-x509-root-certs", "all-proposed-x509-root-certs-to-revoke")

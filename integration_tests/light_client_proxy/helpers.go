@@ -16,6 +16,7 @@ package lightclientproxy
 
 import (
 	"bytes"
+	"context"
 	"crypto/rand"
 	"encoding/binary"
 	"fmt"
@@ -57,7 +58,7 @@ const (
 // runDcld shells out to `dcld <args...>`. Returns combined stdout+stderr.
 // Errors include the full output to make CI logs actionable.
 func runDcld(args ...string) ([]byte, error) {
-	cmd := exec.Command("dcld", args...)
+	cmd := exec.CommandContext(context.Background(), "dcld", args...)
 	// Some `keys add` paths prompt for a BIP39 passphrase; feeding two
 	// newlines unblocks them. Same idiom the upgrade package uses.
 	cmd.Stdin = bytes.NewBufferString("\n\n")
