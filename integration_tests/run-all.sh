@@ -103,10 +103,7 @@ make image &>${DETAILED_OUTPUT_TARGET}
 
 cleanup_pool
 
-# Cli tests — Go-only since the migration completed. One pool per package,
-# coverage merged via collect_cover. The deleted bash suite at
-# integration_tests/cli/*.sh was proven redundant by CI coverage diff
-# (Go coverage was a strict superset of bash coverage).
+# Cli tests
 if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
   CLI_GO_TEST_PACKAGES=$(find integration_tests/cli -mindepth 1 -maxdepth 1 -type d -not -name utils | sort)
 

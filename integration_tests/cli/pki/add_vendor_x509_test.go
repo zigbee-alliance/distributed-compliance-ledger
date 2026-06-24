@@ -36,7 +36,35 @@ const (
 // VID-scoped root's VID) — needs the VID-scoped root_cert_with_vid + the
 // FFF2-scoped intermediate_cert_with_vid_2; that root is owned by
 // TestPKIRevocationPoints (which runs later), so the 440 case is ported there
-// (RejectAddChildVidNotEqualRootVid) to avoid a duplicate-root conflict.
+// (AddChildVidNotEqualRootVid_Fails) to avoid a duplicate-root conflict.
+//
+// Two further add-x509-cert cases from the shell could not be hosted on the
+// gsr4 chain this test owns, because they require roots/fixtures that other
+// tests already own on the single shared ledger (this test runs first, so
+// re-proposing those roots here would make the owning test's propose fail with
+// 501 "certificate already exists"):
+//
+//   - code 4 (a wrong-VID Vendor adds a *second* certificate that shares the
+//     subject/SKID of an already-added intermediate): the handler only reaches
+//     the EnsureVidMatches(existingOwner, signer) code-4 path
+//     (msg_server_add_x_509_cert.go:71) when a cert with the same subject/SKID
+//     but a *distinct* serial already exists. The only such pair is
+//     intermediate_with_same_subject_and_skid_1/2, which chain to
+//     root_with_same_subject_and_skid (owned by TestPKICombineCerts). The gsr4
+//     chain has a single intermediate, so re-adding it hits the earlier
+//     issuer+serial guard (code 501) instead — it cannot reach the code-4 path.
+//     This add-path code-4 case is therefore not portable into this file; note
+//     that remove_x509_certs_test.go:85-87 already covers the analogous
+//     *remove*-path code-4 on that same fixture set.
+//
+//   - success: a matching-VID Vendor adds the numeric-VID PAI (FFF2=65522,
+//     pai_cert_numeric_vid, serial 4428370313154203676) and all-x509-certs
+//     shows it with vid=65522. That PAI is issued by "Matter Test PAA"
+//     (paa_cert_no_vid), the only root it chains to, which is owned by
+//     TestPKIRevocationPoints; that test also approves paa_cert_no_vid with msg
+//     VID=4701, so even the parent's stored Vid differs from the shell's 65522.
+//     The success/vid-field intent is exercised below on the gsr4 intermediate
+//     instead (whose subject carries no Matter VID, so the stored Vid is 0).
 func TestPKIAddVendorX509Certificates(t *testing.T) {
 	jack := testconstants.JackAccount
 	alice := testconstants.AliceAccount
@@ -100,6 +128,12 @@ func TestPKIAddVendorX509Certificates(t *testing.T) {
 		require.Equal(t, addVendorIntermCertSubjectKeyID, cert.SubjectKeyId)
 		require.NotEmpty(t, cert.Certs)
 		require.False(t, cert.Certs[0].IsRoot)
+		// The stored Vid is the Matter VID parsed from the child's subject
+		// (msg_server_add_x_509_cert.go sets it from GetVidFromSubject). The gsr4
+		// intermediate carries no Matter VID, so it is 0 — this mirrors the shell's
+		// "vid field is present and correct" check; the numeric-VID (65522) variant
+		// is not portable here (see the file header).
+		require.Equal(t, int32(0), cert.Certs[0].Vid)
 
 		// The intermediate now appears in all-x509-certs (matched by serial).
 		serial := cert.Certs[0].SerialNumber

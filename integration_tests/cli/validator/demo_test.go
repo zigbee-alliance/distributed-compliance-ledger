@@ -177,6 +177,13 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 		require.Equal(t, validatorAddress, disabled.Address)
 		require.False(t, disabled.DisabledByNodeAdmin)
 
+		// The validator is jailed once the trustee-vote disable reaches quorum
+		// (validator-demo.sh:543-553 asserts "jailed": true).
+		v, err := GetNode(validatorAddress)
+		require.NoError(t, err)
+		require.NotNil(t, v)
+		require.True(t, v.Jailed)
+
 		// Node admin (validatorOwner) re-enables the validator
 		txResult, err = EnableNode(validatorOwner)
 		cliputils.RequireTxOK(t, txResult, err)
@@ -185,6 +192,12 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 		disabled, err = GetDisabledNode(validatorAddress)
 		require.NoError(t, err)
 		require.Nil(t, disabled)
+
+		// And unjailed again after re-enable (handler calls Unjail).
+		v, err = GetNode(validatorAddress)
+		require.NoError(t, err)
+		require.NotNil(t, v)
+		require.False(t, v.Jailed)
 	})
 
 	t.Run("NodeAdminSelfDisableAndReEnable", func(t *testing.T) {
@@ -221,6 +234,44 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 		require.NoError(t, err)
 		require.NotNil(t, v)
 		require.False(t, v.Jailed)
+	})
+
+	t.Run("CannotAddNewValidatorWhileOwningDisabledOne", func(t *testing.T) {
+		// validator-demo.sh:296-303 / 386-393: a node admin that already owns a
+		// (disabled) validator cannot add a brand-new one. The CreateValidator
+		// handler rejects the signer with ErrValidatorOwnerExists as soon as it
+		// already owns a validator, independent of disabled state — so we exercise
+		// it against the reused validator while it is disabled, matching the
+		// scenario in the shell script.
+		//
+		// NOTE: the shell script supplied the pubkey of a freshly provisioned node
+		// (tendermint show-validator). We cannot spin up a new node here, so we
+		// pass a syntactically valid but unused ed25519 consensus pubkey: the tx is
+		// rejected on the owner-exists check before the pubkey is ever registered,
+		// so no real node is required.
+		newPubKey := `{"@type":"/cosmos.crypto.ed25519.PubKey","key":"1e+1/jHGaJi0b2zgCN46eelKCYpKiuTgPN18mL3fzx8="}`
+
+		// Node admin self-disables its validator.
+		txResult, err := DisableNode(validatorOwner)
+		cliputils.RequireTxOK(t, txResult, err)
+
+		disabled, err := GetDisabledNode(validatorAddress)
+		require.NoError(t, err)
+		require.NotNil(t, disabled)
+		require.True(t, disabled.DisabledByNodeAdmin)
+
+		// Adding a new validator from the same node admin is rejected because it
+		// already owns a validator.
+		txBad, errBad := AddNode(newPubKey, "new-node-demo", validatorOwner)
+		cliputils.RequireTxFailContains(t, txBad, errBad, "validator already exist for this operator address")
+
+		// Re-enable to leave the validator in a clean state.
+		txResult, err = EnableNode(validatorOwner)
+		cliputils.RequireTxOK(t, txResult, err)
+
+		disabled, err = GetDisabledNode(validatorAddress)
+		require.NoError(t, err)
+		require.Nil(t, disabled)
 	})
 
 	t.Run("ProposeApproveRejectRejectFailsSecondTime", func(t *testing.T) {
@@ -304,6 +355,16 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 		require.NotNil(t, v)
 		require.False(t, v.Jailed)
 	})
+
+	// OUT OF SCOPE: validator-demo.sh:823-833 revoked the node-admin account that
+	// owned a freshly provisioned node, then asserted that enable-node from that
+	// (now key-less) account fails with "key not found". That flow is infeasible
+	// here: this test reuses an existing localnet validator owned by a genesis
+	// account (anna/jack/alice/bob — see resolveFirstValidator). Revoking a
+	// genesis trustee/node-admin account would corrupt the trustee-quorum math and
+	// the validator owner for every other CLI test sharing this live chain, and we
+	// deliberately do not provision a new node + its own disposable node-admin
+	// account (no new pubkey/moniker/cosmovisor). So this negative case is omitted.
 
 	t.Run("RePropose_AfterRejected_StartsFresh", func(t *testing.T) {
 		// Alice proposes again — should succeed even though it was previously rejected

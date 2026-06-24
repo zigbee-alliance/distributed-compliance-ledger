@@ -151,6 +151,7 @@ func TestPKINocCerts(t *testing.T) {
 		require.NoError(t, err)
 		require.NotNil(t, cert)
 		require.True(t, containsCertSubjectSerial(cert.Certs, nocRootCert2Subject, nocRootCert2SerialNumber))
+		require.Equal(t, float32(1), cert.Tq)
 
 		// Query all NOC root certs — all three certs from both VIDs.
 		allRoots, err := GetAllNocRootCerts()
@@ -159,17 +160,23 @@ func TestPKINocCerts(t *testing.T) {
 		require.True(t, containsNocRootCertSerial(allRoots, nocRootCert2SerialNumber))
 		require.True(t, containsNocRootCertSerial(allRoots, nocRootCert3SerialNumber))
 
-		// Query by subject + SKID using noc-x509-cert.
+		// Query by subject + SKID using noc-x509-cert. A NOC root cert carries no approvals.
 		cert, err = GetNocCert("--subject", nocRootCert1Subject, "--subject-key-id", nocRootCert1SubjectKeyID)
 		require.NoError(t, err)
 		require.NotNil(t, cert)
 		require.True(t, containsCertSubjectSerial(cert.Certs, nocRootCert1Subject, nocRootCert1SerialNumber))
+		c1noc := findCertBySerial(cert.Certs, nocRootCert1SerialNumber)
+		require.NotNil(t, c1noc)
+		require.Empty(t, c1noc.Approvals)
 
-		// Query by subject + SKID using generic cert command.
+		// Query by subject + SKID using generic cert command. Approvals must be empty too.
 		gen, err := GetCert(nocRootCert1Subject, nocRootCert1SubjectKeyID)
 		require.NoError(t, err)
 		require.NotNil(t, gen)
 		require.True(t, containsCertSubjectSerial(gen.Certs, nocRootCert1Subject, nocRootCert1SerialNumber))
+		c1gen := findCertBySerial(gen.Certs, nocRootCert1SerialNumber)
+		require.NotNil(t, c1gen)
+		require.Empty(t, c1gen.Approvals)
 
 		// Query by subject alone.
 		subjCerts, err := GetNocSubjectCerts(nocRootCert1Subject)
@@ -190,11 +197,15 @@ func TestPKINocCerts(t *testing.T) {
 		txResult, err := AddNocX509IcaCert(nocCert1Path, vendorAccount)
 		cliputils.RequireTxOK(t, txResult, err)
 
-		// ICA certs by VID — cert1 present.
+		// ICA certs by VID — cert1 present with the expected vid + schemaVersion.
 		icas, err := GetNocX509IcaCerts(nocVid)
 		require.NoError(t, err)
 		require.NotNil(t, icas)
 		require.True(t, containsCertSubjectSerial(icas.Certs, nocCert1Subject, nocCert1SerialNumber))
+		ica1 := findCertBySerial(icas.Certs, nocCert1SerialNumber)
+		require.NotNil(t, ica1)
+		require.Equal(t, int32(nocVid), ica1.Vid)
+		require.Equal(t, uint32(0), ica1.SchemaVersion)
 
 		// Child certs of root1 — cert1 present.
 		children, err := GetChildX509Certs(nocRootCert1Subject, nocRootCert1SubjectKeyID)
@@ -294,12 +305,18 @@ func TestPKINocCerts(t *testing.T) {
 		require.True(t, containsRevokedNocRootCertSerial(revokedRoots, nocRootCert1SerialNumber))
 		require.True(t, containsRevokedNocRootCertSerial(revokedRoots, nocRootCert1CopySerialNumber))
 
-		// Revoked NOC root cert by subject + SKID.
+		// Revoked NOC root list must not carry root2/root3 (only root1 was revoked).
+		require.False(t, containsRevokedNocRootCertSerial(revokedRoots, nocRootCert2SerialNumber))
+		require.False(t, containsRevokedNocRootCertSerial(revokedRoots, nocRootCert3SerialNumber))
+
+		// Revoked NOC root cert by subject + SKID returns only root1's two serials.
 		revokedRoot, err := GetRevokedNocRootCert(nocRootCert1Subject, nocRootCert1SubjectKeyID)
 		require.NoError(t, err)
 		require.NotNil(t, revokedRoot)
 		require.True(t, containsCertSerial(revokedRoot.Certs, nocRootCert1SerialNumber))
 		require.True(t, containsCertSerial(revokedRoot.Certs, nocRootCert1CopySerialNumber))
+		require.False(t, containsCertSerial(revokedRoot.Certs, nocRootCert2SerialNumber))
+		require.False(t, containsCertSerial(revokedRoot.Certs, nocRootCert3SerialNumber))
 
 		// DA revoked certs must NOT contain revoked NOC root certs.
 		daRevoked, err := GetAllRevokedX509Certs()

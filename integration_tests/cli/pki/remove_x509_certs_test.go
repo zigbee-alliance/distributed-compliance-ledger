@@ -51,6 +51,13 @@ func TestPKIRemoveX509Certificates(t *testing.T) {
 		txResult, err := AddX509Cert(removeX509IntermCert1Path, vendorAccount65521)
 		cliputils.RequireTxOK(t, txResult, err)
 
+		// A vendor whose VID does not match the existing same-subject/SKID
+		// intermediate's owner cannot add the second cert sharing that
+		// subject/SKID: EnsureVidMatches rejects it with code 4 (unauthorized).
+		txResult, err = AddX509Cert(removeX509IntermCert2Path, vendorAccount65522)
+		require.NoError(t, err)
+		require.Equal(t, uint32(4), txResult.Code)
+
 		txResult, err = AddX509Cert(removeX509IntermCert2Path, vendorAccount65521)
 		cliputils.RequireTxOK(t, txResult, err)
 
