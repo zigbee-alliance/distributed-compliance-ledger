@@ -28,19 +28,25 @@ import (
 const (
 	pkiVID = 1
 
+	// Cert fixture values are the same encoding the cli/pki package uses —
+	// subjects are PrintableString-encoded (the old UTF8String DER produced
+	// by an earlier openssl pinned different bytes; updates to the cert
+	// files re-encoded everything as PrintableString). SKIDs / serials read
+	// directly from the on-disk PEMs via `openssl x509 -ext
+	// subjectKeyIdentifier` / `-serial`.
 	pkiRootCertPath         = "integration_tests/constants/root_cert"
-	pkiRootCertSubject      = "MDQxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRAwDgYDVQQKDAdyb290LWNh"
-	pkiRootCertSubjectKeyID = "5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB"
-	pkiRootCertSerialNumber = "442314047376310867378175982234956458728610743315"
+	pkiRootCertSubject      = "MDQxCzAJBgNVBAYTAkFVMRMwEQYDVQQIEwpzb21lLXN0YXRlMRAwDgYDVQQKEwdyb290LWNh"
+	pkiRootCertSubjectKeyID = "DF:4E:AF:B0:8C:9C:37:78:1A:E7:53:12:CA:E4:78:6B:48:1E:AF:B0"
+	pkiRootCertSerialNumber = "81311506302208030248766861785118937702312370677"
 
 	pkiIntermediateCertPath         = "integration_tests/constants/intermediate_cert"
-	pkiIntermediateCertSubject      = "MDwxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMRgwFgYDVQQKDA9pbnRlcm1lZGlhdGUtY2E="
-	pkiIntermediateCertSubjectKeyID = "4E:3B:73:F4:70:4D:C2:98:0D:DB:C8:5A:5F:02:3B:BF:86:25:56:2B"
+	pkiIntermediateCertSubject      = "MDwxCzAJBgNVBAYTAkFVMRMwEQYDVQQIEwpzb21lLXN0YXRlMRgwFgYDVQQKEw9pbnRlcm1lZGlhdGUtY2E="
+	pkiIntermediateCertSubjectKeyID = "1B:73:2A:91:34:46:8A:90:2A:87:19:91:E4:BD:8F:69:3A:F9:04:77"
 
 	pkiLeafCertPath         = "integration_tests/constants/leaf_cert"
-	pkiLeafCertSubject      = "MDExCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApzb21lLXN0YXRlMQ0wCwYDVQQKDARsZWFm"
-	pkiLeafCertSubjectKeyID = "30:F4:65:75:14:20:B2:AF:3D:14:71:17:AC:49:90:93:3E:24:A0:1F"
-	pkiLeafCertSerialNumber = "143290473708569835418599774898811724528308722063"
+	pkiLeafCertSubject      = "MDExCzAJBgNVBAYTAkFVMRMwEQYDVQQIEwpzb21lLXN0YXRlMQ0wCwYDVQQKEwRsZWFm"
+	pkiLeafCertSubjectKeyID = "2A:31:8D:39:6E:50:DA:96:DF:95:C5:98:83:68:F0:58:B2:15:B3:3A"
+	pkiLeafCertSerialNumber = "409691117370409054634487600348183880852961428328"
 
 	pkiUnknownCertSubject      = "Tz11bmtub3duLWNhLFNUPXNvbWUtc3RhdGUsQz1BVQ=="
 	pkiUnknownCertSubjectKeyID = "68:99:0E:76:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB"
