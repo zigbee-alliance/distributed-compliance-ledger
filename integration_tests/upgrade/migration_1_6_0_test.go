@@ -179,7 +179,7 @@ func runUpgrade152To160(t *testing.T, state *UpgradeTestState) {
 		tx, err = AddModelVersion(dcldNew, AddModelVersionArgs{VID: VIDFor1_6_0, PID: PID1For1_6_0, SoftwareVersion: SoftwareVersionFor1_6_0, SoftwareVersionString: SoftwareVersionStringFor1_6_0, CDVersionNumber: CDVersionNumberFor1_6_0, MinApplicableSoftwareVersion: MinApplicableSoftwareVersionFor1_6_0, MaxApplicableSoftwareVersion: MaxApplicableSoftwareVersionFor1_6_0, SpecificationVersion: SpecificationVersionFor1_6_0, From: VendorAccountFor1_6_0})
 		requireTxSuccess(t, tx, err)
 
-		tx, err = AddModel(dcldNew, AddModelArgs{VID: VIDFor1_6_0, PID: PID2For1_6_0, DeviceTypeID: DeviceTypeIDFor1_6_0, ProductName: ProductNameFor1_6_0, ProductLabel: ProductLabelFor1_6_0, PartNumber: PartNumberFor1_6_0, From: VendorAccountFor1_6_0})
+		tx, err = AddModel(dcldNew, AddModelArgs{VID: VIDFor1_6_0, PID: PID2For1_6_0, DeviceTypeID: DeviceTypeIDFor1_6_0, ProductName: ProductNameFor1_6_0, ProductLabel: ProductLabelFor1_6_0, PartNumber: PartNumberFor1_6_0, CommissioningCustomFlow: intPtr(CommissioningCustomFlow), From: VendorAccountFor1_6_0})
 		requireTxSuccess(t, tx, err)
 
 		tx, err = AddModelVersion(dcldNew, AddModelVersionArgs{VID: VIDFor1_6_0, PID: PID2For1_6_0, SoftwareVersion: SoftwareVersionFor1_6_0, SoftwareVersionString: SoftwareVersionStringFor1_6_0, CDVersionNumber: CDVersionNumberFor1_6_0, MinApplicableSoftwareVersion: MinApplicableSoftwareVersionFor1_6_0, MaxApplicableSoftwareVersion: MaxApplicableSoftwareVersionFor1_6_0, From: VendorAccountFor1_6_0})
