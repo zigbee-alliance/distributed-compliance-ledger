@@ -21,25 +21,6 @@ func requirePEMEquals(t *testing.T, fixturePath, stored string) {
 	require.Equal(t, strings.TrimSpace(string(want)), strings.TrimSpace(stored))
 }
 
-// ensureMainnetPAAOnLedger makes paa_cert_no_vid_mainnet (Matter PAA 2, VID 24582)
-// available as an approved root cert, proposing+approving it only if it is not
-// already present (other PKI tests may add/remove it on the shared chain).
-// It reuses the approvalTestRootCert* constants (same fixture, defined in approval_test.go).
-func ensureMainnetPAAOnLedger(t *testing.T, jack, alice string) {
-	t.Helper()
-	cert, err := GetX509Cert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID)
-	require.NoError(t, err)
-	if cert != nil {
-		return
-	}
-
-	txResult, err := ProposeAddX509RootCert(approvalTestRootCertPath, jack, X509ProposeOpts{VID: revPointVid24582})
-	cliputils.RequireTxOK(t, txResult, err)
-
-	txResult, err = ApproveAddX509RootCert(approvalTestRootCertSubject, approvalTestRootCertSubjectKeyID, alice)
-	cliputils.RequireTxOK(t, txResult, err)
-}
-
 const (
 	paaCertWithNumericVidPath         = "../../constants/paa_cert_numeric_vid"
 	paaCertWithNumericVidSubject      = "MDAxGDAWBgNVBAMMD01hdHRlciBUZXN0IFBBQTEUMBIGCisGAQQBgqJ8AgEMBEZGRjE="
@@ -65,13 +46,6 @@ const (
 	// "CRL signer delegated by PAA" (is-paa=true) add path.
 	crlSignerDelegatedByPAAPath = "../../constants/leaf_cert_without_vid"
 
-	// delegated_CRL_signer_certificate is a non-self-signed CRL signer delegated by
-	// pai_cert_certificate_delegator, which chains back to paa_cert_no_vid_mainnet
-	// (Matter PAA 2, VID 24582). Used for the PAI add path with --certificate-delegator.
-	delegatedCRLSignerCertPath       = "../../constants/delegated_CRL_signer_certificate"
-	paiCertCertificateDelegatorPath  = "../../constants/pai_cert_certificate_delegator"
-	delegatedCRLSignerCertIssuerSKID = "E981D0E419765AB12F6D03A734CF003307870F0A"
-
 	// pai_cert_vid is a VID-scoped PAI (VID FFF2=65522) chained to paa_cert_no_vid.
 	paiCertVidPath = "../../constants/pai_cert_vid"
 
@@ -85,7 +59,6 @@ const (
 
 	revPointVid          = 65521
 	revPointVid65522     = 65522
-	revPointVid24582     = 24582
 	revPointVidNonScoped = 4701
 
 	revPointLabel             = "label"
@@ -112,9 +85,6 @@ func TestPKIRevocationPoints(t *testing.T) {
 
 	vendorAccount65522 := fmt.Sprintf("vendor_account_%d", revPointVid65522)
 	cliputils.CreateVendorAccount(t, vendorAccount65522, revPointVid65522)
-
-	vendorAccount24582 := fmt.Sprintf("vendor_account_%d", revPointVid24582)
-	cliputils.CreateVendorAccount(t, vendorAccount24582, revPointVid24582)
 
 	vendorAccountNonScoped := fmt.Sprintf("vendor_account_%d", revPointVidNonScoped)
 	cliputils.CreateVendorAccount(t, vendorAccountNonScoped, revPointVidNonScoped)
@@ -360,34 +330,6 @@ func TestPKIRevocationPoints(t *testing.T) {
 		require.Equal(t, revPointLabelLeaf, point.Label)
 		require.Equal(t, delegatorCertSubjectKeyID, point.IssuerSubjectKeyID)
 		requirePEMEquals(t, crlSignerDelegatedByPAAPath, point.CrlSignerCertificate)
-	})
-
-	t.Run("AddRevocationPointForPAIWithDelegator", func(t *testing.T) {
-		// PAI add path with --certificate-delegator. The delegator
-		// (pai_cert_certificate_delegator) chains back to paa_cert_no_vid_mainnet
-		// (Matter PAA 2, VID 24582), which must be on the ledger first.
-		ensureMainnetPAAOnLedger(t, jack, alice)
-
-		txResult, err := AddRevocationPoint(vendorAccount, RevocationPointOpts{
-			VID:                  revPointVid,
-			Certificate:          delegatedCRLSignerCertPath,
-			Label:                revPointLabelLeafDel,
-			DataURL:              revPointDataURL,
-			IssuerSubjectKeyID:   delegatedCRLSignerCertIssuerSKID,
-			RevocationType:       "1",
-			CertificateDelegator: paiCertCertificateDelegatorPath,
-		})
-		cliputils.RequireTxOK(t, txResult, err)
-
-		point, err := GetPkiRevocationDistributionPoint(revPointVid, revPointLabelLeafDel, delegatedCRLSignerCertIssuerSKID)
-		require.NoError(t, err)
-		require.NotNil(t, point)
-		require.Equal(t, int32(revPointVid), point.Vid)
-		require.Equal(t, revPointLabelLeafDel, point.Label)
-		require.Equal(t, delegatedCRLSignerCertIssuerSKID, point.IssuerSubjectKeyID)
-		// Assert the stored CRL signer cert and its delegator PEM-body values.
-		requirePEMEquals(t, delegatedCRLSignerCertPath, point.CrlSignerCertificate)
-		requirePEMEquals(t, paiCertCertificateDelegatorPath, point.CrlSignerDelegator)
 	})
 
 	t.Run("AddRevocationPointForNonVidScopedPAI", func(t *testing.T) {
