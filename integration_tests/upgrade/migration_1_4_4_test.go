@@ -579,12 +579,12 @@ func VerifyNamespacesAndRevoked_1_4_4(t *testing.T, dcldNew string) {
 		checkResponseContains(t, out, NOCICACert2V144SubjectKeyIDFor1_4_4)
 
 		// noc-x509-cert --vid --subject-key-id returns NOC pair #2.
-		out, err = QueryNocX509Certs(dcldNew, NOCRootCert2V144SubjectKeyIDFor1_4_4, VIDFor1_4_4)
+		out, err = QueryNocX509CertByVid(dcldNew, VIDFor1_4_4, NOCRootCert2V144SubjectKeyIDFor1_4_4)
 		require.NoError(t, err)
 		checkResponseContains(t, out, NOCRootCert2V144SubjectFor1_4_4)
 		checkResponseContains(t, out, NOCRootCert2V144SubjectKeyIDFor1_4_4)
 
-		out, err = QueryNocX509Certs(dcldNew, NOCICACert2V144SubjectKeyIDFor1_4_4, VIDFor1_4_4)
+		out, err = QueryNocX509CertByVid(dcldNew, VIDFor1_4_4, NOCICACert2V144SubjectKeyIDFor1_4_4)
 		require.NoError(t, err)
 		checkResponseContains(t, out, NOCICACert2V144SubjectFor1_4_4)
 		checkResponseContains(t, out, NOCICACert2V144SubjectKeyIDFor1_4_4)

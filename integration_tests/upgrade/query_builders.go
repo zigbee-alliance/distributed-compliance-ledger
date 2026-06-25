@@ -271,9 +271,18 @@ func QueryX509Cert(binPath string, subject string, subjectKeyID string) ([]byte,
 	return ExecuteCLIWithBin(binPath, "query", "pki", "x509-cert", "--subject", subject, "--subject-key-id", subjectKeyID)
 }
 
-// QueryNocX509Certs runs `query pki noc-x509-certs`.
+// QueryNocX509Certs runs `query pki noc-x509-certs` (the plural command, as it
+// existed up to v1.4.3). v1.4.4 renamed it to the singular `noc-x509-cert`
+// (see QueryNocX509CertByVid).
 func QueryNocX509Certs(binPath string, subjectKeyID string, vid int) ([]byte, error) {
 	return ExecuteCLIWithBin(binPath, "query", "pki", "noc-x509-certs", "--subject-key-id", subjectKeyID, "--vid", strconv.Itoa(vid))
+}
+
+// QueryNocX509CertByVid runs `query pki noc-x509-cert --vid --subject-key-id`,
+// the v1.4.4+ form of the VID+SKID NOC lookup (v1.4.3 and earlier used the
+// plural noc-x509-certs — see QueryNocX509Certs).
+func QueryNocX509CertByVid(binPath string, vid int, subjectKeyID string) ([]byte, error) {
+	return ExecuteCLIWithBin(binPath, "query", "pki", "noc-x509-cert", "--vid", strconv.Itoa(vid), "--subject-key-id", subjectKeyID)
 }
 
 // QueryRevocationPoint runs `query pki revocation-point`.
