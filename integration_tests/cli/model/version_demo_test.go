@@ -179,7 +179,7 @@ func TestModelVersionDemo(t *testing.T) {
 
 	t.Run("VendorAdminModelVersionLifecycle", func(t *testing.T) {
 		// A VendorAdmin account can add/update/delete model versions for any
-		// vendor (modelversion-demo.sh:185-223).
+		// vendor.
 		vendorAdmin := cliputils.CreateAccount(t, "VendorAdmin")
 		vid3 := rand.Intn(65534) + 1
 		pid3 := rand.Intn(65534) + 1

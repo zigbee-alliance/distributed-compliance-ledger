@@ -253,7 +253,7 @@ func TestUpgradeDemo(t *testing.T) {
 
 	t.Run("ApproveStaleHeightUpgrade_Fails", func(t *testing.T) {
 		// Propose at a near-future height, let the chain advance past it, then
-		// show approving the now-stale plan is rejected (upgrade-demo.sh:234-313).
+		// show approving the now-stale plan is rejected.
 		// Only the proposer's approval is ever recorded, so the threshold is never
 		// reached and nothing is actually scheduled — the chain does not halt.
 		h, err := cliputils.GetHeight()

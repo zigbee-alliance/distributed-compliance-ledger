@@ -92,13 +92,12 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 	require.NoError(t, err)
 
 	// Pick the first known validator to run the test against.
-	// The shell script used a freshly-started container validator; we reuse an existing one.
+	// We reuse an existing localnet validator rather than provisioning a fresh node.
 	validatorOwner, validatorAddress := resolveFirstValidator(t)
 	t.Logf("Using validator owner=%s address=%s", validatorOwner, validatorAddress)
 
 	t.Run("QueryUnknownNode_NotFound", func(t *testing.T) {
-		// A never-added address has neither a node nor a last-power record
-		// (validator-demo.sh:113-119).
+		// A never-added address has neither a node nor a last-power record.
 		name := utils.RandString()
 		require.NoError(t, cliputils.AddKey(name))
 		unknownAddr, err := cliputils.GetAddress(name)
@@ -177,8 +176,7 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 		require.Equal(t, validatorAddress, disabled.Address)
 		require.False(t, disabled.DisabledByNodeAdmin)
 
-		// The validator is jailed once the trustee-vote disable reaches quorum
-		// (validator-demo.sh:543-553 asserts "jailed": true).
+		// The validator is jailed once the trustee-vote disable reaches quorum.
 		v, err := GetNode(validatorAddress)
 		require.NoError(t, err)
 		require.NotNil(t, v)
@@ -201,10 +199,9 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 	})
 
 	t.Run("NodeAdminSelfDisableAndReEnable", func(t *testing.T) {
-		// The node admin (validator owner) disables its own validator
-		// (validator-demo.sh:248-294). Unlike the trustee-voting path, this sets
-		// disabledByNodeAdmin=true with no approvals, and jails the validator
-		// synchronously.
+		// The node admin (validator owner) disables its own validator.
+		// Unlike the trustee-voting path, this sets disabledByNodeAdmin=true
+		// with no approvals, and jails the validator synchronously.
 		txResult, err := DisableNode(validatorOwner)
 		cliputils.RequireTxOK(t, txResult, err)
 
@@ -237,15 +234,14 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 	})
 
 	t.Run("CannotAddNewValidatorWhileOwningDisabledOne", func(t *testing.T) {
-		// validator-demo.sh:296-303 / 386-393: a node admin that already owns a
-		// (disabled) validator cannot add a brand-new one. The CreateValidator
-		// handler rejects the signer with ErrValidatorOwnerExists as soon as it
-		// already owns a validator, independent of disabled state — so we exercise
-		// it against the reused validator while it is disabled, matching the
-		// scenario in the shell script.
+		// A node admin that already owns a (disabled) validator cannot add a
+		// brand-new one. The CreateValidator handler rejects the signer with
+		// ErrValidatorOwnerExists as soon as it already owns a validator,
+		// independent of disabled state — so we exercise it against the reused
+		// validator while it is disabled, matching the original scenario.
 		//
-		// NOTE: the shell script supplied the pubkey of a freshly provisioned node
-		// (tendermint show-validator). We cannot spin up a new node here, so we
+		// NOTE: the original scenario supplied the pubkey of a freshly provisioned
+		// node (tendermint show-validator). We cannot spin up a new node here, so we
 		// pass a syntactically valid but unused ed25519 consensus pubkey: the tx is
 		// rejected on the owner-exists check before the pubkey is ever registered,
 		// so no real node is required.
@@ -356,7 +352,7 @@ func TestValidatorProposeRejectDisable(t *testing.T) {
 		require.False(t, v.Jailed)
 	})
 
-	// OUT OF SCOPE: validator-demo.sh:823-833 revoked the node-admin account that
+	// OUT OF SCOPE: the original suite revoked the node-admin account that
 	// owned a freshly provisioned node, then asserted that enable-node from that
 	// (now key-less) account fails with "key not found". That flow is infeasible
 	// here: this test reuses an existing localnet validator owned by a genesis

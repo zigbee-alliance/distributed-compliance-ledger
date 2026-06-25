@@ -179,7 +179,7 @@ func TestPKIRevocationPoints(t *testing.T) {
 	})
 
 	t.Run("AddChildVidNotEqualRootVid_Fails", func(t *testing.T) {
-		// Port of pki-add-vendor-x509-certificates.sh:79-82 (code 440): adding an
+		// Code 440 case: adding an
 		// intermediate whose VID (65522) differs from its VID-scoped root's VID
 		// (root_cert_with_vid, 65521) is rejected. This lives here because this
 		// test owns root_cert_with_vid on the ledger; the add fails, so no ledger

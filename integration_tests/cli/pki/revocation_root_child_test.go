@@ -22,8 +22,8 @@ import (
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 )
 
-// TestPKIRevokeRootCertWholeSubjectWithChild ports the whole-subject (no serial
-// number) root revocation flow from pki-revocation-with-revoking-child.sh:140-167:
+// TestPKIRevokeRootCertWholeSubjectWithChild exercises the whole-subject (no serial
+// number) root revocation flow:
 //
 //	dcld tx pki propose-revoke-x509-root-cert --subject ... --subject-key-id ... --revoke-child=true
 //	dcld tx pki approve-revoke-x509-root-cert --subject ... --subject-key-id ...

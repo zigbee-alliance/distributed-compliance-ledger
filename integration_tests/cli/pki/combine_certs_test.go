@@ -64,9 +64,9 @@ func TestPKICombineCerts(t *testing.T) {
 		return false
 	}
 
-	// Section 1 of pki-combine-certs.sh, scoped to this test's own subject (the
-	// global all-* lists already hold certs from earlier tests on the shared
-	// ledger, so only per-subject emptiness can be asserted here).
+	// Scoped to this test's own subject (the global all-* lists already hold
+	// certs from earlier tests on the shared ledger, so only per-subject
+	// emptiness can be asserted here).
 	t.Run("QueryBeforeAdd_NotFound", func(t *testing.T) {
 		x509, err := GetX509Cert(subj, skid)
 		require.NoError(t, err)
@@ -123,11 +123,10 @@ func TestPKICombineCerts(t *testing.T) {
 		require.Len(t, cert.Certs, 2)
 	})
 
-	// Section 3 of pki-combine-certs.sh: the query commands dispatch correctly
-	// and the DA (x509) and NOC namespaces are kept separate — a DA certificate
-	// is visible through every x509/global query but invisible through every NOC
-	// query. (The shell exercises this across a DA+NOC+VVSC chain; those chains
-	// are owned by TestPKIDemo / TestPKINocCerts here, so the separation is
+	// The query commands dispatch correctly and the DA (x509) and NOC namespaces
+	// are kept separate — a DA certificate is visible through every x509/global
+	// query but invisible through every NOC query. (The full DA+NOC+VVSC chain
+	// is owned by TestPKIDemo / TestPKINocCerts here, so the separation is
 	// asserted from the DA side using this test's own root.)
 	t.Run("QueryDispatchAndNamespaceSeparation", func(t *testing.T) {
 		// Visible through the DA / global single-cert queries.
