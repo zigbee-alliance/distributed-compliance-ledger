@@ -24,8 +24,7 @@ import (
 // seeds 1.5.1-era state: new vendor (VID=65529), models that exercise the
 // new commissioningModeSecondaryStepsHint field.
 //
-// This is the final Phase 2 step — after it runs the chain is at v1.5.1
-// and Phase 1's 08/09 subtests can take over.
+// After this step the chain is at v1.5.1 and the 1.5.2 / 1.6.0 steps can take over.
 //
 //nolint:funlen
 func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
@@ -57,7 +56,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 			requireFieldEquals(t, out, "vendorID", vid)
 		}
 
-		// 0.12 pid_2 now carries 1.4.4 productLabel/partNumber (set in script 06).
+		// 0.12 pid_2 now carries 1.4.4 productLabel/partNumber (set during the 1.4.4 step).
 		out, err := QueryGetModel(dcldNew, state.VID, state.PID2)
 		require.NoError(t, err)
 		checkResponseContains(t, out, ProductLabelFor1_4_4)
@@ -73,7 +72,7 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 		t.Helper()
 		out, err := QueryAllAccounts(dcldNew)
 		require.NoError(t, err)
-		// Active accounts across all prior scripts.
+		// Active accounts across all prior steps.
 		for _, addr := range []string{
 			state.User2Address, state.User5Address, state.User8Address, state.User11Address,
 		} {
@@ -363,8 +362,8 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 	})
 
 	// ------------------------------------------------------------------
-	// Verify post-upgrade-seeded NEW 1.5.1 data. The Phase 1 subtests
-	// (08/09) rely on this state being present.
+	// Verify post-upgrade-seeded NEW 1.5.1 data. The later 1.5.2 / 1.6.0 steps
+	// rely on this state being present.
 	// ------------------------------------------------------------------
 	MustRun(t, "VerifyNew_1_5_1_Data", func(t *testing.T) {
 		t.Helper()

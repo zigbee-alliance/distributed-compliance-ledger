@@ -103,7 +103,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 			requireFieldEquals(t, out, "vendorID", vid)
 		}
 
-		// 1.5.2 pid_2 has 1.6.0 productLabel/partNumber (set in script 09).
+		// 1.5.2 pid_2 has 1.6.0 productLabel/partNumber (set during the 1.6.0 step).
 		out, err := QueryGetModel(DcldMasterBinaryPath, VIDFor1_5_2, PID2For1_5_2)
 		require.NoError(t, err)
 		checkResponseContains(t, out, ProductLabelFor1_6_0)
@@ -256,7 +256,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 
 			// DA-store subjects must not resolve in the NOC store: the singular
 			// noc-x509-cert query exits non-zero with a "Not Found" body, so the
-			// error is expected here. Mirrors the script's DA-vs-NOC separation.
+			// error is expected here. Mirrors the original DA-vs-NOC separation.
 			nocOut, _ := QueryNocX509Cert(DcldMasterBinaryPath, c.subj, c.kid)
 			checkResponseContains(t, nocOut, "Not Found")
 		}
@@ -275,7 +275,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 		require.NoError(t, err)
 
 		// DA store (all-x509-certs) must exclude NOC-store SKIDs — mirrors the
-		// script's "Get certificates (DA)" separation check.
+		// original "Get certificates (DA)" separation check.
 		out, err = QueryAllX509Certs(DcldMasterBinaryPath)
 		require.NoError(t, err)
 		require.NotContains(t, string(out), NOCRootCert2V144SubjectKeyIDFor1_4_4,
@@ -289,7 +289,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 		require.NoError(t, err)
 
 		// NOC store (all-noc-x509-certs) must exclude DA-store SKIDs — mirrors
-		// the script's "Get certificates (NOC)" separation check.
+		// the original "Get certificates (NOC)" separation check.
 		out, err = QueryAllNocX509Certs(DcldMasterBinaryPath)
 		require.NoError(t, err)
 		require.NotContains(t, string(out), DARootCert1SubjectKeyIDFor1_4_4,
@@ -410,8 +410,8 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 	})
 
 	// Query-back the master-era vendorinfo + compliance just seeded above. This
-	// is the post-seed verification block the bash script runs (originally the
-	// "VENDORINFO" and "COMPLIANCE" sections of script 10); without it a broken
+	// is the post-seed verification block the original suite verified
+	// (VENDORINFO and COMPLIANCE); without it a broken
 	// migration of these stores would pass undetected.
 	MustRun(t, "VerifyMasterComplianceAndVendorInfo", func(t *testing.T) {
 		t.Helper()
@@ -440,7 +440,7 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 	})
 
 	// ------------------------------------------------------------------
-	// Verify post-upgrade data is in place. Phase 4's add-new-node script
+	// Verify post-upgrade data is in place. The add-new-node step
 	// inherits this state.
 	// ------------------------------------------------------------------
 	MustRun(t, "VerifyNew_Master_Data", func(t *testing.T) {
@@ -456,8 +456,8 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 		requireFieldEquals(t, out, "pid", PID1ForMaster)
 		checkResponseContains(t, out, ProductLabelForMaster)
 
-		// Master plan name is recorded in state for script 11 to verify
-		// against (the new observer should eventually report this version).
+		// Master plan name is recorded in state for the add-new-node step to
+		// verify against (the new observer should eventually report this version).
 		state.MasterPlanName = planName
 	})
 }
@@ -465,8 +465,8 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 // VerifyMasterComplianceAndVendorInfo queries back the master-era vendorinfo
 // and compliance state seeded by VendorInfoFor_Master and ComplianceFor_Master,
 // asserting field-level correctness. It reproduces the post-seed VENDORINFO and
-// COMPLIANCE verification blocks of script 10
-// (10-test-upgrade-1.6.0-to-master.sh). The seeding flow certifies pid_1,
+// COMPLIANCE verification blocks of the original master upgrade suite.
+// The seeding flow certifies pid_1,
 // then provisions -> certifies -> revokes pid_2, so pid_2 ends in the revoked
 // state (and is no longer provisional).
 //
@@ -561,7 +561,7 @@ func VerifyMasterComplianceAndVendorInfo(t *testing.T, state *UpgradeTestState) 
 
 	// No master-era provisional record persists (pid_2 ended revoked); assert
 	// the carry-over provisional record (vid/pid_3 from the 0.12 era) is still
-	// present, matching the script's all-provisional-models check.
+	// present, matching the original all-provisional-models check.
 	out, err = QueryAllProvisionalModels(DcldMasterBinaryPath)
 	require.NoError(t, err)
 	requireFieldEquals(t, out, "vid", state.VID)

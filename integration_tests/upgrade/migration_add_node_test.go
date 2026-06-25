@@ -37,7 +37,7 @@ func runAddNewNodeAfterUpgrade(t *testing.T, state *UpgradeTestState) {
 	t.Helper()
 
 	require.NotEmpty(t, state.MasterPlanName,
-		"MasterPlanName must be populated by script 10 first")
+		"MasterPlanName must be populated by the master upgrade step first")
 
 	dcldOld, err := EnsureBinary(DCLDVersionV012)
 	require.NoError(t, err)

@@ -15,17 +15,17 @@
 package upgrade
 
 // UpgradeTestState carries the on-chain identifiers and per-version
-// constants that earlier phases (01-07) put into the chain. Later phases
-// depend on these.
+// constants that earlier subtests (v0.12 through v1.5.1) put into the chain.
+// Later subtests depend on these.
 type UpgradeTestState struct {
-	// Trustees set up by phase 01.
+	// Trustees set up during v0.12 init.
 	Trustee1 string // "jack"   — genesis trustee
 	Trustee2 string // "alice"  — genesis trustee
 	Trustee3 string // "bob"    — genesis trustee
 	Trustee4 string // randomized
 	Trustee5 string // randomized
 
-	// Vendor + model identifiers seeded by phase 01.
+	// Vendor + model identifiers seeded during v0.12 init.
 	VendorAccount   string
 	VID             int
 	PID2            int
@@ -34,54 +34,55 @@ type UpgradeTestState struct {
 	PartNumber      string
 	SoftwareVersion int
 
-	// Vendor account created by phase 03 (v0.12 → v1.2).
+	// Vendor account created during the v0.12 → v1.2 upgrade.
 	VendorAccountFor1_2 string
 
-	// Constants set by phase 05 — referenced by phase 09's ISSUE #593
-	// pre-upgrade block before 09 redefines them later.
+	// 1.4.3-era constants — referenced by the 1.6.0 ISSUE #593 pre-upgrade
+	// block before 1.6.0 redefines them later.
 	VIDFor1_6_0FromScript5              int
 	PID3For1_6_0FromScript5             int
 	SoftwareVersion1For1_6_0FromScript5 int
 	SoftwareVersion2For1_6_0FromScript5 int
 
-	// User accounts created in phase 01 — referenced by later phases'
+	// User accounts created during v0.12 init — referenced by later subtests'
 	// pre-upgrade verifications. Names are randomized; addresses + pubkeys
 	// propagate forward for auth-flow steps that need them.
-	User1Address, User1Pubkey string // revoked by phase 01
-	User2Address, User2Pubkey string // active CertCenter, then propose-revoke in phase 01
-	User3Address, User3Pubkey string // remains proposed at end of phase 01
+	User1Address, User1Pubkey string // revoked during v0.12 init
+	User2Address, User2Pubkey string // active CertCenter, then propose-revoke during v0.12 init
+	User3Address, User3Pubkey string // remains proposed at end of v0.12 init
 
-	// User accounts created in phase 03.
+	// User accounts created during the v1.2 upgrade.
 	User4Address, User4Pubkey string
 	User5Address, User5Pubkey string
 	User6Address, User6Pubkey string
 
-	// User accounts created in phase 05.
+	// User accounts created during the v1.4.3 upgrade.
 	User7Address, User7Pubkey string
 	User8Address, User8Pubkey string
 	User9Address, User9Pubkey string
 
-	// User accounts created in phase 06.
+	// User accounts created during the v1.4.4 upgrade.
 	User10Address, User10Pubkey string
 	User11Address, User11Pubkey string
 	User12Address, User12Pubkey string
 
-	// User accounts created in phase 07.
+	// User accounts created during the v1.5.1 upgrade.
 	User13Address, User13Pubkey string
 	User14Address, User14Pubkey string
 	User15Address, User15Pubkey string
 
-	// Master upgrade plan name = git short HEAD hash, computed when phase
-	// 10 builds the dcld-build-master image. Used by phase 11 to verify
-	// the new observer eventually reports the same version after catch-up.
+	// Master upgrade plan name = git short HEAD hash, computed when the
+	// master-upgrade subtest builds the dcld-build-master image. Used by the
+	// add-new-node subtest to verify the new observer eventually reports the
+	// same version after catch-up.
 	MasterPlanName string
 
-	// Validator-demo node bookkeeping. Set by AddValidatorNode (phase 01)
-	// and re-used by all per-phase disable/enable flows.
+	// Validator-demo node bookkeeping. Set by AddValidatorNode during v0.12
+	// init and re-used by all per-subtest disable/enable flows.
 	ValidatorAccountName string // random name on the validator-demo's keyring
 	ValidatorAddress     string // cosmosvaloper... owner from `query validator node`
 
-	// Constants set by phase 07's post-upgrade block.
+	// Constants set by the v1.5.1 post-upgrade block.
 	VIDFor1_5_1                                 int
 	PID1For1_5_1                                int
 	PID2For1_5_1                                int
@@ -94,19 +95,19 @@ type UpgradeTestState struct {
 }
 
 // DefaultBashState returns the initial state TestUpgradeSequence assumes
-// when phase 01 starts. The producing code (phase 01's runInitV0_12 + its
-// downstream phases) must keep these literal values in lockstep — they're
-// the contract that later phases rely on.
+// when v0.12 init starts. The producing code (runInitV0_12 + its downstream
+// subtests) must keep these literal values in lockstep — they're the
+// contract that later subtests rely on.
 //
-// Trustee4 is empty here; phase 01 randomizes the name and writes it back
+// Trustee4 is empty here; v0.12 init randomizes the name and writes it back
 // into the struct.
 func DefaultBashState() *UpgradeTestState {
 	return &UpgradeTestState{
-		// Phase 01 — initial v0.12 state.
+		// Initial v0.12 state.
 		Trustee1:        "jack",
 		Trustee2:        "alice",
 		Trustee3:        "bob",
-		Trustee4:        "", // randomized — phase 01 sets this
+		Trustee4:        "", // randomized — v0.12 init sets this
 		VendorAccount:   "vendor_account",
 		VID:             1,
 		PID2:            2,
@@ -115,17 +116,17 @@ func DefaultBashState() *UpgradeTestState {
 		PartNumber:      "RCU2205A",
 		SoftwareVersion: 1,
 
-		// Phase 03 — v1.2 vendor account.
+		// v1.2 vendor account.
 		VendorAccountFor1_2: "vendor_account_4701",
 
-		// Phase 05 constants — referenced by phase 09's pre-upgrade block
-		// before 09 redefines them.
+		// 1.4.3-era constants — referenced by the 1.6.0 pre-upgrade block
+		// before 1.6.0 redefines them.
 		VIDFor1_6_0FromScript5:              4701, // = vid_for_1_2
 		PID3For1_6_0FromScript5:             160,
 		SoftwareVersion1For1_6_0FromScript5: 100001,
 		SoftwareVersion2For1_6_0FromScript5: 200002,
 
-		// Phase 07 — v1.5.1-era constants.
+		// v1.5.1-era constants.
 		VIDFor1_5_1:          65529,
 		PID1For1_5_1:         79,
 		PID2For1_5_1:         89,
@@ -138,7 +139,7 @@ func DefaultBashState() *UpgradeTestState {
 	}
 }
 
-// Constants used by phase 02 (v0.12 rollback).
+// Constants used by the v0.12 rollback step.
 const (
 	VIDForRollback                          = 4705
 	PID1ForRollback                         = 11
@@ -171,8 +172,7 @@ const (
 	WrongPlanChecksumV12 = "sha256:3f2b2a98b7572c6598383f7798c6bc16b4e432ae5cfd9dc8e84105c3d53b5026"
 )
 
-// Constants used by the rollback portion of script 04
-// (04-test-upgrade-1.2-rollback.sh).
+// Constants used by the v1.2 rollback step.
 const (
 	VIDFor1_2R2                          = 4703
 	PID1For1_2R2                         = 16
@@ -204,7 +204,7 @@ const (
 	WrongPlanChecksumV143 = "sha256:a007f58d61632af107a09c89b7392eedd05d8127d0df67ace50f318948c62001"
 )
 
-// Constants used by the 1.2 portion of script 03.
+// Constants used by the 1.2 upgrade step.
 const (
 	VIDFor1_2                          = 4701
 	PID1For1_2                         = 11
@@ -241,7 +241,7 @@ const (
 	IssuerSubjectKeyID = "5A880E6C3653D07FB08971A3F473790930E62BDB"
 )
 
-// PKI certs introduced by script 03 (1.2 era).
+// PKI certs introduced in the 1.2 era.
 const (
 	RootCertPathFor1_2         = "integration_tests/constants/google_root_cert_gsr4"
 	RootCertSubjectFor1_2      = "MFAxJDAiBgNVBAsTG0dsb2JhbFNpZ24gRUNDIFJvb3QgQ0EgLSBSNDETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UEAxMKR2xvYmFsU2lnbg=="
@@ -264,7 +264,7 @@ const (
 	IntermediateCertSubjectKeyIDFor1_2 = "A8:88:D9:8A:39:AC:65:D5:82:4B:37:A8:95:6C:65:43:CD:44:01:E0"
 )
 
-// Constants used by the 1.4.3 portion of script 05.
+// Constants used by the 1.4.3 upgrade step.
 const (
 	VIDFor1_4_3                          = 65521
 	PID1For1_4_3                         = 44
@@ -298,8 +298,8 @@ const (
 	BinaryVersionV1_4_3 = "1.4.3"
 )
 
-// ISSUE #593 pre-upgrade ghost-model constants written by script 05's prelude
-// (these are referenced by script 09 later under the "FromScript5" naming).
+// ISSUE #593 pre-upgrade ghost-model constants written by the 1.4.3 prelude
+// (these are referenced by the 1.6.0 step later under the "FromScript5" naming).
 const (
 	DeviceTypeIDForIssue593       = 4321
 	ProductNameForIssue593        = "ProductName13"
@@ -344,7 +344,7 @@ const (
 	DelegatorCertWithVIDSubjectKeyID = "0E8CE8C8B8AA50BC258556B9B19CC2C7D9C52F17"
 )
 
-// Constants used by the 1.4.4 portion of script 06.
+// Constants used by the 1.4.4 upgrade step.
 const (
 	VIDFor1_4_4                          = 65522
 	PID1For1_4_4                         = 77
@@ -414,8 +414,8 @@ const (
 	NOCICACert2V144SubjectKeyIDFor1_4_4 = "0C:DA:15:1E:9B:04:A8:F3:07:BE:FE:71:B7:74:56:14:B3:6E:0D:02"
 )
 
-// Constants used by the 1.5.1 portion of script 07 (the rest are already on
-// UpgradeTestState since Phase 1 anticipated them).
+// Constants used by the 1.5.1 upgrade step (the rest are already on
+// UpgradeTestState since earlier subtests anticipated them).
 const (
 	PID3For1_5_1                                = 97
 	DeviceTypeIDFor1_5_1                        = 4433
@@ -446,8 +446,8 @@ const (
 	BinaryVersionV1_5_1   = "1.5.1"
 )
 
-// Constants used by the 1.5.2 portion of script 08 (defined in 08 itself, not
-// inherited from earlier scripts).
+// Constants used by the 1.5.2 upgrade step (defined here, not inherited from
+// earlier steps).
 const (
 	VIDFor1_5_2                                 = 65519
 	PID1For1_5_2                                = 59
@@ -477,7 +477,7 @@ const (
 	VendorAccountFor1_5_2 = "vendor_account_1_5_2"
 )
 
-// Constants used by the 1.6.0 portion of script 09.
+// Constants used by the 1.6.0 upgrade step.
 const (
 	VIDFor1_6_0                                 = 65520
 	PID1For1_6_0                                = 60
@@ -512,9 +512,8 @@ const (
 	VendorAccountFor1_6_0 = "vendor_account_1_6_0"
 )
 
-// Constants used by the master portion of script 10
-// (10-test-upgrade-1.6.0-to-master.sh). The plan name itself is the master
-// branch's git short hash, computed at runtime.
+// Constants used by the master upgrade step. The plan name itself is the
+// master branch's git short hash, computed at runtime.
 const (
 	VIDForMaster                          = 62529
 	PID1ForMaster                         = 89
@@ -555,7 +554,7 @@ const (
 	DcldMasterBinaryPath = BinariesDir + "/dcld_master"
 )
 
-// Constants used by script 11 (add new node after upgrade).
+// Constants used by the add-new-node-after-upgrade step.
 const (
 	NewObserverNodeP2PPort    = 26570
 	NewObserverNodeClientPort = 26571

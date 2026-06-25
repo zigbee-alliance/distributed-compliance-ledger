@@ -27,7 +27,7 @@ import (
 // vendor (VID=65521), DA + PAA root certificates, NOC cert add/remove,
 // and a revocation point.
 //
-// Assumes the chain is currently running v1.2 with state from scripts 01-03.
+// Assumes the chain is currently running v1.2 with state from the preceding steps.
 //
 //nolint:funlen
 func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
@@ -40,9 +40,9 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 
 	// ------------------------------------------------------------------
 	// ISSUE #593 pre-upgrade: add a model with 2 versions, delete one. The
-	// resulting ghost-version state is what script 09 verifies cleanup of.
-	// State fields populated here come from DefaultBashState() (script-05
-	// hardcodes vid_for_1_2 = 4701 and pid_3_for_1_6_0 = 160).
+	// resulting ghost-version state is what the 1.6.0 step verifies cleanup of.
+	// State fields populated here come from DefaultBashState() (vid_for_1_2 = 4701
+	// and pid_3_for_1_6_0 = 160).
 	// ------------------------------------------------------------------
 	MustRun(t, "Issue593PreUpgradeGhostSetup", func(t *testing.T) {
 		t.Helper()
@@ -84,7 +84,7 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 	// ------------------------------------------------------------------
 	MustRun(t, "VerifyPreservedVendorInfoAndModels", func(t *testing.T) {
 		t.Helper()
-		// VendorInfo for the v0.12 vendor — script 03 updated companyPreferredName/landing URL to 1.2 values.
+		// VendorInfo for the v0.12 vendor — the 1.2 step updated companyPreferredName/landing URL to 1.2 values.
 		out, err := QueryVendor(dcldNew, state.VID)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vendorID", state.VID)
@@ -106,7 +106,7 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 		checkResponseContains(t, out, companyLegalNameV012)
 		checkResponseContains(t, out, CompanyLegalNameFor1_2)
 
-		// Carry-over models from 01/03.
+		// Carry-over models from the v0.12 and v1.2 steps.
 		for _, pair := range [][2]int{
 			{state.VID, pid1V012}, {state.VID, state.PID2},
 			{VIDFor1_2, PID1For1_2}, {VIDFor1_2, PID2For1_2},
@@ -152,13 +152,13 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 		t.Helper()
 		out, err := QueryAllAccounts(dcldNew)
 		require.NoError(t, err)
-		checkResponseContains(t, out, state.User2Address) // active from 01
-		checkResponseContains(t, out, state.User5Address) // active from 03
+		checkResponseContains(t, out, state.User2Address) // active from the v0.12 step
+		checkResponseContains(t, out, state.User5Address) // active from the v1.2 step
 
 		out, err = QueryAllProposedAccounts(dcldNew)
 		require.NoError(t, err)
-		checkResponseContains(t, out, state.User3Address) // proposed from 01
-		checkResponseContains(t, out, state.User6Address) // proposed from 03
+		checkResponseContains(t, out, state.User3Address) // proposed from the v0.12 step
+		checkResponseContains(t, out, state.User6Address) // proposed from the v1.2 step
 
 		out, err = QueryAllProposedAccountsToRevoke(dcldNew)
 		require.NoError(t, err)
@@ -167,8 +167,8 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 
 		out, err = QueryAllRevokedAccounts(dcldNew)
 		require.NoError(t, err)
-		checkResponseContains(t, out, state.User1Address) // revoked in 01
-		checkResponseContains(t, out, state.User4Address) // revoked in 03
+		checkResponseContains(t, out, state.User1Address) // revoked in the v0.12 step
+		checkResponseContains(t, out, state.User4Address) // revoked in the v1.2 step
 
 		// Single-record account variants.
 		for _, addr := range []string{state.User5Address, state.User2Address} {
@@ -542,12 +542,12 @@ func runUpgrade12To143(t *testing.T, state *UpgradeTestState) {
 		revokeUserAccount(t, dcldNew, state.Trustee1, nil, state.User8Address, false)
 	})
 
-	// Validator disable/enable (lines 1007-1056) — depends on the Docker
-	// validator-demo container that script 01's `add_validator_node` would
-	// create. Stubbed alongside the other validator work.
+	// Validator disable/enable — depends on the Docker validator-demo container
+	// that the validator-node setup would create. Stubbed alongside the other
+	// validator work.
 	MustRun(t, "ValidatorDisableEnableFlow", func(t *testing.T) {
 		t.Helper()
-		// Scripts 05+ approve disable-node with 3 trustees (trustee_4 active).
+		// disable-node is approved with 3 trustees (trustee_4 active).
 		RunValidatorDisableEnableFlow(t, state, dcldNew,
 			[]string{state.Trustee2, state.Trustee3, state.Trustee4})
 	})

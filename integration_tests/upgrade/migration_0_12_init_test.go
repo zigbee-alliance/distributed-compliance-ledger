@@ -20,8 +20,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Local constants used by script 01's body. Kept as constants rather than
-// state fields because nothing in scripts 03-09 references them by name.
+// Local constants used by the initial v0.12.0 seed. Kept as constants rather
+// than state fields because nothing in later upgrade steps references them by name.
 const (
 	pid1V012               = 1
 	pid3V012               = 3
@@ -43,7 +43,7 @@ const (
 	certificationCenterAccount = "certification_center_account_"
 )
 
-// Cert subjects / key IDs used by the PKI portion of script 01.
+// Cert subjects / key IDs used by the PKI portion of the initial v0.12.0 seed.
 const (
 	rootCertPath         = "integration_tests/constants/root_cert"
 	rootCertSubject      = "MDQxCzAJBgNVBAYTAkFVMRMwEQYDVQQIEwpzb21lLXN0YXRlMRAwDgYDVQQKEwdyb290LWNh"
@@ -69,7 +69,7 @@ const (
 //
 // On entry: a clean localnet must already be running with dcld v0.12.0. On
 // exit, the chain has the full menu of seeded state subsequent upgrade
-// phases depend on.
+// steps depend on.
 //
 //nolint:funlen
 func runInitV0_12(t *testing.T, state *UpgradeTestState) {
@@ -279,7 +279,7 @@ func runInitV0_12(t *testing.T, state *UpgradeTestState) {
 
 	MustRun(t, "ValidatorDisableEnableFlow", func(t *testing.T) {
 		t.Helper()
-		// Script 01 uses 2 trustee approvals for disable-node (trustee_4 not
+		// Uses 2 trustee approvals for disable-node (trustee_4 not
 		// yet active in pool quorum until later sections).
 		RunValidatorDisableEnableFlow(t, state, dcld,
 			[]string{state.Trustee2, state.Trustee3})

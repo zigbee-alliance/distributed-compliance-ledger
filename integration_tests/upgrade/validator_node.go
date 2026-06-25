@@ -237,7 +237,7 @@ func ApproveDisableValidatorNode(dcldBin, validatorAddress, from string) (*utils
 }
 
 // HasProposedDisable reports whether a pending propose-disable-node proposal
-// exists for the validator address. Used to decide whether the per-script
+// exists for the validator address. Used to decide whether the per-step
 // flow should propose first or jump straight to approvals.
 func HasProposedDisable(dcldBin, validatorAddress string) bool {
 	out, err := ExecuteCLIWithBin(dcldBin,
@@ -251,20 +251,21 @@ func HasProposedDisable(dcldBin, validatorAddress string) bool {
 	return !strings.Contains(string(out), "Not Found")
 }
 
-// RunValidatorDisableEnableFlow is the per-phase docker exec
-// disable/enable sequence used by phases 01/03/05/06/07/10. Step order:
+// RunValidatorDisableEnableFlow is the per-step docker exec
+// disable/enable sequence used across the upgrade steps. Step order:
 //
 //	docker exec disable-node           (from validator-demo's account)
 //	docker exec enable-node
 //	host propose-disable-node          (from trustee_1) — only if no pending
-//	                                    proposal exists; phase 02+ inherits
-//	                                    the previous phase's tail-propose.
+//	                                    proposal exists; later steps inherit
+//	                                    the previous step's tail-propose.
 //	host approve-disable-node × N      (from trustee_2 … trustee_(approvers+1))
 //	docker exec enable-node
 //	host propose-disable-node          (from trustee_1) — leaves it proposed
 //
 // `approvers` controls how many trustees approve before the final
-// re-enable. Scripts 01/02/04 use 2; scripts 03+ use 3 (also Trustee4).
+// re-enable. The initial and rollback steps use 2 trustees; the 1.2 step
+// onward uses 3 (also Trustee4).
 func RunValidatorDisableEnableFlow(t *testing.T, state *UpgradeTestState, dcldBin string, approvers []string) {
 	t.Helper()
 
@@ -290,8 +291,8 @@ func RunValidatorDisableEnableFlow(t *testing.T, state *UpgradeTestState, dcldBi
 	require.NoError(t, EnableValidatorNode(state.ValidatorAccountName), "enable-node")
 
 	// Propose only if no pending proposal carried over from the previous
-	// script's tail-propose. Bash scripts 02+ skip this initial propose for
-	// the same reason — the proposal is already on-chain.
+	// step's tail-propose. The rollback steps onward skip this initial propose
+	// for the same reason — the proposal is already on-chain.
 	if !HasProposedDisable(dcldBin, state.ValidatorAddress) {
 		tx, err := ProposeDisableValidatorNode(dcldBin, state.ValidatorAddress, state.Trustee1)
 		require.NoError(t, err)
@@ -299,7 +300,7 @@ func RunValidatorDisableEnableFlow(t *testing.T, state *UpgradeTestState, dcldBi
 	}
 
 	// Approvals. If a trustee has already approved this inherited proposal in
-	// a previous script (because the disable threshold wasn't met and the
+	// a previous step (because the disable threshold wasn't met and the
 	// proposal carried forward open), the chain returns "already has approval
 	// from=...". Treat that as a no-op — the approval is already counted, so
 	// re-approving isn't needed and isn't an error in spirit.
@@ -316,13 +317,13 @@ func RunValidatorDisableEnableFlow(t *testing.T, state *UpgradeTestState, dcldBi
 	require.NoError(t, EnableValidatorNode(state.ValidatorAccountName), "final enable-node")
 
 	// Closing propose-disable-node (leaves the node in proposed-disable state
-	// for the next script to inherit). Skip when a proposal is still open —
+	// for the next step to inherit). Skip when a proposal is still open —
 	// the approval count above may not have reached the disable threshold
 	// (e.g. 5-trustee genesis where ceil(2/3*5)=4 approvals are required but
-	// the per-script flow only contributes 3 incl. the implicit proposer
+	// the per-step flow only contributes 3 incl. the implicit proposer
 	// vote), or the inherited proposal carried over the v0.12→v1.2 binary
 	// boundary with a different approvals shape. In either case there's
-	// already an open proposal for the next script to inherit, so a redundant
+	// already an open proposal for the next step to inherit, so a redundant
 	// propose would fail with "Disable proposal already exists".
 	if !HasProposedDisable(dcldBin, state.ValidatorAddress) {
 		tx, err := ProposeDisableValidatorNode(dcldBin, state.ValidatorAddress, state.Trustee1)

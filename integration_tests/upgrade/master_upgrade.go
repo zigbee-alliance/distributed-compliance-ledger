@@ -46,10 +46,10 @@ func BuildMasterImage() error {
 // itself will surface a clearer error if anything is actually broken.
 //
 // The binary for the last entry in HistoricalVersions (currently 1.6.0)
-// is preserved because phase 10 still calls `propose-upgrade` through it.
+// is preserved because the master upgrade step still calls `propose-upgrade` through it.
 func freeDiskBeforeMasterBuild() {
 	if len(HistoricalVersions) > 1 {
-		// Older dcld binaries (~80-100 MB each) — already used by phases 01-09.
+		// Older dcld binaries (~80-100 MB each) — already used by the earlier upgrade steps.
 		for _, v := range HistoricalVersions[:len(HistoricalVersions)-1] {
 			_ = os.Remove(BinaryPath(v))
 		}

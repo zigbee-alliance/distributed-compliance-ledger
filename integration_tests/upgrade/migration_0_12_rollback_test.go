@@ -72,10 +72,8 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 		}
 	})
 
-	// ------------------------------------------------------------------
-	// Verify carry-over data from script 01 is intact — post-rollback
+	// Verify carry-over data from the initial seed is intact — post-rollback
 	// readback of vendor info, models, compliance, pki, accounts, validator.
-	// ------------------------------------------------------------------
 	MustRun(t, "VerifyPreservedV0_12", func(t *testing.T) {
 		t.Helper()
 		// ----- VendorInfo -----
@@ -239,9 +237,7 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 		}
 	})
 
-	// ------------------------------------------------------------------
 	// Post-upgrade seed (chain is still v0.12 since rollback no-op'd).
-	// ------------------------------------------------------------------
 	MustRun(t, "CreateRollbackAccounts", func(t *testing.T) {
 		t.Helper()
 		approvers := []string{state.Trustee2, state.Trustee3, state.Trustee4}
@@ -349,7 +345,7 @@ func runRollback012(t *testing.T, state *UpgradeTestState) {
 
 	MustRun(t, "ValidatorDisableEnableFlow", func(t *testing.T) {
 		t.Helper()
-		// Script 02 mirrors script 01's 2-trustee disable approval pattern.
+		// Mirrors the initial 2-trustee disable approval pattern.
 		RunValidatorDisableEnableFlow(t, state, dcld,
 			[]string{state.Trustee2, state.Trustee3})
 	})

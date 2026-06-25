@@ -70,7 +70,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 			requireFieldEquals(t, out, "pid", pair[1])
 		}
 
-		// 0.12 pid_2 now has 1.4.3 productLabel + partNumber (set in script 05).
+		// 0.12 pid_2 now has 1.4.3 productLabel + partNumber (set during the 1.4.3 step).
 		out, err := QueryModelVersion(dcldNew, state.VID, state.PID2, state.SoftwareVersion)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "minApplicableSoftwareVersion", MinApplicableSoftwareVersionFor1_4_3)
@@ -81,7 +81,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		t.Helper()
 		out, err := QueryAllAccounts(dcldNew)
 		require.NoError(t, err)
-		// Active accounts from all prior scripts.
+		// Active accounts from all prior steps.
 		checkResponseContains(t, out, state.User2Address)
 		checkResponseContains(t, out, state.User5Address)
 		checkResponseContains(t, out, state.User8Address)
@@ -303,7 +303,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		checkResponseContains(t, out, IntermediateCertWithVIDSubjectFor1_4_3)
 
 		// NOC-side listings (added in 1.4.3 NOC flow); since NOC certs were
-		// added then removed at the script 05 tail, these should be empty —
+		// added then removed at the tail of the 1.4.3 step, these should be empty —
 		// run for coverage and check for absence of removed SKIDs.
 		out, err = QueryAllNocX509Certs(dcldNew)
 		require.NoError(t, err)
@@ -511,7 +511,7 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		revokeUserAccount(t, dcldNew, state.Trustee1, nil, state.User11Address, false)
 	})
 
-	// Validator disable/enable (lines 1189-1238) — Docker-dependent, stubbed.
+	// Validator disable/enable — Docker-dependent, stubbed.
 	MustRun(t, "ValidatorDisableEnableFlow", func(t *testing.T) {
 		t.Helper()
 		RunValidatorDisableEnableFlow(t, state, dcldNew,
@@ -543,16 +543,14 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 
 	// Query-back the NOC/DA certs seeded above to verify the 1.4.4 migration
 	// handler + the new revoke-noc-x509-* flow routed them into the correct
-	// stores (the headline 1.4.4 feature). Mirrors the post-seed PKI block of
-	// the original bash script 06.
+	// stores (the headline 1.4.4 feature).
 	VerifyNamespacesAndRevoked_1_4_4(t, dcldNew)
 }
 
-// VerifyNamespacesAndRevoked_1_4_4 reproduces the post-seed PKI query-back
-// assertions of the original bash script 06: it confirms the active NOC pair #2
-// is queryable in the NOC store, that DA/NOC/global namespaces stay separated,
-// and that the revoked DA pair #1 and revoked NOC pair #1 land in their
-// respective revoked stores.
+// VerifyNamespacesAndRevoked_1_4_4 runs the post-seed PKI query-back
+// assertions: it confirms the active NOC pair #2 is queryable in the NOC store,
+// that DA/NOC/global namespaces stay separated, and that the revoked DA pair #1
+// and revoked NOC pair #1 land in their respective revoked stores.
 //
 //nolint:funlen
 func VerifyNamespacesAndRevoked_1_4_4(t *testing.T, dcldNew string) {
@@ -597,7 +595,7 @@ func VerifyNamespacesAndRevoked_1_4_4(t *testing.T, dcldNew string) {
 	//
 	// NOTE: the DA certs all share one SKID (A8:A0:...), so DA presence is
 	// asserted by the distinct DA subjects; NOC presence/absence uses the
-	// distinct NOC SKIDs/subjects — same distinguishing values the bash used.
+	// distinct NOC SKIDs/subjects.
 	// ------------------------------------------------------------------
 	MustRun(t, "VerifyNamespaceSeparation_1_4_4", func(t *testing.T) {
 		t.Helper()

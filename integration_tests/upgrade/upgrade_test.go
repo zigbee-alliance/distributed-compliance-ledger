@@ -64,21 +64,7 @@ func chdirToRepoRoot() error {
 }
 
 // TestUpgradeSequence is the single entry point for the upgrade migration.
-// Subtests run in order against a shared chain. Each phase adds more.
-//
-// Phase ordering (see plan in the migration PR):
-//
-//	Phase 2 — 01_InitializeV0_12      (this commit)
-//	Phase 2 — 03_UpgradeTo1_2         (next)
-//	Phase 2 — 05_UpgradeTo1_4_3       (next)
-//	Phase 2 — 06_UpgradeTo1_4_4       (next)
-//	Phase 2 — 07_UpgradeTo1_5_1       (next)
-//	Phase 1 — 08_UpgradeTo1_5_2       (done — runs once phase 2 completes)
-//	Phase 1 — 09_UpgradeTo1_6_0       (done — runs once phase 2 completes)
-//	Phase 3 — 02_RollbackV0_12        (alt path)
-//	Phase 3 — 04_RollbackV1_2         (alt path)
-//	Phase 4 — 10_UpgradeTo_Master
-//	Phase 4 — 11_AddNewNodeAfterUpgrade
+// Subtests run in order against a shared chain. Each subtest adds more.
 func TestUpgradeSequence(t *testing.T) {
 	if !shouldRunUpgradeFlow() {
 		t.Skipf("set %s=1 to run the full upgrade migration sequence", runUpgradeFlowEnv)
@@ -98,52 +84,59 @@ func TestUpgradeSequence(t *testing.T) {
 		_ = CleanupPool()
 	})
 
+	// The validator-demo container is created in the first subtest and reused
+	// through every later subtest, so it must be torn down at the end of the
+	// whole sequence (not when that subtest returns).
+	t.Cleanup(func() {
+		DockerCleanup(ValidatorDemoContainerName)
+	})
+
 	state := DefaultBashState()
 
-	// Phase 2: script 01 — initialize the chain at v0.12.0 and seed all
-	// downstream prerequisite state.
+	// Initialize the chain at v0.12.0 and seed all downstream prerequisite
+	// state.
 	MustRun(t, "01_InitializeV0_12", func(t *testing.T) {
 		t.Helper()
 		runInitV0_12(t, state)
 	})
 
-	// Phase 3: script 02 — wrong-plan-name upgrade attempt that no-ops.
+	// Wrong-plan-name upgrade attempt that no-ops.
 	MustRun(t, "02_RollbackV0_12", func(t *testing.T) {
 		t.Helper()
 		runRollback012(t, state)
 	})
 
-	// Phase 2: script 03 — upgrade 0.12 → 1.2, plus 1.2-era seed data.
+	// Upgrade 0.12 → 1.2, plus 1.2-era seed data.
 	MustRun(t, "03_UpgradeTo1_2", func(t *testing.T) {
 		t.Helper()
 		runUpgrade012To12(t, state)
 	})
 
-	// Phase 3: script 04 — second wrong-plan-name attempt against v1.2.
+	// Second wrong-plan-name attempt against v1.2.
 	MustRun(t, "04_RollbackV1_2", func(t *testing.T) {
 		t.Helper()
 		runRollback12(t, state)
 	})
 
-	// Phase 2: script 05 — upgrade 1.2 → 1.4.3, plus NOC certs + revocation points.
+	// Upgrade 1.2 → 1.4.3, plus NOC certs + revocation points.
 	MustRun(t, "05_UpgradeTo1_4_3", func(t *testing.T) {
 		t.Helper()
 		runUpgrade12To143(t, state)
 	})
 
-	// Phase 2: script 06 — upgrade 1.4.3 → 1.4.4, plus DA certs + NOC revoke.
+	// Upgrade 1.4.3 → 1.4.4, plus DA certs + NOC revoke.
 	MustRun(t, "06_UpgradeTo1_4_4", func(t *testing.T) {
 		t.Helper()
 		runUpgrade143To144(t, state)
 	})
 
-	// Phase 2: script 07 — upgrade 1.4.4 → 1.5.1. Final Phase 2 script.
+	// Upgrade 1.4.4 → 1.5.1.
 	MustRun(t, "07_UpgradeTo1_5_1", func(t *testing.T) {
 		t.Helper()
 		runUpgrade144To151(t, state)
 	})
 
-	// Phase 1: scripts 08 and 09 — chain state from 07 enables these to run.
+	// Chain state from the 1.5.1 step enables the 1.5.2 and 1.6.0 upgrades.
 	MustRun(t, "08_UpgradeTo1_5_2", func(t *testing.T) {
 		t.Helper()
 		runUpgrade151To152(t, state)
@@ -154,14 +147,14 @@ func TestUpgradeSequence(t *testing.T) {
 		runUpgrade152To160(t, state)
 	})
 
-	// Phase 4: script 10 — build master image, upgrade 1.6 → master.
+	// Build master image, upgrade 1.6 → master.
 	MustRun(t, "10_UpgradeTo_Master", func(t *testing.T) {
 		t.Helper()
 		runUpgrade160ToMaster(t, state)
 	})
 
-	// Phase 4: script 11 — fresh observer joins post-upgrade chain and
-	// catches up through cosmovisor.
+	// Fresh observer joins post-upgrade chain and catches up through
+	// cosmovisor.
 	MustRun(t, "11_AddNewNodeAfterUpgrade", func(t *testing.T) {
 		t.Helper()
 		runAddNewNodeAfterUpgrade(t, state)

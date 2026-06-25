@@ -67,10 +67,8 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 		}
 	})
 
-	// ------------------------------------------------------------------
-	// Verify carry-over from scripts 01/02/03 is intact — post-rollback
-	// readback of vendor info, models, compliance, pki, accounts, validator.
-	// ------------------------------------------------------------------
+	// Verify carry-over from the v0.12 and v1.2 seeded state is intact —
+	// post-rollback readback of vendor info, models, compliance, pki, accounts, validator.
 	MustRun(t, "VerifyPreservedAfterRollback1_2", func(t *testing.T) {
 		t.Helper()
 		// ----- VendorInfo -----
@@ -233,7 +231,7 @@ func runRollback12(t *testing.T, state *UpgradeTestState) {
 		checkResponseContains(t, out, CDCertificateIDFor1_2)
 
 		// ----- PKI single-record + listings -----
-		// 1.2-era root_cert: test_root_cert assigned vid in script 03's assign-vid.
+		// 1.2-era root_cert: test_root_cert assigned vid during the v1.2 seed's assign-vid.
 		out, err = QueryX509Cert(dcld, TestRootCertSubjectFor1_2, TestRootCertSubjectKeyIDFor1_2)
 		require.NoError(t, err)
 		checkResponseContains(t, out, TestRootCertSubjectFor1_2)

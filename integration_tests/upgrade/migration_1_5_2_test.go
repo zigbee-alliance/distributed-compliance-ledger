@@ -26,7 +26,7 @@ import (
 // specificationVersion fields, and a pid_3 add+delete to seed ghost state.
 //
 // Assumes the chain is currently running v1.5.1 with state seeded by
-// phases 01-07.
+// the preceding steps.
 //
 //nolint:funlen
 func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
@@ -199,7 +199,7 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 		txResult, err = DeleteModel(dcldNew, VIDFor1_5_2, PID3For1_5_2, VendorAccountFor1_5_2)
 		requireTxSuccess(t, txResult, err)
 
-		// Update the carry-over model from script 1.
+		// Update the carry-over model from the initial seed.
 		txResult, err = UpdateModel(dcldNew, UpdateModelArgs{
 			VID: state.VID, PID: state.PID2,
 			ProductName: state.ProductName, ProductLabel: ProductLabelFor1_5_2, PartNumber: PartNumberFor1_5_2,

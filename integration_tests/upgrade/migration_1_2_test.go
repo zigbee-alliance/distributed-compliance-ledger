@@ -25,7 +25,7 @@ import (
 // compliance certifications, PKI root cert ladder, revocation point, and
 // three new users.
 //
-// Assumes the chain is currently running v0.12.0 with state from script 01.
+// Assumes the chain is currently running v0.12.0 with the initial seeded state.
 //
 //nolint:funlen
 func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
@@ -42,7 +42,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 		Checksum:         UpgradeChecksumV1_2,
 		DcldOldBin:       dcldOld,
 		DcldNewBin:       dcldNew,
-		// Script 03 uses only 3 trustees for approval (genesis quorum on
+		// Uses only 3 trustees for approval (genesis quorum on
 		// v0.12.0): trustee_1 proposes, trustee_2 and trustee_3 approve.
 		Trustees: []string{state.Trustee1, state.Trustee2, state.Trustee3},
 	}
@@ -60,8 +60,8 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 		checkResponseContains(t, out, companyLegalNameV012)
 		checkResponseContains(t, out, vendorNameV012)
 
-		// `all-vendors` carries both vid (script 01) and vid_for_rollback
-		// (added by script 02), along with their respective legal/vendor names.
+		// `all-vendors` carries both vid (initial seed) and vid_for_rollback
+		// (added by the no-op rollback step), along with their respective legal/vendor names.
 		out, err = QueryAllVendors(dcldNew)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vendorID", state.VID)
@@ -84,7 +84,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", state.VID)
 		requireFieldEquals(t, out, "pid", state.PID2)
-		// Script 02 (rollback) updated pid_2's productLabel/partNumber with
+		// The no-op rollback step updated pid_2's productLabel/partNumber with
 		// the `_for_rollback` values; assert those overwrites are intact.
 		checkResponseContains(t, out, ProductLabelForRollback)
 		checkResponseContains(t, out, PartNumberForRollback)
@@ -161,7 +161,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 	})
 
 	// Bulk `all-*` listings and pki / validator readbacks. Gap-filling
-	// assertions that confirm script 01's state survives the v0.12 → v1.2
+	// assertions that confirm the initial seeded state survives the v0.12 → v1.2
 	// upgrade in aggregate form.
 	MustRun(t, "VerifyPreservedListings_1_2", func(t *testing.T) {
 		t.Helper()
@@ -329,8 +329,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 	MustRun(t, "PKIFor1_2", func(t *testing.T) {
 		t.Helper()
 		// 1.2-era root_cert ladder: propose + (approve + reject + approve x3 by
-		// remaining trustees). Uses 4 trustees + trustee_5 (added in script 02)
-		// for the 5-trustee quorum.
+		// remaining trustees). Uses 4 trustees + trustee_5 for the 5-trustee quorum.
 		tx, err := ProposeAddX509RootCert(dcldNew, RootCertPathFor1_2, RootCertRandomVIDFor1_2, state.Trustee1)
 		requireTxSuccess(t, tx, err)
 
@@ -421,7 +420,7 @@ func runUpgrade012To12(t *testing.T, state *UpgradeTestState) {
 
 	MustRun(t, "ValidatorDisableEnableFlow", func(t *testing.T) {
 		t.Helper()
-		// Script 03 uses 2 trustee approvals (the per-script pattern from 01).
+		// Uses 2 trustee approvals (the same pattern as the initial seed).
 		RunValidatorDisableEnableFlow(t, state, dcldNew,
 			[]string{state.Trustee2, state.Trustee3})
 	})
