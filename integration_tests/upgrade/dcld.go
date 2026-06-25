@@ -1,0 +1,181 @@
+// Copyright 2020 DSR Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package upgrade
+
+import (
+	"bytes"
+	"context"
+	"encoding/json"
+	"fmt"
+	"os/exec"
+	"strings"
+
+	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+)
+
+// ExecuteCLIWithBin runs an arbitrary dcld command using the binary at
+// binPath. Same shape as utils.ExecuteCLI but targets a specific binary
+// so we can drive a historical release. Empty newlines are piped on stdin
+// so commands that prompt for a passphrase don't block on EOF.
+func ExecuteCLIWithBin(binPath string, args ...string) ([]byte, error) {
+	cmd := exec.CommandContext(context.Background(), binPath, args...)
+	cmd.Stdin = bytes.NewBufferString("\n\n")
+
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return out, fmt.Errorf("%s %s: %w, output: %s",
+			binPath, strings.Join(args, " "), err, string(out))
+	}
+
+	strOut := string(out)
+	if idx := strings.Index(strOut, "{"); idx > 0 {
+		strOut = strOut[idx:]
+	}
+
+	return []byte(strOut), nil
+}
+
+// currentBroadcastMode is the broadcast-mode value most recently written to
+// the shared `~/.dcl/config/client.toml` by ConfigureClient. All dcld
+// binaries (regardless of version) read the same client.toml when invoked
+// without --home, so the last ConfigureClient call dictates how every
+// subsequent tx is broadcast — including invocations against older binaries
+// like dcld_v1.2.2 after v1.4+ has flipped the global config to sync.
+//
+// ExecuteTxWithBin reads this var to decide whether to poll for on-chain
+// confirmation. Inferring from binPath version is wrong because an old
+// binary running with config=sync still broadcasts in sync mode.
+var currentBroadcastMode = "block"
+
+// ExecuteTxWithBin runs a `dcld tx ...` command via the binary at binPath.
+//
+// Broadcast mode is taken from the binary's persistent client config (set by
+// ConfigureClient at EnsureBinary time), so we don't pass --broadcast-mode
+// here. Cosmos-SDK retired `block` mode in dcld v1.4.3+, which is why the
+// config is `block` for v0.12.x/v1.2.x and `sync` for v1.4+. In sync mode the
+// broadcast only returns ante-handler/mempool acceptance, so we poll
+// `query tx` for the in-block result — keeping the contract that the
+// returned TxResult.Code reflects on-chain execution in either mode.
+func ExecuteTxWithBin(binPath string, args ...string) (*utils.TxResult, error) {
+	args = append(args,
+		"--yes",
+		"-o", "json",
+		"--keyring-backend", "test",
+	)
+
+	out, err := ExecuteCLIWithBin(binPath, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	var result utils.TxResult
+	if jerr := json.Unmarshal(out, &result); jerr != nil {
+		return nil, fmt.Errorf("parse tx result: %w, output: %s", jerr, string(out))
+	}
+
+	// Poll for on-chain confirmation when the shared client config is sync.
+	// Block mode already returns the confirmed result, so polling is skipped.
+	if currentBroadcastMode == "sync" && result.Code == 0 && result.TxHash != "" {
+		confirmedOut, awaitErr := utils.AwaitTxConfirmation(result.TxHash)
+		if awaitErr != nil {
+			return &result, awaitErr
+		}
+
+		var confirmed utils.TxResult
+		if jerr := json.Unmarshal(confirmedOut, &confirmed); jerr == nil {
+			return &confirmed, nil
+		}
+	}
+
+	return &result, nil
+}
+
+// ConfigureClient applies the standard dcld client config (chain-id, node,
+// keyring-backend, broadcast-mode) for the binary at binPath.
+//
+// Broadcast-mode follows the binary version: `block` for v0.12.x/v1.2.x,
+// `sync` for v1.4+ (cosmos-sdk removed `block` mode in v1.4.3). All dcld
+// binaries share the same `~/.dcl/config/client.toml`, so the last call
+// wins — in practice the upgrade test downloads binaries in version
+// order, and the v1.4+ download flips the global config to sync.
+// v0.12/v1.2 binaries used after that point still work because they also
+// support sync mode.
+//
+// `currentBroadcastMode` is updated so ExecuteTxWithBin knows whether to
+// poll for on-chain confirmation regardless of which binary is invoked.
+func ConfigureClient(binPath string) error {
+	mode := "block"
+	if binPathSupportsOnlySyncMode(binPath) {
+		mode = "sync"
+	}
+
+	cfgs := [][]string{
+		{"config", "chain-id", ChainID},
+		{"config", "output", "json"},
+		{"config", "node", Node0Conn},
+		{"config", "keyring-backend", "test"},
+		{"config", "broadcast-mode", mode},
+	}
+	for _, args := range cfgs {
+		if _, err := ExecuteCLIWithBin(binPath, args...); err != nil {
+			return err
+		}
+	}
+
+	currentBroadcastMode = mode
+
+	return nil
+}
+
+// SetBroadcastMode sets only the client broadcast-mode for the binary at
+// binPath. EnsureBinary already applies the version-appropriate mode via
+// ConfigureClient, so this is just an explicit re-affirmation where a test
+// wants to be sure (e.g. v1.4+ binaries reject `block`).
+func SetBroadcastMode(binPath, mode string) error {
+	_, err := ExecuteCLIWithBin(binPath, "config", "broadcast-mode", mode)
+
+	return err
+}
+
+// binPathSupportsOnlySyncMode reports whether the dcld binary at binPath
+// rejects `--broadcast-mode block`. Cosmos-SDK retired block mode in the
+// release that ships with dcld v1.4.3; v0.12.x and v1.2.x still accept it.
+// The path format from EnsureBinary is `<dir>/dcld_v<major>.<minor>.<patch>`.
+func binPathSupportsOnlySyncMode(binPath string) bool {
+	idx := strings.LastIndex(binPath, "_v")
+	if idx < 0 {
+		return false
+	}
+	version := binPath[idx+2:]
+	parts := strings.SplitN(version, ".", 3)
+	if len(parts) < 2 {
+		return false
+	}
+
+	var major, minor int
+	if _, err := fmt.Sscanf(parts[0], "%d", &major); err != nil {
+		return false
+	}
+	if _, err := fmt.Sscanf(parts[1], "%d", &minor); err != nil {
+		return false
+	}
+
+	// >= v1.4 — covers 1.4.3, 1.4.4, 1.5.x, 1.6.x, plus the master build.
+	if major > 1 {
+		return true
+	}
+
+	return major == 1 && minor >= 4
+}

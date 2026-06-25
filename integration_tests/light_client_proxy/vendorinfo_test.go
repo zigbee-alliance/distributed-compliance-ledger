@@ -1,0 +1,91 @@
+// Copyright 2020 DSR Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package lightclientproxy
+
+import (
+	"strconv"
+	"testing"
+
+	"github.com/stretchr/testify/require"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+)
+
+// TestLightClientProxyVendorInfo exercises the dcld vendorinfo module
+// against the light client proxy.
+func TestLightClientProxyVendorInfo(t *testing.T) {
+	skipIfDisabled(t)
+
+	// 1. Random VID — no vendorinfo record exists yet. Proxy returns Not Found.
+	mustRun(t, "NotFound_BeforeAdd", func(t *testing.T) {
+		t.Helper()
+		assertNotFoundOnProxy(t, "vendor query", Vendor(randomUint16())...)
+	})
+
+	// 2. Listing all vendors via the proxy is rejected.
+	mustRun(t, "ListQuery_Rejected", func(t *testing.T) {
+		t.Helper()
+		out, qerr := queryWithRetry(LightClientProxyAddr,
+			"query", "vendorinfo", "all-vendors",
+		)
+		assertRejectionContains(t, out, qerr, listQueryRejection, "all-vendors")
+	})
+
+	// 3. Propose Vendor account against the full node, then add the vendor
+	//    info record.
+	//
+	//    Account name is suffixed with utils.RandString() so all five tests
+	//    in this package can share one init_pool without colliding on the
+	//    shared keyring (see run-all.sh).
+	vid := randomUint16()
+	vendorAccount := "vinfo_vendor_" + utils.RandString()
+	addVendor := AddVendorArgs{
+		VID:              vid,
+		CompanyLegalName: "XYZ IOT Devices Inc",
+		VendorName:       "XYZ Devices",
+	}
+
+	mustRun(t, "AddVendorInfo", func(t *testing.T) {
+		t.Helper()
+		_ = proposeVendorAccount(t, vendorAccount, vid)
+
+		tx, err := addVendor.Send(vendorAccount)
+		requireTxOK(t, tx, err, "add-vendor")
+	})
+
+	// 4. Now the proxy serves the new record. Poll through the proxy's
+	//    post-write sync window (up to 30s).
+	mustRun(t, "Found_AfterAdd", func(t *testing.T) {
+		t.Helper()
+		out, qerr := queryUntilContains(LightClientProxyAddr, addVendor.CompanyLegalName,
+			Vendor(vid)...)
+		require.NoError(t, qerr)
+		assertContains(t, out, strconv.Itoa(vid), "vendorID")
+		assertContains(t, out, addVendor.CompanyLegalName, "companyLegalName")
+		assertContains(t, out, addVendor.VendorName, "vendorName")
+	})
+
+	// 5. An unrelated VID still returns Not Found through the proxy.
+	mustRun(t, "NotFound_OtherVID", func(t *testing.T) {
+		t.Helper()
+		assertNotFoundOnProxy(t, "vendor query", Vendor(randomUint16())...)
+	})
+
+	// 6. Write attempt through the proxy is rejected.
+	mustRun(t, "Write_Rejected", func(t *testing.T) {
+		t.Helper()
+		args := append(addVendor.Build(), "--from", vendorAccount)
+		assertWriteRejected(t, "add-vendor", args...)
+	})
+}

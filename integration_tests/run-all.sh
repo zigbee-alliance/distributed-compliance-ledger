@@ -130,29 +130,16 @@ fi
 
 # Upgrade procedure tests
 if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
-  UPGRADE_SHELL_TEST="./integration_tests/upgrade/test-upgrade.sh"
-
   log "*****************************************************************************************"
-  log "Running ./integration_tests/prepare-dcld-versions.sh"
+  log "Running go test ./integration_tests/upgrade/..."
   log "*****************************************************************************************"
 
-  bash ./integration_tests/prepare-dcld-versions.sh
-
-  init_pool yes localnet_init_latest_stable_release "/tmp/dcld_bins/dcld_v0.12.0"
-
-  log "*****************************************************************************************"
-  log "Running $UPGRADE_SHELL_TEST"
-  log "*****************************************************************************************"
-
-  if bash "$UPGRADE_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-    log "$UPGRADE_SHELL_TEST finished successfully"
+  if RUN_UPGRADE_GO=1 go test -count=1 -timeout 90m -v ./integration_tests/upgrade/... &>${DETAILED_OUTPUT_TARGET}; then
+    log "upgrade finished successfully"
   else
-    log "$UPGRADE_SHELL_TEST failed"
+    log "upgrade failed"
     exit 1
   fi
-
-  collect_cover
-  cleanup_pool
 fi
 
 # Deploy tests
@@ -166,27 +153,27 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "deploy" ]]; then
   fi
 fi
 
-# Light Client Proxy Cli shell tests
+# Light Client Proxy tests.
 if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "light" ]]; then
-  CLI_SHELL_TESTS=$(find integration_tests/light_client_proxy -type f -name '*.sh' -not -name "common.sh")
+  init_pool
 
-  for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
-    init_pool
+  log "*****************************************************************************************"
+  log "Running go test ./integration_tests/light_client_proxy/..."
+  log "*****************************************************************************************"
 
-    log "*****************************************************************************************"
-    log "Running $CLI_SHELL_TEST"
-    log "*****************************************************************************************"
+  dcld config keyring-backend test
 
-    if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-      log "$CLI_SHELL_TEST finished successfully"
-    else
-      log "$CLI_SHELL_TEST failed"
-      exit 1
-    fi
+  # -failfast halts the whole `go test` invocation at the first failing
+  # subtest.
+  if RUN_LIGHT_GO=1 go test -count=1 -failfast -timeout 30m -v ./integration_tests/light_client_proxy/... &>${DETAILED_OUTPUT_TARGET}; then
+    log "light_client_proxy finished successfully"
+  else
+    log "light_client_proxy failed"
+    exit 1
+  fi
 
-    collect_cover
-    cleanup_pool
-  done
+  collect_cover
+  cleanup_pool
 fi
 
 # Go rest tests
