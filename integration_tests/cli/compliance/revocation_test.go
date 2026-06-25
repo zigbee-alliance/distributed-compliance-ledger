@@ -3,10 +3,12 @@ package compliance
 import (
 	"fmt"
 	"math/rand"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 	compliancetypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
@@ -321,93 +323,92 @@ func TestComplianceRevocation(t *testing.T) {
 		require.NoError(t, err)
 		require.False(t, containsProvisionalModel(allProvisional, int32(vid), int32(pid)))
 	})
-}
 
-// TestComplianceSchemaV1Negative covers the schema-v1 (#730) ValidateBasic
-// negative cases for certify/provision/revoke. Each fails client-side before
-// broadcast (surfaced via the returned error), so the typed helpers express the
-// invalid input directly: SchemaVersion "0" exercises the "must be equal 1"
-// guard and SpecVersionZero the required-field guard.
-func TestComplianceSchemaV1Negative(t *testing.T) {
-	vid := rand.Intn(65534) + 1
-	vendorAccount := fmt.Sprintf("vendor_account_%d", vid)
-	cliputils.CreateVendorAccount(t, vendorAccount, vid)
+	// ── Compliance schema-v1 (#730) ValidateBasic negative cases. These fail
+	// client-side before broadcast, so the error is surfaced via the returned
+	// error (and/or RawLog), not an on-chain code. ──
 
-	zbAccount := cliputils.CreateAccount(t, "CertificationCenter")
+	t.Run("ComplianceSchemaV1NegativeCases", func(t *testing.T) {
+		vidV1 := rand.Intn(65534) + 1
+		vendorV1 := fmt.Sprintf("vendor_account_%d", vidV1)
+		cliputils.CreateVendorAccount(t, vendorV1, vidV1)
+		pidV1 := rand.Intn(65534) + 1
+		svV1 := rand.Intn(65534) + 1
+		svsV1 := fmt.Sprintf("%d", rand.Intn(65534)+1)
+		cliputils.CreateModelAndVersion(t, vidV1, pidV1, svV1, svsV1, vendorV1)
 
-	pid := rand.Intn(65534) + 1
-	sv := rand.Intn(65534) + 1
-	svs := fmt.Sprintf("%d", rand.Intn(65534)+1)
-	cliputils.CreateModelAndVersion(t, vid, pid, sv, svs, vendorAccount)
+		// rejectTx runs a tx that is expected to be rejected and asserts the
+		// failure message appears in the error and/or the tx RawLog.
+		rejectTx := func(want string, args ...string) {
+			t.Helper()
+			txResult, err := utils.ExecuteTx(args...)
+			require.Contains(t, cliputils.TxFailureText(txResult, err), want, "args: %v", args)
+		}
 
-	certType := "zigbee"
-	date := "2020-02-02T02:20:20Z"
-	cdCertID := "12345678910abcdefgh" // exactly 19 chars
+		shortCdID := "1234567890abcdefgh"  // 18 chars
+		longCdID := "12345678910abcdefghX" // 20 chars
+		longCertType := "this_certification_type_is_way_too_long"
 
-	t.Run("CertifyModel_SchemaVersion0_Fails", func(t *testing.T) {
-		txResult, err := CertifyModel(CertifyModelOpts{
-			VID: vid, PID: pid, SoftwareVersion: sv, SoftwareVersionString: svs,
-			CertificationType: certType, CertificationDate: date,
-			CDCertificateID: cdCertID, SchemaVersion: "0", From: zbAccount,
-		})
-		cliputils.RequireTxFailContains(t, txResult, err, "SchemaVersion must be equal 1")
-	})
+		// certify-model with schemaVersion=0 must be 1 (#730).
+		rejectTx("SchemaVersion must be equal 1",
+			"tx", "compliance", "certify-model",
+			"--vid", strconv.Itoa(vidV1), "--pid", strconv.Itoa(pidV1),
+			"--softwareVersion", strconv.Itoa(svV1), "--softwareVersionString", svsV1,
+			"--certificationType", certType, "--specificationVersion", "1",
+			"--certificationDate", certificationDate, "--cdCertificateId", cdCertID,
+			"--cdVersionNumber", "1", "--schemaVersion", "0", "--from", zbAccount)
 
-	t.Run("CertifyModel_ShortCdCertificateId_Fails", func(t *testing.T) {
-		txResult, err := CertifyModel(CertifyModelOpts{
-			VID: vid, PID: pid, SoftwareVersion: sv, SoftwareVersionString: svs,
-			CertificationType: certType, CertificationDate: date,
-			CDCertificateID: "1234567890abcdefgh", // 18 chars
-			From:            zbAccount,
-		})
-		cliputils.RequireTxFailContains(t, txResult, err, "minimum length for CDCertificateId allowed is 19")
-	})
+		// certify-model with cdCertificateId shorter than 19 chars.
+		rejectTx("minimum length for CDCertificateId allowed is 19",
+			"tx", "compliance", "certify-model",
+			"--vid", strconv.Itoa(vidV1), "--pid", strconv.Itoa(pidV1),
+			"--softwareVersion", strconv.Itoa(svV1), "--softwareVersionString", svsV1,
+			"--certificationType", certType, "--specificationVersion", "1",
+			"--certificationDate", certificationDate, "--cdCertificateId", shortCdID,
+			"--cdVersionNumber", "1", "--schemaVersion", "1", "--from", zbAccount)
 
-	t.Run("CertifyModel_LongCdCertificateId_Fails", func(t *testing.T) {
-		txResult, err := CertifyModel(CertifyModelOpts{
-			VID: vid, PID: pid, SoftwareVersion: sv, SoftwareVersionString: svs,
-			CertificationType: certType, CertificationDate: date,
-			CDCertificateID: "12345678910abcdefghX", // 20 chars
-			From:            zbAccount,
-		})
-		cliputils.RequireTxFailContains(t, txResult, err, "maximum length for CDCertificateId allowed is 19")
-	})
+		// certify-model with cdCertificateId longer than 19 chars.
+		rejectTx("maximum length for CDCertificateId allowed is 19",
+			"tx", "compliance", "certify-model",
+			"--vid", strconv.Itoa(vidV1), "--pid", strconv.Itoa(pidV1),
+			"--softwareVersion", strconv.Itoa(svV1), "--softwareVersionString", svsV1,
+			"--certificationType", certType, "--specificationVersion", "1",
+			"--certificationDate", certificationDate, "--cdCertificateId", longCdID,
+			"--cdVersionNumber", "1", "--schemaVersion", "1", "--from", zbAccount)
 
-	t.Run("ProvisionModel_SchemaVersion0_Fails", func(t *testing.T) {
-		txResult, err := ProvisionModel(ProvisionModelOpts{
-			VID: vid, PID: pid, SoftwareVersion: sv, SoftwareVersionString: svs,
-			CertificationType: certType, ProvisionalDate: date,
-			CDCertificateID: cdCertID, SchemaVersion: "0", From: zbAccount,
-		})
-		cliputils.RequireTxFailContains(t, txResult, err, "SchemaVersion must be equal 1")
-	})
+		// provision-model with schemaVersion=0.
+		rejectTx("SchemaVersion must be equal 1",
+			"tx", "compliance", "provision-model",
+			"--vid", strconv.Itoa(vidV1), "--pid", strconv.Itoa(pidV1),
+			"--softwareVersion", strconv.Itoa(svV1), "--softwareVersionString", svsV1,
+			"--certificationType", certType, "--specificationVersion", "1",
+			"--provisionalDate", revocationDate, "--cdCertificateId", cdCertID,
+			"--cdVersionNumber", "1", "--schemaVersion", "0", "--from", zbAccount)
 
-	t.Run("RevokeModel_SchemaVersion0_Fails", func(t *testing.T) {
-		txResult, err := RevokeModel(RevokeModelOpts{
-			VID: vid, PID: pid, SoftwareVersion: sv, SoftwareVersionString: svs,
-			CertificationType: certType, RevocationDate: date,
-			SchemaVersion: "0", From: zbAccount,
-		})
-		cliputils.RequireTxFailContains(t, txResult, err, "SchemaVersion must be equal 1")
-	})
+		// revoke-model with schemaVersion=0.
+		rejectTx("SchemaVersion must be equal 1",
+			"tx", "compliance", "revoke-model",
+			"--vid", strconv.Itoa(vidV1), "--pid", strconv.Itoa(pidV1),
+			"--softwareVersion", strconv.Itoa(svV1), "--softwareVersionString", svsV1,
+			"--certificationType", certType, "--revocationDate", revocationDate,
+			"--cdVersionNumber", "1", "--schemaVersion", "0", "--from", zbAccount)
 
-	t.Run("CertifyModel_LongCertificationType_Fails", func(t *testing.T) {
-		txResult, err := CertifyModel(CertifyModelOpts{
-			VID: vid, PID: pid, SoftwareVersion: sv, SoftwareVersionString: svs,
-			CertificationType: "this_certification_type_is_way_too_long",
-			CertificationDate: date, CDCertificateID: cdCertID, From: zbAccount,
-		})
-		cliputils.RequireTxFailContains(t, txResult, err, "maximum length for CertificationType allowed is 20")
-	})
+		// certify-model with certificationType longer than 20 chars.
+		rejectTx("maximum length for CertificationType allowed is 20",
+			"tx", "compliance", "certify-model",
+			"--vid", strconv.Itoa(vidV1), "--pid", strconv.Itoa(pidV1),
+			"--softwareVersion", strconv.Itoa(svV1), "--softwareVersionString", svsV1,
+			"--certificationType", longCertType, "--specificationVersion", "1",
+			"--certificationDate", certificationDate, "--cdCertificateId", cdCertID,
+			"--cdVersionNumber", "1", "--schemaVersion", "1", "--from", zbAccount)
 
-	t.Run("CertifyModel_SpecificationVersionZero_Fails", func(t *testing.T) {
-		// SchemaVersion omitted (CLI default 1) so the schema-v1 required-field
-		// guard applies; SpecVersionZero forces --specificationVersion 0.
-		txResult, err := CertifyModel(CertifyModelOpts{
-			VID: vid, PID: pid, SoftwareVersion: sv, SoftwareVersionString: svs,
-			CertificationType: certType, CertificationDate: date,
-			CDCertificateID: cdCertID, SpecificationVersion: SpecVersionZero, From: zbAccount,
-		})
-		cliputils.RequireTxFailContains(t, txResult, err, "SpecificationVersion is a required field")
+		// certify-model with specificationVersion=0 (required since #730).
+		rejectTx("SpecificationVersion is a required field",
+			"tx", "compliance", "certify-model",
+			"--vid", strconv.Itoa(vidV1), "--pid", strconv.Itoa(pidV1),
+			"--softwareVersion", strconv.Itoa(svV1), "--softwareVersionString", svsV1,
+			"--certificationType", certType, "--specificationVersion", "0",
+			"--certificationDate", certificationDate, "--cdCertificateId", cdCertID,
+			"--cdVersionNumber", "1", "--schemaVersion", "1", "--from", zbAccount)
 	})
 }

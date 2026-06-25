@@ -51,30 +51,8 @@ func (o OptionalFields) args() []string {
 // CertifyModelOpts holds parameters for the certify-model transaction.
 // Use VIDHex / PIDHex to pass hex-formatted identifiers (e.g. "0xA13"); when
 // those are empty, the numeric VID / PID fields are formatted as decimal.
-// SpecVersionZero forces --specificationVersion 0 in CertifyModel /
-// ProvisionModel. A plain zero SpecificationVersion means "use the default of
-// 1"; the schema-v1 (#730) negative test assigns this sentinel to exercise the
-// "SpecificationVersion is a required field" check.
-const SpecVersionZero = -1
-
-// specVersionFlag resolves the --specificationVersion value: unset (0) defaults
-// to 1, the SpecVersionZero sentinel maps to an explicit 0, and any other value
-// passes through.
-func specVersionFlag(v int) int {
-	switch v {
-	case 0:
-		return 1
-	case SpecVersionZero:
-		return 0
-	default:
-		return v
-	}
-}
-
 // Zero-valued SpecificationVersion and CDVersionNumber default to 1 (pass a
-// non-zero value to exercise a mismatch, or SpecVersionZero to send 0).
-// SchemaVersion is emitted only when non-empty; otherwise the CLI default (1)
-// applies. Pass "0" to exercise the schema-v1 "must be equal 1" check.
+// non-zero value to exercise a mismatch).
 type CertifyModelOpts struct {
 	VID                   int
 	VIDHex                string
@@ -84,7 +62,6 @@ type CertifyModelOpts struct {
 	SoftwareVersionString string
 	CertificationType     string
 	SpecificationVersion  int
-	SchemaVersion         string
 	CertificationDate     string
 	CDCertificateID       string
 	CDVersionNumber       int
@@ -95,6 +72,10 @@ type CertifyModelOpts struct {
 
 // CertifyModel executes the certify-model transaction.
 func CertifyModel(opts CertifyModelOpts) (*utils.TxResult, error) {
+	specVersion := opts.SpecificationVersion
+	if specVersion == 0 {
+		specVersion = 1
+	}
 	cdVersion := opts.CDVersionNumber
 	if cdVersion == 0 {
 		cdVersion = 1
@@ -107,14 +88,11 @@ func CertifyModel(opts CertifyModelOpts) (*utils.TxResult, error) {
 		"--softwareVersion", strconv.Itoa(opts.SoftwareVersion),
 		"--softwareVersionString", opts.SoftwareVersionString,
 		"--certificationType", opts.CertificationType,
-		"--specificationVersion", strconv.Itoa(specVersionFlag(opts.SpecificationVersion)),
+		"--specificationVersion", strconv.Itoa(specVersion),
 		"--certificationDate", opts.CertificationDate,
 		"--cdCertificateId", opts.CDCertificateID,
 		"--cdVersionNumber", strconv.Itoa(cdVersion),
 		"--from", opts.From,
-	}
-	if opts.SchemaVersion != "" {
-		args = append(args, "--schemaVersion", opts.SchemaVersion)
 	}
 	if opts.Reason != "" {
 		args = append(args, "--reason", opts.Reason)
@@ -125,8 +103,7 @@ func CertifyModel(opts CertifyModelOpts) (*utils.TxResult, error) {
 }
 
 // RevokeModelOpts holds parameters for the revoke-model transaction.
-// Zero-valued CDVersionNumber defaults to 1. SchemaVersion is emitted only when
-// non-empty (pass "0" to exercise the schema-v1 "must be equal 1" check).
+// Zero-valued CDVersionNumber defaults to 1.
 type RevokeModelOpts struct {
 	VID                   int
 	VIDHex                string
@@ -136,7 +113,6 @@ type RevokeModelOpts struct {
 	SoftwareVersionString string
 	CertificationType     string
 	RevocationDate        string
-	SchemaVersion         string
 	Reason                string
 	CDVersionNumber       int
 	From                  string
@@ -160,9 +136,6 @@ func RevokeModel(opts RevokeModelOpts) (*utils.TxResult, error) {
 		"--cdVersionNumber", strconv.Itoa(cdVersion),
 		"--from", opts.From,
 	}
-	if opts.SchemaVersion != "" {
-		args = append(args, "--schemaVersion", opts.SchemaVersion)
-	}
 	if opts.Reason != "" {
 		args = append(args, "--reason", opts.Reason)
 	}
@@ -171,9 +144,7 @@ func RevokeModel(opts RevokeModelOpts) (*utils.TxResult, error) {
 }
 
 // ProvisionModelOpts holds parameters for the provision-model transaction.
-// Zero-valued SpecificationVersion and CDVersionNumber default to 1 (pass
-// SpecVersionZero to send 0). SchemaVersion is emitted only when non-empty
-// (pass "0" to exercise the schema-v1 "must be equal 1" check).
+// Zero-valued SpecificationVersion and CDVersionNumber default to 1.
 type ProvisionModelOpts struct {
 	VID                   int
 	VIDHex                string
@@ -183,7 +154,6 @@ type ProvisionModelOpts struct {
 	SoftwareVersionString string
 	CertificationType     string
 	SpecificationVersion  int
-	SchemaVersion         string
 	ProvisionalDate       string
 	CDCertificateID       string
 	CDVersionNumber       int
@@ -194,6 +164,10 @@ type ProvisionModelOpts struct {
 
 // ProvisionModel executes the provision-model transaction.
 func ProvisionModel(opts ProvisionModelOpts) (*utils.TxResult, error) {
+	specVersion := opts.SpecificationVersion
+	if specVersion == 0 {
+		specVersion = 1
+	}
 	cdVersion := opts.CDVersionNumber
 	if cdVersion == 0 {
 		cdVersion = 1
@@ -206,14 +180,11 @@ func ProvisionModel(opts ProvisionModelOpts) (*utils.TxResult, error) {
 		"--softwareVersion", strconv.Itoa(opts.SoftwareVersion),
 		"--softwareVersionString", opts.SoftwareVersionString,
 		"--certificationType", opts.CertificationType,
-		"--specificationVersion", strconv.Itoa(specVersionFlag(opts.SpecificationVersion)),
+		"--specificationVersion", strconv.Itoa(specVersion),
 		"--provisionalDate", opts.ProvisionalDate,
 		"--cdCertificateId", opts.CDCertificateID,
 		"--cdVersionNumber", strconv.Itoa(cdVersion),
 		"--from", opts.From,
-	}
-	if opts.SchemaVersion != "" {
-		args = append(args, "--schemaVersion", opts.SchemaVersion)
 	}
 	if opts.Reason != "" {
 		args = append(args, "--reason", opts.Reason)
