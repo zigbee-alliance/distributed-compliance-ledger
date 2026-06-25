@@ -1,0 +1,375 @@
+package cliputils
+
+import (
+	"encoding/json"
+	"fmt"
+	"strconv"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/stretchr/testify/require"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+)
+
+// isAccountActive checks whether an account address is active on-chain.
+func isAccountActive(addr string) bool {
+	out, err := utils.ExecuteCLI("query", "auth", "account", "--address", addr, "-o", "json")
+	if err != nil {
+		return false
+	}
+
+	return !strings.Contains(string(out), "Not Found")
+}
+
+// CreateAccount generates a new key, proposes and approves the account via jack/alice/bob,
+// and returns the account name. roles is a comma-separated string e.g. "NodeAdmin" or "Vendor".
+// It is robust against varying trustee counts: it tries up to three approvals (jack, alice, bob)
+// and verifies the account is active before returning.
+func CreateAccount(t *testing.T, roles string) string {
+	t.Helper()
+
+	name := utils.RandString()
+
+	require.NoError(t, AddKey(name))
+
+	addr, err := GetAddress(name)
+	require.NoError(t, err)
+
+	pubkey, err := GetPubkey(name)
+	require.NoError(t, err)
+
+	txResult, err := utils.ExecuteTx("tx", "auth", "propose-add-account",
+		"--address", addr,
+		"--pubkey", pubkey,
+		"--roles", roles,
+		"--from", testconstants.JackAccount,
+	)
+	require.NoError(t, err)
+	require.Equal(t, uint32(0), txResult.Code, "propose-add-account failed: %s", txResult.RawLog)
+
+	if isAccountActive(addr) {
+		return name
+	}
+
+	// Alice approves (required for >= 3 trustees with AccountApprovalsPercent=2/3).
+	txResult, err = utils.ExecuteTx("tx", "auth", "approve-add-account",
+		"--address", addr,
+		"--from", testconstants.AliceAccount,
+	)
+	require.NoError(t, err)
+	require.Equal(t, uint32(0), txResult.Code, "approve-add-account (alice) failed: %s", txResult.RawLog)
+
+	if isAccountActive(addr) {
+		return name
+	}
+
+	// Bob approves (required for >= 4 trustees where ceil(2/3*4)=3 approvals are needed).
+	txResult, err = utils.ExecuteTx("tx", "auth", "approve-add-account",
+		"--address", addr,
+		"--from", testconstants.BobAccount,
+	)
+	require.NoError(t, err)
+	require.Equal(t, uint32(0), txResult.Code, "approve-add-account (bob) failed: %s", txResult.RawLog)
+
+	require.True(t, isAccountActive(addr),
+		"account %s (%s) is still not active after jack+alice+bob approvals; "+
+			"too many trustees on chain for automatic activation", name, addr)
+
+	return name
+}
+
+// CreateVendorAccount creates a vendor account with the given name and vid.
+// An optional single pid_ranges argument may be passed.
+// It is robust against varying trustee counts: it tries up to three approvals (jack, alice, bob)
+// and verifies the account is active before returning.
+func CreateVendorAccount(t *testing.T, name string, vid int, pidRanges ...string) string {
+	t.Helper()
+
+	require.NoError(t, AddKey(name))
+
+	addr, err := GetAddress(name)
+	require.NoError(t, err)
+
+	pubkey, err := GetPubkey(name)
+	require.NoError(t, err)
+
+	args := []string{
+		"tx", "auth", "propose-add-account",
+		"--address", addr,
+		"--pubkey", pubkey,
+		"--roles", "Vendor",
+		"--vid", strconv.Itoa(vid),
+		"--from", testconstants.JackAccount,
+	}
+	if len(pidRanges) > 0 {
+		args = append(args, "--pid_ranges", pidRanges[0])
+	}
+
+	txResult, err := utils.ExecuteTx(args...)
+	require.NoError(t, err)
+	require.Equal(t, uint32(0), txResult.Code, "propose-add-account (vendor) failed: %s", txResult.RawLog)
+
+	// With 3 trustees, VendorAccountApprovalsPercent=1/3 → ceil(1)=1 → Jack's proposal activates
+	// directly. With 4+ trustees, ceil(1/3*N) > 1 → need additional approvals.
+	if isAccountActive(addr) {
+		return name
+	}
+
+	// Alice approves (needed when 4-6 trustees, ceil(1/3*N) = 2).
+	txResult, err = utils.ExecuteTx("tx", "auth", "approve-add-account",
+		"--address", addr,
+		"--from", testconstants.AliceAccount,
+	)
+	require.NoError(t, err)
+	require.Equal(t, uint32(0), txResult.Code, "approve-add-account (vendor, alice) failed: %s", txResult.RawLog)
+
+	if isAccountActive(addr) {
+		return name
+	}
+
+	// Bob approves (needed when 7+ trustees, ceil(1/3*N) = 3).
+	txResult, err = utils.ExecuteTx("tx", "auth", "approve-add-account",
+		"--address", addr,
+		"--from", testconstants.BobAccount,
+	)
+	require.NoError(t, err)
+	require.Equal(t, uint32(0), txResult.Code, "approve-add-account (vendor, bob) failed: %s", txResult.RawLog)
+
+	require.True(t, isAccountActive(addr),
+		"vendor account %s (vid=%d, addr=%s) is still not active after jack+alice+bob approvals; "+
+			"too many trustees on chain for automatic activation", name, vid, addr)
+
+	return name
+}
+
+// CreateModelAndVersion adds a model and a model version for the given vid/pid/sv/svs
+// using the provided userAddr (account name) as the signer.
+// NOTE: Kept as inline ExecuteTx calls (rather than the typed model.AddModel /
+// model.AddModelVersion helpers) to avoid an import cycle: tests in
+// integration_tests/cli/model import this cliputils package, so cliputils must
+// not import integration_tests/cli/model.
+func CreateModelAndVersion(t *testing.T, vid, pid, sv int, svs, userAddr string) {
+	t.Helper()
+
+	txResult, err := utils.ExecuteTx("tx", "model", "add-model",
+		"--vid", strconv.Itoa(vid),
+		"--pid", strconv.Itoa(pid),
+		"--deviceTypeID", "1",
+		"--productName", "TestProduct",
+		"--productLabel", "TestingProductLabel",
+		"--partNumber", "1",
+		"--commissioningCustomFlow", "0",
+		"--enhancedSetupFlowOptions", "0",
+		"--from", userAddr,
+	)
+	require.NoError(t, err)
+	require.Equal(t, uint32(0), txResult.Code, "add-model failed: %s", txResult.RawLog)
+
+	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+	require.NoError(t, err)
+
+	txResult, err = utils.ExecuteTx("tx", "model", "add-model-version",
+		"--vid", strconv.Itoa(vid),
+		"--pid", strconv.Itoa(pid),
+		"--softwareVersion", strconv.Itoa(sv),
+		"--softwareVersionString", svs,
+		"--cdVersionNumber", "1",
+		"--maxApplicableSoftwareVersion", "10",
+		"--minApplicableSoftwareVersion", "1",
+		"--from", userAddr,
+	)
+	require.NoError(t, err)
+	require.Equal(t, uint32(0), txResult.Code, "add-model-version failed: %s", txResult.RawLog)
+
+	_, err = utils.AwaitTxConfirmation(txResult.TxHash)
+	require.NoError(t, err)
+}
+
+// GetHeight queries the node status and returns the latest block height.
+func GetHeight() (int64, error) {
+	out, err := utils.ExecuteCLI("status")
+	if err != nil {
+		return 0, err
+	}
+
+	var status struct {
+		SyncInfo struct {
+			LatestBlockHeight string `json:"latest_block_height"`
+		} `json:"SyncInfo"`
+	}
+	if err := json.Unmarshal(out, &status); err != nil {
+		return 0, fmt.Errorf("failed to parse status: %w, output: %s", err, string(out))
+	}
+
+	h, err := strconv.ParseInt(status.SyncInfo.LatestBlockHeight, 10, 64)
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse latest_block_height: %w", err)
+	}
+
+	return h, nil
+}
+
+// WaitForHeight polls until the chain reaches target height or timeoutSec is exceeded.
+func WaitForHeight(t *testing.T, target int64, timeoutSec int) {
+	t.Helper()
+
+	deadline := time.Now().Add(time.Duration(timeoutSec) * time.Second)
+	for {
+		h, err := GetHeight()
+		if err == nil && h >= target {
+			return
+		}
+		if time.Now().After(deadline) {
+			require.Failf(t, "WaitForHeight timed out",
+				"height %d not reached within %d seconds (current: %d, err: %v)",
+				target, timeoutSec, h, err)
+
+			return
+		}
+		time.Sleep(1 * time.Second)
+	}
+}
+
+// FlagOrHex returns hex if non-empty, otherwise the decimal-formatted n. It is
+// the shared formatter for vid/pid-style flags that accept either a decimal or
+// a 0x-prefixed hex value.
+func FlagOrHex(n int, hex string) string {
+	if hex != "" {
+		return hex
+	}
+
+	return strconv.Itoa(n)
+}
+
+// GetSingle runs a single-item dcld query and unmarshals into v. Returns
+// (false, nil) when the CLI emitted "Not Found".
+func GetSingle(v interface{}, args ...string) (found bool, err error) {
+	out, err := utils.ExecuteCLI(args...)
+	if err != nil {
+		return false, err
+	}
+	if utils.IsNotFound(out) {
+		return false, nil
+	}
+	out = utils.NormalizeProtoJSON(out)
+	if err := json.Unmarshal(out, v); err != nil {
+		return false, fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
+	}
+
+	return true, nil
+}
+
+// GetList runs an all-* dcld query and unmarshals the wrapper response.
+func GetList(v interface{}, args ...string) error {
+	out, err := utils.ExecuteCLI(args...)
+	if err != nil {
+		return err
+	}
+	out = utils.NormalizeProtoJSON(utils.StripPagination(out))
+	if err := json.Unmarshal(out, v); err != nil {
+		return fmt.Errorf("parse %T: %w, output: %s", v, err, string(out))
+	}
+
+	return nil
+}
+
+// RequireTxOK asserts a tx broadcast succeeded client-side, executed with
+// on-chain code 0, and confirms it on-chain.
+func RequireTxOK(t *testing.T, txResult *utils.TxResult, err error) {
+	t.Helper()
+	require.NoError(t, err)
+	require.Equal(t, uint32(0), txResult.Code, "tx raw_log: %s", txResult.RawLog)
+	_, awaitErr := utils.AwaitTxConfirmation(txResult.TxHash)
+	require.NoError(t, awaitErr)
+}
+
+// RequireTxFailContains asserts a tx failed (either at the CLI/broadcast level
+// via err, or on-chain via a non-zero code) and that the surfaced message
+// contains the expected substring.
+func RequireTxFailContains(t *testing.T, txResult *utils.TxResult, err error, want string) {
+	t.Helper()
+	var msg string
+	switch {
+	case err != nil:
+		msg = err.Error()
+	case txResult == nil:
+		t.Fatalf("expected failure containing %q, got nil tx and nil err", want)
+	default:
+		require.NotEqual(t, uint32(0), txResult.Code,
+			"expected non-zero code, raw_log: %s", txResult.RawLog)
+		msg = txResult.RawLog
+	}
+	require.True(t, strings.Contains(msg, want),
+		"expected error to contain %q, got: %s", want, msg)
+}
+
+// RequireTxFails asserts a tx broadcast succeeded client-side but failed
+// on-chain with some non-zero code, when the exact code is unimportant. Use
+// RequireTxFailCode to assert a specific code, or RequireTxFailContains to match
+// the error message. It does not await confirmation: a tx rejected at CheckTx
+// never enters a block, so callers that need to drain a delivered-but-failed tx
+// should follow with their own AwaitTxConfirmation.
+func RequireTxFails(t *testing.T, txResult *utils.TxResult, err error) {
+	t.Helper()
+	require.NoError(t, err)
+	require.NotEqual(t, uint32(0), txResult.Code, "tx raw_log: %s", txResult.RawLog)
+}
+
+// RequireTxFailCode asserts a tx broadcast succeeded client-side but failed
+// on-chain with exactly the given code, then drains it from the mempool. Use
+// RequireTxFailContains instead when asserting on the error message; pair this
+// with a follow-up require.Contains(t, txResult.RawLog, …) when both the code
+// and the message matter.
+func RequireTxFailCode(t *testing.T, txResult *utils.TxResult, err error, code uint32) {
+	t.Helper()
+	require.NoError(t, err)
+	require.Equal(t, code, txResult.Code, "tx raw_log: %s", txResult.RawLog)
+	_, _ = utils.AwaitTxConfirmation(txResult.TxHash)
+}
+
+// TxFailureText collects a rejected tx's error text and/or RawLog so the exact
+// chain message can be asserted whether the failure surfaces client-side (err)
+// or in the broadcast/DeliverTx result.
+func TxFailureText(txResult *utils.TxResult, err error) string {
+	combined := ""
+	if err != nil {
+		combined += err.Error()
+	}
+	if txResult != nil {
+		combined += txResult.RawLog
+	}
+
+	return combined
+}
+
+// AddKey generates a new key in the test keyring with the given name. Any
+// pre-existing key with the same name is deleted first (keys accumulate across
+// runs against a shared keyring).
+func AddKey(name string) error {
+	utils.ExecuteCLI("keys", "delete", name, "--keyring-backend", "test", "-y") //nolint:errcheck
+	_, err := utils.ExecuteCLI("keys", "add", name, "--keyring-backend", "test", "--no-backup")
+
+	return err
+}
+
+// GetAddress returns the bech32 address for a keyring key name.
+func GetAddress(name string) (string, error) {
+	out, err := utils.ExecuteCLI("keys", "show", name, "-a", "--keyring-backend", "test")
+	if err != nil {
+		return "", err
+	}
+
+	return strings.TrimSpace(string(out)), nil
+}
+
+// GetPubkey returns the pubkey string for a keyring key name.
+func GetPubkey(name string) (string, error) {
+	out, err := utils.ExecuteCLI("keys", "show", name, "-p", "--keyring-backend", "test")
+	if err != nil {
+		return "", err
+	}
+
+	return strings.TrimSpace(string(out)), nil
+}

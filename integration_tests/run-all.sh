@@ -58,53 +58,7 @@ log() {
   echo "${LOG_PREFIX}$1"
 }
 
-  # patch configs properly by having all values >= 1 sec, otherwise headers may start having time from the future and light client verification will fail
-  # if we patch config to have new blocks created in less than 1 sec, the min time in a time header is still 1 sec.
-  # So, new blocks started to be from the future.
-patch_consensus_config() {
-  local NODE_CONFIGS="$(find "$LOCALNET_DIR" -type f -name "config.toml" -wholename "*node*")"
-
-  for NODE_CONFIG in ${NODE_CONFIGS}; do
-    sed -i $SED_EXT 's/timeout_propose = "3s"/timeout_propose = "1s"/g' "${NODE_CONFIG}"
-    #sed -i $SED_EXT 's/timeout_prevote = "1s"/timeout_prevote = "1s"/g' "${NODE_CONFIG}"
-    #sed -i $SED_EXT 's/timeout_precommit = "1s"/timeout_precommit = "1s"/g' "${NODE_CONFIG}"
-    sed -i $SED_EXT 's/timeout_commit = "5s"/timeout_commit = "1s"/g' "${NODE_CONFIG}"
-  done
-}
-
-init_pool() {
-  local _patch_config="${1:-yes}";
-  local _localnet_init_target=${2:-localnet_init}
-  local _binary_version=${3:-""}
-
-  log "Setting up pool"
-
-  if [ -n "$_binary_version" ]; then
-    log "-> Generating network configuration with binary version=$_binary_version" >${DETAILED_OUTPUT_TARGET}
-    make ${_localnet_init_target} MAINNET_STABLE_VERSION=$_binary_version &>${DETAILED_OUTPUT_TARGET}
-  else
-    log "-> Generating network configuration" >${DETAILED_OUTPUT_TARGET}
-    make ${_localnet_init_target} &>${DETAILED_OUTPUT_TARGET}
-  fi
-
-  if [ "$_patch_config" = "yes" ];
-  then
-    patch_consensus_config
-  fi;
-
-  log "-> Running pool" >${DETAILED_OUTPUT_TARGET}
-  make localnet_start &>${DETAILED_OUTPUT_TARGET}
-
-  log "-> Waiting for the second block (needed to request proofs)" >${DETAILED_OUTPUT_TARGET}
-  execute_with_retry "dcld status" "connection"
-  wait_for_height 2 20
-}
-
-cleanup_pool() {
-  log "Cleaning up pool"
-  log "-> Stopping pool & Removing configurations" >${DETAILED_OUTPUT_TARGET}
-  make localnet_clean
-}
+source integration_tests/pool.sh
 
 stop_rest_server() {
   log "Stopping cli in rest-server mode"
@@ -135,20 +89,6 @@ collect_cover() {
   fi
 }
 
-collect_validator_demo_cover() {
-  if "$GOCOVER_ENABLED"; then
-    if [ -d "$DCL_TMP_VALIDATOR_DEMO_GOCOVERDIR" ]; then
-      log "Collecting coverage from validator-demo"
-      rm -rf "$DCL_TMP_GOCOVERDIR"
-      mkdir -p "$DCL_TMP_GOCOVERDIR"
-      go tool covdata merge -i="$DCL_TMP_VALIDATOR_DEMO_GOCOVERDIR,$GOCOVERDIR" -o="$DCL_TMP_GOCOVERDIR"
-      rm -rf "$GOCOVERDIR"/*
-      cp "$DCL_TMP_GOCOVERDIR"/* "$GOCOVERDIR"/
-      rm -rf "$DCL_TMP_VALIDATOR_DEMO_GOCOVERDIR"
-    fi
-  fi
-}
-
 # Global init
 set -euo pipefail
 
@@ -162,6 +102,31 @@ log "Building docker image"
 make image &>${DETAILED_OUTPUT_TARGET}
 
 cleanup_pool
+
+# Cli tests
+if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
+  CLI_GO_TEST_PACKAGES=$(find integration_tests/cli -mindepth 1 -maxdepth 1 -type d -not -name utils | sort)
+
+  for CLI_GO_TEST_PACKAGE in ${CLI_GO_TEST_PACKAGES}; do
+    init_pool
+
+    log "*****************************************************************************************"
+    log "Running go test ./$CLI_GO_TEST_PACKAGE/..."
+    log "*****************************************************************************************"
+
+    dcld config keyring-backend test
+
+    if go test -count=1 -timeout 30m -p 1 -v "./$CLI_GO_TEST_PACKAGE/..." &>${DETAILED_OUTPUT_TARGET}; then
+      log "$CLI_GO_TEST_PACKAGE finished successfully"
+    else
+      log "$CLI_GO_TEST_PACKAGE failed"
+      exit 1
+    fi
+
+    collect_cover
+    cleanup_pool
+  done
+fi
 
 # Upgrade procedure tests
 if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
@@ -199,34 +164,6 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "deploy" ]]; then
     log "$DEPLOY_SHELL_TEST failed"
     exit 1
   fi
-fi
-
-# Cli shell tests
-if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
-  CLI_SHELL_TESTS=$(find integration_tests/cli -type f -name '*.sh' -not -name "common.sh")
-
-  for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
-    init_pool
-
-    log "*****************************************************************************************"
-    log "Running $CLI_SHELL_TEST"
-    log "*****************************************************************************************"
-
-    if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-      log "$CLI_SHELL_TEST finished successfully"
-    else
-      log "$CLI_SHELL_TEST failed"
-      exit 1
-    fi
-
-    if [[ "$CLI_SHELL_TEST" == *"validator-demo.sh"* ]]; then
-      collect_validator_demo_cover
-    else
-      collect_cover
-    fi
-
-    cleanup_pool
-  done
 fi
 
 # Light Client Proxy Cli shell tests

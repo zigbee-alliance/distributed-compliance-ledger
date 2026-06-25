@@ -1,0 +1,106 @@
+package model
+
+import (
+	"fmt"
+	"math/rand"
+	"testing"
+
+	"github.com/stretchr/testify/require"
+	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
+)
+
+func TestModelDemoHex(t *testing.T) {
+	vid := rand.Intn(65534) + 1
+	pid := rand.Intn(65534) + 1
+	vidHex := fmt.Sprintf("0x%X", vid)
+	pidHex := fmt.Sprintf("0x%X", pid)
+
+	vendorAccount := fmt.Sprintf("vendor_account_%d", vid)
+	cliputils.CreateVendorAccount(t, vendorAccount, vid)
+
+	t.Run("QueryNonExistent", func(t *testing.T) {
+		m, err := GetModelHex(vidHex, pidHex)
+		require.NoError(t, err)
+		require.Nil(t, m)
+
+		vm, err := GetVendorModelsHex(vidHex)
+		require.NoError(t, err)
+		require.Nil(t, vm)
+
+		all, err := GetAllModels()
+		require.NoError(t, err)
+		require.False(t, containsModelByPid(all, int32(vid), int32(pid)))
+	})
+
+	productLabel := "Device #1"
+
+	t.Run("AddModel", func(t *testing.T) {
+		txResult, err := AddModel(AddModelOpts{
+			VIDHex: vidHex, PIDHex: pidHex,
+			ProductLabel: productLabel,
+			From:         vendorAccount,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
+	})
+
+	t.Run("QueryModel", func(t *testing.T) {
+		m, err := GetModelHex(vidHex, pidHex)
+		require.NoError(t, err)
+		require.NotNil(t, m)
+		require.Equal(t, int32(vid), m.Vid)
+		require.Equal(t, int32(pid), m.Pid)
+		require.Equal(t, productLabel, m.ProductLabel)
+
+		all, err := GetAllModels()
+		require.NoError(t, err)
+		require.True(t, containsModelByPid(all, int32(vid), int32(pid)))
+
+		vm, err := GetVendorModelsHex(vidHex)
+		require.NoError(t, err)
+		require.NotNil(t, vm)
+		require.True(t, containsProductByPid(vm.Products, int32(pid)))
+	})
+
+	description := "New Device Description"
+
+	t.Run("UpdateModel", func(t *testing.T) {
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VIDHex: vidHex, PIDHex: pidHex, From: vendorAccount,
+			EnhancedSetupFlowOptions: 2,
+			ProductLabel:             description,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
+
+		m, err := GetModelHex(vidHex, pidHex)
+		require.NoError(t, err)
+		require.NotNil(t, m)
+		require.Equal(t, int32(vid), m.Vid)
+		require.Equal(t, int32(pid), m.Pid)
+		require.Equal(t, description, m.ProductLabel)
+	})
+
+	supportURL := "https://newsupporturl.test"
+
+	t.Run("UpdateModelSupportURL", func(t *testing.T) {
+		txResult, err := UpdateModel(UpdateModelOpts{
+			VIDHex: vidHex, PIDHex: pidHex, From: vendorAccount,
+			EnhancedSetupFlowOptions: 2,
+			SupportURL:               supportURL,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
+
+		m, err := GetModelHex(vidHex, pidHex)
+		require.NoError(t, err)
+		require.NotNil(t, m)
+		require.Equal(t, supportURL, m.SupportUrl)
+	})
+
+	t.Run("DeleteModel", func(t *testing.T) {
+		txResult, err := DeleteModelHex(vidHex, pidHex, vendorAccount)
+		cliputils.RequireTxOK(t, txResult, err)
+
+		m, err := GetModelHex(vidHex, pidHex)
+		require.NoError(t, err)
+		require.Nil(t, m)
+	})
+}

@@ -26,7 +26,7 @@ if [ "$(uname)" == "Darwin" ]; then
 fi
 
 DCL_DIR="$HOME/.dcl"
-KEYPASSWD=test1234  # NOTE not necessary actually since we yse 'test' keyring backend now
+KEYPASSWD=test1234  # NOTE not necessary actually since we use 'test' keyring backend now
 CHAIN_ID=dclchain
 DCL_BINARY=dcld
 
