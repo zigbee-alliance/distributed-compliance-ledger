@@ -92,6 +92,15 @@ func TestLightClientProxyModel(t *testing.T) {
 		require.True(t,
 			containsAnyLocal(out, `"softwareVersionValid": true`, `"softwareVersionValid":true`),
 			"expected softwareVersionValid=true, got: %s", string(out))
+		require.True(t,
+			containsAnyLocal(out, `"cdVersionNumber": 1`, `"cdVersionNumber":1`),
+			"expected cdVersionNumber=1, got: %s", string(out))
+		require.True(t,
+			containsAnyLocal(out, `"minApplicableSoftwareVersion": 1`, `"minApplicableSoftwareVersion":1`),
+			"expected minApplicableSoftwareVersion=1, got: %s", string(out))
+		require.True(t,
+			containsAnyLocal(out, `"maxApplicableSoftwareVersion": 10`, `"maxApplicableSoftwareVersion":10`),
+			"expected maxApplicableSoftwareVersion=10, got: %s", string(out))
 
 		out, qerr = queryWithRetry(LightClientProxyAddr, GetModel(vid, pid)...)
 		require.NoError(t, qerr)

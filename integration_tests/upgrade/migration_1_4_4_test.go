@@ -540,4 +540,169 @@ func runUpgrade143To144(t *testing.T, state *UpgradeTestState) {
 		checkResponseContains(t, out, ProductLabelFor1_4_4)
 		checkResponseContains(t, out, PartNumberFor1_4_4)
 	})
+
+	// Query-back the NOC/DA certs seeded above to verify the 1.4.4 migration
+	// handler + the new revoke-noc-x509-* flow routed them into the correct
+	// stores (the headline 1.4.4 feature). Mirrors the post-seed PKI block of
+	// the original bash script 06.
+	VerifyNamespacesAndRevoked_1_4_4(t, dcldNew)
+}
+
+// VerifyNamespacesAndRevoked_1_4_4 reproduces the post-seed PKI query-back
+// assertions of the original bash script 06: it confirms the active NOC pair #2
+// is queryable in the NOC store, that DA/NOC/global namespaces stay separated,
+// and that the revoked DA pair #1 and revoked NOC pair #1 land in their
+// respective revoked stores.
+//
+//nolint:funlen
+func VerifyNamespacesAndRevoked_1_4_4(t *testing.T, dcldNew string) {
+	t.Helper()
+
+	// ------------------------------------------------------------------
+	// 1. Active NOC pair #2 is positively queryable in the NOC store.
+	// ------------------------------------------------------------------
+	MustRun(t, "VerifyActiveNocPair2_1_4_4", func(t *testing.T) {
+		t.Helper()
+		// noc-x509-cert by subject+SKID returns the NOC root + ICA of pair #2.
+		out, err := QueryNocX509Cert(dcldNew, NOCRootCert2V144SubjectFor1_4_4, NOCRootCert2V144SubjectKeyIDFor1_4_4)
+		require.NoError(t, err)
+		checkResponseContains(t, out, NOCRootCert2V144SubjectFor1_4_4)
+		checkResponseContains(t, out, NOCRootCert2V144SubjectKeyIDFor1_4_4)
+
+		out, err = QueryNocX509Cert(dcldNew, NOCICACert2V144SubjectFor1_4_4, NOCICACert2V144SubjectKeyIDFor1_4_4)
+		require.NoError(t, err)
+		checkResponseContains(t, out, NOCICACert2V144SubjectFor1_4_4)
+		checkResponseContains(t, out, NOCICACert2V144SubjectKeyIDFor1_4_4)
+
+		// all-noc-x509-certs contains NOC pair #2 (root + ICA).
+		out, err = QueryAllNocX509Certs(dcldNew)
+		require.NoError(t, err)
+		checkResponseContains(t, out, NOCRootCert2V144SubjectKeyIDFor1_4_4)
+		checkResponseContains(t, out, NOCICACert2V144SubjectKeyIDFor1_4_4)
+
+		// noc-x509-cert --vid --subject-key-id returns NOC pair #2.
+		out, err = QueryNocX509Certs(dcldNew, NOCRootCert2V144SubjectKeyIDFor1_4_4, VIDFor1_4_4)
+		require.NoError(t, err)
+		checkResponseContains(t, out, NOCRootCert2V144SubjectFor1_4_4)
+		checkResponseContains(t, out, NOCRootCert2V144SubjectKeyIDFor1_4_4)
+
+		out, err = QueryNocX509Certs(dcldNew, NOCICACert2V144SubjectKeyIDFor1_4_4, VIDFor1_4_4)
+		require.NoError(t, err)
+		checkResponseContains(t, out, NOCICACert2V144SubjectFor1_4_4)
+		checkResponseContains(t, out, NOCICACert2V144SubjectKeyIDFor1_4_4)
+	})
+
+	// ------------------------------------------------------------------
+	// 2. DA/NOC/global namespace separation.
+	//
+	// NOTE: the DA certs all share one SKID (A8:A0:...), so DA presence is
+	// asserted by the distinct DA subjects; NOC presence/absence uses the
+	// distinct NOC SKIDs/subjects — same distinguishing values the bash used.
+	// ------------------------------------------------------------------
+	MustRun(t, "VerifyNamespaceSeparation_1_4_4", func(t *testing.T) {
+		t.Helper()
+		// all-certs (global) contains both DA (active root #2) and NOC (active
+		// pair #2) certs.
+		out, err := QueryAllCerts(dcldNew)
+		require.NoError(t, err)
+		checkResponseContains(t, out, DARootCert2SubjectFor1_4_4)
+		checkResponseContains(t, out, NOCRootCert2V144SubjectKeyIDFor1_4_4)
+		checkResponseContains(t, out, NOCICACert2V144SubjectKeyIDFor1_4_4)
+
+		// all-x509-certs (DA) contains DA but NOT NOC.
+		out, err = QueryAllX509Certs(dcldNew)
+		require.NoError(t, err)
+		checkResponseContains(t, out, DARootCert2SubjectFor1_4_4)
+		require.False(t, strings.Contains(string(out), NOCRootCert2V144SubjectKeyIDFor1_4_4),
+			"NOC root SKID leaked into DA all-x509-certs: %s", string(out))
+		require.False(t, strings.Contains(string(out), NOCICACert2V144SubjectKeyIDFor1_4_4),
+			"NOC ICA SKID leaked into DA all-x509-certs: %s", string(out))
+
+		// all-noc-x509-certs (NOC) contains NOC but NOT DA subjects.
+		out, err = QueryAllNocX509Certs(dcldNew)
+		require.NoError(t, err)
+		checkResponseContains(t, out, NOCRootCert2V144SubjectKeyIDFor1_4_4)
+		checkResponseContains(t, out, NOCICACert2V144SubjectKeyIDFor1_4_4)
+		require.False(t, strings.Contains(string(out), DARootCert2SubjectFor1_4_4),
+			"DA root subject leaked into NOC all-noc-x509-certs: %s", string(out))
+
+		// x509-cert <noc subject> → Not Found (NOC absent from DA store).
+		out, err = QueryX509Cert(dcldNew, NOCRootCert2V144SubjectFor1_4_4, NOCRootCert2V144SubjectKeyIDFor1_4_4)
+		require.NoError(t, err)
+		require.True(t, strings.Contains(string(out), "Not Found"),
+			"expected Not Found for NOC subject in DA x509-cert, got: %s", string(out))
+
+		// noc-x509-cert <da subject> → Not Found (DA absent from NOC store).
+		out, err = QueryNocX509Cert(dcldNew, DARootCert2SubjectFor1_4_4, DARootCert2SubjectKeyIDFor1_4_4)
+		require.NoError(t, err)
+		require.True(t, strings.Contains(string(out), "Not Found"),
+			"expected Not Found for DA subject in noc-x509-cert, got: %s", string(out))
+
+		// per-namespace all-subject queries.
+		// DA: all-subject-x509-certs returns DA subject; NOC subject → Not Found.
+		out, err = QueryAllSubjectX509Certs(dcldNew, DARootCert2SubjectFor1_4_4)
+		require.NoError(t, err)
+		checkResponseContains(t, out, DARootCert2SubjectFor1_4_4)
+
+		out, err = QueryAllSubjectX509Certs(dcldNew, NOCRootCert2V144SubjectFor1_4_4)
+		require.NoError(t, err)
+		require.True(t, strings.Contains(string(out), "Not Found"),
+			"expected Not Found for NOC subject in DA all-subject-x509-certs, got: %s", string(out))
+
+		// NOC: all-noc-subject-x509-certs returns NOC subject; DA subject → Not Found.
+		out, err = QueryAllNocSubjectX509Certs(dcldNew, NOCRootCert2V144SubjectFor1_4_4)
+		require.NoError(t, err)
+		checkResponseContains(t, out, NOCRootCert2V144SubjectFor1_4_4)
+
+		out, err = QueryAllNocSubjectX509Certs(dcldNew, DARootCert2SubjectFor1_4_4)
+		require.NoError(t, err)
+		require.True(t, strings.Contains(string(out), "Not Found"),
+			"expected Not Found for DA subject in NOC all-noc-subject-x509-certs, got: %s", string(out))
+	})
+
+	// ------------------------------------------------------------------
+	// 3. Revoked DA pair #1 lands in the DA revoked store.
+	// ------------------------------------------------------------------
+	MustRun(t, "VerifyRevokedDaPair1_1_4_4", func(t *testing.T) {
+		t.Helper()
+		// all-revoked-x509-certs contains da_root_1 + da_intermediate_1.
+		out, err := QueryAllRevokedX509Certs(dcldNew)
+		require.NoError(t, err)
+		checkResponseContains(t, out, DARootCert1SubjectFor1_4_4)
+		checkResponseContains(t, out, DAIntermediateCert1SubjectFor1_4_4)
+
+		// revoked-x509-cert returns da_root_1.
+		out, err = QueryRevokedX509Cert(dcldNew, DARootCert1SubjectFor1_4_4, DARootCert1SubjectKeyIDFor1_4_4)
+		require.NoError(t, err)
+		checkResponseContains(t, out, DARootCert1SubjectFor1_4_4)
+		checkResponseContains(t, out, DARootCert1SubjectKeyIDFor1_4_4)
+	})
+
+	// ------------------------------------------------------------------
+	// 4. Revoked NOC pair #1 lands in the NOC revoked stores.
+	// ------------------------------------------------------------------
+	MustRun(t, "VerifyRevokedNocPair1_1_4_4", func(t *testing.T) {
+		t.Helper()
+		// all-revoked-noc-x509-root-certs contains NOC root #1.
+		out, err := QueryAllRevokedNocX509RootCerts(dcldNew)
+		require.NoError(t, err)
+		checkResponseContains(t, out, NOCRootCert1V144SubjectKeyIDFor1_4_4)
+
+		// all-revoked-noc-x509-ica-certs contains NOC ICA #1.
+		out, err = QueryAllRevokedNocX509IcaCerts(dcldNew)
+		require.NoError(t, err)
+		checkResponseContains(t, out, NOCICACert1V144SubjectKeyIDFor1_4_4)
+
+		// revoked-noc-x509-root-cert returns NOC root #1.
+		out, err = QueryRevokedNocX509RootCert(dcldNew, NOCRootCert1V144SubjectFor1_4_4, NOCRootCert1V144SubjectKeyIDFor1_4_4)
+		require.NoError(t, err)
+		checkResponseContains(t, out, NOCRootCert1V144SubjectFor1_4_4)
+		checkResponseContains(t, out, NOCRootCert1V144SubjectKeyIDFor1_4_4)
+
+		// A DA subject → Not Found in the NOC revoked store.
+		out, err = QueryRevokedNocX509RootCert(dcldNew, DARootCert1SubjectFor1_4_4, DARootCert1SubjectKeyIDFor1_4_4)
+		require.NoError(t, err)
+		require.True(t, strings.Contains(string(out), "Not Found"),
+			"expected Not Found for DA subject in revoked-noc-x509-root-cert, got: %s", string(out))
+	})
 }

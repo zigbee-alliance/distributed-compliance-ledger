@@ -383,14 +383,18 @@ func runUpgrade144To151(t *testing.T, state *UpgradeTestState) {
 			state.CommissioningModeSecondaryStepsHintFor1_5_1)
 		requireFieldEquals(t, out, "icdUserActiveModeTriggerHint",
 			ICDUserActiveModeTriggerHintFor1_5_1)
+		checkResponseContains(t, out, ICDUserActiveModeTriggerInstructionFor1_5_1)
 		requireFieldEquals(t, out, "factoryResetStepsHint",
 			FactoryResetStepsHintFor1_5_1)
+		checkResponseContains(t, out, FactoryResetStepsInstructionFor1_5_1)
 
 		// pid_2 with defaults.
 		out, err = QueryGetModel(dcldNew, state.VIDFor1_5_1, state.PID2For1_5_1)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", state.VIDFor1_5_1)
 		requireFieldEquals(t, out, "pid", state.PID2For1_5_1)
+		// Migration/back-fill default for this field is 1.
+		requireFieldEquals(t, out, "commissioningModeSecondaryStepsHint", 1)
 
 		// 0.12 pid_2 now has 1.5.1 productLabel/partNumber.
 		out, err = QueryGetModel(dcldNew, state.VID, state.PID2)

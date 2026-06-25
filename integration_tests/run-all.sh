@@ -155,9 +155,7 @@ fi
 
 # Light Client Proxy tests — Go-only since the migration completed. One pool
 # for the package; the five test funcs share the keyring and rely on
-# random-suffixed account names to avoid collisions. The bash suite at
-# integration_tests/light_client_proxy/*.sh is kept on disk for ad-hoc
-# inspection but no longer wired into CI.
+# random-suffixed account names to avoid collisions.
 if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "light" ]]; then
   init_pool
 

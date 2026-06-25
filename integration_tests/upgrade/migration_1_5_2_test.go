@@ -232,7 +232,16 @@ func runUpgrade151To152(t *testing.T, state *UpgradeTestState) {
 
 	MustRun(t, "VerifyNewModels_1_5_2", func(t *testing.T) {
 		t.Helper()
-		out, err := QueryGetModel(dcldNew, VIDFor1_5_2, PID1For1_5_2)
+
+		// compliance-info for the certified pid_1 — certificationIdOfSoftwareComponent
+		// is left empty by certify-model.
+		out, err := QueryComplianceInfo(dcldNew, VIDFor1_5_2, PID1For1_5_2, SoftwareVersionFor1_5_2, CertificationTypeFor1_5_2)
+		require.NoError(t, err)
+		requireFieldEquals(t, out, "vid", VIDFor1_5_2)
+		requireFieldEquals(t, out, "pid", PID1For1_5_2)
+		requireFieldEquals(t, out, "certificationIdOfSoftwareComponent", `""`)
+
+		out, err = QueryGetModel(dcldNew, VIDFor1_5_2, PID1For1_5_2)
 		require.NoError(t, err)
 		requireFieldEquals(t, out, "vid", VIDFor1_5_2)
 		requireFieldEquals(t, out, "pid", PID1For1_5_2)

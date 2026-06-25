@@ -254,7 +254,11 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 			require.NoError(t, err)
 			checkResponseContains(t, out, c.subj)
 
-			_, _ = QueryNocX509Cert(DcldMasterBinaryPath, c.subj, c.kid)
+			// DA-store subjects must not resolve in the NOC store: the singular
+			// noc-x509-cert query exits non-zero with a "Not Found" body, so the
+			// error is expected here. Mirrors the script's DA-vs-NOC separation.
+			nocOut, _ := QueryNocX509Cert(DcldMasterBinaryPath, c.subj, c.kid)
+			checkResponseContains(t, nocOut, "Not Found")
 		}
 
 		_, _ = QueryRevokedX509Cert(DcldMasterBinaryPath, IntermediateCertSubjectFor1_2, IntermediateCertSubjectKeyIDFor1_2)
@@ -269,14 +273,27 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 
 		_, err = QueryAllCerts(DcldMasterBinaryPath)
 		require.NoError(t, err)
-		_, err = QueryAllX509Certs(DcldMasterBinaryPath)
+
+		// DA store (all-x509-certs) must exclude NOC-store SKIDs — mirrors the
+		// script's "Get certificates (DA)" separation check.
+		out, err = QueryAllX509Certs(DcldMasterBinaryPath)
 		require.NoError(t, err)
+		require.NotContains(t, string(out), NOCRootCert2V144SubjectKeyIDFor1_4_4,
+			"all-x509-certs (DA store) leaked NOC root SKID: %s", string(out))
+		require.NotContains(t, string(out), NOCICACert2V144SubjectKeyIDFor1_4_4,
+			"all-x509-certs (DA store) leaked NOC ICA SKID: %s", string(out))
+
 		_, err = QueryAllRevokedX509Certs(DcldMasterBinaryPath)
 		require.NoError(t, err)
 		_, err = QueryAllRevokedX509RootCerts(DcldMasterBinaryPath)
 		require.NoError(t, err)
-		_, err = QueryAllNocX509Certs(DcldMasterBinaryPath)
+
+		// NOC store (all-noc-x509-certs) must exclude DA-store SKIDs — mirrors
+		// the script's "Get certificates (NOC)" separation check.
+		out, err = QueryAllNocX509Certs(DcldMasterBinaryPath)
 		require.NoError(t, err)
+		require.NotContains(t, string(out), DARootCert1SubjectKeyIDFor1_4_4,
+			"all-noc-x509-certs (NOC store) leaked DA root SKID: %s", string(out))
 		_, err = QueryAllRevokedNocX509RootCerts(DcldMasterBinaryPath)
 		require.NoError(t, err)
 		_, err = QueryAllRevokedNocX509IcaCerts(DcldMasterBinaryPath)
@@ -392,6 +409,15 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 		requireTxSuccess(t, tx, err)
 	})
 
+	// Query-back the master-era vendorinfo + compliance just seeded above. This
+	// is the post-seed verification block the bash script runs (originally the
+	// "VENDORINFO" and "COMPLIANCE" sections of script 10); without it a broken
+	// migration of these stores would pass undetected.
+	MustRun(t, "VerifyMasterComplianceAndVendorInfo", func(t *testing.T) {
+		t.Helper()
+		VerifyMasterComplianceAndVendorInfo(t, state)
+	})
+
 	MustRun(t, "AccountFlowsFor_Master", func(t *testing.T) {
 		t.Helper()
 		approvers := []string{state.Trustee2, state.Trustee3, state.Trustee4}
@@ -434,4 +460,122 @@ func runUpgrade160ToMaster(t *testing.T, state *UpgradeTestState) {
 		// against (the new observer should eventually report this version).
 		state.MasterPlanName = planName
 	})
+}
+
+// VerifyMasterComplianceAndVendorInfo queries back the master-era vendorinfo
+// and compliance state seeded by VendorInfoFor_Master and ComplianceFor_Master,
+// asserting field-level correctness. It reproduces the post-seed VENDORINFO and
+// COMPLIANCE verification blocks of script 10
+// (10-test-upgrade-1.6.0-to-master.sh). The seeding flow certifies pid_1,
+// then provisions -> certifies -> revokes pid_2, so pid_2 ends in the revoked
+// state (and is no longer provisional).
+//
+//nolint:funlen
+func VerifyMasterComplianceAndVendorInfo(t *testing.T, state *UpgradeTestState) {
+	t.Helper()
+
+	// ----------------------------------------------------------------------
+	// VENDORINFO
+	// ----------------------------------------------------------------------
+	// New master vendor record.
+	out, err := QueryVendor(DcldMasterBinaryPath, VIDForMaster)
+	require.NoError(t, err)
+	requireFieldEquals(t, out, "vendorID", VIDForMaster)
+	checkResponseContains(t, out, CompanyLegalNameForMaster)
+
+	// vid_for_1_2 vendor was updated with master-era preferred name + landing
+	// page URL (companyLegalName/vendorName kept the 1.2-era values).
+	out, err = QueryVendor(DcldMasterBinaryPath, VIDFor1_2)
+	require.NoError(t, err)
+	requireFieldEquals(t, out, "vendorID", VIDFor1_2)
+	checkResponseContains(t, out, VendorNameFor1_2)
+	checkResponseContains(t, out, CompanyPreferredNameForMaster)
+	checkResponseContains(t, out, VendorLandingPageURLForMaster)
+
+	// all-vendors listing contains the master vendor.
+	out, err = QueryAllVendors(DcldMasterBinaryPath)
+	require.NoError(t, err)
+	requireFieldEquals(t, out, "vendorID", VIDForMaster)
+	checkResponseContains(t, out, CompanyLegalNameForMaster)
+	checkResponseContains(t, out, VendorNameForMaster)
+
+	// ----------------------------------------------------------------------
+	// COMPLIANCE
+	// ----------------------------------------------------------------------
+	// pid_1 was certified -> certified-model value true.
+	out, err = QueryCertifiedModel(DcldMasterBinaryPath, VIDForMaster, PID1ForMaster, SoftwareVersionForMaster, CertificationTypeForMaster)
+	require.NoError(t, err)
+	requireFieldEquals(t, out, "value", true)
+	requireFieldEquals(t, out, "vid", VIDForMaster)
+	requireFieldEquals(t, out, "pid", PID1ForMaster)
+	requireFieldEquals(t, out, "softwareVersion", SoftwareVersionForMaster)
+	checkResponseContains(t, out, CertificationTypeForMaster)
+
+	// pid_2 was provisioned -> certified -> revoked, so it ends revoked.
+	out, err = QueryRevokedModel(DcldMasterBinaryPath, VIDForMaster, PID2ForMaster, SoftwareVersionForMaster, CertificationTypeForMaster)
+	require.NoError(t, err)
+	requireFieldEquals(t, out, "value", true)
+	requireFieldEquals(t, out, "vid", VIDForMaster)
+	requireFieldEquals(t, out, "pid", PID2ForMaster)
+
+	// pid_2 is no longer provisional -> provisional-model value false.
+	out, err = QueryProvisionalModel(DcldMasterBinaryPath, VIDForMaster, PID2ForMaster, SoftwareVersionForMaster, CertificationTypeForMaster)
+	require.NoError(t, err)
+	requireFieldEquals(t, out, "value", false)
+	requireFieldEquals(t, out, "vid", VIDForMaster)
+	requireFieldEquals(t, out, "pid", PID2ForMaster)
+
+	// compliance-info for both pids.
+	out, err = QueryComplianceInfo(DcldMasterBinaryPath, VIDForMaster, PID1ForMaster, SoftwareVersionForMaster, CertificationTypeForMaster)
+	require.NoError(t, err)
+	requireFieldEquals(t, out, "vid", VIDForMaster)
+	requireFieldEquals(t, out, "pid", PID1ForMaster)
+	requireFieldEquals(t, out, "softwareVersion", SoftwareVersionForMaster)
+	checkResponseContains(t, out, CertificationTypeForMaster)
+
+	out, err = QueryComplianceInfo(DcldMasterBinaryPath, VIDForMaster, PID2ForMaster, SoftwareVersionForMaster, CertificationTypeForMaster)
+	require.NoError(t, err)
+	requireFieldEquals(t, out, "vid", VIDForMaster)
+	requireFieldEquals(t, out, "pid", PID2ForMaster)
+	requireFieldEquals(t, out, "softwareVersion", SoftwareVersionForMaster)
+	checkResponseContains(t, out, CertificationTypeForMaster)
+
+	// device-software-compliance for the master cdCertId (set on the pid_1
+	// certify + pid_2 provision/certify txs).
+	out, err = QueryDeviceSoftwareCompliance(DcldMasterBinaryPath, CDCertificateIDForMaster)
+	require.NoError(t, err)
+	requireFieldEquals(t, out, "vid", VIDForMaster)
+	requireFieldEquals(t, out, "pid", PID1ForMaster)
+	checkResponseContains(t, out, CDCertificateIDForMaster)
+
+	// all-* listings contain the master-era records.
+	out, err = QueryAllCertifiedModels(DcldMasterBinaryPath)
+	require.NoError(t, err)
+	requireFieldEquals(t, out, "vid", VIDForMaster)
+	requireFieldEquals(t, out, "pid", PID1ForMaster)
+
+	out, err = QueryAllRevokedModels(DcldMasterBinaryPath)
+	require.NoError(t, err)
+	requireFieldEquals(t, out, "vid", VIDForMaster)
+	requireFieldEquals(t, out, "pid", PID2ForMaster)
+
+	// No master-era provisional record persists (pid_2 ended revoked); assert
+	// the carry-over provisional record (vid/pid_3 from the 0.12 era) is still
+	// present, matching the script's all-provisional-models check.
+	out, err = QueryAllProvisionalModels(DcldMasterBinaryPath)
+	require.NoError(t, err)
+	requireFieldEquals(t, out, "vid", state.VID)
+	requireFieldEquals(t, out, "pid", pid3V012)
+
+	out, err = QueryAllComplianceInfo(DcldMasterBinaryPath)
+	require.NoError(t, err)
+	requireFieldEquals(t, out, "vid", VIDForMaster)
+	requireFieldEquals(t, out, "pid", PID1ForMaster)
+	requireFieldEquals(t, out, "pid", PID2ForMaster)
+
+	out, err = QueryAllDeviceSoftwareCompliance(DcldMasterBinaryPath)
+	require.NoError(t, err)
+	requireFieldEquals(t, out, "vid", VIDForMaster)
+	requireFieldEquals(t, out, "pid", PID1ForMaster)
+	checkResponseContains(t, out, CDCertificateIDForMaster)
 }
