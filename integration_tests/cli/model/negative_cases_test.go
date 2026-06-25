@@ -103,9 +103,11 @@ func TestModelNegativeCases(t *testing.T) {
 			want  string
 		}{
 			{"vid<1", AddModelOpts{VID: -1, PID: pid, From: vendorAccount}, "Vid must not be less than 1"},
+			{"vid=0", AddModelOpts{VID: 0, PID: pid, From: vendorAccount}, "Vid must not be less than 1"},
 			{"vid>65535", AddModelOpts{VID: 65536, PID: pid, From: vendorAccount}, "Vid must not be greater than 65535"},
 			{"vid-nonnumeric", AddModelOpts{VIDHex: "string", PID: pid, From: vendorAccount}, "invalid syntax"},
 			{"pid<1", AddModelOpts{VID: vid, PID: -1, From: vendorAccount}, "Pid must not be less than 1"},
+			{"pid=0", AddModelOpts{VID: vid, PID: 0, From: vendorAccount}, "Pid must not be less than 1"},
 			{"pid>65535", AddModelOpts{VID: vid, PID: 65536, From: vendorAccount}, "Pid must not be greater than 65535"},
 			{"pid-nonnumeric", AddModelOpts{VID: vid, PIDHex: "string", From: vendorAccount}, "invalid syntax"},
 		}

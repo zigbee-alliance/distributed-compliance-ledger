@@ -103,12 +103,32 @@ make image &>${DETAILED_OUTPUT_TARGET}
 
 cleanup_pool
 
-# Upgrade procedure tests — Go-only since the migration completed. Unlike
-# the cli/light buckets, the upgrade Go suite manages its own localnet
-# lifecycle: TestUpgradeSequence calls EnsureAllBinaries (binary downloads)
-# and InitPool/CleanupPool (via pool.go) internally, so run-all.sh just
-# invokes `go test`. The bash suite at integration_tests/upgrade/*.sh and
-# the gap-check tooling under scripts/upgrade-command-diff.sh are gone.
+# Cli tests
+if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
+  CLI_GO_TEST_PACKAGES=$(find integration_tests/cli -mindepth 1 -maxdepth 1 -type d -not -name utils | sort)
+
+  for CLI_GO_TEST_PACKAGE in ${CLI_GO_TEST_PACKAGES}; do
+    init_pool
+
+    log "*****************************************************************************************"
+    log "Running go test ./$CLI_GO_TEST_PACKAGE/..."
+    log "*****************************************************************************************"
+
+    dcld config keyring-backend test
+
+    if go test -count=1 -timeout 30m -p 1 -v "./$CLI_GO_TEST_PACKAGE/..." &>${DETAILED_OUTPUT_TARGET}; then
+      log "$CLI_GO_TEST_PACKAGE finished successfully"
+    else
+      log "$CLI_GO_TEST_PACKAGE failed"
+      exit 1
+    fi
+
+    collect_cover
+    cleanup_pool
+  done
+fi
+
+# Upgrade procedure tests
 if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
   log "*****************************************************************************************"
   log "Running go test ./integration_tests/upgrade/..."
@@ -161,34 +181,6 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "light" ]]; then
 
   collect_cover
   cleanup_pool
-fi
-
-# Cli tests — Go-only since the migration completed. One pool per package,
-# coverage merged via collect_cover. The deleted bash suite at
-# integration_tests/cli/*.sh was proven redundant by CI coverage diff
-# (Go coverage was a strict superset of bash coverage).
-if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
-  CLI_GO_TEST_PACKAGES=$(find integration_tests/cli -mindepth 1 -maxdepth 1 -type d -not -name utils | sort)
-
-  for CLI_GO_TEST_PACKAGE in ${CLI_GO_TEST_PACKAGES}; do
-    init_pool
-
-    log "*****************************************************************************************"
-    log "Running go test ./$CLI_GO_TEST_PACKAGE/..."
-    log "*****************************************************************************************"
-
-    dcld config keyring-backend test
-
-    if go test -count=1 -timeout 30m -p 1 -v "./$CLI_GO_TEST_PACKAGE/..." &>${DETAILED_OUTPUT_TARGET}; then
-      log "$CLI_GO_TEST_PACKAGE finished successfully"
-    else
-      log "$CLI_GO_TEST_PACKAGE failed"
-      exit 1
-    fi
-
-    collect_cover
-    cleanup_pool
-  done
 fi
 
 # Go rest tests

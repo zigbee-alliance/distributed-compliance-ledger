@@ -22,21 +22,13 @@ const (
 )
 
 // TestPKIAddVendorX509Certificates ports the add-x509-cert authorization /
-// VID-scoping error matrix from pki-add-vendor-x509-certificates.sh against the
-// google_root_cert_gsr4 → intermediate_cert_gsr4 chain this test owns.
-//
+// VID-scoping error matrix against the google_root_cert_gsr4 → intermediate_cert_gsr4 chain this test owns.
 // The gsr4 root is non-VID-scoped in its subject but is assigned msg VID=1 at
 // proposal (rootCert.Vid=1); the gsr4 intermediate carries no Matter VID
 // (childVid=0). That combination exercises:
 //   - code 4   — a non-Vendor account cannot add an intermediate (unauthorized).
 //   - code 439 — a Vendor whose VID (65522) differs from the root's VID (1).
 //   - success  — the Vendor whose VID (1) matches the root's VID.
-//
-// The remaining shell case — code 440 (a child whose VID differs from a
-// VID-scoped root's VID) — needs the VID-scoped root_cert_with_vid + the
-// FFF2-scoped intermediate_cert_with_vid_2; that root is owned by
-// TestPKIRevocationPoints (which runs later), so the 440 case is ported there
-// (RejectAddChildVidNotEqualRootVid) to avoid a duplicate-root conflict.
 func TestPKIAddVendorX509Certificates(t *testing.T) {
 	jack := testconstants.JackAccount
 	alice := testconstants.AliceAccount
@@ -100,6 +92,12 @@ func TestPKIAddVendorX509Certificates(t *testing.T) {
 		require.Equal(t, addVendorIntermCertSubjectKeyID, cert.SubjectKeyId)
 		require.NotEmpty(t, cert.Certs)
 		require.False(t, cert.Certs[0].IsRoot)
+		// The stored Vid is the Matter VID parsed from the child's subject
+		// (msg_server_add_x_509_cert.go sets it from GetVidFromSubject). The gsr4
+		// intermediate carries no Matter VID, so it is 0 — this covers the
+		// "vid field is present and correct" check; the numeric-VID (65522) variant
+		// is not portable here (see the file header).
+		require.Equal(t, int32(0), cert.Certs[0].Vid)
 
 		// The intermediate now appears in all-x509-certs (matched by serial).
 		serial := cert.Certs[0].SerialNumber

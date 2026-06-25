@@ -74,7 +74,7 @@ func TestPKIRevocationWithSerialNumber(t *testing.T) {
 
 	t.Run("RevokeIntermWithInvalidSerialNumber", func(t *testing.T) {
 		txResult, err := RevokeX509Cert(revSerialIntermCertSubject, revSerialIntermCertSubjectKeyID, vendorAccount, RevokeNocCertOpts{SerialNumber: "invalid"})
-		cliputils.RequireTxFails(t, txResult, err)
+		cliputils.RequireTxFailCode(t, txResult, err, 404)
 	})
 
 	t.Run("RevokeIntermWithSerialNumber3Only", func(t *testing.T) {
@@ -154,7 +154,7 @@ func TestPKIRevocationWithSerialNumber(t *testing.T) {
 
 	t.Run("ProposeRevokeRootWithInvalidSerialNumber", func(t *testing.T) {
 		txResult, err := ProposeRevokeX509RootCert(revSerialRootCertSubject, revSerialRootCertSubjectKeyID, jack, X509ActionOpts{SerialNumber: "invalid"})
-		cliputils.RequireTxFails(t, txResult, err)
+		cliputils.RequireTxFailCode(t, txResult, err, 404)
 	})
 
 	t.Run("ProposeAndApproveRevokeRootSerial1Only", func(t *testing.T) {

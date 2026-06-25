@@ -11,19 +11,19 @@ import (
 	compliancetypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
-// TestComplianceProvisioning is a full port of compliance-provisioning.sh. It
-// exercises the provisional → certified / revoked state machine for both the
-// zigbee and matter certification types, the provision error codes
-// (305 already-provisional, 303 already-certified, 304 already-revoked), the
-// single-record and all-* queries at each stage, and provision/certify with the
-// full set of optional fields.
+// TestComplianceProvisioning exercises the provisional → certified / revoked
+// state machine for both the zigbee and matter certification types, the
+// provision error codes (305 already-provisional, 303 already-certified,
+// 304 already-revoked), the single-record and all-* queries at each stage, and
+// provision/certify with the full set of optional fields.
 //
-// NOTE on assertions: the shell script verifies state with substring greps over
-// the JSON, so e.g. it asserts "softwareVersionCertificationStatus": 1 after a
-// certify — that "1" actually matches the provisional record preserved in the
-// `history` array, not the (now 2) top-level status. The typed assertions below
-// assert the correct top-level value (CodeCertified) and check `history` only
-// after a genuine state transition, where it is populated.
+// NOTE on assertions: the original CLI checks verified state with substring
+// matching over the JSON output, so e.g. they asserted
+// "softwareVersionCertificationStatus": 1 after a certify — that "1" actually
+// matches the provisional record preserved in the `history` array, not the
+// (now 2) top-level status. The typed assertions below assert the correct
+// top-level value (CodeCertified) and check `history` only after a genuine
+// state transition, where it is populated.
 func TestComplianceProvisioning(t *testing.T) {
 	vid := rand.Intn(65534) + 1
 	vendorAccount := fmt.Sprintf("vendor_account_%d", vid)
@@ -536,8 +536,8 @@ func TestComplianceProvisioning(t *testing.T) {
 		require.NotNil(t, certified)
 		require.True(t, certified.Value)
 
-		// Compliance info: top-level status is now certified (the shell's "1"
-		// matched the provisional record preserved in history). Updated fields
+		// Compliance info: top-level status is now certified (a "1" would only
+		// match the provisional record preserved in history). Updated fields
 		// reflect the certify; OSVersion/route/transport/parentChild persist.
 		info, err := GetComplianceInfo(ComplianceQueryOpts{VID: vid, PID: pidOpt, SoftwareVersion: svOpt, CertificationType: certTypeZb})
 		require.NoError(t, err)

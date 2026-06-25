@@ -134,6 +134,19 @@ func TestPKINocRevocationWithRevokingChild(t *testing.T) {
 		require.NotNil(t, revokedRoot)
 		require.Equal(t, nocRootCert1Subject, revokedRoot.Subject)
 
+		// After the root cascade, root_cert_1 is gone from the active queries.
+		// all-noc-subject-x509-certs by subject is empty.
+		subjCerts, err := GetNocSubjectCerts(nocRootCert1Subject)
+		require.NoError(t, err)
+		if subjCerts != nil {
+			require.NotContains(t, subjCerts.SubjectKeyIds, nocRootCert1SubjectKeyID)
+		}
+
+		// noc-x509-cert by SKID alone is Not Found.
+		skidCert, err := GetNocCert("--subject-key-id", nocRootCert1SubjectKeyID)
+		require.NoError(t, err)
+		require.Nil(t, skidCert)
+
 		// Namespace separation: a revoked NOC root must not leak into the DA
 		// revoked-root list (all-revoked-x509-root-certs).
 		daRevokedRoots, err := GetAllRevokedX509RootCerts()
@@ -224,5 +237,28 @@ func TestPKINocRevocationWithRevokingChild(t *testing.T) {
 			require.NotEqual(t, nocCert2Subject, c.Subject)
 			require.NotEqual(t, nocLeafCert2Subject, c.Subject)
 		}
+
+		// all-noc-subject-x509-certs by the ICA subject is now empty.
+		subjCerts, err := GetNocSubjectCerts(nocCert2Subject)
+		require.NoError(t, err)
+		if subjCerts != nil {
+			require.NotContains(t, subjCerts.SubjectKeyIds, nocCert2SubjectKeyID)
+		}
+
+		// noc-x509-cert by SKID alone (ICA) is Not Found.
+		cert, err := GetNocCert("--subject-key-id", nocCert2SubjectKeyID)
+		require.NoError(t, err)
+		require.Nil(t, cert)
+
+		// noc-x509-cert by VID+SKID for the surviving root_cert_2 is still present.
+		cert, err = GetNocCert("--vid", fmt.Sprintf("%d", nocVid), "--subject-key-id", nocRootCert2SubjectKeyID)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+		require.True(t, containsCertSubjectSerial(cert.Certs, nocRootCert2Subject, nocRootCert2SerialNumber))
+
+		// noc-x509-cert by VID+SKID for the revoked ICA cert2 is Not Found.
+		cert, err = GetNocCert("--vid", fmt.Sprintf("%d", nocVid), "--subject-key-id", nocCert2SubjectKeyID)
+		require.NoError(t, err)
+		require.Nil(t, cert)
 	})
 }

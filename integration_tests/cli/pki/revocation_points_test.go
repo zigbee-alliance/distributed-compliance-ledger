@@ -2,12 +2,24 @@ package pki
 
 import (
 	"fmt"
+	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 	cliputils "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/cli/utils"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 )
+
+// requirePEMEquals asserts that a stored PEM field equals the PEM in the given
+// fixture file, ignoring surrounding whitespace (the CLI may add/strip a trailing
+// newline when reading the --certificate/--certificate-delegator file).
+func requirePEMEquals(t *testing.T, fixturePath, stored string) {
+	t.Helper()
+	want, err := os.ReadFile(fixturePath)
+	require.NoError(t, err)
+	require.Equal(t, strings.TrimSpace(string(want)), strings.TrimSpace(stored))
+}
 
 const (
 	paaCertWithNumericVidPath         = "../../constants/paa_cert_numeric_vid"
@@ -28,6 +40,14 @@ const (
 	delegatorCertSubjectKeyID         = "B07B3FF14501918FC1FAEECB9A0106C7479B5DEC"
 
 	crlSignerDelegatedByPAI1Path = "../../constants/leaf_cert_with_vid_65521"
+	crlSignerDelegatedByPAI2Path = "../../constants/leaf_cert_with_vid_65522"
+	// leaf_cert_without_vid is delegated by intermediate_cert_with_vid_1 (SKID B07B…),
+	// the same delegator SKID as the leaf_cert_with_vid_* certs. Used for the
+	// "CRL signer delegated by PAA" (is-paa=true) add path.
+	crlSignerDelegatedByPAAPath = "../../constants/leaf_cert_without_vid"
+
+	// pai_cert_vid is a VID-scoped PAI (VID FFF2=65522) chained to paa_cert_no_vid.
+	paiCertVidPath = "../../constants/pai_cert_vid"
 
 	rootCertWithVidRevPath         = "../../constants/root_cert_with_vid"
 	rootCertWithVidRevSubject      = "MIGYMQswCQYDVQQGEwJVUzERMA8GA1UECBMITmV3IFlvcmsxETAPBgNVBAcTCE5ldyBZb3JrMRgwFgYDVQQKEw9FeGFtcGxlIENvbXBhbnkxGTAXBgNVBAsTEFRlc3RpbmcgRGl2aXNpb24xGDAWBgNVBAMTD3d3dy5leGFtcGxlLmNvbTEUMBIGCisGAQQBgqJ8AgETBEZGRjE="
@@ -39,11 +59,11 @@ const (
 
 	revPointVid          = 65521
 	revPointVid65522     = 65522
-	revPointVid24582     = 24582
 	revPointVidNonScoped = 4701
 
 	revPointLabel             = "label"
 	revPointLabelPAI          = "label_pai"
+	revPointLabelLeaf         = "label_leaf"
 	revPointLabelLeafDel      = "label_leaf_with_delegator"
 	revPointLabelIntermediate = "label_intermediate"
 	revPointLabelNonScoped    = "label2"
@@ -65,9 +85,6 @@ func TestPKIRevocationPoints(t *testing.T) {
 
 	vendorAccount65522 := fmt.Sprintf("vendor_account_%d", revPointVid65522)
 	cliputils.CreateVendorAccount(t, vendorAccount65522, revPointVid65522)
-
-	vendorAccount24582 := fmt.Sprintf("vendor_account_%d", revPointVid24582)
-	cliputils.CreateVendorAccount(t, vendorAccount24582, revPointVid24582)
 
 	vendorAccountNonScoped := fmt.Sprintf("vendor_account_%d", revPointVidNonScoped)
 	cliputils.CreateVendorAccount(t, vendorAccountNonScoped, revPointVidNonScoped)
@@ -124,6 +141,18 @@ func TestPKIRevocationPoints(t *testing.T) {
 			RevocationType:     "1",
 		})
 		cliputils.RequireTxFails(t, txResult, err)
+
+		// PAI revocation point added by a non-vendor (trustee) — should fail
+		txResult, err = AddRevocationPoint(jack, RevocationPointOpts{
+			VID:                revPointVid,
+			PID:                32768,
+			Certificate:        paiCertWithNumericVidPidPath,
+			Label:              revPointLabel,
+			DataURL:            revPointDataURL,
+			IssuerSubjectKeyID: revPointIssuerSKID,
+			RevocationType:     "1",
+		})
+		cliputils.RequireTxFails(t, txResult, err)
 	})
 
 	t.Run("AddCertsToLedger", func(t *testing.T) {
@@ -150,7 +179,7 @@ func TestPKIRevocationPoints(t *testing.T) {
 	})
 
 	t.Run("AddChildVidNotEqualRootVid_Fails", func(t *testing.T) {
-		// Port of pki-add-vendor-x509-certificates.sh:79-82 (code 440): adding an
+		// Code 440 case: adding an
 		// intermediate whose VID (65522) differs from its VID-scoped root's VID
 		// (root_cert_with_vid, 65521) is rejected. This lives here because this
 		// test owns root_cert_with_vid on the ledger; the add fails, so no ledger
@@ -198,6 +227,19 @@ func TestPKIRevocationPoints(t *testing.T) {
 			Certificate:        paaCertWithNumericVidPath,
 			Label:              revPointLabel,
 			DataURL:            revPointDataURL + "-new",
+			IssuerSubjectKeyID: revPointIssuerSKID,
+			RevocationType:     "1",
+		})
+		cliputils.RequireTxFails(t, txResult, err)
+
+		// Cannot add same point twice (same vid, issuer, dataURL) — new label reuses
+		// the already-stored dataURL, which the handler rejects as a duplicate key.
+		txResult, err = AddRevocationPoint(vendorAccount, RevocationPointOpts{
+			VID:                revPointVid,
+			IsPAA:              true,
+			Certificate:        paaCertWithNumericVidPath,
+			Label:              revPointLabel + "-new",
+			DataURL:            revPointDataURL,
 			IssuerSubjectKeyID: revPointIssuerSKID,
 			RevocationType:     "1",
 		})
@@ -262,6 +304,32 @@ func TestPKIRevocationPoints(t *testing.T) {
 		require.NotNil(t, point)
 		require.Equal(t, int32(revPointVid), point.Vid)
 		require.Equal(t, revPointLabelLeafDel, point.Label)
+		// CRL signer PEM-body field assertions (the cert and its delegator).
+		requirePEMEquals(t, crlSignerDelegatedByPAI1Path, point.CrlSignerCertificate)
+		requirePEMEquals(t, delegatorCertWithVid65521Path, point.CrlSignerDelegator)
+	})
+
+	t.Run("AddRevocationPointForCRLSignerDelegatedByPAA", func(t *testing.T) {
+		// is-paa=true path: leaf_cert_without_vid is delegated by
+		// intermediate_cert_with_vid_1 (added to the ledger in the previous subtest).
+		txResult, err := AddRevocationPoint(vendorAccount65522, RevocationPointOpts{
+			VID:                revPointVid65522,
+			IsPAA:              true,
+			Certificate:        crlSignerDelegatedByPAAPath,
+			Label:              revPointLabelLeaf,
+			DataURL:            revPointDataURL,
+			IssuerSubjectKeyID: delegatorCertSubjectKeyID,
+			RevocationType:     "1",
+		})
+		cliputils.RequireTxOK(t, txResult, err)
+
+		point, err := GetPkiRevocationDistributionPoint(revPointVid65522, revPointLabelLeaf, delegatorCertSubjectKeyID)
+		require.NoError(t, err)
+		require.NotNil(t, point)
+		require.Equal(t, int32(revPointVid65522), point.Vid)
+		require.Equal(t, revPointLabelLeaf, point.Label)
+		require.Equal(t, delegatorCertSubjectKeyID, point.IssuerSubjectKeyID)
+		requirePEMEquals(t, crlSignerDelegatedByPAAPath, point.CrlSignerCertificate)
 	})
 
 	t.Run("AddRevocationPointForNonVidScopedPAI", func(t *testing.T) {
@@ -298,6 +366,26 @@ func TestPKIRevocationPoints(t *testing.T) {
 		require.NoError(t, err)
 		require.NotNil(t, point)
 		require.Equal(t, dataURLNew, point.DataURL)
+		requirePEMEquals(t, crlSignerDelegatedByPAI1Path, point.CrlSignerCertificate)
+		requirePEMEquals(t, delegatorCertWithVid65521CopyPath, point.CrlSignerDelegator)
+
+		// Update CRL signer delegated by PAA (label_leaf point added with IsPAA=true).
+		// Swap to leaf_cert_with_vid_65522, which is also delegated by
+		// intermediate_cert_with_vid_1 (on the ledger) and VID-scoped to FFF2 (65522).
+		txResult, err = UpdateRevocationPoint(vendorAccount65522, RevocationPointOpts{
+			VID:                revPointVid65522,
+			Certificate:        crlSignerDelegatedByPAI2Path,
+			Label:              revPointLabelLeaf,
+			DataURL:            dataURLNew,
+			IssuerSubjectKeyID: delegatorCertSubjectKeyID,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
+
+		point, err = GetPkiRevocationDistributionPoint(revPointVid65522, revPointLabelLeaf, delegatorCertSubjectKeyID)
+		require.NoError(t, err)
+		require.NotNil(t, point)
+		require.Equal(t, dataURLNew, point.DataURL)
+		requirePEMEquals(t, crlSignerDelegatedByPAI2Path, point.CrlSignerCertificate)
 
 		// Update non-VID-scoped PAI (uses addVendorIntermCertPath / revPointGsr4IssuerSKID)
 		dataURLNonScopedNew := revPointDataURLNonScoped + "_new"
@@ -326,6 +414,79 @@ func TestPKIRevocationPoints(t *testing.T) {
 			SchemaVersion:      "0",
 		})
 		cliputils.RequireTxOK(t, txResult, err)
+
+		point, err = GetPkiRevocationDistributionPoint(revPointVid, revPointLabel, revPointIssuerSKID)
+		require.NoError(t, err)
+		require.NotNil(t, point)
+		requirePEMEquals(t, rootCertWithVidRevPath, point.CrlSignerCertificate)
+		require.Equal(t, uint32(0), point.SchemaVersion)
+
+		// Update non-VID-scoped PAA (label2 point, paa_cert_no_vid is self-signed and
+		// non-VID-scoped, VID 4701 assigned at proposal). Re-supplying the same on-ledger
+		// cert exercises verifyUpdatedPAA positively without depending on test_root_cert,
+		// whose ledger presence is owned by TestPKIDemo.
+		dataURLNonScopedPAANew := revPointDataURLNonScoped + "_paa_new"
+		txResult, err = UpdateRevocationPoint(vendorAccountNonScoped, RevocationPointOpts{
+			VID:                revPointVidNonScoped,
+			Certificate:        paaCertNoVidPath,
+			Label:              revPointLabelNonScoped,
+			DataURL:            dataURLNonScopedPAANew,
+			IssuerSubjectKeyID: revPointIssuerSKID,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
+
+		point, err = GetPkiRevocationDistributionPoint(revPointVidNonScoped, revPointLabelNonScoped, revPointIssuerSKID)
+		require.NoError(t, err)
+		require.NotNil(t, point)
+		require.Equal(t, dataURLNonScopedPAANew, point.DataURL)
+		requirePEMEquals(t, paaCertNoVidPath, point.CrlSignerCertificate)
+
+		// Update PAI (label_pai point). Swap to pai_cert_vid (VID-scoped FFF2=65522),
+		// which chains back to paa_cert_no_vid on the ledger.
+		txResult, err = UpdateRevocationPoint(vendorAccount65522, RevocationPointOpts{
+			VID:                revPointVid65522,
+			Certificate:        paiCertVidPath,
+			Label:              revPointLabelPAI,
+			DataURL:            revPointDataURL,
+			IssuerSubjectKeyID: revPointIssuerSKID,
+		})
+		cliputils.RequireTxOK(t, txResult, err)
+
+		point, err = GetPkiRevocationDistributionPoint(revPointVid65522, revPointLabelPAI, revPointIssuerSKID)
+		require.NoError(t, err)
+		require.NotNil(t, point)
+		requirePEMEquals(t, paiCertVidPath, point.CrlSignerCertificate)
+
+		// Update failure: new cert is not a PAA (the VID-scoped PAA point's old cert is
+		// self-signed, so verifyUpdatedPAA rejects a non-self-signed replacement).
+		txResult, err = UpdateRevocationPoint(vendorAccount, RevocationPointOpts{
+			VID:                revPointVid,
+			Certificate:        paiCertWithNumericVidPidPath,
+			Label:              revPointLabel,
+			DataURL:            revPointDataURL,
+			IssuerSubjectKeyID: revPointIssuerSKID,
+		})
+		cliputils.RequireTxFails(t, txResult, err)
+
+		// Update failure: sender VID (account 65522) not equal to cert/msg VID (65521).
+		txResult, err = UpdateRevocationPoint(vendorAccount65522, RevocationPointOpts{
+			VID:                revPointVid,
+			Certificate:        paaCertWithNumericVidPath,
+			Label:              revPointLabel,
+			DataURL:            revPointDataURL,
+			IssuerSubjectKeyID: revPointIssuerSKID,
+		})
+		cliputils.RequireTxFails(t, txResult, err)
+
+		// Update failure: msg VID (65522) not equal to cert VID (paa_cert_numeric_vid is FFF1=65521).
+		txResult, err = UpdateRevocationPoint(vendorAccount, RevocationPointOpts{
+			VID:                revPointVid65522,
+			Certificate:        paaCertWithNumericVidPath,
+			Label:              revPointLabel,
+			DataURL:            revPointDataURL,
+			IssuerSubjectKeyID: revPointIssuerSKID,
+		})
+		cliputils.RequireTxFails(t, txResult, err)
 
 		// Update failure: point not found
 		txResult, err = UpdateRevocationPoint(vendorAccount65522, RevocationPointOpts{

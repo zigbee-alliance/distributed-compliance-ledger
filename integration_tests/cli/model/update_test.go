@@ -139,8 +139,8 @@ func TestModelUpdate(t *testing.T) {
 	})
 
 	t.Run("UpdateImmutableFields_Fails", func(t *testing.T) {
-		// VID and PID are immutable — attempting to change vid via update should fail or be ignored
-		// The shell script creates a model and then tries to update with a different vid (impossible via flags).
+		// VID and PID are immutable — attempting to change vid via update should fail or be ignored.
+		// Updating a model with a different vid is impossible via flags, so this covers the create-then-query path.
 		// We verify that productName cannot be set to empty via update by checking the model is intact.
 		m, err := GetModel(vid, pid)
 		require.NoError(t, err)

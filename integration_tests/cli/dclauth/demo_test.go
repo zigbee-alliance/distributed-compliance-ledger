@@ -305,7 +305,7 @@ func TestAuthDemoNodeAdmin(t *testing.T) {
 	t.Run("RejectedAccountCannotAddModel", func(t *testing.T) {
 		// The rejected user's key is in the keyring, but the account was never
 		// created on-chain, so signing a model tx fails ("key not found") — a
-		// rejected account cannot transact (auth-demo.sh:627-631).
+		// rejected account cannot transact.
 		mvid := rand.Intn(65534) + 1
 		mpid := rand.Intn(65534) + 1
 		txResult, err := model.AddModel(model.AddModelOpts{
@@ -640,7 +640,7 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 	// ── Critical scenario: approvals collected under a larger trustee set ──
 	// must NOT auto-activate an account once the set shrinks; the account stays
 	// pending until the next approval re-evaluates the (now-met) quorum. This
-	// mirrors the documented edge case in the original auth-demo.sh.
+	// mirrors the documented edge case.
 	t.Run("PendingApprovalsSurviveTrusteeRevocation", func(t *testing.T) {
 		// Add a 4th trustee: with 3 trustees a Trustee needs ceil(2/3*3)=2
 		// approvals → jack proposes + alice approves → active → 4 trustees.
@@ -712,7 +712,7 @@ func TestAuthDemoDynamicTrusteeCount(t *testing.T) {
 	})
 
 	// ── The now-active Vendor (VID=vid) can add/update/query a model for its own
-	// VID, but adding a model for a different VID is rejected (auth-demo.sh:1336-1362).
+	// VID, but adding a model for a different VID is rejected.
 	t.Run("VendorModelLifecycle", func(t *testing.T) {
 		mpid := rand.Intn(65534) + 1
 		productName := "Device #1"

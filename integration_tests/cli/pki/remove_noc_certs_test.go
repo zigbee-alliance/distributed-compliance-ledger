@@ -119,6 +119,14 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 		require.True(t, containsCertSerial(cert.Certs, removeNocIntermCert2Serial))
 		require.False(t, containsCertSerial(cert.Certs, removeNocIntermCert1Serial))
 
+		// ICA certs by VID still carry the remaining ICA + the leaf; the removed serial is gone.
+		icas, err := GetNocX509IcaCerts(removeNocRootCertVid)
+		require.NoError(t, err)
+		require.NotNil(t, icas)
+		require.True(t, containsCertSubjectSerial(icas.Certs, removeNocIntermCertSubject, removeNocIntermCert2Serial))
+		require.True(t, containsCertSerial(icas.Certs, removeNocLeafCertSerial))
+		require.False(t, containsCertSerial(icas.Certs, removeNocIntermCert1Serial))
+
 		// Remove remaining ICA cert by subject+subjectKeyID
 		txResult, err = RemoveNocCert(removeNocIntermCertSubject, removeNocIntermCertSubjectKeyID, vendorAccount65521)
 		cliputils.RequireTxOK(t, txResult, err)
@@ -126,6 +134,15 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 		cert, err = GetNocCert("--subject", removeNocIntermCertSubject, "--subject-key-id", removeNocIntermCertSubjectKeyID)
 		require.NoError(t, err)
 		require.Nil(t, cert)
+
+		// ICA certs by VID now carry only the leaf; the ICA subject is gone.
+		icas, err = GetNocX509IcaCerts(removeNocRootCertVid)
+		require.NoError(t, err)
+		require.NotNil(t, icas)
+		require.True(t, containsCertSerial(icas.Certs, removeNocLeafCertSerial))
+		for _, c := range icas.Certs {
+			require.NotEqual(t, removeNocIntermCertSubject, c.Subject)
+		}
 
 		// This test's ICA certs (subject = removeNocIntermCertSubject) should not be in the revoked list.
 		// (Prior NOC tests may have left other subjects in the revoked list, so we cannot assert empty.)
@@ -141,6 +158,27 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 		cert, err := GetNocCert("--subject", removeNocLeafCertSubject, "--subject-key-id", removeNocLeafCertSubjectKeyID)
 		require.NoError(t, err)
 		require.Nil(t, cert)
+
+		// Once this test's ICA and leaf are removed, none of its serials/subject
+		// remain under the VID. (Other NOC tests share VID 65521 on the shared
+		// ledger, so the by-VID list itself may still be non-empty.)
+		icas, err := GetNocX509IcaCerts(removeNocRootCertVid)
+		require.NoError(t, err)
+		if icas != nil {
+			require.False(t, containsCertSerial(icas.Certs, removeNocLeafCertSerial))
+			require.False(t, containsCertSerial(icas.Certs, removeNocIntermCert2Serial))
+			for _, c := range icas.Certs {
+				require.NotEqual(t, removeNocIntermCertSubject, c.Subject)
+			}
+		}
+
+		// All NOC certs still carry the root, but neither leaf nor ICA serials.
+		all, err := GetAllNocX509Certs()
+		require.NoError(t, err)
+		require.NotNil(t, all)
+		require.True(t, containsCertSerial(all.Certs, removeNocRootCert1SerialNumber))
+		require.False(t, containsCertSerial(all.Certs, removeNocLeafCertSerial))
+		require.False(t, containsCertSerial(all.Certs, removeNocIntermCert2Serial))
 	})
 
 	t.Run("RemoveNocRootCert", func(t *testing.T) {
@@ -171,6 +209,11 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 		txResult, err = RevokeNocRootCert(removeNocRootCertSubject, removeNocRootCertSubjectKeyID, vendorAccount65521, RevokeNocCertOpts{SerialNumber: removeNocRootCert1SerialNumber})
 		cliputils.RequireTxOK(t, txResult, err)
 
+		// Revoked NOC root list now carries the revoked root serial.
+		revokedRoots, err := GetAllRevokedNocRootCerts()
+		require.NoError(t, err)
+		require.True(t, containsRevokedNocRootCertSerial(revokedRoots, removeNocRootCert1SerialNumber))
+
 		// Remove revoked root cert by serial
 		txResult, err = RemoveNocRootCert(removeNocRootCertSubject, removeNocRootCertSubjectKeyID, vendorAccount65521, RevokeNocCertOpts{SerialNumber: removeNocRootCert1SerialNumber})
 		cliputils.RequireTxOK(t, txResult, err)
@@ -194,10 +237,34 @@ func TestPKIRemoveNocCertificates(t *testing.T) {
 		require.NoError(t, err)
 		require.Nil(t, cert)
 
+		// NOC root certs by VID are empty once both roots are removed.
+		roots, err = GetNocRootCerts(removeNocRootCertVid)
+		require.NoError(t, err)
+		if roots != nil {
+			require.False(t, containsCertSerial(roots.Certs, removeNocRootCert1SerialNumber))
+			require.False(t, containsCertSerial(roots.Certs, removeNocRootCert1CopySerial))
+		}
+
+		// noc-x509-cert by VID+SKID no longer carries this test's root serials.
+		// (The root subject/SKID is shared with other NOC tests on the shared
+		// ledger, so the VID+SKID entry itself may still exist for their certs.)
+		cert, err = GetNocCert("--vid", fmt.Sprintf("%d", removeNocRootCertVid), "--subject-key-id", removeNocRootCertSubjectKeyID)
+		require.NoError(t, err)
+		if cert != nil {
+			require.False(t, containsCertSerial(cert.Certs, removeNocRootCert1SerialNumber))
+			require.False(t, containsCertSerial(cert.Certs, removeNocRootCert1CopySerial))
+		}
+
 		// ICA cert should still be present.
 		all, err := GetAllNocX509Certs()
 		require.NoError(t, err)
 		require.NotNil(t, all)
 		require.True(t, containsCertSerial(all.Certs, removeNocIntermCert1Serial))
+
+		// noc-x509-cert by VID+SKID for the re-added ICA is present.
+		cert, err = GetNocCert("--vid", fmt.Sprintf("%d", removeNocRootCertVid), "--subject-key-id", removeNocIntermCertSubjectKeyID)
+		require.NoError(t, err)
+		require.NotNil(t, cert)
+		require.True(t, containsCertSerial(cert.Certs, removeNocIntermCert1Serial))
 	})
 }

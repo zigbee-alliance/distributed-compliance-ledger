@@ -124,17 +124,6 @@ test:
 		go test -v $$(ls $$d/*.go | grep -v _test.go) $$f || exit 1; \
 	done
 
-test_cli_go:
-	@bash -c '\
-		source integration_tests/cli/common.sh; \
-		source integration_tests/pool.sh; \
-		init_pool; \
-		go test -tags=dev -v -count=1 -timeout 30m -p 1 ./integration_tests/cli/...; \
-		EXIT_CODE=$$?; \
-		cleanup_pool; \
-		exit $$EXIT_CODE \
-	'
-
 lint:
 	golangci-lint run ./... --timeout 5m0s
 
@@ -160,7 +149,7 @@ ts-client-test:
 ${TEST_TARGETS}:
 	make -f ${MK_TEST} $@
 
-.PHONY: all build install test test_cli_go lint clean \
+.PHONY: all build install test lint clean \
 		ts-client-gen ts-client-test \
 		license license-check \
 		${TEST_TARGETS}

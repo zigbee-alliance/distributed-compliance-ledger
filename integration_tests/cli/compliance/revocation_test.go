@@ -10,17 +10,17 @@ import (
 	compliancetypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
-// TestComplianceRevocation is a full port of compliance-revocation.sh. It revokes
-// an uncertified model for both zigbee and matter, exercises the re-revoke error
-// path (304), verifies every per-record and all-* query while revoked, then
-// re-certifies the revoked model (covering the 302 "must be after" guard) and
-// re-verifies the resulting states. It finishes with the compliance schema-v1
-// (#730) ValidateBasic negative cases.
+// TestComplianceRevocation revokes an uncertified model for both zigbee and
+// matter, exercises the re-revoke error path (304), verifies every per-record
+// and all-* query while revoked, then re-certifies the revoked model (covering
+// the 302 "must be after" guard) and re-verifies the resulting states. It
+// finishes with the compliance schema-v1 (#730) ValidateBasic negative cases.
 //
-// NOTE on assertions: the shell verifies state with substring greps. After a
-// certify it asserts "softwareVersionCertificationStatus": 2, but a revoke
-// followed by certify keeps the prior states in the `history` array, so the
-// typed assertions below check the correct top-level value and only inspect
+// NOTE on assertions: the original CLI checks verified state with substring
+// matching over the JSON output. After a certify they asserted
+// "softwareVersionCertificationStatus": 2, but a revoke followed by certify
+// keeps the prior states in the `history` array, so the typed assertions below
+// check the correct top-level value and only inspect
 // `history` where it is meaningfully populated. The all-* list queries skip
 // Value=false entries (see grpc_query_*_model.go), so a re-certified zigbee
 // model drops out of all-revoked-models while the still-revoked matter remains.
