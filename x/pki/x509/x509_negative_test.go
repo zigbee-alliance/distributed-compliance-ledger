@@ -65,6 +65,8 @@ func TestVerifyCAExtensions_NegativeBranches(t *testing.T) {
 
 func TestVerifyEndEntityExtensions_NegativeBranches(t *testing.T) {
 	base := func(t *testing.T) *x509.Certificate {
+		t.Helper()
+
 		return decodeStd(t, testconstants.MatterDACShaped)
 	}
 	t.Run("BasicConstraints not critical", func(t *testing.T) {
