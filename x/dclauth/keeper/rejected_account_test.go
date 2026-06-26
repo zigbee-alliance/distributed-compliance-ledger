@@ -1,25 +1,22 @@
 package keeper_test
 
-/*
 import (
-	"strconv"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	keepertest "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
-// Prevent strconv unused error.
-var _ = strconv.IntSize
-
 func createNRejectedAccount(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.RejectedAccount {
 	items := make([]types.RejectedAccount, n)
 	for i := range items {
-		items[i].Address = strconv.Itoa(i)
+		acc := newTestAccount(sample.AccAddress())
+		items[i] = types.RejectedAccount{Account: &acc}
 
 		keeper.SetRejectedAccount(ctx, items[i])
 	}
@@ -31,9 +28,7 @@ func TestRejectedAccountGet(t *testing.T) {
 	keeper, ctx := keepertest.DclauthKeeper(t)
 	items := createNRejectedAccount(keeper, ctx, 10)
 	for _, item := range items {
-		rst, found := keeper.GetRejectedAccount(ctx,
-			item.Address,
-		)
+		rst, found := keeper.GetRejectedAccount(ctx, item.GetAddress())
 		require.True(t, found)
 		require.Equal(t,
 			nullify.Fill(&item),
@@ -46,12 +41,8 @@ func TestRejectedAccountRemove(t *testing.T) {
 	keeper, ctx := keepertest.DclauthKeeper(t)
 	items := createNRejectedAccount(keeper, ctx, 10)
 	for _, item := range items {
-		keeper.RemoveRejectedAccount(ctx,
-			item.Address,
-		)
-		_, found := keeper.GetRejectedAccount(ctx,
-			item.Address,
-		)
+		keeper.RemoveRejectedAccount(ctx, item.GetAddress())
+		_, found := keeper.GetRejectedAccount(ctx, item.GetAddress())
 		require.False(t, found)
 	}
 }
@@ -64,4 +55,3 @@ func TestRejectedAccountGetAll(t *testing.T) {
 		nullify.Fill(keeper.GetAllRejectedAccount(ctx)),
 	)
 }
-*/

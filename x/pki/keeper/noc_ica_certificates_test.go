@@ -63,3 +63,25 @@ func TestNocIcaCertificatesGetAll(t *testing.T) {
 		nullify.Fill(keeper.GetAllNocIcaCertificates(ctx)),
 	)
 }
+
+func TestGetNocIcaCertificatesBySubjectAndSKID(t *testing.T) {
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
+	keeper.SetNocIcaCertificates(ctx, types.NocIcaCertificates{
+		Vid: 1,
+		Certs: []*types.Certificate{
+			{Subject: "s1", SubjectKeyId: "k1"},
+			{Subject: "s2", SubjectKeyId: "k2"},
+		},
+	})
+
+	res, found := keeper.GetNocIcaCertificatesBySubjectAndSKID(ctx, 1, "s1", "k1")
+	require.True(t, found)
+	require.Len(t, res.Certs, 1)
+	require.Equal(t, "s1", res.Certs[0].Subject)
+
+	_, found = keeper.GetNocIcaCertificatesBySubjectAndSKID(ctx, 1, "nope", "nope")
+	require.False(t, found)
+
+	_, found = keeper.GetNocIcaCertificatesBySubjectAndSKID(ctx, 99, "s1", "k1")
+	require.False(t, found)
+}

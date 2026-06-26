@@ -1,6 +1,5 @@
 package types_test
 
-/*
 import (
 	"testing"
 
@@ -23,70 +22,25 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "valid genesis state",
 			genState: &types.GenesisState{
 				ComplianceInfoList: []types.ComplianceInfo{
-					{
-						Vid:               0,
-						Pid:               0,
-						SoftwareVersion:   0,
-						CertificationType: "0",
-					},
-					{
-						Vid:               1,
-						Pid:               1,
-						SoftwareVersion:   1,
-						CertificationType: "1",
-					},
+					{Vid: 0, Pid: 0, SoftwareVersion: 0, CertificationType: "0"},
+					{Vid: 1, Pid: 1, SoftwareVersion: 1, CertificationType: "1"},
 				},
 				CertifiedModelList: []types.CertifiedModel{
-					{
-						Vid:               0,
-						Pid:               0,
-						SoftwareVersion:   0,
-						CertificationType: "0",
-					},
-					{
-						Vid:               1,
-						Pid:               1,
-						SoftwareVersion:   1,
-						CertificationType: "1",
-					},
+					{Vid: 0, Pid: 0, SoftwareVersion: 0, CertificationType: "0"},
+					{Vid: 1, Pid: 1, SoftwareVersion: 1, CertificationType: "1"},
 				},
 				RevokedModelList: []types.RevokedModel{
-					{
-						Vid:               0,
-						Pid:               0,
-						SoftwareVersion:   0,
-						CertificationType: "0",
-					},
-					{
-						Vid:               1,
-						Pid:               1,
-						SoftwareVersion:   1,
-						CertificationType: "1",
-					},
+					{Vid: 0, Pid: 0, SoftwareVersion: 0, CertificationType: "0"},
+					{Vid: 1, Pid: 1, SoftwareVersion: 1, CertificationType: "1"},
 				},
 				ProvisionalModelList: []types.ProvisionalModel{
-					{
-						Vid:               0,
-						Pid:               0,
-						SoftwareVersion:   0,
-						CertificationType: "0",
-					},
-					{
-						Vid:               1,
-						Pid:               1,
-						SoftwareVersion:   1,
-						CertificationType: "1",
-					},
+					{Vid: 0, Pid: 0, SoftwareVersion: 0, CertificationType: "0"},
+					{Vid: 1, Pid: 1, SoftwareVersion: 1, CertificationType: "1"},
 				},
 				DeviceSoftwareComplianceList: []types.DeviceSoftwareCompliance{
-	{
-		CdCertificateId: "0",
-},
-	{
-		CdCertificateId: "1",
-},
-},
-// this line is used by starport scaffolding # types/genesis/validField
+					{CDCertificateId: "0"},
+					{CDCertificateId: "1"},
+				},
 			},
 			valid: true,
 		},
@@ -94,18 +48,8 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "duplicated complianceInfo",
 			genState: &types.GenesisState{
 				ComplianceInfoList: []types.ComplianceInfo{
-					{
-						Vid:               0,
-						Pid:               0,
-						SoftwareVersion:   0,
-						CertificationType: "0",
-					},
-					{
-						Vid:               0,
-						Pid:               0,
-						SoftwareVersion:   0,
-						CertificationType: "0",
-					},
+					{Vid: 0, Pid: 0, SoftwareVersion: 0, CertificationType: "0"},
+					{Vid: 0, Pid: 0, SoftwareVersion: 0, CertificationType: "0"},
 				},
 			},
 			valid: false,
@@ -114,18 +58,8 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "duplicated certifiedModel",
 			genState: &types.GenesisState{
 				CertifiedModelList: []types.CertifiedModel{
-					{
-						Vid:               0,
-						Pid:               0,
-						SoftwareVersion:   0,
-						CertificationType: "0",
-					},
-					{
-						Vid:               0,
-						Pid:               0,
-						SoftwareVersion:   0,
-						CertificationType: "0",
-					},
+					{Vid: 0, Pid: 0, SoftwareVersion: 0, CertificationType: "0"},
+					{Vid: 0, Pid: 0, SoftwareVersion: 0, CertificationType: "0"},
 				},
 			},
 			valid: false,
@@ -134,18 +68,8 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "duplicated revokedModel",
 			genState: &types.GenesisState{
 				RevokedModelList: []types.RevokedModel{
-					{
-						Vid:               0,
-						Pid:               0,
-						SoftwareVersion:   0,
-						CertificationType: "0",
-					},
-					{
-						Vid:               0,
-						Pid:               0,
-						SoftwareVersion:   0,
-						CertificationType: "0",
-					},
+					{Vid: 0, Pid: 0, SoftwareVersion: 0, CertificationType: "0"},
+					{Vid: 0, Pid: 0, SoftwareVersion: 0, CertificationType: "0"},
 				},
 			},
 			valid: false,
@@ -154,37 +78,22 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "duplicated provisionalModel",
 			genState: &types.GenesisState{
 				ProvisionalModelList: []types.ProvisionalModel{
-					{
-						Vid:               0,
-						Pid:               0,
-						SoftwareVersion:   0,
-						CertificationType: "0",
-					},
-					{
-						Vid:               0,
-						Pid:               0,
-						SoftwareVersion:   0,
-						CertificationType: "0",
-					},
+					{Vid: 0, Pid: 0, SoftwareVersion: 0, CertificationType: "0"},
+					{Vid: 0, Pid: 0, SoftwareVersion: 0, CertificationType: "0"},
 				},
 			},
 			valid: false,
 		},
 		{
-	desc:     "duplicated deviceSoftwareCompliance",
-	genState: &types.GenesisState{
-		DeviceSoftwareComplianceList: []types.DeviceSoftwareCompliance{
-			{
-				CdCertificateId: "0",
-},
-			{
-				CdCertificateId: "0",
-},
+			desc: "duplicated deviceSoftwareCompliance",
+			genState: &types.GenesisState{
+				DeviceSoftwareComplianceList: []types.DeviceSoftwareCompliance{
+					{CDCertificateId: "0"},
+					{CDCertificateId: "0"},
+				},
+			},
+			valid: false,
 		},
-	},
-	valid:    false,
-},
-// this line is used by starport scaffolding # types/genesis/testcase
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
 			err := tc.genState.Validate()
@@ -196,4 +105,3 @@ func TestGenesisState_Validate(t *testing.T) {
 		})
 	}
 }
-*/

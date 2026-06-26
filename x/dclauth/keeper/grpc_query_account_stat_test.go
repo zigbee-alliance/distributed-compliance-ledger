@@ -1,6 +1,5 @@
 package keeper_test
 
-/*
 import (
 	"testing"
 
@@ -47,4 +46,11 @@ func TestAccountStatQuery(t *testing.T) {
 		})
 	}
 }
-*/
+
+func TestAccountStatQuery_NotFound(t *testing.T) {
+	keeper, ctx := keepertest.DclauthKeeper(t)
+	wctx := sdk.WrapSDKContext(ctx)
+
+	_, err := keeper.AccountStat(wctx, &types.QueryGetAccountStatRequest{})
+	require.ErrorIs(t, err, status.Error(codes.NotFound, "not found"))
+}

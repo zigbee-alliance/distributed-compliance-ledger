@@ -1,8 +1,6 @@
 package keeper_test
 
-/*
 import (
-	"strconv"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -10,13 +8,11 @@ import (
 	"github.com/stretchr/testify/require"
 	keepertest "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
-
-// Prevent strconv unused error
-var _ = strconv.IntSize
 
 func TestPendingAccountQuerySingle(t *testing.T) {
 	keeper, ctx := keepertest.DclauthKeeper(t)
@@ -29,25 +25,19 @@ func TestPendingAccountQuerySingle(t *testing.T) {
 		err      error
 	}{
 		{
-			desc: "First",
-			request: &types.QueryGetPendingAccountRequest{
-				Address: msgs[0].Address,
-			},
+			desc:     "First",
+			request:  &types.QueryGetPendingAccountRequest{Address: msgs[0].GetAddress().String()},
 			response: &types.QueryGetPendingAccountResponse{PendingAccount: msgs[0]},
 		},
 		{
-			desc: "Second",
-			request: &types.QueryGetPendingAccountRequest{
-				Address: msgs[1].Address,
-			},
+			desc:     "Second",
+			request:  &types.QueryGetPendingAccountRequest{Address: msgs[1].GetAddress().String()},
 			response: &types.QueryGetPendingAccountResponse{PendingAccount: msgs[1]},
 		},
 		{
-			desc: "KeyNotFound",
-			request: &types.QueryGetPendingAccountRequest{
-				Address: strconv.Itoa(100000),
-			},
-			err: status.Error(codes.NotFound, "not found"),
+			desc:    "KeyNotFound",
+			request: &types.QueryGetPendingAccountRequest{Address: sample.AccAddress()},
+			err:     status.Error(codes.NotFound, "not found"),
 		},
 		{
 			desc: "InvalidRequest",
@@ -67,6 +57,11 @@ func TestPendingAccountQuerySingle(t *testing.T) {
 			}
 		})
 	}
+
+	t.Run("InvalidAddress", func(t *testing.T) {
+		_, err := keeper.PendingAccount(wctx, &types.QueryGetPendingAccountRequest{Address: "not-a-bech32-address"})
+		require.Error(t, err)
+	})
 }
 
 func TestPendingAccountQueryPaginated(t *testing.T) {
@@ -90,10 +85,7 @@ func TestPendingAccountQueryPaginated(t *testing.T) {
 			resp, err := keeper.PendingAccountAll(wctx, request(nil, uint64(i), uint64(step), false))
 			require.NoError(t, err)
 			require.LessOrEqual(t, len(resp.PendingAccount), step)
-			require.Subset(t,
-				nullify.Fill(msgs),
-				nullify.Fill(resp.PendingAccount),
-			)
+			require.Subset(t, nullify.Fill(msgs), nullify.Fill(resp.PendingAccount))
 		}
 	})
 	t.Run("ByKey", func(t *testing.T) {
@@ -103,10 +95,7 @@ func TestPendingAccountQueryPaginated(t *testing.T) {
 			resp, err := keeper.PendingAccountAll(wctx, request(next, 0, uint64(step), false))
 			require.NoError(t, err)
 			require.LessOrEqual(t, len(resp.PendingAccount), step)
-			require.Subset(t,
-				nullify.Fill(msgs),
-				nullify.Fill(resp.PendingAccount),
-			)
+			require.Subset(t, nullify.Fill(msgs), nullify.Fill(resp.PendingAccount))
 			next = resp.Pagination.NextKey
 		}
 	})
@@ -114,14 +103,10 @@ func TestPendingAccountQueryPaginated(t *testing.T) {
 		resp, err := keeper.PendingAccountAll(wctx, request(nil, 0, 0, true))
 		require.NoError(t, err)
 		require.Equal(t, len(msgs), int(resp.Pagination.Total))
-		require.ElementsMatch(t,
-			nullify.Fill(msgs),
-			nullify.Fill(resp.PendingAccount),
-		)
+		require.ElementsMatch(t, nullify.Fill(msgs), nullify.Fill(resp.PendingAccount))
 	})
 	t.Run("InvalidRequest", func(t *testing.T) {
 		_, err := keeper.PendingAccountAll(wctx, nil)
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
 }
-*/

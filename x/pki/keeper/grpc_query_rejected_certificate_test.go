@@ -1,6 +1,5 @@
 package keeper_test
 
-/*
 import (
 	"strconv"
 	"testing"
@@ -16,46 +15,43 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-// Prevent strconv unused error
-var _ = strconv.IntSize
-
 func TestRejectedCertificateQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.PkiKeeper(t)
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNRejectedCertificate(keeper, ctx, 2)
 	for _, tc := range []struct {
 		desc     string
-		request  *types.QueryGetRejectedCertificateRequest
-		response *types.QueryGetRejectedCertificateResponse
+		request  *types.QueryGetRejectedCertificatesRequest
+		response *types.QueryGetRejectedCertificatesResponse
 		err      error
 	}{
 		{
 			desc: "First",
-			request: &types.QueryGetRejectedCertificateRequest{
+			request: &types.QueryGetRejectedCertificatesRequest{
 				Subject:      msgs[0].Subject,
-				SubjectKeyID: msgs[0].SubjectKeyID,
+				SubjectKeyId: msgs[0].SubjectKeyId,
 			},
-			response: &types.QueryGetRejectedCertificateResponse{RejectedCertificate: msgs[0]},
+			response: &types.QueryGetRejectedCertificatesResponse{RejectedCertificate: msgs[0]},
 		},
 		{
 			desc: "Second",
-			request: &types.QueryGetRejectedCertificateRequest{
+			request: &types.QueryGetRejectedCertificatesRequest{
 				Subject:      msgs[1].Subject,
-				SubjectKeyID: msgs[1].SubjectKeyID,
+				SubjectKeyId: msgs[1].SubjectKeyId,
 			},
-			response: &types.QueryGetRejectedCertificateResponse{RejectedCertificate: msgs[1]},
+			response: &types.QueryGetRejectedCertificatesResponse{RejectedCertificate: msgs[1]},
 		},
 		{
 			desc: "KeyNotFound",
-			request: &types.QueryGetRejectedCertificateRequest{
+			request: &types.QueryGetRejectedCertificatesRequest{
 				Subject:      strconv.Itoa(100000),
-				SubjectKeyID: strconv.Itoa(100000),
+				SubjectKeyId: strconv.Itoa(100000),
 			},
-			err: status.Error(codes.InvalidArgument, "not found"),
+			err: status.Error(codes.NotFound, "not found"),
 		},
 		{
 			desc: "InvalidRequest",
-			err:  status.Error(codes.InvalidArgument, "invalid request"),
+			err:  status.Error(codes.NotFound, "invalid request"),
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
@@ -74,12 +70,12 @@ func TestRejectedCertificateQuerySingle(t *testing.T) {
 }
 
 func TestRejectedCertificateQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.PkiKeeper(t)
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNRejectedCertificate(keeper, ctx, 5)
 
-	request := func(next []byte, offset, limit uint64, total bool) *types.QueryAllRejectedCertificateRequest {
-		return &types.QueryAllRejectedCertificateRequest{
+	request := func(next []byte, offset, limit uint64, total bool) *types.QueryAllRejectedCertificatesRequest {
+		return &types.QueryAllRejectedCertificatesRequest{
 			Pagination: &query.PageRequest{
 				Key:        next,
 				Offset:     offset,
@@ -128,4 +124,3 @@ func TestRejectedCertificateQueryPaginated(t *testing.T) {
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
 }
-*/

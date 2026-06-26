@@ -1,6 +1,5 @@
 package types_test
 
-/*
 import (
 	"testing"
 
@@ -23,14 +22,9 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "valid genesis state",
 			genState: &types.GenesisState{
 				VendorInfoList: []types.VendorInfo{
-					{
-						VendorID: 0,
-					},
-					{
-						VendorID: 1,
-					},
+					{VendorID: 0},
+					{VendorID: 1},
 				},
-				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
 		},
@@ -38,17 +32,12 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "duplicated vendorInfo",
 			genState: &types.GenesisState{
 				VendorInfoList: []types.VendorInfo{
-					{
-						VendorID: 0,
-					},
-					{
-						VendorID: 0,
-					},
+					{VendorID: 0},
+					{VendorID: 0},
 				},
 			},
 			valid: false,
 		},
-		// this line is used by starport scaffolding # types/genesis/testcase
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
 			err := tc.genState.Validate()
@@ -60,4 +49,3 @@ func TestGenesisState_Validate(t *testing.T) {
 		})
 	}
 }
-*/
