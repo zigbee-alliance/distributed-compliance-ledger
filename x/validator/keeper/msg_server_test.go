@@ -10,7 +10,6 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
-//nolint:deadcode,unused
 func setupMsgServer(tb testing.TB) (types.MsgServer, context.Context) {
 	tb.Helper()
 	k, ctx := keepertest.ValidatorKeeper(tb, nil)

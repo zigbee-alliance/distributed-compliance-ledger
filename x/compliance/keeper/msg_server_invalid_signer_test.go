@@ -22,22 +22,27 @@ func TestMsgServerInvalidSigner(t *testing.T) {
 	}{
 		{"CertifyModel", func() error {
 			_, err := ms.CertifyModel(wctx, &types.MsgCertifyModel{Signer: bad})
+
 			return err
 		}},
 		{"RevokeModel", func() error {
 			_, err := ms.RevokeModel(wctx, &types.MsgRevokeModel{Signer: bad})
+
 			return err
 		}},
 		{"ProvisionModel", func() error {
 			_, err := ms.ProvisionModel(wctx, &types.MsgProvisionModel{Signer: bad})
+
 			return err
 		}},
 		{"UpdateComplianceInfo", func() error {
 			_, err := ms.UpdateComplianceInfo(wctx, &types.MsgUpdateComplianceInfo{Creator: bad})
+
 			return err
 		}},
 		{"DeleteComplianceInfo", func() error {
 			_, err := ms.DeleteComplianceInfo(wctx, &types.MsgDeleteComplianceInfo{Creator: bad})
+
 			return err
 		}},
 	}

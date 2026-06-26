@@ -17,22 +17,27 @@ func TestMsgServerInvalidSigner(t *testing.T) {
 	}{
 		{"ProposeAddAccount", func() error {
 			_, err := ms.ProposeAddAccount(ctx, &types.MsgProposeAddAccount{Signer: bad})
+
 			return err
 		}},
 		{"ApproveAddAccount", func() error {
 			_, err := ms.ApproveAddAccount(ctx, &types.MsgApproveAddAccount{Signer: bad})
+
 			return err
 		}},
 		{"RejectAddAccount", func() error {
 			_, err := ms.RejectAddAccount(ctx, &types.MsgRejectAddAccount{Signer: bad})
+
 			return err
 		}},
 		{"ProposeRevokeAccount", func() error {
 			_, err := ms.ProposeRevokeAccount(ctx, &types.MsgProposeRevokeAccount{Signer: bad})
+
 			return err
 		}},
 		{"ApproveRevokeAccount", func() error {
 			_, err := ms.ApproveRevokeAccount(ctx, &types.MsgApproveRevokeAccount{Signer: bad})
+
 			return err
 		}},
 	}

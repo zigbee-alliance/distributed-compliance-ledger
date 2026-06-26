@@ -10,7 +10,6 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-//nolint:unused
 func setupMsgServer(tb testing.TB) (types.MsgServer, context.Context) {
 	tb.Helper()
 	k, ctx := keepertest.PkiKeeper(tb, nil)
