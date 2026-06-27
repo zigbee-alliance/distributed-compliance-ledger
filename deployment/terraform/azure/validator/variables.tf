@@ -14,6 +14,12 @@ variable "location" {
   default     = null
 }
 
+variable "enable_nay_gw" {
+  description = "Enables NAT gw creation"
+  type        = bool
+  default     = false
+}
+
 variable "enable_encryption_at_host" {
   description = "Enables encryption at host for the node's managed disks"
   type        = bool
