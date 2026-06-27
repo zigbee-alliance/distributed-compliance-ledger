@@ -18,8 +18,9 @@ go test -tags=dev -json -v $(go list ./... | grep -v '/integration_tests') \
     -coverprofile=./cover.out -covermode=set -coverpkg=./... 2>&1 \
     | tee /tmp/gotest.log | gotestfmt
 
-go test -covermode=set -coverprofile=./cover_url_liveness.out \
-    -coverpkg=./utils/cli/... ./utils/cli/
+go test -json -v -covermode=set -coverprofile=./cover_url_liveness.out \
+    -coverpkg=./utils/cli/... ./utils/cli/ 2>&1 \
+    | tee -a /tmp/gotest.log | gotestfmt
 
 go install "github.com/wadey/gocovmerge@${GOCOVMERGE_VERSION}"
 gocovmerge ./cover.out ./cover_url_liveness.out > ./cover_merged.out
