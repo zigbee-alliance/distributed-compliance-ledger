@@ -2,5 +2,5 @@
 
 profile: 'cover.out'
 threshold:
-  total: 50
+  total: 90
   file: 0
