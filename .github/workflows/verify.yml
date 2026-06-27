@@ -113,7 +113,16 @@ jobs:
           set -euo pipefail
           # shellcheck disable=SC2046
           go test -tags=dev -json -v $(go list ./... | grep -v '/integration_tests') -coverprofile=./cover.out -covermode=set -coverpkg=./... 2>&1 | tee /tmp/gotest.log | gotestfmt
-          go test -v utils/cli/url_liveness.go  utils/cli/url_liveness_test.go
+          # url_liveness.go gates its HTTP logic behind the dev build flag, so it is
+          # unreachable (and its !dev-tagged test is excluded) in the -tags=dev run
+          # above. Re-run the package without the dev tag to collect real coverage for
+          # the liveness checks, then merge it into cover.out so it shows up in the
+          # coverage report. The non-dev package build reports the same canonical file
+          # paths as the run above, so gocovmerge unions the two cleanly.
+          go test -covermode=set -coverprofile=./cover_url_liveness.out -coverpkg=./utils/cli/... ./utils/cli/
+          go install github.com/wadey/gocovmerge@b5bfa59ec0adc420475f97f89b58045c721d761c
+          gocovmerge ./cover.out ./cover_url_liveness.out > ./cover_merged.out
+          mv ./cover_merged.out ./cover.out
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GOCOVER_MODE: set
