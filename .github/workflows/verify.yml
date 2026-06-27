@@ -36,7 +36,7 @@ jobs:
       workflows: ${{ steps.filter.outputs.workflows }}
       ts_client: ${{ steps.filter.outputs.ts_client }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: dorny/paths-filter@v4
         if: ${{ !env.ACT }}
         id: filter
@@ -74,7 +74,7 @@ jobs:
     needs:
       - changes
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: gaurav-nelson/github-action-markdown-link-check@v1
         with:
           use-verbose-mode: 'yes'
@@ -86,7 +86,7 @@ jobs:
     needs:
       - changes
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: rojopolis/spellcheck-github-actions@0.35.0
   unit-tests:
     name: Check unit tests
@@ -97,7 +97,7 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version: 1.26.4
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: actions/cache@v5
         if: ${{ !env.ACT }}
         with:
@@ -132,7 +132,7 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version: 1.26.4
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: actions/cache@v5
         with:
           path: |
@@ -164,7 +164,7 @@ jobs:
     needs:
       - changes
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -177,7 +177,7 @@ jobs:
     needs:
       - changes
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: actions/setup-go@v6
         with:
           go-version: 1.26.4
@@ -195,7 +195,7 @@ jobs:
       - integration-tests
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: actions/download-artifact@v8
       - uses: actions/setup-go@v6
         with:

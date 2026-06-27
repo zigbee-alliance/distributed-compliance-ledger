@@ -25,7 +25,7 @@ jobs:
     name: Check syntax (super-linter)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Run super-linter validation
         uses: github/super-linter@v7
         env:
