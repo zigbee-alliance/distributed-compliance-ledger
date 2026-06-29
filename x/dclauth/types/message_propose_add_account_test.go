@@ -6,11 +6,14 @@ import (
 	"testing"
 
 	"cosmossdk.io/errors"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
 	validator "github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/common/types"
 )
@@ -191,4 +194,52 @@ func TestMsgProposeAddAccountGetSignBytes(t *testing.T) {
 		transactionTime)
 
 	require.Equal(t, expected, string(msg.GetSignBytes()))
+}
+
+func TestMsgProposeAddAccount_ValidateBasicBranches(t *testing.T) {
+	pk := ed25519.GenPrivKey().PubKey()
+	accAddr := sdk.AccAddress(pk.Address())
+	pkAny, err := codectypes.NewAnyWithValue(pk)
+	require.NoError(t, err)
+	badAny, err := codectypes.NewAnyWithValue(&MsgProposeAddAccount{})
+	require.NoError(t, err)
+	signer := sample.AccAddress()
+
+	base := func() MsgProposeAddAccount {
+		return MsgProposeAddAccount{
+			Address:  accAddr.String(),
+			Signer:   signer,
+			PubKey:   pkAny,
+			Roles:    AccountRoles{Vendor},
+			VendorID: 1,
+		}
+	}
+
+	mutate := func(f func(*MsgProposeAddAccount)) MsgProposeAddAccount {
+		m := base()
+		f(&m)
+
+		return m
+	}
+
+	for _, tc := range []struct {
+		name string
+		msg  MsgProposeAddAccount
+	}{
+		{"empty address", mutate(func(m *MsgProposeAddAccount) { m.Address = "" })},
+		{"invalid address", mutate(func(m *MsgProposeAddAccount) { m.Address = "invalid" })},
+		{"empty signer", mutate(func(m *MsgProposeAddAccount) { m.Signer = "" })},
+		{"invalid signer", mutate(func(m *MsgProposeAddAccount) { m.Signer = "invalid" })},
+		{"nil pubkey", mutate(func(m *MsgProposeAddAccount) { m.PubKey = nil })},
+		{"non-pubkey any", mutate(func(m *MsgProposeAddAccount) { m.PubKey = badAny })},
+		{"pubkey/address mismatch", mutate(func(m *MsgProposeAddAccount) { m.Address = sample.AccAddress() })},
+		{"no roles", mutate(func(m *MsgProposeAddAccount) { m.Roles = nil })},
+		{"invalid role", mutate(func(m *MsgProposeAddAccount) { m.Roles = AccountRoles{"bogus"} })},
+		{"vendor without vendorID", mutate(func(m *MsgProposeAddAccount) { m.VendorID = 0 })},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			msg := tc.msg
+			require.Error(t, msg.ValidateBasic())
+		})
+	}
 }
