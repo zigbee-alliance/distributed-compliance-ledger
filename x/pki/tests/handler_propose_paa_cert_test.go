@@ -308,6 +308,48 @@ func TestHandler_ProposeAddDaRootCert_CertificateAlreadyExists(t *testing.T) {
 //	require.True(t, pkitypes.ErrInappropriateCertificateType.Is(err))
 // }
 
+func TestHandler_ProposeAddDaRootCert_ExistingCertIsNotRoot(t *testing.T) {
+	setup := utils.Setup(t)
+
+	// seed an approved NON-root certificate sharing the proposed root's
+	// subject/SKID (different serial so the uniqueness check passes).
+	existing := utils.RootDaCertificate(setup.Trustee1)
+	existing.SerialNumber = utils.SerialNumber
+	existing.IsRoot = false
+	utils.AddMokedDaCertificate(setup, existing)
+
+	// propose the self-signed root with the same subject/SKID
+	proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(
+		setup.Trustee1.String(),
+		testconstants.RootCertPem,
+		testconstants.Info,
+		testconstants.Vid,
+		testconstants.CertSchemaVersion)
+	_, err := setup.Handler(setup.Ctx, proposeAddX509RootCert)
+	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+}
+
+func TestHandler_ProposeAddDaRootCert_ExistingCertIsNoc(t *testing.T) {
+	setup := utils.Setup(t)
+
+	// seed an approved NOC root certificate sharing the proposed root's
+	// subject/SKID (different serial so the uniqueness check passes).
+	existing := utils.RootDaCertificate(setup.Trustee1)
+	existing.SerialNumber = utils.SerialNumber
+	existing.IsRoot = true
+	existing.CertificateType = types.CertificateType_OperationalPKI
+	utils.AddMokedDaCertificate(setup, existing)
+
+	proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(
+		setup.Trustee1.String(),
+		testconstants.RootCertPem,
+		testconstants.Info,
+		testconstants.Vid,
+		testconstants.CertSchemaVersion)
+	_, err := setup.Handler(setup.Ctx, proposeAddX509RootCert)
+	require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+}
+
 func TestHandler_ProposeAddDaRootCert_ForDifferentSigner(t *testing.T) {
 	setup := utils.Setup(t)
 
