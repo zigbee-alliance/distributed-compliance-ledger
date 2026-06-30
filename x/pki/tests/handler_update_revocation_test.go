@@ -267,6 +267,58 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_NegativeCases(t *testing.T
 			},
 			err: pkitypes.ErrCertNotChainedBack,
 		},
+		{
+			// PAA path: the new CRL signer certificate is not a parseable/valid cert.
+			name:            "PAANewCertificateInvalid",
+			vendorAccVid:    testconstants.PAACertWithNumericVidVid,
+			rootCertOptions: utils.CreatePAACertWithNumericVidOptions(),
+			addRevocation:   createAddRevocationMessageWithPAACertWithNumericVid(vendorAcc.String()),
+			updatedRevocation: &types.MsgUpdatePkiRevocationDistributionPoint{
+				Signer:               vendorAcc.String(),
+				Vid:                  testconstants.PAACertWithNumericVidVid,
+				CrlSignerCertificate: testconstants.StubCertPem,
+				Label:                label,
+				DataURL:              testconstants.DataURL,
+				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+				SchemaVersion:        0,
+			},
+			err: pkitypes.ErrInvalidCertificate,
+		},
+		{
+			// PAI path: the new CRL signer certificate is not a parseable/valid cert.
+			name:            "PAINewCertificateInvalid",
+			vendorAccVid:    testconstants.PAICertWithNumericPidVidVid,
+			rootCertOptions: utils.CreatePAACertWithNumericVidOptions(),
+			addRevocation:   createAddRevocationMessageWithPAICertWithNumericVidPid(vendorAcc.String()),
+			updatedRevocation: &types.MsgUpdatePkiRevocationDistributionPoint{
+				Signer:               vendorAcc.String(),
+				Vid:                  testconstants.PAICertWithNumericPidVidVid,
+				CrlSignerCertificate: testconstants.StubCertPem,
+				Label:                label,
+				DataURL:              testconstants.DataURL,
+				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+				SchemaVersion:        0,
+			},
+			err: pkitypes.ErrInvalidCertificate,
+		},
+		{
+			// PAI path: the new CRL signer certificate is self-signed, which is
+			// invalid for a non-root distribution point.
+			name:            "PAINewCertificateSelfSigned",
+			vendorAccVid:    testconstants.PAICertWithNumericPidVidVid,
+			rootCertOptions: utils.CreatePAACertWithNumericVidOptions(),
+			addRevocation:   createAddRevocationMessageWithPAICertWithNumericVidPid(vendorAcc.String()),
+			updatedRevocation: &types.MsgUpdatePkiRevocationDistributionPoint{
+				Signer:               vendorAcc.String(),
+				Vid:                  testconstants.PAICertWithNumericPidVidVid,
+				CrlSignerCertificate: testconstants.PAACertWithNumericVid,
+				Label:                label,
+				DataURL:              testconstants.DataURL,
+				IssuerSubjectKeyID:   testconstants.SubjectKeyIDWithoutColons,
+				SchemaVersion:        0,
+			},
+			err: pkitypes.ErrNonRootCertificateSelfSigned,
+		},
 	}
 
 	for _, tc := range cases {
@@ -889,4 +941,92 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_CrlSignerCertificateField(
 			require.NoError(t, err)
 		})
 	}
+}
+
+// TestHandler_UpdatePkiRevocationDistributionPoint_NonCRL_DataFields covers the
+// data-field update branches (DataURL/DataFileSize/DataDigest/DataDigestType).
+// Those fields can only be set when the revocation point is NOT of CRL type
+// (otherwise the handler rejects them), but only the CRL type can be added
+// through the normal flow. The point is therefore seeded as CRL and then
+// switched to a non-CRL type directly in the keeper before the update.
+func TestHandler_UpdatePkiRevocationDistributionPoint_NonCRL_DataFields(t *testing.T) {
+	const nonCRLRevocationType = uint32(2)
+
+	setup := utils.Setup(t)
+
+	vendorAcc := utils.GenerateAccAddress()
+	addedRevocation := createAddRevocationMessageWithPAACertWithNumericVid(vendorAcc.String())
+	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, addedRevocation.Vid)
+
+	utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, utils.CreatePAACertWithNumericVidOptions())
+
+	_, err := setup.Handler(setup.Ctx, addedRevocation)
+	require.NoError(t, err)
+
+	// Switch the stored point to a non-CRL type so the update is allowed to carry
+	// data fields. This bypasses the add-time validation, which only permits CRL.
+	point, isFound := setup.Keeper.GetPkiRevocationDistributionPoint(
+		setup.Ctx, addedRevocation.Vid, addedRevocation.Label, addedRevocation.IssuerSubjectKeyID)
+	require.True(t, isFound)
+	point.RevocationType = nonCRLRevocationType
+	setup.Keeper.SetPkiRevocationDistributionPoint(setup.Ctx, point)
+	setup.Keeper.UpdatePkiRevocationDistributionPointBySubjectKeyID(setup.Ctx, point)
+
+	updateRevocation := &types.MsgUpdatePkiRevocationDistributionPoint{
+		Signer:             vendorAcc.String(),
+		Vid:                addedRevocation.Vid,
+		Label:              addedRevocation.Label,
+		IssuerSubjectKeyID: addedRevocation.IssuerSubjectKeyID,
+		DataURL:            addedRevocation.DataURL + "/data",
+		DataFileSize:       uint64(123),
+		DataDigest:         testconstants.DataDigest,
+		DataDigestType:     uint32(1),
+		SchemaVersion:      0,
+	}
+	_, err = setup.Handler(setup.Ctx, updateRevocation)
+	require.NoError(t, err)
+
+	updatedPoint, isFound := setup.Keeper.GetPkiRevocationDistributionPoint(
+		setup.Ctx, addedRevocation.Vid, addedRevocation.Label, addedRevocation.IssuerSubjectKeyID)
+	require.True(t, isFound)
+	require.Equal(t, updateRevocation.DataURL, updatedPoint.DataURL)
+	require.Equal(t, updateRevocation.DataFileSize, updatedPoint.DataFileSize)
+	require.Equal(t, updateRevocation.DataDigest, updatedPoint.DataDigest)
+	require.Equal(t, updateRevocation.DataDigestType, updatedPoint.DataDigestType)
+}
+
+func TestHandler_UpdatePkiRevocationDistributionPoint_StoredCertificateUndecodable(t *testing.T) {
+	setup := utils.Setup(t)
+
+	vendorAcc := utils.GenerateAccAddress()
+	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.PAACertWithNumericVidVid)
+
+	// propose and approve root certificate
+	rootCert := utils.RootDaCertificateWithNumericVid(setup.Trustee1)
+	utils.ProposeAndApproveRootCertificate(setup, setup.Trustee1, rootCert)
+
+	// create a valid revocation point
+	addRevocation := createAddRevocationMessageWithPAACertWithNumericVid(vendorAcc.String())
+	_, err := setup.Handler(setup.Ctx, addRevocation)
+	require.NoError(t, err)
+
+	// corrupt the stored CRL signer certificate so it can no longer be decoded
+	point, found := setup.Keeper.GetPkiRevocationDistributionPoint(
+		setup.Ctx, addRevocation.Vid, addRevocation.Label, addRevocation.IssuerSubjectKeyID)
+	require.True(t, found)
+	point.CrlSignerCertificate = "not a certificate"
+	setup.Keeper.SetPkiRevocationDistributionPoint(setup.Ctx, point)
+
+	// updating with a new certificate now fails while decoding the *old* stored cert
+	update := &types.MsgUpdatePkiRevocationDistributionPoint{
+		Signer:               vendorAcc.String(),
+		Vid:                  addRevocation.Vid,
+		CrlSignerCertificate: testconstants.PAACertWithNumericVid,
+		Label:                addRevocation.Label,
+		DataURL:              testconstants.DataURL,
+		IssuerSubjectKeyID:   addRevocation.IssuerSubjectKeyID,
+		SchemaVersion:        0,
+	}
+	_, err = setup.Handler(setup.Ctx, update)
+	require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
 }

@@ -1,6 +1,5 @@
 package keeper_test
 
-/*
 import (
 	"strconv"
 	"testing"
@@ -13,9 +12,6 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
-// Prevent strconv unused error
-var _ = strconv.IntSize
-
 func createNDeviceSoftwareCompliance(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.DeviceSoftwareCompliance {
 	items := make([]types.DeviceSoftwareCompliance, n)
 	for i := range items {
@@ -23,16 +19,15 @@ func createNDeviceSoftwareCompliance(keeper *keeper.Keeper, ctx sdk.Context, n i
 
 		keeper.SetDeviceSoftwareCompliance(ctx, &items[i])
 	}
+
 	return items
 }
 
 func TestDeviceSoftwareComplianceGet(t *testing.T) {
-	keeper, ctx := keepertest.ComplianceKeeper(t)
+	keeper, ctx := keepertest.ComplianceKeeper(t, nil, nil)
 	items := createNDeviceSoftwareCompliance(keeper, ctx, 10)
 	for _, item := range items {
-		rst, found := keeper.GetDeviceSoftwareCompliance(ctx,
-			item.CDCertificateId,
-		)
+		rst, found := keeper.GetDeviceSoftwareCompliance(ctx, item.CDCertificateId)
 		require.True(t, found)
 		require.Equal(t,
 			nullify.Fill(&item),
@@ -40,26 +35,22 @@ func TestDeviceSoftwareComplianceGet(t *testing.T) {
 		)
 	}
 }
+
 func TestDeviceSoftwareComplianceRemove(t *testing.T) {
-	keeper, ctx := keepertest.ComplianceKeeper(t)
+	keeper, ctx := keepertest.ComplianceKeeper(t, nil, nil)
 	items := createNDeviceSoftwareCompliance(keeper, ctx, 10)
 	for _, item := range items {
-		keeper.RemoveDeviceSoftwareCompliance(ctx,
-			item.CdCertificateId,
-		)
-		_, found := keeper.GetDeviceSoftwareCompliance(ctx,
-			item.CdCertificateId,
-		)
+		keeper.RemoveDeviceSoftwareCompliance(ctx, item.CDCertificateId)
+		_, found := keeper.GetDeviceSoftwareCompliance(ctx, item.CDCertificateId)
 		require.False(t, found)
 	}
 }
 
 func TestDeviceSoftwareComplianceGetAll(t *testing.T) {
-	keeper, ctx := keepertest.ComplianceKeeper(t)
+	keeper, ctx := keepertest.ComplianceKeeper(t, nil, nil)
 	items := createNDeviceSoftwareCompliance(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
 		nullify.Fill(keeper.GetAllDeviceSoftwareCompliance(ctx)),
 	)
 }
-*/

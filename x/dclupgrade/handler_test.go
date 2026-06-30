@@ -98,6 +98,30 @@ func TestHandler_ProposedUpgradeExists(t *testing.T) {
 	require.True(t, types.ErrProposedUpgradeAlreadyExists.Is(err))
 }
 
+func TestHandler_ProposeUpgrade_SingleApproverApprovesImmediately(t *testing.T) {
+	setup := Setup(t)
+
+	trusteeAccAddress := testdata.GenerateAccAddress()
+	setup.AddAccount(trusteeAccAddress, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+
+	// Only one upgrade approver exists, so the required approvals count is 1 and
+	// the proposal is approved (and the upgrade scheduled) immediately instead of
+	// being stored as a pending proposed upgrade.
+	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(1)
+
+	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress)
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil)
+
+	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
+	require.NoError(t, err)
+
+	// the upgrade is approved, not left as a pending proposal
+	_, found := setup.Keeper.GetApprovedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.True(t, found)
+	_, found = setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, found)
+}
+
 func TestHandler_ProposeAndRejectUpgrade(t *testing.T) {
 	setup := Setup(t)
 

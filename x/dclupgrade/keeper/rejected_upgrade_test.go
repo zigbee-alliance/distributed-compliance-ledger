@@ -1,6 +1,5 @@
 package keeper_test
 
-/*
 import (
 	"strconv"
 	"testing"
@@ -13,25 +12,23 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types"
 )
 
-// Prevent strconv unused error
-var _ = strconv.IntSize
-
 func createNRejectedUpgrade(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.RejectedUpgrade {
 	items := make([]types.RejectedUpgrade, n)
 	for i := range items {
-		items[i].Name = strconv.Itoa(i)
+		items[i].Plan.Name = strconv.Itoa(i)
 
 		keeper.SetRejectedUpgrade(ctx, items[i])
 	}
+
 	return items
 }
 
 func TestRejectedUpgradeGet(t *testing.T) {
-	keeper, ctx := keepertest.DclupgradeKeeper(t)
+	keeper, ctx := keepertest.DclupgradeKeeper(t, nil, nil)
 	items := createNRejectedUpgrade(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetRejectedUpgrade(ctx,
-			item.Name,
+			item.Plan.Name,
 		)
 		require.True(t, found)
 		require.Equal(t,
@@ -40,26 +37,26 @@ func TestRejectedUpgradeGet(t *testing.T) {
 		)
 	}
 }
+
 func TestRejectedUpgradeRemove(t *testing.T) {
-	keeper, ctx := keepertest.DclupgradeKeeper(t)
+	keeper, ctx := keepertest.DclupgradeKeeper(t, nil, nil)
 	items := createNRejectedUpgrade(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveRejectedUpgrade(ctx,
-			item.Name,
+			item.Plan.Name,
 		)
 		_, found := keeper.GetRejectedUpgrade(ctx,
-			item.Name,
+			item.Plan.Name,
 		)
 		require.False(t, found)
 	}
 }
 
 func TestRejectedUpgradeGetAll(t *testing.T) {
-	keeper, ctx := keepertest.DclupgradeKeeper(t)
+	keeper, ctx := keepertest.DclupgradeKeeper(t, nil, nil)
 	items := createNRejectedUpgrade(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
 		nullify.Fill(keeper.GetAllRejectedUpgrade(ctx)),
 	)
 }
-*/

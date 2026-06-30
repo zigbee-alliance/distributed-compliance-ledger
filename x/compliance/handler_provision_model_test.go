@@ -6,6 +6,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
@@ -197,4 +198,44 @@ func TestHandler_SchemaVersion_ProvisionModel_StampsCurrentOnCreate(t *testing.T
 
 	provisionalModel, _ := queryProvisionalModel(setup, vid, pid, softwareVersion, certificationType)
 	require.Equal(t, provisionalModel.CurrentSchemaVersion(), provisionalModel.SchemaVersion)
+}
+
+// Covers the default switch arm: existing compliance info whose status is none of
+// provisional/certified/revoked.
+func TestHandler_ProvisionModel_ExistingInfoUnknownStatus(t *testing.T) {
+	setup, vid, pid, softwareVersion, softwareVersionString, certificationType := setupProvisionModel(t)
+
+	setup.Keeper.SetComplianceInfo(setup.Ctx, &types.ComplianceInfo{
+		Vid:                                vid,
+		Pid:                                pid,
+		SoftwareVersion:                    softwareVersion,
+		CertificationType:                  certificationType,
+		SoftwareVersionCertificationStatus: 99, // not provisional/certified/revoked
+	})
+
+	_, err := setup.provisionModel(vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+	require.ErrorIs(t, err, types.ErrComplianceInfoAlreadyExist)
+}
+
+// Covers the branch where the stored model version's software version string does
+// not match the one in the message.
+func TestHandler_ProvisionModel_ModelVersionStringMismatch(t *testing.T) {
+	setup, vid, pid, softwareVersion, _, certificationType := setupProvisionModel(t)
+
+	_, err := setup.provisionModel(vid, pid, softwareVersion, "different-version-string", certificationType, setup.CertificationCenter)
+	require.ErrorIs(t, err, types.ErrModelVersionStringDoesNotMatch)
+}
+
+// Covers the branch where the stored model version's CD version number does not
+// match the one in the message (software version string still matches).
+func TestHandler_ProvisionModel_CdVersionNumberMismatch(t *testing.T) {
+	setup := setup(t)
+	vid, pid, softwareVersion := testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion
+
+	modelVersion := newModelVersion(vid, pid, softwareVersion, testconstants.SoftwareVersionString)
+	modelVersion.CdVersionNumber = testconstants.CdVersionNumber + 1
+	setup.ModelKeeper.On("GetModelVersion", mock.Anything, vid, pid, softwareVersion).Return(*modelVersion, true)
+
+	_, err := setup.provisionModel(vid, pid, softwareVersion, testconstants.SoftwareVersionString, types.ZigbeeCertificationType, setup.CertificationCenter)
+	require.ErrorIs(t, err, types.ErrModelVersionStringDoesNotMatch)
 }

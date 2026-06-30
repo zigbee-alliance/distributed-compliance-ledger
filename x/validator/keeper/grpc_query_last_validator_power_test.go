@@ -1,25 +1,20 @@
 package keeper_test
 
-/* FIXME issue 99
-
 import (
-	"strconv"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/stretchr/testify/require"
 	keepertest "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-// Prevent strconv unused error
-var _ = strconv.IntSize
-
 func TestLastValidatorPowerQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.ValidatorKeeper(t)
+	keeper, ctx := keepertest.ValidatorKeeper(t, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNLastValidatorPower(keeper, ctx, 2)
 	for _, tc := range []struct {
@@ -45,9 +40,16 @@ func TestLastValidatorPowerQuerySingle(t *testing.T) {
 		{
 			desc: "KeyNotFound",
 			request: &types.QueryGetLastValidatorPowerRequest{
-				Owner: strconv.Itoa(100000),
+				Owner: sample.ValAddress(),
 			},
 			err: status.Error(codes.NotFound, "not found"),
+		},
+		{
+			desc: "EmptyAddress",
+			request: &types.QueryGetLastValidatorPowerRequest{
+				Owner: "",
+			},
+			err: status.Error(codes.InvalidArgument, "validator address cannot be empty"),
 		},
 		{
 			desc: "InvalidRequest",
@@ -59,14 +61,22 @@ func TestLastValidatorPowerQuerySingle(t *testing.T) {
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {
+				require.NoError(t, err)
 				require.Equal(t, tc.response, response)
 			}
 		})
 	}
+
+	t.Run("InvalidAddress", func(t *testing.T) {
+		_, err := keeper.LastValidatorPower(wctx, &types.QueryGetLastValidatorPowerRequest{
+			Owner: "not-a-bech32-address",
+		})
+		require.Error(t, err)
+	})
 }
 
 func TestLastValidatorPowerQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.ValidatorKeeper(t)
+	keeper, ctx := keepertest.ValidatorKeeper(t, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNLastValidatorPower(keeper, ctx, 5)
 
@@ -104,10 +114,10 @@ func TestLastValidatorPowerQueryPaginated(t *testing.T) {
 		resp, err := keeper.LastValidatorPowerAll(wctx, request(nil, 0, 0, true))
 		require.NoError(t, err)
 		require.Equal(t, len(msgs), int(resp.Pagination.Total))
+		require.ElementsMatch(t, msgs, resp.LastValidatorPower)
 	})
 	t.Run("InvalidRequest", func(t *testing.T) {
 		_, err := keeper.LastValidatorPowerAll(wctx, nil)
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
 }
-*/

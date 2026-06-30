@@ -1,6 +1,5 @@
 package types_test
 
-/*
 import (
 	"testing"
 
@@ -23,46 +22,21 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "valid genesis state",
 			genState: &types.GenesisState{
 				VendorProductsList: []types.VendorProducts{
-					{
-						Vid: 0,
-					},
-					{
-						Vid: 1,
-					},
+					{Vid: 0},
+					{Vid: 1},
 				},
 				ModelList: []types.Model{
-					{
-						Vid: 0,
-						Pid: 0,
-					},
-					{
-						Vid: 1,
-						Pid: 1,
-					},
+					{Vid: 0, Pid: 0},
+					{Vid: 1, Pid: 1},
 				},
 				ModelVersionList: []types.ModelVersion{
-					{
-						Vid:             0,
-						Pid:             0,
-						SoftwareVersion: 0,
-					},
-					{
-						Vid:             1,
-						Pid:             1,
-						SoftwareVersion: 1,
-					},
+					{Vid: 0, Pid: 0, SoftwareVersion: 0},
+					{Vid: 1, Pid: 1, SoftwareVersion: 1},
 				},
 				ModelVersionsList: []types.ModelVersions{
-					{
-						Vid: 0,
-						Pid: 0,
-					},
-					{
-						Vid: 1,
-						Pid: 1,
-					},
+					{Vid: 0, Pid: 0},
+					{Vid: 1, Pid: 1},
 				},
-				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
 		},
@@ -70,12 +44,8 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "duplicated vendorProducts",
 			genState: &types.GenesisState{
 				VendorProductsList: []types.VendorProducts{
-					{
-						Vid: 0,
-					},
-					{
-						Vid: 0,
-					},
+					{Vid: 0},
+					{Vid: 0},
 				},
 			},
 			valid: false,
@@ -84,14 +54,8 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "duplicated model",
 			genState: &types.GenesisState{
 				ModelList: []types.Model{
-					{
-						Vid: 0,
-						Pid: 0,
-					},
-					{
-						Vid: 0,
-						Pid: 0,
-					},
+					{Vid: 0, Pid: 0},
+					{Vid: 0, Pid: 0},
 				},
 			},
 			valid: false,
@@ -100,16 +64,8 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "duplicated modelVersion",
 			genState: &types.GenesisState{
 				ModelVersionList: []types.ModelVersion{
-					{
-						Vid:             0,
-						Pid:             0,
-						SoftwareVersion: 0,
-					},
-					{
-						Vid:             0,
-						Pid:             0,
-						SoftwareVersion: 0,
-					},
+					{Vid: 0, Pid: 0, SoftwareVersion: 0},
+					{Vid: 0, Pid: 0, SoftwareVersion: 0},
 				},
 			},
 			valid: false,
@@ -118,19 +74,12 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "duplicated modelVersions",
 			genState: &types.GenesisState{
 				ModelVersionsList: []types.ModelVersions{
-					{
-						Vid: 0,
-						Pid: 0,
-					},
-					{
-						Vid: 0,
-						Pid: 0,
-					},
+					{Vid: 0, Pid: 0},
+					{Vid: 0, Pid: 0},
 				},
 			},
 			valid: false,
 		},
-		// this line is used by starport scaffolding # types/genesis/testcase
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
 			err := tc.genState.Validate()
@@ -142,4 +91,3 @@ func TestGenesisState_Validate(t *testing.T) {
 		})
 	}
 }
-*/

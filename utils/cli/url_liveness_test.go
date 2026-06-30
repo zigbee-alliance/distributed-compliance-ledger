@@ -35,14 +35,23 @@ func TestIsLiveURL(t *testing.T) {
 		want       bool
 	}{
 		{"200 OK", http.StatusOK, true},
+		{"201 created", http.StatusCreated, true},
+		{"204 no content", http.StatusNoContent, true},
+		{"299 highest 2xx", 299, true},
 		{"301 redirect", http.StatusMovedPermanently, true},
+		{"302 found", http.StatusFound, true},
+		{"308 permanent redirect", http.StatusPermanentRedirect, true},
+		{"399 highest 3xx", 399, true},
 		{"401 unauthorized", http.StatusUnauthorized, true},
 		{"403 forbidden", http.StatusForbidden, true},
 		{"405 method not allowed", http.StatusMethodNotAllowed, true},
 		{"451 unavailable for legal reasons", http.StatusUnavailableForLegalReasons, true},
+		{"400 bad request", http.StatusBadRequest, false},
 		{"404 not found", http.StatusNotFound, false},
+		{"429 too many requests", http.StatusTooManyRequests, false},
 		{"500 internal server error", http.StatusInternalServerError, false},
 		{"502 bad gateway", http.StatusBadGateway, false},
+		{"503 service unavailable", http.StatusServiceUnavailable, false},
 	}
 
 	for _, tt := range tests {
@@ -66,6 +75,38 @@ func TestIsLiveURLUnreachable(t *testing.T) {
 	require.NoError(t, err)
 
 	require.False(t, IsLiveURL(u.String()))
+}
+
+// TestIsLiveURLRequestCreationError covers the path where the HTTP request
+// cannot even be constructed (e.g. the URL is malformed), so no network call
+// is attempted and the URL is treated as not live.
+func TestIsLiveURLRequestCreationError(t *testing.T) {
+	tests := []struct {
+		name string
+		url  string
+	}{
+		{"invalid control character", "http://example.com/\x7f"},
+		{"missing protocol scheme", ":no-scheme"},
+		{"control character in host", "http://exa\x00mple.com"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			require.False(t, IsLiveURL(tt.url))
+		})
+	}
+}
+
+// TestIsLiveURLAllowed4XXNotMutated guards against the allow-list of 4XX status
+// codes being changed unexpectedly, since IsLiveURL relies on it for the
+// allowed-status path.
+func TestIsLiveURLAllowed4XXNotMutated(t *testing.T) {
+	require.ElementsMatch(t, []int{
+		http.StatusUnauthorized,
+		http.StatusForbidden,
+		http.StatusUnavailableForLegalReasons,
+		http.StatusMethodNotAllowed,
+	}, allowed4XXStatusCodes)
 }
 
 func TestCheckURLsForLiveness(t *testing.T) {

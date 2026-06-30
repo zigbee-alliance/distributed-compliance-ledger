@@ -164,6 +164,40 @@ func TestMsgProposeUpgrade_ValidateBasic(t *testing.T) {
 	}
 }
 
+func TestNewMsgProposeUpgrade(t *testing.T) {
+	creator := sample.AccAddress()
+	plan := Plan{
+		Name:   testconstants.UpgradePlanName,
+		Height: testconstants.UpgradePlanHeight,
+		Info:   testconstants.UpgradePlanInfo,
+	}
+
+	msg := NewMsgProposeUpgrade(creator, plan, testconstants.Info)
+	require.Equal(t, creator, msg.Creator)
+	require.Equal(t, plan, msg.Plan)
+	require.Equal(t, testconstants.Info, msg.Info)
+	require.NotZero(t, msg.Time)
+}
+
+func TestMsgProposeUpgrade_ValidateBasicCLI_InvalidCreator(t *testing.T) {
+	// Invalid creator address is rejected before the live GitHub-API call,
+	// so this exercises ValidateBasicCLI without any network access.
+	msg := MsgProposeUpgrade{
+		Creator: "invalid_address",
+		Plan: Plan{
+			Name:   testconstants.UpgradePlanName,
+			Height: testconstants.UpgradePlanHeight,
+			Info:   testconstants.UpgradePlanInfo,
+		},
+		Info: testconstants.Info,
+		Time: testconstants.Time,
+	}
+
+	err := msg.ValidateBasicCLI()
+	require.Error(t, err)
+	require.ErrorIs(t, err, sdkerrors.ErrInvalidAddress)
+}
+
 func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 	var expectedResponse string
 
@@ -268,6 +302,102 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 			},
 			err: sdkerrors.ErrJSONUnmarshal,
 		},
+		{
+			// valid JSON but the single binary targets an unsupported platform.
+			name:     "unsupported os platform (valid json)",
+			expected: testconstants.UpgradeGitAPIJSONResponse,
+			msg: MsgProposeUpgrade{
+				Creator: sample.AccAddress(),
+				Plan: Plan{
+					Name:   testconstants.UpgradePlanName,
+					Height: testconstants.UpgradePlanHeight,
+					Info:   "{\"binaries\":{\"windows/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.4.4/dcld?checksum=sha256:abc\"}}",
+				},
+				Info: testconstants.Info,
+				Time: testconstants.Time,
+			},
+			err: sdkerrors.ErrJSONUnmarshal,
+		},
+		{
+			// URL has the required "?checksum=" separator but too few path segments.
+			name:     "binary url too short",
+			expected: testconstants.UpgradeGitAPIJSONResponse,
+			msg: MsgProposeUpgrade{
+				Creator: sample.AccAddress(),
+				Plan: Plan{
+					Name:   testconstants.UpgradePlanName,
+					Height: testconstants.UpgradePlanHeight,
+					Info:   "{\"binaries\":{\"linux/amd64\":\"http://x?checksum=sha256:abc\"}}",
+				},
+				Info: testconstants.Info,
+				Time: testconstants.Time,
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},
+		{
+			// git tag parsed from the URL does not contain the plan name.
+			name:     "plan name not in binary url tag",
+			expected: testconstants.UpgradeGitAPIJSONResponse,
+			msg: MsgProposeUpgrade{
+				Creator: sample.AccAddress(),
+				Plan: Plan{
+					Name:   "v9.9.9",
+					Height: testconstants.UpgradePlanHeight,
+					Info:   testconstants.UpgradePlanInfo,
+				},
+				Info: testconstants.Info,
+				Time: testconstants.Time,
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},
+		{
+			// server returns a body that is not valid JSON.
+			name:     "git api response not json",
+			expected: "this is not json",
+			msg: MsgProposeUpgrade{
+				Creator: sample.AccAddress(),
+				Plan: Plan{
+					Name:   testconstants.UpgradePlanName,
+					Height: testconstants.UpgradePlanHeight,
+					Info:   testconstants.UpgradePlanInfo,
+				},
+				Info: testconstants.Info,
+				Time: testconstants.Time,
+			},
+			err: sdkerrors.ErrJSONUnmarshal,
+		},
+		{
+			// server returns valid JSON without the "assets" field.
+			name:     "git api response without assets",
+			expected: "{\"message\":\"Not Found\"}",
+			msg: MsgProposeUpgrade{
+				Creator: sample.AccAddress(),
+				Plan: Plan{
+					Name:   testconstants.UpgradePlanName,
+					Height: testconstants.UpgradePlanHeight,
+					Info:   testconstants.UpgradePlanInfo,
+				},
+				Info: testconstants.Info,
+				Time: testconstants.Time,
+			},
+			err: sdkerrors.ErrJSONUnmarshal,
+		},
+		{
+			// assets present but none match the expected binary.
+			name:     "git api response with no matching asset",
+			expected: "{\"assets\":[{\"name\": \"other\", \"state\": \"uploaded\", \"digest\": null, \"browser_download_url\":\"https://example.com/other\"}]}",
+			msg: MsgProposeUpgrade{
+				Creator: sample.AccAddress(),
+				Plan: Plan{
+					Name:   testconstants.UpgradePlanName,
+					Height: testconstants.UpgradePlanHeight,
+					Info:   testconstants.UpgradePlanInfo,
+				},
+				Info: testconstants.Info,
+				Time: testconstants.Time,
+			},
+			err: sdkerrors.ErrInvalidRequest,
+		},
 	}
 
 	positiveTests := []struct {
@@ -275,6 +405,21 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 		expected string
 		msg      MsgProposeUpgrade
 	}{
+		{
+			// empty Plan.Info short-circuits with no error and no network call.
+			name:     "empty plan info",
+			expected: testconstants.UpgradeGitAPIJSONResponse,
+			msg: MsgProposeUpgrade{
+				Creator: sample.AccAddress(),
+				Plan: Plan{
+					Name:   testconstants.UpgradePlanName,
+					Height: testconstants.UpgradePlanHeight,
+					Info:   "",
+				},
+				Info: testconstants.Info,
+				Time: testconstants.Time,
+			},
+		},
 		{
 			name:     "valid binary file without checksum",
 			expected: "{\"assets\":[{\"name\": \"dcld\", \"state\": \"uploaded\", \"digest\": null, \"browser_download_url\":\"" + testconstants.UpgradeBrowserDownloadURL + "\"}]}",
@@ -334,4 +479,37 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 			require.ErrorIs(t, err, tt.err)
 		})
 	}
+
+	t.Run("git token header is set when GH_TOKEN present", func(t *testing.T) {
+		t.Setenv("GH_TOKEN", "test-token")
+		expectedResponse = testconstants.UpgradeGitAPIJSONResponse
+		msg := MsgProposeUpgrade{
+			Creator: sample.AccAddress(),
+			Plan: Plan{
+				Name:   testconstants.UpgradePlanName,
+				Height: testconstants.UpgradePlanHeight,
+				Info:   testconstants.UpgradePlanInfo,
+			},
+			Info: testconstants.Info,
+			Time: testconstants.Time,
+		}
+		require.NoError(t, ValidateBinaries(&msg, svr.URL))
+	})
+
+	t.Run("git api request fails", func(t *testing.T) {
+		msg := MsgProposeUpgrade{
+			Creator: sample.AccAddress(),
+			Plan: Plan{
+				Name:   testconstants.UpgradePlanName,
+				Height: testconstants.UpgradePlanHeight,
+				Info:   testconstants.UpgradePlanInfo,
+			},
+			Info: testconstants.Info,
+			Time: testconstants.Time,
+		}
+		// Unroutable address forces client.Do to fail before any response.
+		err := ValidateBinaries(&msg, "http://127.0.0.1:1")
+		require.Error(t, err)
+		require.ErrorIs(t, err, sdkerrors.ErrInvalidRequest)
+	})
 }

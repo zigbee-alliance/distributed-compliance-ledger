@@ -109,11 +109,7 @@ jobs:
             ${{ runner.os }}-go-
       - uses: haveyoudebuggedit/gotestfmt-action@v2
       - name: Run tests
-        run: |
-          set -euo pipefail
-          # shellcheck disable=SC2046
-          go test -tags=dev -json -v $(go list ./... | grep -v '/integration_tests') -coverprofile=./cover.out -covermode=set -coverpkg=./... 2>&1 | tee /tmp/gotest.log | gotestfmt
-          go test -v utils/cli/url_liveness.go  utils/cli/url_liveness_test.go
+        run: .github/workflows/run_unit_tests.sh
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GOCOVER_MODE: set
@@ -211,7 +207,6 @@ jobs:
         run: .github/workflows/filter_coverage.sh
       - name: Report test coverage
         uses: vladopajic/go-test-coverage@v2
-        continue-on-error: true
         with:
           config: ./.github/.testcoverage.yml
           git-token: ${{ github.ref_name == 'master' && secrets.GITHUB_TOKEN || '' }}
