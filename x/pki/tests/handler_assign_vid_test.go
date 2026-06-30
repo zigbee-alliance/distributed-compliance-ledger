@@ -172,6 +172,117 @@ func TestHandler_AssignVid_CertificateAlreadyHasVid(t *testing.T) {
 	require.ErrorIs(t, err, pkitypes.ErrNotEmptyVid)
 }
 
+func TestHandler_AssignVid_ForNocRootCertificate(t *testing.T) {
+	setup := utils.Setup(t)
+
+	vendorAcc := setup.CreateVendorAdminAccount(0)
+
+	// seed a NOC-typed root certificate directly
+	cert := utils.RootDaCertificate(setup.Trustee1)
+	cert.Vid = 0
+	cert.CertificateType = types.CertificateType_OperationalPKI
+	utils.AddMokedDaCertificate(setup, cert)
+
+	assignVid := types.MsgAssignVid{
+		Signer:       vendorAcc.String(),
+		Subject:      cert.Subject,
+		SubjectKeyId: cert.SubjectKeyId,
+		Vid:          testconstants.Vid,
+	}
+
+	_, err := setup.Handler(setup.Ctx, &assignVid)
+	require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+}
+
+func TestHandler_AssignVid_CertificateWithMalformedSubjectVid(t *testing.T) {
+	setup := utils.Setup(t)
+
+	vendorAcc := setup.CreateVendorAdminAccount(0)
+
+	// seed a root certificate whose SubjectAsText carries a non-hex vid value, so
+	// parsing the VID out of the subject fails.
+	cert := utils.RootDaCertificate(setup.Trustee1)
+	cert.Vid = 0
+	cert.SubjectAsText = "vid=0xZZ"
+	utils.AddMokedDaCertificate(setup, cert)
+
+	assignVid := types.MsgAssignVid{
+		Signer:       vendorAcc.String(),
+		Subject:      cert.Subject,
+		SubjectKeyId: cert.SubjectKeyId,
+		Vid:          testconstants.Vid,
+	}
+
+	_, err := setup.Handler(setup.Ctx, &assignVid)
+	require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+}
+
+// The following three cases drive the defensive "index missing" branches by
+// seeding the certificate into only a subset of the indexes the handler walks.
+
+func TestHandler_AssignVid_MissingAllCertificatesBySubjectKeyID(t *testing.T) {
+	setup := utils.Setup(t)
+
+	vendorAcc := setup.CreateVendorAdminAccount(0)
+
+	cert := utils.RootDaCertificate(setup.Trustee1)
+	cert.Vid = 0
+	setup.Keeper.AddAllCertificate(setup.Ctx, cert) // only the global list
+
+	assignVid := types.MsgAssignVid{
+		Signer:       vendorAcc.String(),
+		Subject:      cert.Subject,
+		SubjectKeyId: cert.SubjectKeyId,
+		Vid:          testconstants.Vid,
+	}
+
+	_, err := setup.Handler(setup.Ctx, &assignVid)
+	require.ErrorIs(t, err, pkitypes.ErrCertificateDoesNotExist)
+}
+
+func TestHandler_AssignVid_MissingApprovedCertificates(t *testing.T) {
+	setup := utils.Setup(t)
+
+	vendorAcc := setup.CreateVendorAdminAccount(0)
+
+	cert := utils.RootDaCertificate(setup.Trustee1)
+	cert.Vid = 0
+	setup.Keeper.AddAllCertificate(setup.Ctx, cert)
+	setup.Keeper.AddAllCertificateBySubjectKeyID(setup.Ctx, cert)
+
+	assignVid := types.MsgAssignVid{
+		Signer:       vendorAcc.String(),
+		Subject:      cert.Subject,
+		SubjectKeyId: cert.SubjectKeyId,
+		Vid:          testconstants.Vid,
+	}
+
+	_, err := setup.Handler(setup.Ctx, &assignVid)
+	require.ErrorIs(t, err, pkitypes.ErrCertificateDoesNotExist)
+}
+
+func TestHandler_AssignVid_MissingApprovedCertificatesBySubjectKeyID(t *testing.T) {
+	setup := utils.Setup(t)
+
+	vendorAcc := setup.CreateVendorAdminAccount(0)
+
+	cert := utils.RootDaCertificate(setup.Trustee1)
+	cert.Vid = 0
+	setup.Keeper.AddAllCertificate(setup.Ctx, cert)
+	setup.Keeper.AddAllCertificateBySubjectKeyID(setup.Ctx, cert)
+	setup.Keeper.AddApprovedCertificate(setup.Ctx, cert)
+
+	assignVid := types.MsgAssignVid{
+		Signer:       vendorAcc.String(),
+		Subject:      cert.Subject,
+		SubjectKeyId: cert.SubjectKeyId,
+		Vid:          testconstants.Vid,
+	}
+
+	_, err := setup.Handler(setup.Ctx, &assignVid)
+	require.ErrorIs(t, err, pkitypes.ErrCertificateDoesNotExist)
+}
+
 func TestHandler_AssignVid_MessageVidAndCertificateVidNotEqual(t *testing.T) {
 	setup := utils.Setup(t)
 

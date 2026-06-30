@@ -392,6 +392,76 @@ func TestHandler_AddDaIntermediateCert_RootIsNoc(t *testing.T) {
 	require.Contains(t, err.Error(), "PAI: BasicConstraints pathLenConstraint SHALL be present and set to 0")
 }
 
+func TestHandler_AddDaIntermediateCert_ExistingCertUnauthorizedIssuer(t *testing.T) {
+	setup := utils.Setup(t)
+
+	// seed an existing non-root certificate with the same subject/SKID as the new
+	// intermediate but a different issuer, so the issuer/authorityKeyID match
+	// check against existing certificates fails.
+	existing := types.Certificate{
+		Subject:         testconstants.IntermediateSubject,
+		SubjectKeyId:    testconstants.IntermediateSubjectKeyID,
+		Issuer:          "CN=different-issuer",
+		AuthorityKeyId:  "AA:BB:CC",
+		SerialNumber:    "99999",
+		IsRoot:          false,
+		CertificateType: types.CertificateType_DeviceAttestationPKI,
+		PemCert:         testconstants.IntermediateCertPem,
+	}
+	utils.AddMokedDaCertificate(setup, existing)
+
+	addX509Cert := types.NewMsgAddX509Cert(
+		setup.Vendor1.String(),
+		testconstants.IntermediateCertPem,
+		testconstants.CertSchemaVersion)
+	_, err := setup.Handler(setup.Ctx, addX509Cert)
+	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+}
+
+func TestHandler_AddDaIntermediateCert_ExistingCertIsNoc(t *testing.T) {
+	setup := utils.Setup(t)
+
+	// seed an existing NOC certificate with the same subject/SKID AND matching
+	// issuer/authorityKeyID as the new intermediate, so the "existing cert is
+	// NOC" check fires.
+	existing := types.Certificate{
+		Subject:         testconstants.IntermediateSubject,
+		SubjectKeyId:    testconstants.IntermediateSubjectKeyID,
+		Issuer:          testconstants.IntermediateIssuer,
+		AuthorityKeyId:  testconstants.IntermediateAuthorityKeyID,
+		SerialNumber:    "99999",
+		IsRoot:          false,
+		CertificateType: types.CertificateType_OperationalPKI,
+		PemCert:         testconstants.IntermediateCertPem,
+	}
+	utils.AddMokedDaCertificate(setup, existing)
+
+	addX509Cert := types.NewMsgAddX509Cert(
+		setup.Vendor1.String(),
+		testconstants.IntermediateCertPem,
+		testconstants.CertSchemaVersion)
+	_, err := setup.Handler(setup.Ctx, addX509Cert)
+	require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+}
+
+func TestHandler_AddDaIntermediateCert_RootIsNocTyped(t *testing.T) {
+	setup := utils.Setup(t)
+
+	// seed a valid DA root (so the chain builds) but mark it as a NOC certificate
+	// type, so the "root must not be NOC" check fires.
+	rootCertificate := utils.RootDaCertificate(setup.Trustee1)
+	rootCertificate.CertificateType = types.CertificateType_OperationalPKI
+	utils.AddMokedDaCertificate(setup, rootCertificate)
+
+	testIntermediateCertificate := utils.IntermediateDaCertificate(setup.Vendor1)
+	addX509Cert := types.NewMsgAddX509Cert(
+		setup.Vendor1.String(),
+		testIntermediateCertificate.PemCert,
+		testconstants.CertSchemaVersion)
+	_, err := setup.Handler(setup.Ctx, addX509Cert)
+	require.ErrorIs(t, err, pkitypes.ErrInappropriateCertificateType)
+}
+
 func TestHandler_AddDaIntermediateCert_RootWithMalformedSubject(t *testing.T) {
 	// The stored root certificate keeps a valid PEM (so the chain still builds),
 	// but its SubjectAsText is tampered so ensureVidMatches rejects it. A real
