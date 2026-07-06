@@ -200,9 +200,7 @@ func (k Keeper) verifyVVSCCertificate(ctx sdk.Context,
 		}
 	}
 
-	return nil, pkitypes.NewErrInvalidCertificate(
-		fmt.Sprintf("VVSC chain verification failed for subject=%v subjectKeyID=%v",
-			x509Certificate.Subject, x509Certificate.SubjectKeyID))
+	return nil, pkitypes.NewErrVVSCChainVerificationFailed(x509Certificate.Subject, x509Certificate.SubjectKeyID)
 }
 
 // Tries to build a valid certificate chain for the given certificate.
