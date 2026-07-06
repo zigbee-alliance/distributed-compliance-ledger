@@ -87,7 +87,7 @@ jobs:
       - changes
     steps:
       - uses: actions/checkout@v6
-      - uses: rojopolis/spellcheck-github-actions@0.35.0
+      - uses: rojopolis/spellcheck-github-actions@0.63.0
   unit-tests:
     name: Check unit tests
     runs-on: ubuntu-24.04
