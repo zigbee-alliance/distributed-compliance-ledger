@@ -55,6 +55,7 @@ var (
 	ErrCRLSignerCertificateInvalidVersion                = errors.Register(ModuleName, 443, "invalid CRLSignerCertificate version")
 	ErrCertVidNotEqualToIssuerVid                        = errors.Register(ModuleName, 444, "certificate's vid is not equal to issuer's vid")
 	ErrCertPidNotEqualToIssuerPid                        = errors.Register(ModuleName, 445, "certificate's pid is not equal to issuer's pid")
+	ErrUnauthorizedCertIssuer                            = errors.Register(ModuleName, 446, "unauthorized certificate issuer")
 )
 
 func NewErrUnauthorizedRole(transactionName string, requiredRole types.AccountRole) error {
@@ -192,7 +193,7 @@ func NewErrNonRootCertificateSelfSigned() error {
 }
 
 func NewErrUnauthorizedCertIssuer(subject string, subjectKeyID string) error {
-	return errors.Wrapf(sdkerrors.ErrUnauthorized,
+	return errors.Wrapf(ErrUnauthorizedCertIssuer,
 		"Issuer and authorityKeyID of new certificate with subject=%v and subjectKeyID=%v "+
 			"must be the same as ones of existing certificates with the same subject and subjectKeyID",
 		subject, subjectKeyID)

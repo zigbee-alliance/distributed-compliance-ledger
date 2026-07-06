@@ -326,7 +326,7 @@ func TestHandler_ProposeAddDaRootCert_ExistingCertIsNotRoot(t *testing.T) {
 		testconstants.Vid,
 		testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, proposeAddX509RootCert)
-	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+	require.ErrorIs(t, err, pkitypes.ErrUnauthorizedCertIssuer)
 }
 
 func TestHandler_ProposeAddDaRootCert_ExistingCertIsNoc(t *testing.T) {

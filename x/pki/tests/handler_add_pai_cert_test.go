@@ -415,7 +415,7 @@ func TestHandler_AddDaIntermediateCert_ExistingCertUnauthorizedIssuer(t *testing
 		testconstants.IntermediateCertPem,
 		testconstants.CertSchemaVersion)
 	_, err := setup.Handler(setup.Ctx, addX509Cert)
-	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+	require.ErrorIs(t, err, pkitypes.ErrUnauthorizedCertIssuer)
 }
 
 func TestHandler_AddDaIntermediateCert_ExistingCertIsNoc(t *testing.T) {

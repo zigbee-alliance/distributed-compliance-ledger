@@ -518,7 +518,7 @@ func runIntermediateCertificateExistCases(t *testing.T, fx intermediateCertifica
 				IsRoot:         true,
 				Vid:            testconstants.Vid,
 			},
-			err: sdkerrors.ErrUnauthorized,
+			err: pkitypes.ErrUnauthorizedCertIssuer,
 		},
 		{
 			name: "ExistingWithDifferentIssuer",
@@ -532,7 +532,7 @@ func runIntermediateCertificateExistCases(t *testing.T, fx intermediateCertifica
 				IsRoot:         false,
 				Vid:            testconstants.Vid,
 			},
-			err: sdkerrors.ErrUnauthorized,
+			err: pkitypes.ErrUnauthorizedCertIssuer,
 		},
 		{
 			name: "ExistingWithDifferentAuthorityKeyId",
@@ -546,7 +546,7 @@ func runIntermediateCertificateExistCases(t *testing.T, fx intermediateCertifica
 				IsRoot:         false,
 				Vid:            testconstants.Vid,
 			},
-			err: sdkerrors.ErrUnauthorized,
+			err: pkitypes.ErrUnauthorizedCertIssuer,
 		},
 		{
 			name: "ExistingNotNocCert",
