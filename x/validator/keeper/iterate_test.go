@@ -45,8 +45,13 @@ func TestValidatorIterationAndRemove(t *testing.T) {
 	_, found := k.GetValidator(ctx, v1.GetOwner())
 	require.False(t, found)
 
-	// Removing a non-existent validator is a no-op.
+	// Removing a non-existent validator is a no-op: v1 stays absent and v2 is untouched.
 	k.RemoveValidator(ctx, v1.GetOwner())
+	_, found = k.GetValidator(ctx, v1.GetOwner())
+	require.False(t, found)
+	_, found = k.GetValidator(ctx, v2.GetOwner())
+	require.True(t, found)
+	require.Len(t, k.GetAllValidator(ctx), 1)
 }
 
 func TestSetLastValidatorPower_PanicsOnInvalidOwner(t *testing.T) {

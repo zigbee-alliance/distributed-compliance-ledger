@@ -87,6 +87,7 @@ func TestVerifyVVSCCertificate_ParentNotVidSigner(t *testing.T) {
 		setup.Vendor1.String(), testconstants.VvscIcaCert1, testconstants.CertSchemaVersion, true)
 	_, err := setup.Handler(setup.Ctx, addMsg)
 	require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+	require.ErrorContains(t, err, "VVSC chain verification failed")
 }
 
 func TestVerifyVVSCCertificate_ParentUndecodable(t *testing.T) {
@@ -105,6 +106,7 @@ func TestVerifyVVSCCertificate_ParentUndecodable(t *testing.T) {
 		setup.Vendor1.String(), testconstants.VvscIcaCert1, testconstants.CertSchemaVersion, true)
 	_, err := setup.Handler(setup.Ctx, addMsg)
 	require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+	require.ErrorContains(t, err, "VVSC chain verification failed")
 }
 
 func TestVerifyVVSCCertificate_ParentSignatureMismatch(t *testing.T) {
@@ -124,4 +126,5 @@ func TestVerifyVVSCCertificate_ParentSignatureMismatch(t *testing.T) {
 		setup.Vendor1.String(), testconstants.VvscIcaCert1, testconstants.CertSchemaVersion, true)
 	_, err := setup.Handler(setup.Ctx, addMsg)
 	require.ErrorIs(t, err, pkitypes.ErrInvalidCertificate)
+	require.ErrorContains(t, err, "VVSC chain verification failed")
 }

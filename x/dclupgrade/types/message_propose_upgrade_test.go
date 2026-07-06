@@ -199,22 +199,25 @@ func TestMsgProposeUpgrade_ValidateBasicCLI_InvalidCreator(t *testing.T) {
 }
 
 func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
-	var expectedResponse string
+	var mockGitAPIResponse string
+
+	var lastAuthHeader string
 
 	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		_, _ = fmt.Fprint(w, expectedResponse)
+		lastAuthHeader = r.Header.Get("Authorization")
+		_, _ = fmt.Fprint(w, mockGitAPIResponse)
 	}))
 	defer svr.Close()
 
 	negativeTests := []struct {
-		name     string
-		expected string
-		msg      MsgProposeUpgrade
-		err      error
+		name           string
+		gitAPIResponse string
+		msg            MsgProposeUpgrade
+		err            error
 	}{
 		{
-			name:     "invalid binary format 1",
-			expected: testconstants.UpgradeGitAPIJSONResponse,
+			name:           "invalid binary format 1",
+			gitAPIResponse: testconstants.UpgradeGitAPIJSONResponse,
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
 				Plan: Plan{
@@ -228,8 +231,8 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 			err: sdkerrors.ErrJSONUnmarshal,
 		},
 		{
-			name:     "invalid binary format 2",
-			expected: testconstants.UpgradeGitAPIJSONResponse,
+			name:           "invalid binary format 2",
+			gitAPIResponse: testconstants.UpgradeGitAPIJSONResponse,
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
 				Plan: Plan{
@@ -243,8 +246,8 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 			err: sdkerrors.ErrJSONUnmarshal,
 		},
 		{
-			name:     "invalid binary format 3",
-			expected: testconstants.UpgradeGitAPIJSONResponse,
+			name:           "invalid binary format 3",
+			gitAPIResponse: testconstants.UpgradeGitAPIJSONResponse,
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
 				Plan: Plan{
@@ -258,8 +261,8 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 			err: sdkerrors.ErrJSONUnmarshal,
 		},
 		{
-			name:     "lots of binary files",
-			expected: testconstants.UpgradeGitAPIJSONResponse,
+			name:           "lots of binary files",
+			gitAPIResponse: testconstants.UpgradeGitAPIJSONResponse,
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
 				Plan: Plan{
@@ -273,8 +276,8 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 			err: sdkerrors.ErrJSONUnmarshal,
 		},
 		{
-			name:     "unsupported os platform",
-			expected: testconstants.UpgradeGitAPIJSONResponse,
+			name:           "unsupported os platform",
+			gitAPIResponse: testconstants.UpgradeGitAPIJSONResponse,
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
 				Plan: Plan{
@@ -288,8 +291,8 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 			err: sdkerrors.ErrJSONUnmarshal,
 		},
 		{
-			name:     "no binary files",
-			expected: testconstants.UpgradeGitAPIJSONResponse,
+			name:           "no binary files",
+			gitAPIResponse: testconstants.UpgradeGitAPIJSONResponse,
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
 				Plan: Plan{
@@ -304,8 +307,8 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 		},
 		{
 			// valid JSON but the single binary targets an unsupported platform.
-			name:     "unsupported os platform (valid json)",
-			expected: testconstants.UpgradeGitAPIJSONResponse,
+			name:           "unsupported os platform (valid json)",
+			gitAPIResponse: testconstants.UpgradeGitAPIJSONResponse,
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
 				Plan: Plan{
@@ -320,8 +323,8 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 		},
 		{
 			// URL has the required "?checksum=" separator but too few path segments.
-			name:     "binary url too short",
-			expected: testconstants.UpgradeGitAPIJSONResponse,
+			name:           "binary url too short",
+			gitAPIResponse: testconstants.UpgradeGitAPIJSONResponse,
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
 				Plan: Plan{
@@ -336,8 +339,8 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 		},
 		{
 			// git tag parsed from the URL does not contain the plan name.
-			name:     "plan name not in binary url tag",
-			expected: testconstants.UpgradeGitAPIJSONResponse,
+			name:           "plan name not in binary url tag",
+			gitAPIResponse: testconstants.UpgradeGitAPIJSONResponse,
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
 				Plan: Plan{
@@ -352,8 +355,8 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 		},
 		{
 			// server returns a body that is not valid JSON.
-			name:     "git api response not json",
-			expected: "this is not json",
+			name:           "git api response not json",
+			gitAPIResponse: "this is not json",
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
 				Plan: Plan{
@@ -368,8 +371,8 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 		},
 		{
 			// server returns valid JSON without the "assets" field.
-			name:     "git api response without assets",
-			expected: "{\"message\":\"Not Found\"}",
+			name:           "git api response without assets",
+			gitAPIResponse: "{\"message\":\"Not Found\"}",
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
 				Plan: Plan{
@@ -384,8 +387,8 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 		},
 		{
 			// assets present but none match the expected binary.
-			name:     "git api response with no matching asset",
-			expected: "{\"assets\":[{\"name\": \"other\", \"state\": \"uploaded\", \"digest\": null, \"browser_download_url\":\"https://example.com/other\"}]}",
+			name:           "git api response with no matching asset",
+			gitAPIResponse: "{\"assets\":[{\"name\": \"other\", \"state\": \"uploaded\", \"digest\": null, \"browser_download_url\":\"https://example.com/other\"}]}",
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
 				Plan: Plan{
@@ -401,14 +404,14 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 	}
 
 	positiveTests := []struct {
-		name     string
-		expected string
-		msg      MsgProposeUpgrade
+		name           string
+		gitAPIResponse string
+		msg            MsgProposeUpgrade
 	}{
 		{
 			// empty Plan.Info short-circuits with no error and no network call.
-			name:     "empty plan info",
-			expected: testconstants.UpgradeGitAPIJSONResponse,
+			name:           "empty plan info",
+			gitAPIResponse: testconstants.UpgradeGitAPIJSONResponse,
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
 				Plan: Plan{
@@ -421,8 +424,8 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 			},
 		},
 		{
-			name:     "valid binary file without checksum",
-			expected: "{\"assets\":[{\"name\": \"dcld\", \"state\": \"uploaded\", \"digest\": null, \"browser_download_url\":\"" + testconstants.UpgradeBrowserDownloadURL + "\"}]}",
+			name:           "valid binary file without checksum",
+			gitAPIResponse: "{\"assets\":[{\"name\": \"dcld\", \"state\": \"uploaded\", \"digest\": null, \"browser_download_url\":\"" + testconstants.UpgradeBrowserDownloadURL + "\"}]}",
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
 				Plan: Plan{
@@ -435,8 +438,8 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 			},
 		},
 		{
-			name:     "valid binary file with checksum",
-			expected: testconstants.UpgradeGitAPIJSONResponse,
+			name:           "valid binary file with checksum",
+			gitAPIResponse: testconstants.UpgradeGitAPIJSONResponse,
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
 				Plan: Plan{
@@ -449,8 +452,8 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 			},
 		},
 		{
-			name:     "valid binary file for a dev release",
-			expected: "{\"assets\":[{\"name\": \"dcld\", \"state\": \"uploaded\", \"digest\": \"sha256:f5c1120790319c9c4aefbfbc08a0bb1f91e848e3cd77cf3590a46d637e70cfad\", \"browser_download_url\":\"" + "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.5.2-0.dev.1/dcld" + "\"}]}",
+			name:           "valid binary file for a dev release",
+			gitAPIResponse: "{\"assets\":[{\"name\": \"dcld\", \"state\": \"uploaded\", \"digest\": \"sha256:f5c1120790319c9c4aefbfbc08a0bb1f91e848e3cd77cf3590a46d637e70cfad\", \"browser_download_url\":\"" + "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v1.5.2-0.dev.1/dcld" + "\"}]}",
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
 				Plan: Plan{
@@ -465,7 +468,7 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 	}
 	for _, tt := range positiveTests {
 		t.Run(tt.name, func(t *testing.T) {
-			expectedResponse = tt.expected
+			mockGitAPIResponse = tt.gitAPIResponse
 			err := ValidateBinaries(&tt.msg, svr.URL)
 			require.NoError(t, err)
 		})
@@ -473,7 +476,7 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 
 	for _, tt := range negativeTests {
 		t.Run(tt.name, func(t *testing.T) {
-			expectedResponse = tt.expected
+			mockGitAPIResponse = tt.gitAPIResponse
 			err := ValidateBinaries(&tt.msg, svr.URL)
 			require.Error(t, err)
 			require.ErrorIs(t, err, tt.err)
@@ -482,7 +485,7 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 
 	t.Run("git token header is set when GH_TOKEN present", func(t *testing.T) {
 		t.Setenv("GH_TOKEN", "test-token")
-		expectedResponse = testconstants.UpgradeGitAPIJSONResponse
+		mockGitAPIResponse = testconstants.UpgradeGitAPIJSONResponse
 		msg := MsgProposeUpgrade{
 			Creator: sample.AccAddress(),
 			Plan: Plan{
@@ -494,6 +497,7 @@ func TestMsgProposeUpgrade_ValidateBinaries(t *testing.T) {
 			Time: testconstants.Time,
 		}
 		require.NoError(t, ValidateBinaries(&msg, svr.URL))
+		require.Equal(t, "token test-token", lastAuthHeader)
 	})
 
 	t.Run("git api request fails", func(t *testing.T) {

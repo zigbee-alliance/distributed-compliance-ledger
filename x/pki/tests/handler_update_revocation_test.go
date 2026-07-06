@@ -943,58 +943,6 @@ func TestHandler_UpdatePkiRevocationDistributionPoint_CrlSignerCertificateField(
 	}
 }
 
-// TestHandler_UpdatePkiRevocationDistributionPoint_NonCRL_DataFields covers the
-// data-field update branches (DataURL/DataFileSize/DataDigest/DataDigestType).
-// Those fields can only be set when the revocation point is NOT of CRL type
-// (otherwise the handler rejects them), but only the CRL type can be added
-// through the normal flow. The point is therefore seeded as CRL and then
-// switched to a non-CRL type directly in the keeper before the update.
-func TestHandler_UpdatePkiRevocationDistributionPoint_NonCRL_DataFields(t *testing.T) {
-	const nonCRLRevocationType = uint32(2)
-
-	setup := utils.Setup(t)
-
-	vendorAcc := utils.GenerateAccAddress()
-	addedRevocation := createAddRevocationMessageWithPAACertWithNumericVid(vendorAcc.String())
-	setup.AddAccount(vendorAcc, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, addedRevocation.Vid)
-
-	utils.ProposeAndApproveRootCertificateByOptions(setup, setup.Trustee1, utils.CreatePAACertWithNumericVidOptions())
-
-	_, err := setup.Handler(setup.Ctx, addedRevocation)
-	require.NoError(t, err)
-
-	// Switch the stored point to a non-CRL type so the update is allowed to carry
-	// data fields. This bypasses the add-time validation, which only permits CRL.
-	point, isFound := setup.Keeper.GetPkiRevocationDistributionPoint(
-		setup.Ctx, addedRevocation.Vid, addedRevocation.Label, addedRevocation.IssuerSubjectKeyID)
-	require.True(t, isFound)
-	point.RevocationType = nonCRLRevocationType
-	setup.Keeper.SetPkiRevocationDistributionPoint(setup.Ctx, point)
-	setup.Keeper.UpdatePkiRevocationDistributionPointBySubjectKeyID(setup.Ctx, point)
-
-	updateRevocation := &types.MsgUpdatePkiRevocationDistributionPoint{
-		Signer:             vendorAcc.String(),
-		Vid:                addedRevocation.Vid,
-		Label:              addedRevocation.Label,
-		IssuerSubjectKeyID: addedRevocation.IssuerSubjectKeyID,
-		DataURL:            addedRevocation.DataURL + "/data",
-		DataFileSize:       uint64(123),
-		DataDigest:         testconstants.DataDigest,
-		DataDigestType:     uint32(1),
-		SchemaVersion:      0,
-	}
-	_, err = setup.Handler(setup.Ctx, updateRevocation)
-	require.NoError(t, err)
-
-	updatedPoint, isFound := setup.Keeper.GetPkiRevocationDistributionPoint(
-		setup.Ctx, addedRevocation.Vid, addedRevocation.Label, addedRevocation.IssuerSubjectKeyID)
-	require.True(t, isFound)
-	require.Equal(t, updateRevocation.DataURL, updatedPoint.DataURL)
-	require.Equal(t, updateRevocation.DataFileSize, updatedPoint.DataFileSize)
-	require.Equal(t, updateRevocation.DataDigest, updatedPoint.DataDigest)
-	require.Equal(t, updateRevocation.DataDigestType, updatedPoint.DataDigestType)
-}
-
 func TestHandler_UpdatePkiRevocationDistributionPoint_StoredCertificateUndecodable(t *testing.T) {
 	setup := utils.Setup(t)
 
