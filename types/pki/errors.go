@@ -55,6 +55,8 @@ var (
 	ErrCRLSignerCertificateInvalidVersion                = errors.Register(ModuleName, 443, "invalid CRLSignerCertificate version")
 	ErrCertVidNotEqualToIssuerVid                        = errors.Register(ModuleName, 444, "certificate's vid is not equal to issuer's vid")
 	ErrCertPidNotEqualToIssuerPid                        = errors.Register(ModuleName, 445, "certificate's pid is not equal to issuer's pid")
+	ErrUnauthorizedCertIssuer                            = errors.Register(ModuleName, 446, "unauthorized certificate issuer")
+	ErrVVSCChainVerificationFailed                       = errors.Register(ModuleName, 447, "VVSC chain verification failed")
 )
 
 func NewErrUnauthorizedRole(transactionName string, requiredRole types.AccountRole) error {
@@ -152,6 +154,12 @@ func NewErrInvalidCertificate(e interface{}) error {
 		e)
 }
 
+func NewErrVVSCChainVerificationFailed(subject string, subjectKeyID string) error {
+	return errors.Wrapf(ErrVVSCChainVerificationFailed,
+		"VVSC chain verification failed for subject=%v subjectKeyID=%v",
+		subject, subjectKeyID)
+}
+
 func NewErrInvalidDataDigestType(dataDigestType uint32, allowedDataDigestTypes []uint32) error {
 	return errors.Wrapf(ErrInvalidDataDigestType,
 		"Invalid DataDigestType: %d. Supported types are: %v", dataDigestType, allowedDataDigestTypes)
@@ -192,7 +200,7 @@ func NewErrNonRootCertificateSelfSigned() error {
 }
 
 func NewErrUnauthorizedCertIssuer(subject string, subjectKeyID string) error {
-	return errors.Wrapf(sdkerrors.ErrUnauthorized,
+	return errors.Wrapf(ErrUnauthorizedCertIssuer,
 		"Issuer and authorityKeyID of new certificate with subject=%v and subjectKeyID=%v "+
 			"must be the same as ones of existing certificates with the same subject and subjectKeyID",
 		subject, subjectKeyID)

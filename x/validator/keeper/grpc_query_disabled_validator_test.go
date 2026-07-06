@@ -1,6 +1,5 @@
 package keeper_test
 
-/*
 import (
 	"strconv"
 	"testing"
@@ -15,9 +14,6 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
-
-// Prevent strconv unused error.
-var _ = strconv.IntSize
 
 func TestDisabledValidatorQuerySingle(t *testing.T) {
 	keeper, ctx := keepertest.ValidatorKeeper(t, nil)
@@ -125,4 +121,3 @@ func TestDisabledValidatorQueryPaginated(t *testing.T) {
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
 }
-*/

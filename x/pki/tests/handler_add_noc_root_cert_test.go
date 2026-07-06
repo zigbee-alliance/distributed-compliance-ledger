@@ -416,7 +416,7 @@ func runCertificateExistCases(t *testing.T, base certificateExistCase) {
 				IsRoot:        false,
 				Vid:           testconstants.Vid,
 			},
-			err: sdkerrors.ErrUnauthorized,
+			err: pkitypes.ErrUnauthorizedCertIssuer,
 		},
 		{
 			name: "ExistingNotNocCert",

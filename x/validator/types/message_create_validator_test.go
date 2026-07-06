@@ -1,42 +1,42 @@
-package types
+package types_test
 
-/* TODO issue 99
 import (
+	"strings"
 	"testing"
 
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	"github.com/stretchr/testify/require"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
-func TestMsgCreateValidator_ValidateBasic(t *testing.T) {
-	tests := []struct {
+func TestMsgCreateValidator_ValidateBasicBranches(t *testing.T) {
+	goodPk, err := codectypes.NewAnyWithValue(ed25519.GenPrivKey().PubKey())
+	require.NoError(t, err)
+	badPk, err := codectypes.NewAnyWithValue(&types.Validator{Owner: "x"})
+	require.NoError(t, err)
+
+	signer := sample.ValAddress()
+	goodDesc := types.NewDescription("moniker", "identity", "website", "details")
+
+	for _, tc := range []struct {
 		name string
-		msg  MsgCreateValidator
-		err  error
+		msg  types.MsgCreateValidator
 	}{
-		{
-			name: "invalid address",
-			msg: MsgCreateValidator{
-				Signer: "invalid_address",
-			},
-			err: sdkerrors.ErrInvalidAddress,
-		}, {
-			name: "valid address",
-			msg: MsgCreateValidator{
-				Signer: sample.AccAddress(),
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			err := tt.msg.ValidateBasic()
-			if tt.err != nil {
-				require.ErrorIs(t, err, tt.err)
-				return
-			}
-			require.NoError(t, err)
+		{"invalid signer", types.MsgCreateValidator{Signer: "invalid"}},
+		{"nil pubkey", types.MsgCreateValidator{Signer: signer, PubKey: nil, Description: goodDesc}},
+		{"non-pubkey any", types.MsgCreateValidator{Signer: signer, PubKey: badPk, Description: goodDesc}},
+		{"empty description", types.MsgCreateValidator{Signer: signer, PubKey: goodPk}},
+		{"invalid description", types.MsgCreateValidator{
+			Signer:      signer,
+			PubKey:      goodPk,
+			Description: types.NewDescription(strings.Repeat("a", types.MaxNameLength+1), "", "", ""),
+		}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			msg := tc.msg
+			require.Error(t, msg.ValidateBasic())
 		})
 	}
 }
-*/

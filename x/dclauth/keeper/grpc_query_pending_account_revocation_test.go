@@ -1,9 +1,6 @@
 package keeper_test
 
-/*
-
 import (
-	"strconv"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -11,13 +8,11 @@ import (
 	"github.com/stretchr/testify/require"
 	keepertest "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
-
-// Prevent strconv unused error
-var _ = strconv.IntSize
 
 func TestPendingAccountRevocationQuerySingle(t *testing.T) {
 	keeper, ctx := keepertest.DclauthKeeper(t)
@@ -30,25 +25,19 @@ func TestPendingAccountRevocationQuerySingle(t *testing.T) {
 		err      error
 	}{
 		{
-			desc: "First",
-			request: &types.QueryGetPendingAccountRevocationRequest{
-				Address: msgs[0].Address,
-			},
+			desc:     "First",
+			request:  &types.QueryGetPendingAccountRevocationRequest{Address: msgs[0].Address},
 			response: &types.QueryGetPendingAccountRevocationResponse{PendingAccountRevocation: msgs[0]},
 		},
 		{
-			desc: "Second",
-			request: &types.QueryGetPendingAccountRevocationRequest{
-				Address: msgs[1].Address,
-			},
+			desc:     "Second",
+			request:  &types.QueryGetPendingAccountRevocationRequest{Address: msgs[1].Address},
 			response: &types.QueryGetPendingAccountRevocationResponse{PendingAccountRevocation: msgs[1]},
 		},
 		{
-			desc: "KeyNotFound",
-			request: &types.QueryGetPendingAccountRevocationRequest{
-				Address: strconv.Itoa(100000),
-			},
-			err: status.Error(codes.NotFound, "not found"),
+			desc:    "KeyNotFound",
+			request: &types.QueryGetPendingAccountRevocationRequest{Address: sample.AccAddress()},
+			err:     status.Error(codes.NotFound, "not found"),
 		},
 		{
 			desc: "InvalidRequest",
@@ -68,6 +57,11 @@ func TestPendingAccountRevocationQuerySingle(t *testing.T) {
 			}
 		})
 	}
+
+	t.Run("InvalidAddress", func(t *testing.T) {
+		_, err := keeper.PendingAccountRevocation(wctx, &types.QueryGetPendingAccountRevocationRequest{Address: "not-a-bech32-address"})
+		require.Error(t, err)
+	})
 }
 
 func TestPendingAccountRevocationQueryPaginated(t *testing.T) {
@@ -91,10 +85,7 @@ func TestPendingAccountRevocationQueryPaginated(t *testing.T) {
 			resp, err := keeper.PendingAccountRevocationAll(wctx, request(nil, uint64(i), uint64(step), false))
 			require.NoError(t, err)
 			require.LessOrEqual(t, len(resp.PendingAccountRevocation), step)
-			require.Subset(t,
-				nullify.Fill(msgs),
-				nullify.Fill(resp.PendingAccountRevocation),
-			)
+			require.Subset(t, nullify.Fill(msgs), nullify.Fill(resp.PendingAccountRevocation))
 		}
 	})
 	t.Run("ByKey", func(t *testing.T) {
@@ -104,10 +95,7 @@ func TestPendingAccountRevocationQueryPaginated(t *testing.T) {
 			resp, err := keeper.PendingAccountRevocationAll(wctx, request(next, 0, uint64(step), false))
 			require.NoError(t, err)
 			require.LessOrEqual(t, len(resp.PendingAccountRevocation), step)
-			require.Subset(t,
-				nullify.Fill(msgs),
-				nullify.Fill(resp.PendingAccountRevocation),
-			)
+			require.Subset(t, nullify.Fill(msgs), nullify.Fill(resp.PendingAccountRevocation))
 			next = resp.Pagination.NextKey
 		}
 	})
@@ -115,14 +103,10 @@ func TestPendingAccountRevocationQueryPaginated(t *testing.T) {
 		resp, err := keeper.PendingAccountRevocationAll(wctx, request(nil, 0, 0, true))
 		require.NoError(t, err)
 		require.Equal(t, len(msgs), int(resp.Pagination.Total))
-		require.ElementsMatch(t,
-			nullify.Fill(msgs),
-			nullify.Fill(resp.PendingAccountRevocation),
-		)
+		require.ElementsMatch(t, nullify.Fill(msgs), nullify.Fill(resp.PendingAccountRevocation))
 	})
 	t.Run("InvalidRequest", func(t *testing.T) {
 		_, err := keeper.PendingAccountRevocationAll(wctx, nil)
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
 }
-*/

@@ -16,10 +16,12 @@
 package validator
 
 import (
+	"strings"
 	"testing"
 
 	// cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types".
 
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -171,6 +173,57 @@ func TestHandler_CreateValidator_TwiceForSameValidatorAddress(t *testing.T) {
 	require.NoError(t, err)
 	_, err = setup.Handler(setup.Ctx, msgCreateValidator)
 	require.ErrorIs(t, err, sdkstakingtypes.ErrValidatorPubKeyExists)
+}
+
+func TestHandler_CreateValidator_PoolIsFull(t *testing.T) {
+	setup := Setup(t)
+
+	// fill the active set up to the maximum number of nodes
+	for i := 0; i < types.MaxNodes; i++ {
+		_, _, addr := testdata.KeyTestPubAddr()
+		setup.ValidatorKeeper.SetLastValidatorPower(setup.Ctx, types.NewLastValidatorPower(sdk.ValAddress(addr)))
+	}
+
+	msgCreateValidator, err := types.NewMsgCreateValidator(
+		sdk.ValAddress(testconstants.Address1),
+		testconstants.ValidatorPubKey1,
+		&types.Description{Moniker: testconstants.ProductName},
+	)
+	require.NoError(t, err)
+
+	_, err = setup.Handler(setup.Ctx, msgCreateValidator)
+	require.ErrorIs(t, err, types.PoolIsFull)
+}
+
+func TestHandler_CreateValidator_PubKeyNotCryptoPubKey(t *testing.T) {
+	setup := Setup(t)
+
+	// an Any whose cached value is a proto message that is not a cryptotypes.PubKey
+	badPk, err := codectypes.NewAnyWithValue(&types.Validator{Owner: "x"})
+	require.NoError(t, err)
+
+	msgCreateValidator := &types.MsgCreateValidator{
+		Signer:      sdk.ValAddress(testconstants.Address1).String(),
+		PubKey:      badPk,
+		Description: types.Description{Moniker: testconstants.ProductName},
+	}
+
+	_, err = setup.Handler(setup.Ctx, msgCreateValidator)
+	require.ErrorIs(t, err, sdkerrors.ErrInvalidType)
+}
+
+func TestHandler_CreateValidator_InvalidDescription(t *testing.T) {
+	setup := Setup(t)
+
+	msgCreateValidator, err := types.NewMsgCreateValidator(
+		sdk.ValAddress(testconstants.Address1),
+		testconstants.ValidatorPubKey1,
+		&types.Description{Moniker: strings.Repeat("a", types.MaxNameLength+1)},
+	)
+	require.NoError(t, err)
+
+	_, err = setup.Handler(setup.Ctx, msgCreateValidator)
+	require.Error(t, err)
 }
 
 func TestHandler_CreateValidator_TwiceForSameValidatorOwner(t *testing.T) {
@@ -674,6 +727,59 @@ func TestHandler_DisabledValidatorAlreadyExistsPropose(t *testing.T) {
 // 	require.Error(t, err)
 // 	require.ErrorIs(t, err, types.ErrDisabledValidatorAlreadytExists)
 // }
+
+func TestHandler_DisableValidator_ByNotNodeAdmin(t *testing.T) {
+	setup := Setup(t)
+
+	// ValidatorAddress1 has a validator but no node-admin account, so the role
+	// check fails.
+	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
+	require.NoError(t, err)
+
+	ba := authtypes.NewBaseAccount(sdk.AccAddress(valAddress), testconstants.PubKey2, 0, 0)
+	account := dclauthtypes.NewAccount(ba,
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
+	setup.DclauthKeeper.SetAccount(setup.Ctx, account)
+
+	msgDisableValidator := types.NewMsgDisableValidator(valAddress)
+	_, err = setup.Handler(setup.Ctx, msgDisableValidator)
+	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+}
+
+func TestHandler_DisableValidator_ValidatorNotFound(t *testing.T) {
+	setup := Setup(t)
+
+	// a node admin whose validator does not exist
+	valAddress := sdk.ValAddress(testconstants.Address2)
+	ba := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
+	account := dclauthtypes.NewAccount(ba,
+		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
+	setup.DclauthKeeper.SetAccount(setup.Ctx, account)
+
+	msgDisableValidator := types.NewMsgDisableValidator(valAddress)
+	_, err := setup.Handler(setup.Ctx, msgDisableValidator)
+	require.ErrorIs(t, err, sdkstakingtypes.ErrNoValidatorFound)
+}
+
+func TestHandler_DisableValidator_AlreadyDisabled(t *testing.T) {
+	setup := Setup(t)
+
+	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
+	require.NoError(t, err)
+
+	ba := authtypes.NewBaseAccount(sdk.AccAddress(valAddress), testconstants.PubKey2, 0, 0)
+	account := dclauthtypes.NewAccount(ba,
+		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, nil, testconstants.VendorID2, testconstants.ProductIDsEmpty)
+	setup.DclauthKeeper.SetAccount(setup.Ctx, account)
+
+	msgDisableValidator := types.NewMsgDisableValidator(valAddress)
+	_, err = setup.Handler(setup.Ctx, msgDisableValidator)
+	require.NoError(t, err)
+
+	// disabling again must fail because the disabled validator already exists
+	_, err = setup.Handler(setup.Ctx, msgDisableValidator)
+	require.ErrorIs(t, err, types.ErrDisabledValidatorAlreadytExists)
+}
 
 func TestHandler_OwnerNodeAdminCanDisabledValidator(t *testing.T) {
 	setup := Setup(t)

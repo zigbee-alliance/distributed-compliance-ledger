@@ -1,9 +1,9 @@
 package types_test
 
-/*
 import (
 	"testing"
 
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	"github.com/stretchr/testify/require"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types"
 )
@@ -23,42 +23,17 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "valid genesis state",
 			genState: &types.GenesisState{
 				ProposedUpgradeList: []types.ProposedUpgrade{
-					{
-						Plan: types.Plan{
-							Name: "0",
-						},
-					},
-					{
-						Plan: types.Plan{
-							Name: "1",
-						},
-					},
+					{Plan: upgradetypes.Plan{Name: "0"}},
+					{Plan: upgradetypes.Plan{Name: "1"}},
 				},
 				ApprovedUpgradeList: []types.ApprovedUpgrade{
-					{
-						Plan: types.Plan{
-							Name: "0",
-						},
-					},
-					{
-						Plan: types.Plan{
-							Name: "1",
-						},
-					},
+					{Plan: upgradetypes.Plan{Name: "0"}},
+					{Plan: upgradetypes.Plan{Name: "1"}},
 				},
 				RejectedUpgradeList: []types.RejectedUpgrade{
-					{
-						Plan: types.Plan{
-							Name: "0",
-						},
-					},
-					{
-						Plan: types.Plan{
-							Name: "1",
-						},
-					},
+					{Plan: upgradetypes.Plan{Name: "0"}},
+					{Plan: upgradetypes.Plan{Name: "1"}},
 				},
-				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
 		},
@@ -66,16 +41,8 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "duplicated proposedUpgrade",
 			genState: &types.GenesisState{
 				ProposedUpgradeList: []types.ProposedUpgrade{
-					{
-						Plan: types.Plan{
-							Name: "0",
-						},
-					},
-					{
-						Plan: types.Plan{
-							Name: "0",
-						},
-					},
+					{Plan: upgradetypes.Plan{Name: "0"}},
+					{Plan: upgradetypes.Plan{Name: "0"}},
 				},
 			},
 			valid: false,
@@ -84,16 +51,8 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "duplicated approvedUpgrade",
 			genState: &types.GenesisState{
 				ApprovedUpgradeList: []types.ApprovedUpgrade{
-					{
-						Plan: types.Plan{
-							Name: "0",
-						},
-					},
-					{
-						Plan: types.Plan{
-							Name: "0",
-						},
-					},
+					{Plan: upgradetypes.Plan{Name: "0"}},
+					{Plan: upgradetypes.Plan{Name: "0"}},
 				},
 			},
 			valid: false,
@@ -102,21 +61,12 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "duplicated rejectedUpgrade",
 			genState: &types.GenesisState{
 				RejectedUpgradeList: []types.RejectedUpgrade{
-					{
-						Plan: types.Plan{
-							Name: "0",
-						},
-					},
-					{
-						Plan: types.Plan{
-							Name: "1",
-						},
-					},
+					{Plan: upgradetypes.Plan{Name: "0"}},
+					{Plan: upgradetypes.Plan{Name: "0"}},
 				},
 			},
 			valid: false,
 		},
-		// this line is used by starport scaffolding # types/genesis/testcase
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
 			err := tc.genState.Validate()
@@ -128,4 +78,3 @@ func TestGenesisState_Validate(t *testing.T) {
 		})
 	}
 }
-*/

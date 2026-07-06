@@ -1,6 +1,5 @@
 package keeper_test
 
-/*
 import (
 	"strconv"
 	"testing"
@@ -16,11 +15,8 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types"
 )
 
-// Prevent strconv unused error
-var _ = strconv.IntSize
-
 func TestRejectedUpgradeQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.DclupgradeKeeper(t)
+	keeper, ctx := keepertest.DclupgradeKeeper(t, nil, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNRejectedUpgrade(keeper, ctx, 2)
 	for _, tc := range []struct {
@@ -32,14 +28,14 @@ func TestRejectedUpgradeQuerySingle(t *testing.T) {
 		{
 			desc: "First",
 			request: &types.QueryGetRejectedUpgradeRequest{
-				Name: msgs[0].Name,
+				Name: msgs[0].Plan.Name,
 			},
 			response: &types.QueryGetRejectedUpgradeResponse{RejectedUpgrade: msgs[0]},
 		},
 		{
 			desc: "Second",
 			request: &types.QueryGetRejectedUpgradeRequest{
-				Name: msgs[1].Name,
+				Name: msgs[1].Plan.Name,
 			},
 			response: &types.QueryGetRejectedUpgradeResponse{RejectedUpgrade: msgs[1]},
 		},
@@ -48,7 +44,7 @@ func TestRejectedUpgradeQuerySingle(t *testing.T) {
 			request: &types.QueryGetRejectedUpgradeRequest{
 				Name: strconv.Itoa(100000),
 			},
-			err: status.Error(codes.InvalidArgument, "not found"),
+			err: status.Error(codes.NotFound, "not found"),
 		},
 		{
 			desc: "InvalidRequest",
@@ -71,7 +67,7 @@ func TestRejectedUpgradeQuerySingle(t *testing.T) {
 }
 
 func TestRejectedUpgradeQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.DclupgradeKeeper(t)
+	keeper, ctx := keepertest.DclupgradeKeeper(t, nil, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNRejectedUpgrade(keeper, ctx, 5)
 
@@ -125,4 +121,3 @@ func TestRejectedUpgradeQueryPaginated(t *testing.T) {
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
 }
-*/

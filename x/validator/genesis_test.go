@@ -1,72 +1,57 @@
 package validator_test
 
-/* TODO issue 99
 import (
 	"testing"
 
+	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
-	keepertest "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
+	testkeeper "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
 func TestGenesis(t *testing.T) {
+	setup := testkeeper.Setup(t)
+
+	pk1 := ed25519.GenPrivKey().PubKey()
+	pk2 := ed25519.GenPrivKey().PubKey()
+	v1, err := types.NewValidator(sdk.ValAddress(pk1.Address()), pk1, types.NewDescription("v1", "", "", ""))
+	require.NoError(t, err)
+	v2, err := types.NewValidator(sdk.ValAddress(pk2.Address()), pk2, types.NewDescription("v2", "", "", ""))
+	require.NoError(t, err)
+
 	genesisState := types.GenesisState{
-		ValidatorList: []types.Validator{
-			{
-				Owner: "0",
-			},
-			{
-				Owner: "1",
-			},
-		},
+		ValidatorList: []types.Validator{v1, v2},
 		LastValidatorPowerList: []types.LastValidatorPower{
-			{
-				Owner: "0",
-			},
-			{
-				Owner: "1",
-			},
+			types.NewLastValidatorPower(v1.GetOwner()),
+			types.NewLastValidatorPower(v2.GetOwner()),
 		},
 		ProposedDisableValidatorList: []types.ProposedDisableValidator{
-		{
-			Address: "0",
-},
-		{
-			Address: "1",
-},
-	},
-	DisabledValidatorList: []types.DisabledValidator{
-		{
-			Address: "0",
-},
-		{
-			Address: "1",
-},
-	},
-	RejectedNodeList: []types.RejectedNode{
-		{
-			Owner: "0",
-},
-		{
-			Owner: "1",
-},
-	},
-	// this line is used by starport scaffolding # genesis/test/state
+			{Address: "a"},
+			{Address: "b"},
+		},
+		DisabledValidatorList: []types.DisabledValidator{
+			{Address: "c"},
+			{Address: "d"},
+		},
+		RejectedValidatorList: []types.RejectedDisableValidator{
+			{Address: sample.ValAddress()},
+		},
 	}
 
-	k, ctx := keepertest.ValidatorKeeper(t, nil)
-	validator.InitGenesis(ctx, *k, genesisState)
-	got := validator.ExportGenesis(ctx, *k)
-	require.NotNil(t, got)
+	validator.InitGenesis(setup.Ctx, setup.ValidatorKeeper, genesisState)
 
-	require.Len(t, got.ValidatorList, len(genesisState.ValidatorList))
-	require.Subset(t, genesisState.ValidatorList, got.ValidatorList)
-	require.Len(t, got.LastValidatorPowerList, len(genesisState.LastValidatorPowerList))
-	require.Subset(t, genesisState.LastValidatorPowerList, got.LastValidatorPowerList)
-	require.ElementsMatch(t, genesisState.ProposedDisableValidatorList, got.ProposedDisableValidatorList)
-require.ElementsMatch(t, genesisState.DisabledValidatorList, got.DisabledValidatorList)
-require.ElementsMatch(t, genesisState.RejectedNodeList, got.RejectedNodeList)
-// this line is used by starport scaffolding # genesis/test/assert
+	got := validator.ExportGenesis(setup.Ctx, setup.ValidatorKeeper)
+	require.NotNil(t, got)
+	require.Len(t, got.ValidatorList, 2)
+	require.Len(t, got.LastValidatorPowerList, 2)
+	require.Len(t, got.ProposedDisableValidatorList, 2)
+	require.Len(t, got.DisabledValidatorList, 2)
+	require.Len(t, got.RejectedValidatorList, 1)
+
+	// WriteValidators iterates the active set; covered regardless of result.
+	_, err = validator.WriteValidators(setup.Ctx, setup.ValidatorKeeper)
+	require.NoError(t, err)
 }
-*/

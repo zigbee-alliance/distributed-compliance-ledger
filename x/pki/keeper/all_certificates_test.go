@@ -6,9 +6,12 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	keepertest "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
+	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/types/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/keeper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/tests/utils"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
@@ -65,4 +68,60 @@ func TestCertificatesGetAll(t *testing.T) {
 		nullify.Fill(items),
 		nullify.Fill(keeper.GetAllAllCertificates(ctx)),
 	)
+}
+
+func TestVerifyVVSCCertificate_ParentNotVidSigner(t *testing.T) {
+	setup := utils.Setup(t)
+
+	// parent exists at the ICA's issuer/AKI but is not a VID-signer cert, so the
+	// VVSC walker skips it and no chain can be built.
+	parent := types.Certificate{
+		Subject:         testconstants.VvscIcaCert1Issuer,
+		SubjectKeyId:    testconstants.VvscIcaCert1AuthorityKeyID,
+		CertificateType: types.CertificateType_OperationalPKI,
+		PemCert:         testconstants.VvscRootCert1,
+	}
+	setup.Keeper.AddAllCertificate(setup.Ctx, parent)
+
+	addMsg := types.NewMsgAddNocX509IcaCert(
+		setup.Vendor1.String(), testconstants.VvscIcaCert1, testconstants.CertSchemaVersion, true)
+	_, err := setup.Handler(setup.Ctx, addMsg)
+	require.ErrorIs(t, err, pkitypes.ErrVVSCChainVerificationFailed)
+}
+
+func TestVerifyVVSCCertificate_ParentUndecodable(t *testing.T) {
+	setup := utils.Setup(t)
+
+	// parent is a VID-signer entry but its stored PEM cannot be decoded.
+	parent := types.Certificate{
+		Subject:         testconstants.VvscIcaCert1Issuer,
+		SubjectKeyId:    testconstants.VvscIcaCert1AuthorityKeyID,
+		CertificateType: types.CertificateType_VIDSignerPKI,
+		PemCert:         "not a certificate",
+	}
+	setup.Keeper.AddAllCertificate(setup.Ctx, parent)
+
+	addMsg := types.NewMsgAddNocX509IcaCert(
+		setup.Vendor1.String(), testconstants.VvscIcaCert1, testconstants.CertSchemaVersion, true)
+	_, err := setup.Handler(setup.Ctx, addMsg)
+	require.ErrorIs(t, err, pkitypes.ErrVVSCChainVerificationFailed)
+}
+
+func TestVerifyVVSCCertificate_ParentSignatureMismatch(t *testing.T) {
+	setup := utils.Setup(t)
+
+	// parent is a valid VID-signer cert but did not sign the ICA, so the VVSC
+	// signature check fails and no chain can be built.
+	parent := types.Certificate{
+		Subject:         testconstants.VvscIcaCert1Issuer,
+		SubjectKeyId:    testconstants.VvscIcaCert1AuthorityKeyID,
+		CertificateType: types.CertificateType_VIDSignerPKI,
+		PemCert:         testconstants.VvscRootCert2,
+	}
+	setup.Keeper.AddAllCertificate(setup.Ctx, parent)
+
+	addMsg := types.NewMsgAddNocX509IcaCert(
+		setup.Vendor1.String(), testconstants.VvscIcaCert1, testconstants.CertSchemaVersion, true)
+	_, err := setup.Handler(setup.Ctx, addMsg)
+	require.ErrorIs(t, err, pkitypes.ErrVVSCChainVerificationFailed)
 }

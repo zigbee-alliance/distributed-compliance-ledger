@@ -1,6 +1,5 @@
 package keeper_test
 
-/*
 import (
 	"strconv"
 	"testing"
@@ -16,11 +15,8 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
-// Prevent strconv unused error
-var _ = strconv.IntSize
-
 func TestDeviceSoftwareComplianceQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.ComplianceKeeper(t)
+	keeper, ctx := keepertest.ComplianceKeeper(t, nil, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNDeviceSoftwareCompliance(keeper, ctx, 2)
 	for _, tc := range []struct {
@@ -32,23 +28,23 @@ func TestDeviceSoftwareComplianceQuerySingle(t *testing.T) {
 		{
 			desc: "First",
 			request: &types.QueryGetDeviceSoftwareComplianceRequest{
-				CdCertificateId: msgs[0].CdCertificateId,
+				CDCertificateId: msgs[0].CDCertificateId,
 			},
 			response: &types.QueryGetDeviceSoftwareComplianceResponse{DeviceSoftwareCompliance: msgs[0]},
 		},
 		{
 			desc: "Second",
 			request: &types.QueryGetDeviceSoftwareComplianceRequest{
-				CdCertificateId: msgs[1].CdCertificateId,
+				CDCertificateId: msgs[1].CDCertificateId,
 			},
 			response: &types.QueryGetDeviceSoftwareComplianceResponse{DeviceSoftwareCompliance: msgs[1]},
 		},
 		{
 			desc: "KeyNotFound",
 			request: &types.QueryGetDeviceSoftwareComplianceRequest{
-				CdCertificateId: strconv.Itoa(100000),
+				CDCertificateId: strconv.Itoa(100000),
 			},
-			err: status.Error(codes.InvalidArgument, "not found"),
+			err: status.Error(codes.NotFound, "not found"),
 		},
 		{
 			desc: "InvalidRequest",
@@ -71,7 +67,7 @@ func TestDeviceSoftwareComplianceQuerySingle(t *testing.T) {
 }
 
 func TestDeviceSoftwareComplianceQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.ComplianceKeeper(t)
+	keeper, ctx := keepertest.ComplianceKeeper(t, nil, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNDeviceSoftwareCompliance(keeper, ctx, 5)
 
@@ -125,4 +121,3 @@ func TestDeviceSoftwareComplianceQueryPaginated(t *testing.T) {
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
 }
-*/

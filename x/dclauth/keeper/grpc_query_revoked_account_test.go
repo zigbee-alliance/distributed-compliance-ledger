@@ -1,23 +1,18 @@
 package keeper_test
 
-/*
 import (
-	"strconv"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/stretchr/testify/require"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	keepertest "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
-
-// Prevent strconv unused error
-var _ = strconv.IntSize
 
 func TestRevokedAccountQuerySingle(t *testing.T) {
 	keeper, ctx := keepertest.DclauthKeeper(t)
@@ -30,25 +25,19 @@ func TestRevokedAccountQuerySingle(t *testing.T) {
 		err      error
 	}{
 		{
-			desc: "First",
-			request: &types.QueryGetRevokedAccountRequest{
-				Address: msgs[0].Address,
-			},
+			desc:     "First",
+			request:  &types.QueryGetRevokedAccountRequest{Address: msgs[0].GetAddress().String()},
 			response: &types.QueryGetRevokedAccountResponse{RevokedAccount: msgs[0]},
 		},
 		{
-			desc: "Second",
-			request: &types.QueryGetRevokedAccountRequest{
-				Address: msgs[1].Address,
-			},
+			desc:     "Second",
+			request:  &types.QueryGetRevokedAccountRequest{Address: msgs[1].GetAddress().String()},
 			response: &types.QueryGetRevokedAccountResponse{RevokedAccount: msgs[1]},
 		},
 		{
-			desc: "KeyNotFound",
-			request: &types.QueryGetRevokedAccountRequest{
-				Address: strconv.Itoa(100000),
-			},
-			err: status.Error(codes.NotFound, "not found"),
+			desc:    "KeyNotFound",
+			request: &types.QueryGetRevokedAccountRequest{Address: sample.AccAddress()},
+			err:     status.Error(codes.NotFound, "not found"),
 		},
 		{
 			desc: "InvalidRequest",
@@ -68,6 +57,11 @@ func TestRevokedAccountQuerySingle(t *testing.T) {
 			}
 		})
 	}
+
+	t.Run("InvalidAddress", func(t *testing.T) {
+		_, err := keeper.RevokedAccount(wctx, &types.QueryGetRevokedAccountRequest{Address: "not-a-bech32-address"})
+		require.Error(t, err)
+	})
 }
 
 func TestRevokedAccountQueryPaginated(t *testing.T) {
@@ -91,10 +85,7 @@ func TestRevokedAccountQueryPaginated(t *testing.T) {
 			resp, err := keeper.RevokedAccountAll(wctx, request(nil, uint64(i), uint64(step), false))
 			require.NoError(t, err)
 			require.LessOrEqual(t, len(resp.RevokedAccount), step)
-			require.Subset(t,
-				nullify.Fill(msgs),
-				nullify.Fill(resp.RevokedAccount),
-			)
+			require.Subset(t, nullify.Fill(msgs), nullify.Fill(resp.RevokedAccount))
 		}
 	})
 	t.Run("ByKey", func(t *testing.T) {
@@ -104,10 +95,7 @@ func TestRevokedAccountQueryPaginated(t *testing.T) {
 			resp, err := keeper.RevokedAccountAll(wctx, request(next, 0, uint64(step), false))
 			require.NoError(t, err)
 			require.LessOrEqual(t, len(resp.RevokedAccount), step)
-			require.Subset(t,
-				nullify.Fill(msgs),
-				nullify.Fill(resp.RevokedAccount),
-			)
+			require.Subset(t, nullify.Fill(msgs), nullify.Fill(resp.RevokedAccount))
 			next = resp.Pagination.NextKey
 		}
 	})
@@ -115,15 +103,10 @@ func TestRevokedAccountQueryPaginated(t *testing.T) {
 		resp, err := keeper.RevokedAccountAll(wctx, request(nil, 0, 0, true))
 		require.NoError(t, err)
 		require.Equal(t, len(msgs), int(resp.Pagination.Total))
-		require.ElementsMatch(t,
-			nullify.Fill(msgs),
-			nullify.Fill(resp.RevokedAccount),
-		)
+		require.ElementsMatch(t, nullify.Fill(msgs), nullify.Fill(resp.RevokedAccount))
 	})
 	t.Run("InvalidRequest", func(t *testing.T) {
 		_, err := keeper.RevokedAccountAll(wctx, nil)
-		require.ErrorIs(t, err, status.Error(codes.NotFound, "not found"))
+		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
 }
-
-*/
