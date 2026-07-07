@@ -74,7 +74,7 @@ const (
 	TextSpecificationVersion                         = "Specification version applicable to the device model, and it matches the SpecificationVersion attribute in the Basic Information Cluster of a device running the software certified by this DeviceModel record. For example, for version 1.4.2.0 this field should contain 0x01040200."
 	TextCertificationIDOfSoftwareComponent           = "Certification ID of software component."
 	DeprecatedTextCertificationIDOfSoftwareComponent = "Flag 'certificationIDOfSoftwareComponent' will be removed in a future release."
-	TextSchemaVersion                                = "Schema version - default is 1, the value should be equal to 1"
+	TextSchemaVersion                                = "Schema version - default is 1."
 	TextOSVersion                                    = "Name and version of operating system separated by whitespace. For example, Android 16 or iOS 26.4."
 	DeprecatedTextOSVersion                          = "Flag 'OSVersion' will be removed in a future release."
 	TextCompliantPlatformUsed                        = "Certification ID of the compliant platform used with the product."
