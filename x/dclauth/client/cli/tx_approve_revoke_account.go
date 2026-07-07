@@ -18,7 +18,7 @@ var _ = strconv.Itoa(0)
 func CmdApproveRevokeAccount() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "approve-revoke-account",
-		Short: "Broadcast message ApproveRevokeAccount",
+		Short: "Approves the proposed revocation of the account identified by the given address (Trustee only)",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argAddress, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))

@@ -52,8 +52,8 @@ func CmdAddX509Cert() *cobra.Command {
 	}
 
 	cmd.Flags().StringP(FlagCertificate, FlagCertificateShortcut, "",
-		"PEM encoded certificate (string or path to file containing data)")
-	cmd.Flags().Uint32Var(&certSchemaVersion, common.FlagSchemaVersion, 0, "Schema version of certificate")
+		"PEM encoded certificate (string or path to file containing data). Maximum size: 20 KiB.")
+	cmd.Flags().Uint32Var(&certSchemaVersion, common.FlagSchemaVersion, 0, "Schema version of certificate - default is 0.")
 
 	cli.AddTxFlagsToCmd(cmd)
 

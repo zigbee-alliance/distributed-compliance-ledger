@@ -18,7 +18,7 @@ var _ = strconv.Itoa(0)
 func CmdRejectAddAccount() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "reject-add-account",
-		Short: "Broadcast message RejectAddAccount",
+		Short: "Rejects the proposed account identified by the given address (Trustee only)",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argAddress, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))

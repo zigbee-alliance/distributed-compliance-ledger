@@ -150,13 +150,13 @@ The following steps are expected to be done **during** the ceremony.
     9.1. A Trustee proposes a NodeAdmin account
 
     ```bash
-    dcld tx auth propose-add-account --address='<bench32 encoded admin-account-address>' --pubkey='<protobuf JSON encoded admin-account-pubkey>' --roles=NodeAdmin --from='<trustee-account-name>' --info="Propose from Name"
+    dcld tx auth propose-add-account --address='<bech32 encoded admin-account-address>' --pubkey='<protobuf JSON encoded admin-account-pubkey>' --roles=NodeAdmin --from='<trustee-account-name>' --info="Propose from Name"
     ```
 
     9.2. Trustees approve the NodeAdmin account
 
     ```bash
-    dcld tx auth approve-add-account --address='<bench32 encoded admin-account-address>' --from='<trustee-account-name>' --info="Approval from Name"
+    dcld tx auth approve-add-account --address='<bech32 encoded admin-account-address>' --from='<trustee-account-name>' --info="Approval from Name"
     ```
 
 10. **[Optional] Add Trustee account**
@@ -164,13 +164,13 @@ The following steps are expected to be done **during** the ceremony.
     10.1. A Trustee proposes Trustee account
 
     ```bash
-    dcld tx auth propose-add-account --address='<bench32 encoded trustee-account-address>' --pubkey='<protobuf JSON encoded trustee-account-pubkey>' --roles=Trustee --from='<trustee-account-name>'
+    dcld tx auth propose-add-account --address='<bech32 encoded trustee-account-address>' --pubkey='<protobuf JSON encoded trustee-account-pubkey>' --roles=Trustee --from='<trustee-account-name>'
     ```
 
     10.2. Trustees approve Trustee account
 
     ```bash
-    dcld tx auth approve-add-account --address='<bench32 encoded trustee-account-address>' --from='<trustee-account-name>'
+    dcld tx auth approve-add-account --address='<bech32 encoded trustee-account-address>' --from='<trustee-account-name>'
     ```
 
 11. **Run VN node**

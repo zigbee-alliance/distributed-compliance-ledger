@@ -14,7 +14,7 @@ const (
 	FlagRootSubjectKeyID         = "root-subject-key-id"
 	FlagRootSubjectKeyIDShortcut = "i"
 	FlagInfo                     = "info"
-	FlagInfoUsage                = "Optional information/notes for approval, proposal or revocation"
+	FlagInfoUsage                = "Optional information/notes for approval, proposal or revocation. Can contain up to 4096 characters."
 	FlagVid                      = "vid"
 	FlagPid                      = "pid"
 	FlagIsPAA                    = "is-paa"
@@ -28,7 +28,6 @@ const (
 	FlagIssuerSubjectKeyID       = "issuer-subject-key-id"
 	FlagRevokeChild              = "revoke-child"
 	FlagRevokeChildShortcut      = "r"
-	FlagCertificateSchemaVersion = "certificate-schema-version"
 	FlagCertificateDelegator     = "certificate-delegator"
 	FlagIsVVSC                   = "is-vid-verification-signer"
 )

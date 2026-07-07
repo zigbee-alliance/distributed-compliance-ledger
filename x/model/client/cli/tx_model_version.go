@@ -90,21 +90,21 @@ func CmdCreateModelVersion() *cobra.Command {
 		 when this Software Image boots on the device`)
 	// by default the Software Version is valid, unless --softwareVersionValid is passed by user explicitly
 	cmd.Flags().BoolVar(&softwareVersionValid, FlagSoftwareVersionValid, true,
-		"boolean flag to revoke the software version model")
+		"Flag to indicate whether the software version is valid or not (default true)")
 	cmd.Flags().StringVar(&otaURL, FlagOtaURL, "",
-		"URL where to obtain the OTA image")
+		"URL where to obtain the OTA image. If set, otaFileSize, otaChecksum and otaChecksumType must also be provided. Must be a valid HTTPS URL (max 256 characters).")
 	cmd.Flags().Uint64Var(&otaFileSize, FlagOtaFileSize, 0,
 		"OtaFileSize is the total size of the OTA software image in bytes")
 	cmd.Flags().StringVar(&otaChecksum, FlagOtaChecksum, "",
-		`Digest of the entire contents of the associated OTA 
-		Software Update Image under the OtaUrl attribute, 
-		encoded in base64 string representation. The digest SHALL have been computed using 
-		the algorithm specified in OtaChecksumType`)
+		`Digest of the entire contents of the associated OTA
+		Software Update Image under the OtaUrl attribute,
+		encoded in base64 string representation. The digest SHALL have been computed using
+		the algorithm specified in OtaChecksumType (base64 encoded, min 44 / max 88 characters)`)
 	cmd.Flags().Int32Var(&otaChecksumType, FlagOtaChecksumType, 0,
-		`Numberic identifier as defined in 
+		`Numeric identifier as defined in
 IANA Named Information Hash Algorithm Registry for the type of otaChecksum.
-For example, a value of 1 would match the sha-256 identifier, 
-which maps to the SHA-256 digest algorithm`)
+For example, a value of 1 would match the sha-256 identifier,
+which maps to the SHA-256 digest algorithm. Must be one of 1 (sha-256), 7 (sha-384), 8 (sha-512), 10 (sha3-256), 11 (sha3-384), 12 (sha3-512)`)
 	cmd.Flags().Uint32Var(&minApplicableSoftwareVersion, FlagMinApplicableSoftwareVersion, 0,
 		`MinApplicableSoftwareVersion should specify the lowest 
 SoftwareVersion for which this image can be applied`)
@@ -112,8 +112,8 @@ SoftwareVersion for which this image can be applied`)
 		`MaxApplicableSoftwareVersion should specify the highest 
 SoftwareVersion for which this image can be applied`)
 	cmd.Flags().StringVar(&releaseNotesURL, FlagReleaseNotesURL, "",
-		`URL that contains product specific web page that contains 
-release notes for the device model.`)
+		`URL that contains product specific web page that contains
+release notes for the device model. Must be a valid HTTPS URL (max 256 characters).`)
 	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
 	cmd.Flags().Uint32Var(&specificationVersion, FlagSpecificationVersion, 0,
 		"SpecificationVersion SHALL identify the specification version applicable to the device model.")
@@ -189,6 +189,7 @@ func CmdUpdateModelVersion() *cobra.Command {
 			return err
 		},
 	}
+	const otaFlagsNote = "Note: otaFileSize, otaChecksum and otaChecksumType can only be provided together with the first otaURL\nand are immutable once an OTA image has been published; afterwards only the URL can be replaced."
 
 	cmd.Flags().Int32Var(&vid, FlagVid, 0,
 		"Model vendor ID (positive non-zero uint16)")
@@ -199,25 +200,23 @@ func CmdUpdateModelVersion() *cobra.Command {
 	// by default the Software Version is valid, unless --softwareVersionValid is passed by user explicitly
 	// FIXME: This behavior looks erroneous because the user can implicitly change invalid model version to valid
 	cmd.Flags().BoolVar(&softwareVersionValid, FlagSoftwareVersionValid, true,
-		"boolean flag to revoke the software version model")
-	cmd.Flags().StringVar(&otaURL, FlagOtaURL, "",
-		"URL where to obtain the OTA image")
-	cmd.Flags().Uint64Var(&OtaFileSize, FlagOtaFileSize, 0, "OtaFileSize is the total size of the OTA software image in bytes")
-	cmd.Flags().StringVar(&OtaChecksum, FlagOtaChecksum, "", `Digest of the entire contents of the associated OTA 
-	Software Update Image under the OtaUrl attribute, 
-	encoded in base64 string representation. The digest SHALL have been computed using 
-	the algorithm specified in OtaChecksumType`)
+		"Flag to indicate whether the software version is valid or not (default true)")
+	cmd.Flags().StringVar(&otaURL, FlagOtaURL, "", `URL where to obtain the OTA image.`+otaFlagsNote)
+	cmd.Flags().Uint64Var(&OtaFileSize, FlagOtaFileSize, 0, `OtaFileSize is the total size of the OTA software image in bytes.`+otaFlagsNote)
+	cmd.Flags().StringVar(&OtaChecksum, FlagOtaChecksum, "", `Digest of the entire contents of the associated OTA
+	Software Update Image under the OtaUrl attribute,
+	encoded in base64 string representation. The digest SHALL have been computed using
+	the algorithm specified in OtaChecksumType (base64 encoded, min 44 / max 88 characters).`+otaFlagsNote)
 	cmd.Flags().Int32Var(&OtaChecksumType, FlagOtaChecksumType, 0,
-		`Numberic identifier as defined in 
-IANA Named Information Hash Algorithm Registry for the type of otaChecksum.
-For example, a value of 1 would match the sha-256 identifier, 
-which maps to the SHA-256 digest algorithm`)
+		`Numeric identifier as defined in IANA Named Information Hash Algorithm Registry for the type of otaChecksum.
+For example, a value of 1 would match the sha-256 identifier,which maps to the SHA-256 digest algorithm. 
+Must be one of 1 (sha-256), 7 (sha-384), 8 (sha-512), 10 (sha3-256), 11 (sha3-384), 12 (sha3-512).`+otaFlagsNote)
 	cmd.Flags().Uint32Var(&minApplicableSoftwareVersion, FlagMinApplicableSoftwareVersion, 0,
 		`MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied`)
 	cmd.Flags().Uint32Var(&maxApplicableSoftwareVersion, FlagMaxApplicableSoftwareVersion, 0,
 		`MaxApplicableSoftwareVersion should specify the highest SoftwareVersion for which this image can be applied`)
 	cmd.Flags().StringVar(&releaseNotesURL, FlagReleaseNotesURL, "",
-		`URL that contains product specific web page that contains release notes for the device model.`)
+		`URL that contains product specific web page that contains release notes for the device model. Must be a valid HTTPS URL (max 256 characters).`)
 	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
 
 	cli.AddTxFlagsToCmd(cmd)

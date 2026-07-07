@@ -131,16 +131,18 @@ func CmdCreateModel() *cobra.Command {
 	cmd.Flags().StringVar(&partNumber, FlagPartNumber, "",
 		"Model Part Number (or sku)")
 	cmd.Flags().Uint32Var(&discoveryCapabilitiesBitmask, FlagDiscoveryCapabilitiesBitmask, 0,
-		`This field identifies the device's available technologies for device discovery. 
-This field SHALL be populated if CommissioningFallbackUrl is populated`)
+		`This field identifies the device's available technologies for device discovery.
+This field SHALL be populated if CommissioningFallbackUrl is populated. Valid range: 0-30.`)
 	cmd.Flags().Int32Var(&commissioningCustomFlow, FlagCommissioningCustomFlow, 0,
-		`A value of 1 indicates that user interaction with the device (pressing a button, for example) is 
-required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, 
-the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end-user with 
-the necessary details for how to configure the product for initial commissioning.`)
+		`A value of 1 indicates that user interaction with the device (pressing a button, for example) is
+required before commissioning can take place. When CommissioningCustomflow is set to a value of 2,
+the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end-user with
+the necessary details for how to configure the product for initial commissioning.
+Valid values are 0, 1 and 2; if set to 2, commissioningCustomFlowURL must be provided.`)
 	cmd.Flags().StringVar(&commissioningCustomFlowURL, FlagCommissioningCustomFlowURL, "",
-		`commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the 
-device model when the commissioningCustomFlow field is set to '2'`)
+		`commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the
+device model when the commissioningCustomFlow field is set to '2'.
+Must be a valid HTTPS URL (max 256 characters).`)
 	cmd.Flags().Uint32Var(&commissioningModeInitialStepsHint, FlagCommissioningModeInitialStepsHint, 1,
 		`commissioningModeInitialStepsHint SHALL 
 identify a hint for the steps that can be used to put into commissioning mode a device that 
@@ -181,18 +183,18 @@ a value of 64 (bit 6 is set) indicates that a device will be factory reset when 
 factory reset instruction for those values of FactoryResetStepsHint, for which the Pairing/Reset Hint Table 
 indicates a dependency in the Instruction Dependency column.`)
 	cmd.Flags().StringVar(&userManualURL, FlagUserManualURL, "",
-		"URL that contains product specific web page that contains user manual for the device model.")
+		"URL that contains product specific web page that contains user manual for the device model. Must be a valid HTTPS URL (max 256 characters).")
 	cmd.Flags().StringVar(&supportURL, FlagSupportURL, "",
-		"URL that contains product specific web page that contains support details for the device model.")
+		"URL that contains product specific web page that contains support details for the device model. Must be a valid HTTPS URL (max 256 characters).")
 	cmd.Flags().StringVar(&productURL, FlagProductURL, "",
-		"URL that contains product specific web page that contains details for the device model.")
-	cmd.Flags().StringVar(&lsfURL, FlagLsfURL, "", "URL to the Localized String File of this product")
+		"URL that contains product specific web page that contains details for the device model. Must be a valid HTTPS URL (max 256 characters).")
+	cmd.Flags().StringVar(&lsfURL, FlagLsfURL, "", "URL to the Localized String File of this product. Must be a valid HTTPS URL (max 256 characters).")
 	cli.AddTxFlagsToCmd(cmd)
 	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version - default is 0, the value should be equal to 0")
 	cmd.Flags().Int32Var(&enhancedSetupFlowOptions, FlagEnhancedSetupFlowOptions, 0,
 		"enhancedSetupFlowOptions SHALL identify the configuration options for the Enhanced Setup Flow.")
 	cmd.Flags().StringVar(&enhancedSetupFlowTCURL, FlagEnhancedSetupFlowTCURL, "",
-		"enhancedSetupFlowTCURL SHALL identify a link to the Enhanced Setup Flow Terms and Condition File for this product. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
+		"enhancedSetupFlowTCURL SHALL identify a link to the Enhanced Setup Flow Terms and Condition File for this product. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set. Must be a valid HTTPS URL (max 256 characters).")
 	cmd.Flags().Int32Var(&enhancedSetupFlowTCRevision, FlagEnhancedSetupFlowTCRevision, 0,
 		"enhancedSetupFlowTCRevision is an increasing positive integer indicating the latest available version of the Enhanced Setup Flow Terms and Conditions file. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
 	cmd.Flags().StringVar(&enhancedSetupFlowTCDigest, FlagEnhancedSetupFlowTCDigest, "",
@@ -200,9 +202,9 @@ indicates a dependency in the Instruction Dependency column.`)
 	cmd.Flags().Uint32Var(&enhancedSetupFlowTCFileSize, FlagEnhancedSetupFlowTCFileSize, 0,
 		"enhancedSetupFlowTCFileSize SHALL indicate the total size of the Enhanced Setup Flow Terms and Conditions file in bytes, and SHALL be used to ensure the downloaded file size is within the bounds of EnhancedSetupFlowTCFileSize. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
 	cmd.Flags().StringVar(&maintenanceURL, FlagMaintenanceURL, "",
-		"maintenanceURL SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
+		"maintenanceURL SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set. Must be a valid HTTPS URL (max 256 characters).")
 	cmd.Flags().StringVar(&commissioningFallbackURL, FlagCommissioningFallbackURL, "",
-		"This field SHALL identify a vendor-specific commissioning-fallback URL for the device model, which can be used by a Commissioner in case commissioning fails to direct the user to a manufacturer-provided mechanism to provide resolution to commissioning issues.")
+		"This field SHALL identify a vendor-specific commissioning-fallback URL for the device model, which can be used by a Commissioner in case commissioning fails to direct the user to a manufacturer-provided mechanism to provide resolution to commissioning issues. Must be a valid HTTPS URL (max 256 characters).")
 
 	_ = cmd.MarkFlagRequired(FlagVid)
 	_ = cmd.MarkFlagRequired(FlagPid)
@@ -320,8 +322,9 @@ func CmdUpdateModel() *cobra.Command {
 	cmd.Flags().StringVar(&partNumber, FlagPartNumber, "",
 		"Model Part Number (or sku)")
 	cmd.Flags().StringVar(&commissioningCustomFlowURL, FlagCommissioningCustomFlowURL, "",
-		`commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the 
-device model when the commissioningCustomFlow field is set to '2'`)
+		`commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the
+device model when the commissioningCustomFlow field is set to '2'.
+Must be a valid HTTPS URL (max 256 characters).`)
 	cmd.Flags().StringVar(&commissioningModeInitialStepsInstruction, FlagCommissioningModeInitialStepsInstruction, "",
 		`commissioningModeInitialStepsInstruction SHALL contain text which relates to specific 
 values of commissioningModeInitialStepsHint. Certain values of CommissioningModeInitialStepsHint, 
@@ -346,27 +349,28 @@ UserActiveModeTriggerInstruction.`)
 factory reset instruction for those values of FactoryResetStepsHint, for which the Pairing/Reset Hint Table 
 indicates a dependency in the Instruction Dependency column.`)
 	cmd.Flags().StringVar(&userManualURL, FlagUserManualURL, "",
-		"URL that contains product specific web page that contains user manual for the device model.")
+		"URL that contains product specific web page that contains user manual for the device model. Must be a valid HTTPS URL (max 256 characters).")
 	cmd.Flags().StringVar(&supportURL, FlagSupportURL, "",
-		"URL that contains product specific web page that contains support details for the device model.")
+		"URL that contains product specific web page that contains support details for the device model. Must be a valid HTTPS URL (max 256 characters).")
 	cmd.Flags().StringVar(&productURL, FlagProductURL, "",
-		"URL that contains product specific web page that contains details for the device model.")
-	cmd.Flags().StringVar(&lsfURL, FlagLsfURL, "", "URL to the Localized String File of this product")
+		"URL that contains product specific web page that contains details for the device model. Must be a valid HTTPS URL (max 256 characters).")
+	cmd.Flags().StringVar(&lsfURL, FlagLsfURL, "", "URL to the Localized String File of this product. Must be a valid HTTPS URL (max 256 characters).")
 	cmd.Flags().Int32Var(&lsfRevision, FlagLsfRevision, 0,
 		"LsfRevision is a monotonically increasing positive integer indicating the latest available version of Localized String File")
-	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version - default is 0, the value should be equal to 0")
 	cmd.Flags().Uint32Var(&commissioningModeInitialStepsHint, FlagCommissioningModeInitialStepsHint, 0,
-		`commissioningModeInitialStepsHint SHALL 
-identify a hint for the steps that can be used to put into commissioning mode a device that 
-has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. 
-For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned 
-will enter Commissioning Mode upon a power cycle. Note that this value cannot be updated to 0. (default 1).`)
+		`commissioningModeInitialStepsHint SHALL
+identify a hint for the steps that can be used to put into commissioning mode a device that
+has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table.
+For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned
+will enter Commissioning Mode upon a power cycle. Note that this value cannot be updated to 0.`)
 	cmd.Flags().Uint32Var(&commissioningModeSecondaryStepsHint, FlagCommissioningModeSecondaryStepsHint, 0,
-		`commissioningModeSecondaryStepsHint SHALL 
-identify a hint for the steps that can be used to put into commissioning mode a device that 
-has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. 
-For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned 
-will enter Commissioning Mode upon a power cycle. Note that this value cannot be updated to 0. (default 1).`)
+		`commissioningModeSecondaryStepsHint SHALL
+identify a hint for steps that can be used to put into commissioning mode a device that
+has already been commissioned. This field is a bitmap with values defined in the Pairing Hint Table.
+For example, a value of 4 (bit 2 is set) indicates that a device that has already been commissioned
+will require the user to visit a current CHIP Administrator to put the device into commissioning mode.
+Note that this value cannot be updated to 0.`)
 	cmd.Flags().Uint32Var(&factoryResetStepsHint, FlagFactoryResetStepsHint, 0,
 		`FactoryResetStepsHint SHALL identify a hint for the steps that MAY be used to factory 
 reset a device. This field is a bitmap with values defined in the Pairing/Reset Hint Table. For example, 
@@ -374,7 +378,7 @@ a value of 64 (bit 6 is set) indicates that a device will be factory reset when 
 	cmd.Flags().Int32Var(&enhancedSetupFlowOptions, FlagEnhancedSetupFlowOptions, 0,
 		"enhancedSetupFlowOptions SHALL identify the configuration options for the Enhanced Setup Flow.")
 	cmd.Flags().StringVar(&enhancedSetupFlowTCURL, FlagEnhancedSetupFlowTCURL, "",
-		"enhancedSetupFlowTCURL SHALL identify a link to the Enhanced Setup Flow Terms and Condition File for this product. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
+		"enhancedSetupFlowTCURL SHALL identify a link to the Enhanced Setup Flow Terms and Condition File for this product. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set. Must be a valid HTTPS URL (max 256 characters).")
 	cmd.Flags().Int32Var(&enhancedSetupFlowTCRevision, FlagEnhancedSetupFlowTCRevision, 0,
 		"enhancedSetupFlowTCRevision is an increasing positive integer indicating the latest available version of the Enhanced Setup Flow Terms and Conditions file. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
 	cmd.Flags().StringVar(&enhancedSetupFlowTCDigest, FlagEnhancedSetupFlowTCDigest, "",
@@ -382,9 +386,9 @@ a value of 64 (bit 6 is set) indicates that a device will be factory reset when 
 	cmd.Flags().Uint32Var(&enhancedSetupFlowTCFileSize, FlagEnhancedSetupFlowTCFileSize, 0,
 		"enhancedSetupFlowTCFileSize SHALL indicate the total size of the Enhanced Setup Flow Terms and Conditions file in bytes, and SHALL be used to ensure the downloaded file size is within the bounds of EnhancedSetupFlowTCFileSize. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
 	cmd.Flags().StringVar(&maintenanceURL, FlagMaintenanceURL, "",
-		"maintenanceURL SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set.")
+		"maintenanceURL SHALL identify a link to a vendor-specific URL which SHALL provide a manufacturer specific means to resolve any functionality limitations indicated by the TERMS_AND_CONDITIONS_CHANGED status code. This field SHALL be present if and only if the EnhancedSetupFlowOptions field has bit 0 set. Must be a valid HTTPS URL (max 256 characters).")
 	cmd.Flags().StringVar(&commissioningFallbackURL, FlagCommissioningFallbackURL, "",
-		"This field SHALL identify a vendor-specific commissioning-fallback URL for the device model, which can be used by a Commissioner in case commissioning fails to direct the user to a manufacturer-provided mechanism to provide resolution to commissioning issues.")
+		"This field SHALL identify a vendor-specific commissioning-fallback URL for the device model, which can be used by a Commissioner in case commissioning fails to direct the user to a manufacturer-provided mechanism to provide resolution to commissioning issues. Must be a valid HTTPS URL (max 256 characters).")
 
 	cli.AddTxFlagsToCmd(cmd)
 

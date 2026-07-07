@@ -43,7 +43,7 @@ Recommended (for highload applications):
 
 ### Operating System
 
-Current delivery is compiled and tested under `Ubuntu 20.04 LTS` so we recommend using this distribution for now.
+Current delivery is compiled and tested under `Ubuntu 20.04 LTS` and `Ubuntu 24.04 LTS` so we recommend using `Ubuntu 24.04 LTS`.
 In future, it will be possible to compile the application for a wide range of operating systems (thanks to Go language).
 
 ### Install `Python`

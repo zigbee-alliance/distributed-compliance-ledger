@@ -15,14 +15,14 @@ Adds a record about a Vendor.
   - vendorName: `string` -  Vendor name
   - companyLegalName: `string` -  Legal name of the vendor company
   - companyPreferredName: `optional(string)` -  Preferred name of the vendor company
-  - vendorLandingPageURL: `optional(string)` -  URL of the vendor's landing page
+  - vendorLandingPageURL: `optional(string)` -  URL of the vendor's landing page. Must be a valid `https:` URL (max 256 characters).
   - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State: `vendorinfo/VendorInfo/value/<vid>`
 - Who can send:
   - Account with a vendor role who has the matching Vendor ID
   - Account with a vendor admin role
 - CLI command:
-  - `dcld tx vendorinfo add-vendor --vid=<uint16> --vendorName=<string> --companyLegalName=<string> --companyPreferredName=<string> --vendorLandingPageURL=<string> --from=<account>`
+  - `dcld tx vendorinfo add-vendor --vid=<uint16> --vendorName=<string> --companyLegalName=<string> --companyPreferredName=<string> --vendorLandingPageURL=<string> --schemaVersion=<uint16> --from=<account>`
 
 ### UPDATE_VENDOR_INFO
 
@@ -35,7 +35,7 @@ Updates a record about a Vendor.
   - vendorName: `optional(string)` -  Vendor name
   - companyLegalName: `optional(string)` -  Legal name of the vendor company
   - companyPreferredName: `optional(string)` -  Preferred name of the vendor company
-  - vendorLandingPageURL: `optional(string)` -  URL of the vendor's landing page
+  - vendorLandingPageURL: `optional(string)` -  URL of the vendor's landing page. Must be a valid `https:` URL (max 256 characters).
   - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State: `vendorinfo/VendorInfo/value/<vid>`
 - Who can send:

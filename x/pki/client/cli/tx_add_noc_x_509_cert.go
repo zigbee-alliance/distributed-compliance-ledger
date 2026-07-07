@@ -53,9 +53,9 @@ func CmdAddNocX509IcaCert() *cobra.Command {
 	}
 
 	cmd.Flags().StringP(FlagCertificate, FlagCertificateShortcut, "",
-		"PEM encoded certificate (string or path to file containing data)")
-	cmd.Flags().Uint32Var(&certSchemaVersion, common.FlagSchemaVersion, 0, "Schema version of certificate")
-	cmd.Flags().BoolVar(&isVidVerificationSigner, FlagIsVVSC, false, "is VID Verification Signer Certificate")
+		"PEM encoded certificate (string or path to file containing data). Maximum size: 20 KiB.")
+	cmd.Flags().Uint32Var(&certSchemaVersion, common.FlagSchemaVersion, 0, "Schema version of certificate - default is 0.")
+	cmd.Flags().BoolVar(&isVidVerificationSigner, FlagIsVVSC, false, "If true, the certificate is validated and stored as a VID Verification Signer Certificate (VVSC) instead of an ICAC. The VVSC chain (including the trust anchor) is limited to 3 certificates")
 
 	cli.AddTxFlagsToCmd(cmd)
 

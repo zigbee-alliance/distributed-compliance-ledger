@@ -53,10 +53,10 @@ func CmdProposeAddX509RootCert() *cobra.Command {
 	}
 
 	cmd.Flags().StringP(FlagCertificate, FlagCertificateShortcut, "",
-		"PEM encoded certificate (string or path to file containing data)")
+		"PEM encoded certificate (string or path to file containing data). Maximum size: 20 KiB.")
 	cmd.Flags().String(FlagInfo, "", FlagInfoUsage)
-	cmd.Flags().Int32(FlagVid, 0, "Model vendor ID (positive non-zero uint16)")
-	cmd.Flags().Uint32(common.FlagSchemaVersion, 0, "Schema version of certificate")
+	cmd.Flags().Int32(FlagVid, 0, "Vendor ID (positive non-zero uint16). For a VID-scoped PAA must be equal to the VID in the certificate's subject")
+	cmd.Flags().Uint32(common.FlagSchemaVersion, 0, "Schema version of certificate - default is 0.")
 
 	cli.AddTxFlagsToCmd(cmd)
 

@@ -47,7 +47,7 @@ func CmdAssignVid() *cobra.Command {
 
 	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
 	cmd.Flags().StringP(FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
-	cmd.Flags().Int32(FlagVid, 0, "Model vendor ID (positive non-zero uint16)")
+	cmd.Flags().Int32(FlagVid, 0, "Vendor ID to assign to the PAA (positive non-zero uint16). For a VID-scoped PAA must be equal to the VID in the certificate's subject")
 	flags.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagSubject)

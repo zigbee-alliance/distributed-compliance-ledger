@@ -2,6 +2,8 @@
 
 <!-- markdownlint-disable MD036 -->
 
+**Note**: in release builds the `dcld` CLI verifies that every URL provided to [`add-model`](#add_model), [`edit-model`](#edit_model), [`add-model-version`](#add_model_version) and [`edit-model-version`](#edit_model_version) is reachable before broadcasting the transaction, and fails with `URLs not reachable` otherwise.
+
 ### ADD_MODEL
 
 **Status: Implemented**
@@ -21,7 +23,7 @@ Not all fields can be edited (see `EDIT_MODEL`).
   - commissioningCustomFlowURL: `optional(string)` - commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the device model when the commissioningCustomFlow field is set to '2'
   - commissioningModeInitialStepsHint: `optional(uint32)` - commissioningModeInitialStepsHint SHALL identify a hint for the steps that can be used to put into commissioning mode a device that has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle (default 1).
   - commissioningModeInitialStepsInstruction: `optional(string)` - commissioningModeInitialStepsInstruction SHALL contain text which relates to specific values of CommissioningModeInitialStepsHint. Certain values of CommissioningModeInitialStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeInitialStepsInstruction SHALL be set
-  - commissioningModeSecondaryStepsHint: `optional(uint32)` - commissioningModeSecondaryStepsHint SHALL identify a hint for steps that can be used to put into commissioning mode a device that has already been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 4 (bit 2 is set) indicates that a device that has already been commissioned will require the user to visit a current CHIP Administrator to put the device into commissioning mode (default 1).
+  - commissioningModeSecondaryStepsHint: `optional(uint32)` - commissioningModeSecondaryStepsHint SHALL identify a hint for steps that can be used to put into commissioning mode a device that has already been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 4 (bit 2 is set) indicates that a device that has already been commissioned will require the user to visit a current CHIP Administrator to put the device into commissioning mode (default 0).
   - commissioningModeSecondaryStepInstruction: `optional(string)` - commissioningModeSecondaryStepInstruction SHALL contain text which relates to specific values of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeSecondaryStepInstruction SHALL be set
   - IcdUserActiveModeTriggerHint: `optional(uint32)` - IcdUserActiveModeTriggerHint  (when provided) is applicable to an ICD that supports the UserActiveModeTriggerFeature feature. This field SHALL indicate which user action(s) will trigger the ICD to switch to Active mode. This field SHALL follow the requirements specified in UserActiveModeTriggerHint.
   - IcdUserActiveModeTriggerInstruction: `optional(string)` - IcdUserActiveModeTriggerInstruction (when provided) is applicable to an ICD that supports the UserActiveModeTriggerFeature feature. The meaning of this field is dependent upon the UserActiveModeTriggerHint field value, and the conformance is indicated in the "dependency" column in UserActiveModeTriggerHintTable. This field SHALL follow the requirements specified in UserActiveModeTriggerInstruction.
@@ -49,14 +51,14 @@ Not all fields can be edited (see `EDIT_MODEL`).
 - CLI command minimal:
 
 ```bash
-dcld tx model add-model --vid=<uint16> --pid=<uint16> --deviceTypeID=<uint16> --productName=<string> --productLabel=<string or path> --partNumber=<string> --from=<account>
+dcld tx model add-model --vid=<uint16> --pid=<uint16> --deviceTypeID=<uint16> --productName=<string> --productLabel=<string or path> --partNumber=<string> --commissioningCustomFlow=<uint8> --from=<account>
 ```
 
 - CLI command full:
 
 ```bash
 dcld tx model add-model --vid=<uint16> --pid=<uint16> --deviceTypeID=<uint16> --productName=<string> --productLabel=<string or path> --partNumber=<string> 
-    --commissioningCustomFlow=<uint8> --commissioningCustomFlowUrl=<string> --commissioningModeInitialStepsHint=<uint32> --commissioningModeInitialStepsInstruction=<string>
+    --commissioningCustomFlow=<uint8> --commissioningCustomFlowURL=<string> --commissioningModeInitialStepsHint=<uint32> --commissioningModeInitialStepsInstruction=<string>
     --commissioningModeSecondaryStepsHint=<uint32> --commissioningModeSecondaryStepsInstruction=<string>
     --icdUserActiveModeTriggerHint=<uint32> --icdUserActiveModeTriggerInstruction=<string>
     --factoryResetStepsHint=<uint32> --factoryResetStepsInstruction=<string>
@@ -143,21 +145,21 @@ If the corresponding Compliance Info record already exists in the ledger, the So
 
 Not all Model Software Version fields can be edited (see `EDIT_MODEL_VERSION`).
 
-If one of `OTA_URl`, `OTA_checksum` or `OTA_checksum_type` fields is set, then the other two must also be set.
+If `otaURL` is set, then `otaFileSize`, `otaChecksum` and `otaChecksumType` must all be set as well. If `otaURL` is not set, none of should be provided.
 
 - Parameters:
   - vid: `uint16` -  model vendor ID (positive non-zero)
   - pid: `uint16` -  model product ID (positive non-zero)
   - softwareVersion: `uint32` - model software version
-  - softwareVersionSting: `string` - model software version string
+  - softwareVersionString: `string` - model software version string
   - cdVersionNumber `uint16` - CD Version Number of the certification
   - minApplicableSoftwareVersion `uint32` - MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied
   - maxApplicableSoftwareVersion `uint32` - MaxApplicableSoftwareVersion should specify the highest SoftwareVersion for which this image can be applied
   - firmwareInformation `optional(string)` - FirmwareInformation field included in the Device Attestation response when this Software Image boots on the device
   - softwareVersionValid `optional(bool)` - Flag to indicate whether the software version is valid or not (default true)
   - otaURL `optional(string)` - URL where to obtain the OTA image
-  - otaFileSize `optional(string)`  - OtaFileSize is the total size of the OTA software image in bytes
-  - otaChecksum `optional(string)` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation (max 88 characters). The digest SHALL have been computed using the algorithm specified in OtaChecksumType.
+  - otaFileSize `optional(uint64)`  - OtaFileSize is the total size of the OTA software image in bytes
+  - otaChecksum `optional(string)` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation (min 44, max 88 characters). The digest SHALL have been computed using the algorithm specified in OtaChecksumType.
   - otaChecksumType `optional(int32)` - Numeric identifier as defined in the [IANA Named Information Hash Algorithm Registry](https://www.iana.org/assignments/named-information/named-information.xhtml#hash-alg) for the type of otaChecksum. The chosen digest algorithm SHALL have a minimum length of 256 bits. To increase interoperability, this field SHALL be one of `1` (sha-256), `7` (sha-384), `8` (sha-512), `10` (sha3-256), `11` (sha3-384), `12` (sha3-512).
   - releaseNotesURL `optional(string)` - URL that contains product specific web page that contains release notes for the device model.
   - schemaVersion: `optional(uint16)` - Schema version to support backward/forward compatability. Should be equal to 0 (default 0)
@@ -180,7 +182,7 @@ dcld tx model add-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=
 ```bash
 dcld tx model add-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --cdVersionNumber=<uint32>
 --minApplicableSoftwareVersion=<uint32> --maxApplicableSoftwareVersion=<uint32>
---firmwareInformation=<string> --softwareVersionValid=<bool> --otaURL=<string> --otaFileSize=<uint64> --otaChecksum=<string> --otaChecksumType=<int32> --releaseNotesURL=<string> 
+--firmwareInformation=<string> --softwareVersionValid=<bool> --otaURL=<string> --otaFileSize=<uint64> --otaChecksum=<string> --otaChecksumType=<int32> --releaseNotesURL=<string> --schemaVersion=<uint16>
 --from=<account>
 ```
 
@@ -207,7 +209,7 @@ All non-edited fields remain the same.
   - softwareVersionValid `optional(bool)` - Flag to indicate whether the software version is valid or not (default true)
   - otaURL `optional(string)` - URL where to obtain the OTA image
   - otaFileSize `optional(uint64)`  - OtaFileSize is the total size of the OTA software image in bytes. Only accepted alongside the first `otaURL` (see OTA update semantics above).
-  - otaChecksum `optional(string)` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation (max 88 characters). Only accepted alongside the first `otaURL` (see OTA update semantics above).
+  - otaChecksum `optional(string)` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation (min 44, max 88 characters). Only accepted alongside the first `otaURL` (see OTA update semantics above).
   - otaChecksumType `optional(int32)` - Numeric identifier as defined in the [IANA Named Information Hash Algorithm Registry](https://www.iana.org/assignments/named-information/named-information.xhtml#hash-alg) for the type of otaChecksum. Must be one of `1` (sha-256), `7` (sha-384), `8` (sha-512), `10` (sha3-256), `11` (sha3-384), `12` (sha3-512). Only accepted alongside the first `otaURL` (see OTA update semantics above).
   - maxApplicableSoftwareVersion `optional(uint32)` - MaxApplicableSoftwareVersion should specify the highest SoftwareVersion for which this image can be applied
   - minApplicableSoftwareVersion `optional(uint32)` - MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied
@@ -228,7 +230,7 @@ All non-edited fields remain the same.
 Deletes an existing Model Version identified by a unique combination of `vid` (vendor ID), `pid` (product ID) and `softwareVersion`
 by the vendor account. If `account` was created with product ID ranges then the `pid` must fall within that specified range.
 
-Model Version can be deleted only before it is certified.
+Model Version cannot be deleted if a compliance record (certified, revoked or provisional) exists for it on the ledger.
 
 - Parameters:
   - vid: `uint16` -  model version vendor ID (positive non-zero)
@@ -239,7 +241,7 @@ Model Version can be deleted only before it is certified.
   - Vendor account associated with the same vid who has created the model version
   - VendorAdmin account (can delete any model version)
 - CLI command:
-  - `dcld tx model delete-model-version --vid=< uint16 > --pid=< uint16 > --softwareVersion=<uint32> --from=<account>`
+  - `dcld tx model delete-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --from=<account>`
 
 ### GET_MODEL
 

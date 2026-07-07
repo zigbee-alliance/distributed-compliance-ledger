@@ -83,7 +83,7 @@ func CmdShowLastValidatorPower() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(FlagAddress, "", "Bench32 encoded validator address or owner account")
+	cmd.Flags().String(FlagAddress, "", "bech32 encoded validator address or owner account")
 	flags.AddQueryFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagAddress)

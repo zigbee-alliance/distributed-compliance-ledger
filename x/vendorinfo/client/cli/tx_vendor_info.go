@@ -58,16 +58,13 @@ func CmdCreateVendorInfo() *cobra.Command {
 
 	cmd.Flags().Int32Var(&vid, FlagVID, 0,
 		"Vendor ID")
-	cmd.Flags().StringVarP(&vendorName, FlagVendorName, FlagVendorNameShortcut,
-		"", "Vendor Name")
-	cmd.Flags().StringVarP(&companyLegalName, FlagCompanyLegalName, FlagCompanyLegalNameShortcut,
-		"", "Company Legal Name")
-	cmd.Flags().StringVarP(&companyPreferredName, FlagCompanyPreferredName, FlagCompanyPreferredNameShortcut,
-		"", "Company Preferred Name")
+	cmd.Flags().StringVarP(&vendorName, FlagVendorName, FlagVendorNameShortcut, "", "Vendor Name (max 128 characters)")
+	cmd.Flags().StringVarP(&companyLegalName, FlagCompanyLegalName, FlagCompanyLegalNameShortcut, "", "Company Legal Name (max 256 characters)")
+	cmd.Flags().StringVarP(&companyPreferredName, FlagCompanyPreferredName, FlagCompanyPreferredNameShortcut, "", "Company Preferred Name (max 256 characters)")
 	cmd.Flags().StringVarP(&vendorLandingPageURL, FlagVendorLandingPageURL, FlagVendorLandingPageURLShortcut,
-		"", "Landing Page URL for the Vendor")
+		"", "Landing page URL for the vendor. Must be a valid HTTPS URL, max 256 characters.")
 	cli.AddTxFlagsToCmd(cmd)
-	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version - default is 0.")
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagVendorName)
@@ -121,17 +118,13 @@ func CmdUpdateVendorInfo() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().Int32Var(&vid, FlagVID, 0,
-		"Vendor ID")
-	cmd.Flags().StringVarP(&vendorName, FlagVendorName, FlagVendorNameShortcut,
-		"", "Vendor Name")
-	cmd.Flags().StringVarP(&companyLegalName, FlagCompanyLegalName, FlagCompanyLegalNameShortcut,
-		"", "Company Legal Name")
-	cmd.Flags().StringVarP(&companyPreferredName, FlagCompanyPreferredName, FlagCompanyPreferredNameShortcut,
-		"", "Company Preferred Name")
+	cmd.Flags().Int32Var(&vid, FlagVID, 0, "Vendor ID")
+	cmd.Flags().StringVarP(&vendorName, FlagVendorName, FlagVendorNameShortcut, "", "Vendor Name (max 128 characters)")
+	cmd.Flags().StringVarP(&companyLegalName, FlagCompanyLegalName, FlagCompanyLegalNameShortcut, "", "Company Legal Name (max 256 characters)")
+	cmd.Flags().StringVarP(&companyPreferredName, FlagCompanyPreferredName, FlagCompanyPreferredNameShortcut, "", "Company Preferred Name (max 256 characters)")
 	cmd.Flags().StringVarP(&vendorLandingPageURL, FlagVendorLandingPageURL, FlagVendorLandingPageURLShortcut,
-		"", "Landing Page URL for the Vendor")
-	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version")
+		"", "Landing page URL for the vendor. Must be a valid HTTPS URL, max 256 characters; in release builds the URL must be reachable")
+	cmd.Flags().Uint32Var(&schemaVersion, common.FlagSchemaVersion, 0, "Schema version - default is 0.")
 
 	cli.AddTxFlagsToCmd(cmd)
 

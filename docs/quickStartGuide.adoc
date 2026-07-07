@@ -9,8 +9,8 @@ Please refer to https://github.com/zigbee-alliance/distributed-compliance-ledger
 === DCL CLI setup
 These steps will configure `dcld` on Ubuntu platform.
 
-==== GOLANG 1.20+
-Make sure you have goLang 1.20+ installed.
+==== GOLANG 1.26+
+Make sure you have goLang 1.26+ installed.
 Ubuntu
     https://khongwooilee.medium.com/how-to-update-the-go-version-6065f5c8c3ec
 MacOS

@@ -5,7 +5,7 @@
 **NOTE**: X.509 v3 certificates are only supported (all certificates MUST contain `Subject Key ID` field).
 All PKI related methods are based on this restriction.
 
-**Size limits**: each PEM-encoded certificate accepted by the certificate-add transactions is capped at **20 KiB** (previously ~10 MiB). For the PKI Revocation Distribution Point transactions ([ADD_REVOCATION_DISTRIBUTION_POINT](#add_revocation_distribution_point) and [UPDATE_REVOCATION_DISTRIBUTION_POINT](#update_revocation_distribution_point)), `label` and `issuerSubjectKeyID` are capped at 64 characters, `crlSignerCertificate` and `crlSignerDelegator` at 2 KiB each, `dataURL` at 256 characters (accepts `http://` or `https://`), and `dataDigest` at 128 characters.
+**Size limits**: each PEM-encoded certificate accepted by the certificate-add transactions is capped at **20 KiB** (previously ~10 MiB). For the PKI Revocation Distribution Point transactions ([ADD_REVOCATION_DISTRIBUTION_POINT](#add_revocation_distribution_point), [UPDATE_REVOCATION_DISTRIBUTION_POINT](#update_revocation_distribution_point) and [DELETE_REVOCATION_DISTRIBUTION_POINT](#delete_revocation_distribution_point)), `label` and `issuerSubjectKeyID` are capped at 64 characters, `crlSignerCertificate` and `crlSignerDelegator` at 2 KiB each, `dataURL` at 256 characters (accepts `http://` or `https://`), and `dataDigest` at 128 characters.
 
 * [All Certificates (DA, NOC)](#all-certificates-da-noc)
 * [Device Attestation Certificates (DA): PAA, PAI](#device-attestation-certificates-da-paa-pai)
@@ -125,15 +125,18 @@ The PAA certificate is immutable. It can only be revoked by either the owner or 
   - schemaVersion: `optional(uint16)` - Certificate's schema version to support backward/forward compatability. Should be equal to 0 (default 0)
 - In State: `pki/ProposedCertificate/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI command:
-  - `dcld tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>`
+  - `dcld tx pki propose-add-x509-root-cert --certificate=<string-or-path> --vid=<uint16> --from=<account>`
 - Validation:
   - provided certificate must be root:
     - `Issuer` == `Subject`
     - `Authority Key Identifier` == `Subject Key Identifier`
-  - the certificate's structural profile must satisfy the PAA profile: `cA=TRUE`, `KeyUsage` critical with `keyCertSign` + `cRLSign` (`digitalSignature` allowed), `SubjectKeyIdentifier` present, `AuthorityKeyIdentifier` optional for self-signed PAAs.
+  - the certificate's structural profile must satisfy the PAA profile: `cA=TRUE`, `KeyUsage` critical with `keyCertSign` + `cRLSign` (`digitalSignature` allowed), `SubjectKeyIdentifier` present, `AuthorityKeyIdentifier` optional for self-signed PAAs, `pathLenConstraint` may be omitted but if present must be equal to 1.
+  - the certificate must be an X.509 v3 certificate signed with `ecdsa-with-SHA256` over the `prime256v1` (P-256) curve.
+  - the certificate's subject must not contain a Matter PID attribute, and at most one Matter VID and at most one Matter PID attribute may be present in the subject and issuer fields.
   - no existing `Proposed` certificate with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination.
   - no existing certificate with the same `<Certificate's Issuer>:<Certificate's Serial Number>` combination.
   - if approved certificates with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination already exists:
+    - the existing certificate must be a root certificate
     - the existing certificate must not be NOC certificate
     - sender must match to the owner of the existing certificates.
   - the signature (self-signature) and expiration date are valid.
@@ -316,6 +319,12 @@ and DACs (leaf certificates) added to DCL if they are revoked in the CRL identif
 - CLI command:
   - `dcld tx pki add-revocation-point --vid=<uint16> --pid=<uint16> --issuer-subject-key-id=<string> --is-paa=<bool> --label=<string>
     --certificate=<string-or-path> --certificate-delegator=<string-or-path> --data-url=<string> --revocation-type=1 --from=<account>`
+- Validation:
+  - if `crlSignerCertificate` is a non-self-signed certificate (a non-root PAA signer, a PAI, or a certificate delegated by a PAI), it must satisfy the CRL signer certificate format:
+    - X.509 v3 certificate signed with `ecdsa-with-SHA256` over the `prime256v1` (P-256) curve
+    - `SubjectKeyIdentifier` present
+    - `BasicConstraints` extension present, marked critical, with `cA=FALSE`
+    - `KeyUsage` extension marked critical, with the `cRLSign` bit set and no bits other than `cRLSign` and `digitalSignature`
 
 #### UPDATE_REVOCATION_DISTRIBUTION_POINT
 
@@ -344,6 +353,8 @@ Updates an existing PKI Revocation distribution endpoint (such as RFC5280 Certif
 - CLI command:
   - `dcld tx pki update-revocation-point --vid=<uint16> --issuer-subject-key-id=<string> --label=<string>
     --data-url=<string> --certificate=<string-or-path> --certificate-delegator=<string-or-path> --from=<account>`
+- Validation:
+  - if the revocation point relates to a PAA (`isPAA` was true) or has a `crlSignerDelegator`, the new `crlSignerCertificate` must satisfy the CRL signer certificate format (see [ADD_REVOCATION_DISTRIBUTION_POINT](#add_revocation_distribution_point)).
 
 #### DELETE_REVOCATION_DISTRIBUTION_POINT
 
@@ -375,7 +386,7 @@ Adds a PAI (intermediate certificate) signed by a chain of certificates which mu
   - Vendor Account
 - Parameters:
   - cert: `string` - PEM encoded certificate. The corresponding CLI parameter can contain either a PEM string or a path to a file containing the data.
-  - certificate-schema-version: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
 - In State:
   - `pki/ApprovedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
   - `pki/ChildCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
@@ -385,13 +396,19 @@ Adds a PAI (intermediate certificate) signed by a chain of certificates which mu
   - provided certificate must not be root:
     - `Issuer` != `Subject`
     - `Authority Key Identifier` != `Subject Key Identifier`
-  - the certificate's structural profile must satisfy the PAI profile: `cA=TRUE`, `KeyUsage` critical with `keyCertSign` + `cRLSign` (`digitalSignature` allowed), `SubjectKeyIdentifier` and `AuthorityKeyIdentifier` present.
+  - the certificate's structural profile is selected by the `cA` flag of the `BasicConstraints` extension:
+    - `cA=TRUE` (PAI): `KeyUsage` critical with `keyCertSign` + `cRLSign` (`digitalSignature` allowed), `SubjectKeyIdentifier` and `AuthorityKeyIdentifier` present, `pathLenConstraint` present and equal to 0.
+    - `cA=FALSE` (DAC): `BasicConstraints` extension marked critical, `KeyUsage` critical with exactly `digitalSignature`, `SubjectKeyIdentifier` and `AuthorityKeyIdentifier` present.
+  - the certificate must be an X.509 v3 certificate signed with `ecdsa-with-SHA256` over the `prime256v1` (P-256) curve.
+  - at most one Matter VID and at most one Matter PID attribute may be present in the certificate's subject and issuer fields.
   - no existing certificate with the same `<Certificate's Issuer>:<Certificate's Serial Number>` combination.
   - if certificates with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination already exist:
+    - the existing certificate must have the same `Issuer` and `Authority Key Identifier` as the provided one.
     - the existing certificate must not be NOC certificate.
     - the sender's VID must match the VID of the existing certificate's owner.
   - the signature and expiration date are valid.
   - parent certificate must be already stored on the ledger and a valid chain to some root certificate can be built.
+  - if the immediate issuer (parent) certificate has a VID in its subject, the provided certificate must have the same VID; if the parent has a PID in its subject, the provided certificate must have the same PID.
   - if the parent root certificate is VID scoped:
     - the provided certificate must also be VID scoped.
     - the `vid` in the subject of the root certificate must be equal to the `vid` in the subject of the provided certificate.
@@ -782,7 +799,7 @@ Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revok
 - In State:
   - `pki/RevokedNocRootCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI command:
-  - `dcld tx pki revoke-noc-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --serial-number=<string> --info=<string> --time=<int64> --revoke-child=<bool> --from=<account>`
+  - `dcld tx pki revoke-noc-x509-root-cert --subject=<base64 string> --subject-key-id=<hex string> --serial-number=<string> --info=<string> --revoke-child=<bool> --from=<account>`
 - Validation:
   - a NOC Root Certificate (RCAC) with the provided `subject` and `subject_key_id` must exist in the ledger.
 
@@ -813,8 +830,8 @@ This transaction adds a NOC ICA certificate (ICAC) — or, when `isVidVerificati
 - Who can send: Vendor account
 - Validation:
   - the certificate's structural profile is selected by `isVidVerificationSigner`:
-    - `false` (default) — ICAC profile: `cA=TRUE`, `KeyUsage` critical with `keyCertSign` + `cRLSign`, no `ExtendedKeyUsage`, `SubjectKeyIdentifier` and `AuthorityKeyIdentifier` present.
-    - `true` — VVSC profile: `cA=FALSE`, `KeyUsage` critical with exactly `digitalSignature`, `SubjectKeyIdentifier` and `AuthorityKeyIdentifier` present.
+    - `false` (default) — ICAC profile: `cA=TRUE`, `KeyUsage` critical with `keyCertSign` + `cRLSign` (`digitalSignature` allowed), no `ExtendedKeyUsage`, `SubjectKeyIdentifier` and `AuthorityKeyIdentifier` present.
+    - `true` — VVSC profile: `cA=FALSE`, `KeyUsage` critical with exactly `digitalSignature`, `SubjectKeyIdentifier` and `AuthorityKeyIdentifier` present. The VVSC certificate chain (including the trust anchor) is limited to at most three certificates.
   - the provided certificate must be a non-root certificate:
     - `Issuer` != `Subject`
     - `Authority Key Identifier` != `Subject Key Identifier`
@@ -829,7 +846,7 @@ This transaction adds a NOC ICA certificate (ICAC) — or, when `isVidVerificati
   - the signature and expiration date must be valid.
 - Parameters:
   - cert: `string` - The NOC ICA Certificate (ICAC) or VVSC, encoded in X.509v3 PEM format. Can be a PEM string or a file path.
-  - certificate-schema-version: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
+  - schemaVersion: `optional(uint16)` - Certificate's schema version to support backward/forward compatability(default 0)
   - isVidVerificationSigner: `optional(bool)` - when `true`, the certificate is validated and stored as a VVSC. Defaults to `false` (ICAC profile).
 - In State:
   - `pki/AllCertificates/value/<Subject>/<SubjectKeyID>`
@@ -867,7 +884,7 @@ Revoked certificates can be retrieved by using the [GET_REVOKED_CERT](#get_revok
 - In State:
   - `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - CLI command:
-  - `dcld tx pki revoke-noc-x509-ica-cert --subject=<base64 string> --subject-key-id=<hex string> --serial-number=<string> --info=<string> --time=<int64> --revoke-child=<bool> --from=<account>`
+  - `dcld tx pki revoke-noc-x509-ica-cert --subject=<base64 string> --subject-key-id=<hex string> --serial-number=<string> --info=<string> --revoke-child=<bool> --from=<account>`
 
 #### REMOVE_NOC_ICA (ICAC)
 

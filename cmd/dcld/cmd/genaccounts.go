@@ -180,7 +180,7 @@ the address will be looked up in the local Keybase.
 		},
 	}
 
-	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address or key name")
+	cmd.Flags().String(FlagAddress, "", "Bech32 encoded account address or key name")
 	cmd.Flags().String(FlagPubKey, "", "The validator's Protobuf JSON encoded public key")
 	cmd.Flags().String(FlagRoles, "",
 		fmt.Sprintf("The list of roles (split by comma) to assign to account (supported roles: %v)", dclauthtypes.Roles))
