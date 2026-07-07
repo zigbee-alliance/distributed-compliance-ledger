@@ -128,25 +128,25 @@ Once approved the account can be used to send transactions. See [use_case_txn_au
 ### 1. Create an Account proposal for the user
 
 ```bash
-dcld tx auth propose-add-account --address=<bench32 encoded string> --pubkey=<protobuf JSON encoded> --roles=<role1,role2,...> --vid=<uint16> --pid_ranges=<uint16-range,uint16-range,...> --from=<account>
+dcld tx auth propose-add-account --address=<bech32 encoded string> --pubkey=<protobuf JSON encoded> --roles=<role1,role2,...> --vid=<uint16> --pid_ranges=<uint16-range,uint16-range,...> --from=<account>
 ```
 
 ### 2. Approve proposed Account
 
 ```bash
-dcld tx auth approve-add-account --address=<bench32 encoded string> --from=<account>
+dcld tx auth approve-add-account --address=<bech32 encoded string> --from=<account>
 ```
 
 ### 3. Propose revocation of an Account
 
 ```bash
-dcld tx auth propose-revoke-account --address=<bench32 encoded string> --from=<account>
+dcld tx auth propose-revoke-account --address=<bech32 encoded string> --from=<account>
 ```
 
 ### 4. Approve revocation of an Account
 
 ```bash
-dcld tx auth approve-revoke-account --address=<bench32 encoded string> --from=<account>
+dcld tx auth approve-revoke-account --address=<bech32 encoded string> --from=<account>
 ```
 
 ### 5. Propose a new self-signed root certificate

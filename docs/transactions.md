@@ -30,7 +30,7 @@ an Account or sign the request.
 - The following roles are supported:
   - `Trustee` - can create and approve accounts, approve root certificates.
   - `Vendor` - can add models that belong to the vendor ID associated with the vendor account.
-  - `VendorAdmin` - can add vendor info records and update any vendor info.
+  - `VendorAdmin` - can add vendor info records and update any vendor info; can also add, edit and delete any Model and Model Version.
   - `CertificationCenter` - can certify and revoke models.
   - `NodeAdmin` - can add validator nodes to the network.
 

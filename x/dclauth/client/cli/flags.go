@@ -2,7 +2,7 @@ package cli
 
 const (
 	FlagAddress      = "address"
-	FlagAddressUsage = "Bench32 encoded account address"
+	FlagAddressUsage = "Bech32 encoded account address"
 	FlagPubKey       = "pubkey"
 	FlagRoles        = "roles"
 	FlagVID          = "vid"

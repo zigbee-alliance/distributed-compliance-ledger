@@ -22,9 +22,9 @@ The steps:
     * verify the branch/commit target for the release: usually it should be `master` but other targets are possible as well
     * put release notes
 3. once published [release pipeline](https://github.com/zigbee-alliance/distributed-compliance-ledger/actions/workflows/release.yml) is triggered:
-    * it builds `dcld` binary on `ubuntu-20.04` and `macos-11` and attaches the artifacts to the GitHub release:
-        * binary and archived binary for `ubuntu-20.04`
-        * archived binary for `macos-11`
+    * it builds `dcld` binaries for `ubuntu-20.04`, `ubuntu-24.04` and `macos-14` targets and attaches the artifacts to the GitHub release:
+        * binary and archived binary for `ubuntu-20.04` and `ubuntu-24.04`
+        * archived binary for `macos-14`
         * systemd service file
 4. additional way to trigger the pipeline is to do that manually, it can be used for the following cases:
     * some intermittent issue happened during the normal build so some artifact hasn't been attached

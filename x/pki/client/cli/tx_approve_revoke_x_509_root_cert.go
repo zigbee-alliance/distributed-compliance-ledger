@@ -18,7 +18,8 @@ func CmdApproveRevokeX509RootCert() *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "approve-revoke-x509-root-cert",
 		Short: "Approves the proposed revocation of the given root certificate. " +
-			"All the certificates in the subtree signed by the revoked certificate will be revoked as well.",
+			"All the certificates in the subtree signed by the revoked certificate will be revoked as well " +
+			"only if the revocation was proposed with revoke-child flag set to true.",
 		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)

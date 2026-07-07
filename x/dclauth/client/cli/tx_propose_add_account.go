@@ -23,7 +23,7 @@ var _ = strconv.Itoa(0)
 func CmdProposeAddAccount() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "propose-add-account",
-		Short: "Broadcast message ProposeAddAccount",
+		Short: "Proposes a new account with the given address, public key and roles (Trustee only; the account is activated once enough Trustee approvals are received)",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argAddress, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
@@ -95,10 +95,10 @@ func CmdProposeAddAccount() *cobra.Command {
 	cmd.Flags().String(FlagAddress, "", "Bech32 encoded account address")
 	cmd.Flags().String(FlagPubKey, "", "The account's Protobuf JSON encoded public key")
 	cmd.Flags().String(FlagRoles, "",
-		fmt.Sprintf("The list of roles, comma-separated, assigning to the account (supported roles: %v)",
+		fmt.Sprintf("The list of roles, comma-separated, assigning to the account (supported roles: %v).",
 			types.Roles))
-	cmd.Flags().String(FlagVID, "", "Vendor ID associated with this account (positive non-zero uint16). Required only for Vendor Roles.")
-	cmd.Flags().String(FlagPIDs, "", "Optional list of Product ID ranges (inclusive numbers split by \"-\") associated with this account (for example: 1-100,200-65535, positive non-zero uint16)")
+	cmd.Flags().String(FlagVID, "", "Vendor ID associated with this account (positive non-zero uint16). Required only for the Vendor role.")
+	cmd.Flags().String(FlagPIDs, "", "Optional list of Product ID ranges (inclusive numbers split by \"-\") associated with this account (for example: 1-100,200-65535, positive non-zero uint16). Ranges must be in increasing order and must not overlap.")
 	cmd.Flags().String(FlagInfo, "", FlagInfoUsage)
 
 	cli.AddTxFlagsToCmd(cmd)
