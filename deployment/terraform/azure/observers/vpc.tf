@@ -20,6 +20,8 @@ resource "azurerm_subnet_network_security_group_association" "this" {
 }
 
 resource "azurerm_nat_gateway" "this" {
+  count = var.enable_nay_gw ? 1 : 0
+
   name                = "${local.resource_prefix}-vnet-nat-gw"
   resource_group_name = local.resource_group_name
   location            = local.location
@@ -28,11 +30,15 @@ resource "azurerm_nat_gateway" "this" {
 }
 
 resource "azurerm_subnet_nat_gateway_association" "this" {
+  count = var.enable_nay_gw ? 1 : 0
+
   subnet_id      = azurerm_subnet.this.id
-  nat_gateway_id = azurerm_nat_gateway.this.id
+  nat_gateway_id = azurerm_nat_gateway.this[0].id
 }
 
 resource "azurerm_public_ip" "nat_gw" {
+  count = var.enable_nay_gw ? 1 : 0
+
   name                = "${local.resource_prefix}-nat-gw-public-ip"
   location            = local.location
   resource_group_name = local.resource_group_name
@@ -43,6 +49,8 @@ resource "azurerm_public_ip" "nat_gw" {
 }
 
 resource "azurerm_nat_gateway_public_ip_association" "this" {
-  nat_gateway_id       = azurerm_nat_gateway.this.id
-  public_ip_address_id = azurerm_public_ip.nat_gw.id
+  count = var.enable_nay_gw ? 1 : 0
+
+  nat_gateway_id       = azurerm_nat_gateway.this[0].id
+  public_ip_address_id = azurerm_public_ip.nat_gw[0].id
 }
